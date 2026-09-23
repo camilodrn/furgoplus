@@ -88,7 +88,6 @@ jobs:
           channel: stable
           cache: true
       - run: flutter config --jdk-dir="$JAVA_HOME"
-      - run: flutter create --platforms=android --project-name=furgoplus .
       - run: flutter pub get
       - run: dart format --output=none --set-exit-if-changed lib test
       - run: flutter analyze
