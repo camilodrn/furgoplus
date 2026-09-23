@@ -36,18 +36,19 @@ For direct host backend/web development, set `.env` values in your shell, use `D
 
 ## Flutter on host
 
-The repository contains one SDK-only Flutter app. With Flutter 3.47.2 installed:
+The repository contains one SDK-only Flutter app and its Android platform shell. With Flutter 3.47.2 installed:
 
 ```bash
 cd mobile
-flutter create --platforms=android --project-name=furgoplus .
 flutter pub get
 flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000 --dart-define=ALLOW_HTTP_API=true
 ```
 
 Set Flutter's Android JDK to a locally installed Java 21 LTS JDK before building (`flutter config --jdk-dir="$JAVA_HOME"` with `JAVA_HOME` pointing to that JDK). The Android shell uses the AGP 9.1.0, Gradle 9.3.1 and Kotlin plugin 2.4.0 versions from the Flutter 3.47.2 template. Its Java 17 source and bytecode targets remain the template defaults; Java 21 is the JDK that runs the build tools.
 
-`flutter create` generates the standard Android platform shell for the pinned SDK without committing machine-specific `local.properties`. For a physical device, set `API_BASE_URL` to an API origin reachable **from that device**; the computer's `localhost` is not the device's localhost. `10.0.2.2` is the Android emulator alias for the host. Compose binds port 8000 to host loopback; use the emulator bridge or adjust the local port binding for a trusted development network. No developer machine IP is committed. HTTP is accepted only with `ALLOW_HTTP_API=true` in non-release builds; release builds require HTTPS.
+The Android shell is committed. Do not run `flutter create` as a routine setup step because it can recreate Flutter template files that FurgoPlus intentionally removed or replaced. Regenerate platform files only as an explicit maintenance task, review the resulting diff, and preserve FurgoPlus-specific Android configuration. Machine-specific `local.properties` stays ignored.
+
+For a physical device, set `API_BASE_URL` to an API origin reachable **from that device**; the computer's `localhost` is not the device's localhost. `10.0.2.2` is the Android emulator alias for the host. Compose binds port 8000 to host loopback; use the emulator bridge or adjust the local port binding for a trusted development network. No developer machine IP is committed. HTTP is accepted only with `ALLOW_HTTP_API=true` in non-release builds; release builds require HTTPS.
 
 The mobile screen displays loading, success or failure for the same health contract. It has no role navigation, sessions or location permissions yet. For Task 02's native session adapter, the selected OS-backed storage package is `flutter_secure_storage` 11.2.0; it is not installed or used by the Task 01 health client.
 
@@ -69,7 +70,7 @@ cd ../web
 npm ci
 npm run format:check && npm run contract:check && npm run lint && npm run typecheck && npm test && npm run build
 
-# Mobile, after flutter create and pub get
+# Mobile, after flutter pub get
 cd ../mobile
 dart format --output=none --set-exit-if-changed lib test
 flutter analyze && flutter test
