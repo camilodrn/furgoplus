@@ -1,0 +1,13 @@
+.git
+.env
+**/.env
+**/__pycache__
+**/*.pyc
+**/.venv
+web/node_modules
+web/dist
+web/coverage
+mobile/.dart_tool
+mobile/build
+mobile/android/.gradle
+*.iml

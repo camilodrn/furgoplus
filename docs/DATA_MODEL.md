@@ -1,6 +1,6 @@
 # Conceptual data model
 
-Status: implementation contract for planning; no migrations exist yet. PostgreSQL is the only application database. Use relational foreign keys, server-generated identifiers and timestamps. IDs are not authorization. Store instants in UTC; recurring service times/dates and document-expiration interpretation use America/Santiago. This model is the source of truth for field meaning, states and ownership; [ADR 0004](decisions/0004-publication-eligibility.md) defines discovery eligibility.
+Status: implementation contract for planning; Task 01 adds only the custom User migration. PostgreSQL is the only application database. Use relational foreign keys, server-generated identifiers and timestamps. IDs are not authorization. Store instants in UTC; recurring service times/dates and document-expiration interpretation use America/Santiago. This model is the source of truth for field meaning, states and ownership; [ADR 0004](decisions/0004-publication-eligibility.md) defines discovery eligibility.
 
 ## Identity, validation and plans
 

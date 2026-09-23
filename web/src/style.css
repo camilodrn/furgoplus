@@ -1,0 +1,55 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #17343b;
+  background: #f4f8f7;
+}
+
+body {
+  margin: 0;
+}
+.shell {
+  min-height: 100vh;
+}
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 2rem;
+  background: #12353c;
+  color: white;
+}
+.site-header span {
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+.site-header small {
+  opacity: 0.8;
+}
+main {
+  max-width: 42rem;
+  margin: 5rem auto;
+  padding: 0 1.5rem;
+}
+.card {
+  background: white;
+  border: 1px solid #d9e6e3;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 10px 32px #12353c0d;
+}
+.eyebrow {
+  color: #487069;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+h1 {
+  margin-top: 0.5rem;
+}
+.success {
+  color: #146843;
+}
+.error {
+  color: #a23434;
+}

@@ -1,0 +1,111 @@
+name: CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17.6-alpine3.22
+        env:
+          POSTGRES_DB: furgoplus_test
+          POSTGRES_USER: furgoplus
+          POSTGRES_PASSWORD: ci-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U furgoplus -d furgoplus_test"
+          --health-interval 3s --health-timeout 3s --health-retries 20
+    env:
+      DJANGO_SECRET_KEY: ci-only-dummy-key-long-enough-for-checks-123456
+      DJANGO_DEBUG: 'false'
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      API_PUBLIC_ORIGIN: https://app.example.test
+      WEB_PUBLIC_ORIGIN: https://app.example.test
+      PRIVATE_UPLOAD_ROOT: ${{ runner.temp }}/private
+      DB_NAME: furgoplus_test
+      DB_USER: furgoplus
+      DB_PASSWORD: ci-only-password
+      DB_HOST: localhost
+      DB_PORT: '5432'
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13.8'
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - run: pip install -r requirements.txt
+      - run: ruff format --check .
+      - run: ruff check .
+      - run: python manage.py check --database default
+      - run: python manage.py makemigrations --check --dry-run
+      - run: python manage.py migrate --noinput
+      - run: python manage.py migrate --check
+      - run: python manage.py generate_openapi --check
+      - run: python manage.py test
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.19.0'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run contract:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  mobile:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          channel: stable
+          cache: true
+      - run: flutter config --jdk-dir="$JAVA_HOME"
+      - run: flutter create --platforms=android --project-name=furgoplus .
+      - run: flutter pub get
+      - run: dart format --output=none --set-exit-if-changed lib test
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build apk --debug --dart-define=API_BASE_URL=https://api.example.test
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          cp .env.example .env
+          sed -i 's/replace-with-a-unique-long-random-secret/ci-only-dummy-secret-long-enough-123456789/' .env
+          sed -i 's/replace-with-a-local-database-password/ci-only-password/' .env
+      - run: docker compose --env-file .env -f infra/compose.yaml config --quiet
+      - run: docker compose --env-file .env -f infra/compose.yaml up -d --build
+      - run: docker compose --env-file .env -f infra/compose.yaml exec -T backend python manage.py migrate --noinput
+      - run: bash infra/smoke.sh
+      - if: always()
+        run: docker compose --env-file .env -f infra/compose.yaml down
