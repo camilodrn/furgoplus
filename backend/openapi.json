@@ -407,6 +407,1999 @@
           }
         ]
       }
+    },
+    "/api/v1/driver/profile/": {
+      "patch": {
+        "operationId": "patchDriverProfile",
+        "summary": "Update own profile basics",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "display_name",
+                    "service_summary",
+                    "service_contact_email",
+                    "validation_state",
+                    "current_validation_revision",
+                    "approved_revision"
+                  ],
+                  "properties": {
+                    "display_name": {
+                      "type": "string"
+                    },
+                    "service_summary": {
+                      "type": "string"
+                    },
+                    "service_contact_email": {
+                      "type": "string"
+                    },
+                    "validation_state": {
+                      "type": "string"
+                    },
+                    "current_validation_revision": {
+                      "type": "integer"
+                    },
+                    "approved_revision": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "display_name": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "service_summary": {
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  "service_contact_email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "get": {
+        "operationId": "getDriverProfile",
+        "summary": "Own driver onboarding profile",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "display_name",
+                    "service_summary",
+                    "service_contact_email",
+                    "validation_state",
+                    "current_validation_revision",
+                    "approved_revision"
+                  ],
+                  "properties": {
+                    "display_name": {
+                      "type": "string"
+                    },
+                    "service_summary": {
+                      "type": "string"
+                    },
+                    "service_contact_email": {
+                      "type": "string"
+                    },
+                    "validation_state": {
+                      "type": "string"
+                    },
+                    "current_validation_revision": {
+                      "type": "integer"
+                    },
+                    "approved_revision": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/driver/validation/checklist/": {
+      "get": {
+        "operationId": "getDriverChecklist",
+        "summary": "Synthetic demo checklist",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "demo_only",
+                    "allowed_content_types",
+                    "max_bytes",
+                    "items"
+                  ],
+                  "properties": {
+                    "demo_only": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "allowed_content_types": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "max_bytes": {
+                      "type": "integer"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "kind",
+                          "label",
+                          "requires_expiry"
+                        ],
+                        "properties": {
+                          "kind": {
+                            "type": "string"
+                          },
+                          "label": {
+                            "type": "string"
+                          },
+                          "requires_expiry": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/driver/documents/": {
+      "post": {
+        "operationId": "uploadDriverDocument",
+        "summary": "Upload one private demo document",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "version",
+                    "kind",
+                    "content_type",
+                    "byte_size",
+                    "uploaded_at",
+                    "expires_on",
+                    "is_current"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "version": {
+                      "type": "integer"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "content_type": {
+                      "type": "string"
+                    },
+                    "byte_size": {
+                      "type": "integer"
+                    },
+                    "uploaded_at": {
+                      "type": "string"
+                    },
+                    "expires_on": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date"
+                    },
+                    "is_current": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "file"
+                ],
+                "properties": {
+                  "kind": {
+                    "type": "string"
+                  },
+                  "expires_on": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "get": {
+        "operationId": "getDriverDocuments",
+        "summary": "Own document versions",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "documents"
+                  ],
+                  "properties": {
+                    "documents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "version",
+                          "kind",
+                          "content_type",
+                          "byte_size",
+                          "uploaded_at",
+                          "expires_on",
+                          "is_current"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "version": {
+                            "type": "integer"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "content_type": {
+                            "type": "string"
+                          },
+                          "byte_size": {
+                            "type": "integer"
+                          },
+                          "uploaded_at": {
+                            "type": "string"
+                          },
+                          "expires_on": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date"
+                          },
+                          "is_current": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/driver/documents/{id}/download/": {
+      "get": {
+        "operationId": "downloadDriverDocument",
+        "summary": "Download own private document",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/driver/validations/": {
+      "get": {
+        "operationId": "getDriverValidations",
+        "summary": "Own validation history",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "validation_state",
+                    "current_validation_revision",
+                    "approved_revision",
+                    "validations"
+                  ],
+                  "properties": {
+                    "validation_state": {
+                      "type": "string"
+                    },
+                    "current_validation_revision": {
+                      "type": "integer"
+                    },
+                    "approved_revision": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "validations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "revision",
+                          "state",
+                          "submitted_at",
+                          "reviewed_at",
+                          "observations",
+                          "display_name_snapshot",
+                          "documents"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "revision": {
+                            "type": "integer"
+                          },
+                          "state": {
+                            "type": "string",
+                            "enum": [
+                              "pending",
+                              "approved",
+                              "rejected",
+                              "superseded"
+                            ]
+                          },
+                          "submitted_at": {
+                            "type": "string"
+                          },
+                          "reviewed_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "observations": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "display_name_snapshot": {
+                            "type": "string"
+                          },
+                          "documents": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "id",
+                                "version",
+                                "kind",
+                                "content_type",
+                                "byte_size",
+                                "uploaded_at",
+                                "expires_on"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "version": {
+                                  "type": "integer"
+                                },
+                                "kind": {
+                                  "type": "string"
+                                },
+                                "content_type": {
+                                  "type": "string"
+                                },
+                                "byte_size": {
+                                  "type": "integer"
+                                },
+                                "uploaded_at": {
+                                  "type": "string"
+                                },
+                                "expires_on": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "format": "date"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/driver/validations/submit/": {
+      "post": {
+        "operationId": "submitDriverValidation",
+        "summary": "Submit immutable revision",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "revision",
+                    "state",
+                    "submitted_at",
+                    "reviewed_at",
+                    "observations",
+                    "display_name_snapshot",
+                    "documents"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "approved",
+                        "rejected",
+                        "superseded"
+                      ]
+                    },
+                    "submitted_at": {
+                      "type": "string"
+                    },
+                    "reviewed_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "observations": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "display_name_snapshot": {
+                      "type": "string"
+                    },
+                    "documents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "version",
+                          "kind",
+                          "content_type",
+                          "byte_size",
+                          "uploaded_at",
+                          "expires_on"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "version": {
+                            "type": "integer"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "content_type": {
+                            "type": "string"
+                          },
+                          "byte_size": {
+                            "type": "integer"
+                          },
+                          "uploaded_at": {
+                            "type": "string"
+                          },
+                          "expires_on": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/validations/": {
+      "get": {
+        "operationId": "getAdminValidations",
+        "summary": "Validation queue or history, latest 50",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "results"
+                  ],
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "revision",
+                          "state",
+                          "submitted_at",
+                          "reviewed_at",
+                          "observations",
+                          "display_name_snapshot",
+                          "driver",
+                          "comparison"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "revision": {
+                            "type": "integer"
+                          },
+                          "state": {
+                            "type": "string",
+                            "enum": [
+                              "pending",
+                              "approved",
+                              "rejected",
+                              "superseded"
+                            ]
+                          },
+                          "submitted_at": {
+                            "type": "string"
+                          },
+                          "reviewed_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "observations": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "display_name_snapshot": {
+                            "type": "string"
+                          },
+                          "comparison": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "previous_revision",
+                              "changed_document_count",
+                              "unchanged_document_count",
+                              "changed_identity_field_count",
+                              "has_material_changes",
+                              "document_changes",
+                              "identity_changes"
+                            ],
+                            "properties": {
+                              "previous_revision": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "changed_document_count": {
+                                "type": "integer"
+                              },
+                              "unchanged_document_count": {
+                                "type": "integer"
+                              },
+                              "changed_identity_field_count": {
+                                "type": "integer"
+                              },
+                              "has_material_changes": {
+                                "type": "boolean"
+                              },
+                              "document_changes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "kind",
+                                    "status",
+                                    "previous_version",
+                                    "current_version",
+                                    "previous_content_type",
+                                    "current_content_type",
+                                    "previous_expires_on",
+                                    "current_expires_on"
+                                  ],
+                                  "properties": {
+                                    "kind": {
+                                      "type": "string"
+                                    },
+                                    "status": {
+                                      "type": "string",
+                                      "enum": [
+                                        "unchanged",
+                                        "replaced",
+                                        "added",
+                                        "removed"
+                                      ]
+                                    },
+                                    "previous_version": {
+                                      "type": [
+                                        "integer",
+                                        "null"
+                                      ]
+                                    },
+                                    "current_version": {
+                                      "type": [
+                                        "integer",
+                                        "null"
+                                      ]
+                                    },
+                                    "previous_content_type": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "current_content_type": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "previous_expires_on": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ],
+                                      "format": "date"
+                                    },
+                                    "current_expires_on": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ],
+                                      "format": "date"
+                                    }
+                                  }
+                                }
+                              },
+                              "identity_changes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "field",
+                                    "previous_value",
+                                    "current_value"
+                                  ],
+                                  "properties": {
+                                    "field": {
+                                      "type": "string",
+                                      "enum": [
+                                        "display_name"
+                                      ]
+                                    },
+                                    "previous_value": {
+                                      "type": "string"
+                                    },
+                                    "current_value": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "driver": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "id",
+                              "display_name",
+                              "email"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "display_name": {
+                                "type": "string"
+                              },
+                              "email": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "approved",
+                "rejected",
+                "superseded",
+                "all"
+              ],
+              "default": "pending"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/validations/{id}/": {
+      "get": {
+        "operationId": "getAdminValidation",
+        "summary": "Submitted revision detail",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "revision",
+                    "state",
+                    "submitted_at",
+                    "reviewed_at",
+                    "observations",
+                    "display_name_snapshot",
+                    "driver",
+                    "comparison",
+                    "documents"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "approved",
+                        "rejected",
+                        "superseded"
+                      ]
+                    },
+                    "submitted_at": {
+                      "type": "string"
+                    },
+                    "reviewed_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "observations": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "display_name_snapshot": {
+                      "type": "string"
+                    },
+                    "comparison": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "previous_revision",
+                        "changed_document_count",
+                        "unchanged_document_count",
+                        "changed_identity_field_count",
+                        "has_material_changes",
+                        "document_changes",
+                        "identity_changes"
+                      ],
+                      "properties": {
+                        "previous_revision": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "changed_document_count": {
+                          "type": "integer"
+                        },
+                        "unchanged_document_count": {
+                          "type": "integer"
+                        },
+                        "changed_identity_field_count": {
+                          "type": "integer"
+                        },
+                        "has_material_changes": {
+                          "type": "boolean"
+                        },
+                        "document_changes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "kind",
+                              "status",
+                              "previous_version",
+                              "current_version",
+                              "previous_content_type",
+                              "current_content_type",
+                              "previous_expires_on",
+                              "current_expires_on"
+                            ],
+                            "properties": {
+                              "kind": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "unchanged",
+                                  "replaced",
+                                  "added",
+                                  "removed"
+                                ]
+                              },
+                              "previous_version": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "current_version": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "previous_content_type": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "current_content_type": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "previous_expires_on": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "format": "date"
+                              },
+                              "current_expires_on": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "format": "date"
+                              }
+                            }
+                          }
+                        },
+                        "identity_changes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "field",
+                              "previous_value",
+                              "current_value"
+                            ],
+                            "properties": {
+                              "field": {
+                                "type": "string",
+                                "enum": [
+                                  "display_name"
+                                ]
+                              },
+                              "previous_value": {
+                                "type": "string"
+                              },
+                              "current_value": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "driver": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "id",
+                        "display_name",
+                        "email"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "display_name": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "documents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "version",
+                          "kind",
+                          "content_type",
+                          "byte_size",
+                          "uploaded_at",
+                          "expires_on"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "version": {
+                            "type": "integer"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "content_type": {
+                            "type": "string"
+                          },
+                          "byte_size": {
+                            "type": "integer"
+                          },
+                          "uploaded_at": {
+                            "type": "string"
+                          },
+                          "expires_on": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/documents/{id}/download/": {
+      "get": {
+        "operationId": "downloadAdminDocument",
+        "summary": "Audited private review download",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/validations/{id}/approve/": {
+      "post": {
+        "operationId": "approveValidation",
+        "summary": "Approve current pending revision",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "revision",
+                    "state",
+                    "submitted_at",
+                    "reviewed_at",
+                    "observations",
+                    "display_name_snapshot",
+                    "driver",
+                    "comparison",
+                    "documents"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "approved",
+                        "rejected",
+                        "superseded"
+                      ]
+                    },
+                    "submitted_at": {
+                      "type": "string"
+                    },
+                    "reviewed_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "observations": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "display_name_snapshot": {
+                      "type": "string"
+                    },
+                    "comparison": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "previous_revision",
+                        "changed_document_count",
+                        "unchanged_document_count",
+                        "changed_identity_field_count",
+                        "has_material_changes",
+                        "document_changes",
+                        "identity_changes"
+                      ],
+                      "properties": {
+                        "previous_revision": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "changed_document_count": {
+                          "type": "integer"
+                        },
+                        "unchanged_document_count": {
+                          "type": "integer"
+                        },
+                        "changed_identity_field_count": {
+                          "type": "integer"
+                        },
+                        "has_material_changes": {
+                          "type": "boolean"
+                        },
+                        "document_changes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "kind",
+                              "status",
+                              "previous_version",
+                              "current_version",
+                              "previous_content_type",
+                              "current_content_type",
+                              "previous_expires_on",
+                              "current_expires_on"
+                            ],
+                            "properties": {
+                              "kind": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "unchanged",
+                                  "replaced",
+                                  "added",
+                                  "removed"
+                                ]
+                              },
+                              "previous_version": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "current_version": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "previous_content_type": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "current_content_type": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "previous_expires_on": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "format": "date"
+                              },
+                              "current_expires_on": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "format": "date"
+                              }
+                            }
+                          }
+                        },
+                        "identity_changes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "field",
+                              "previous_value",
+                              "current_value"
+                            ],
+                            "properties": {
+                              "field": {
+                                "type": "string",
+                                "enum": [
+                                  "display_name"
+                                ]
+                              },
+                              "previous_value": {
+                                "type": "string"
+                              },
+                              "current_value": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "driver": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "id",
+                        "display_name",
+                        "email"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "display_name": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "documents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "version",
+                          "kind",
+                          "content_type",
+                          "byte_size",
+                          "uploaded_at",
+                          "expires_on"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "version": {
+                            "type": "integer"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "content_type": {
+                            "type": "string"
+                          },
+                          "byte_size": {
+                            "type": "integer"
+                          },
+                          "uploaded_at": {
+                            "type": "string"
+                          },
+                          "expires_on": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "observations"
+                ],
+                "properties": {
+                  "observations": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/validations/{id}/reject/": {
+      "post": {
+        "operationId": "rejectValidation",
+        "summary": "Reject current pending revision",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "revision",
+                    "state",
+                    "submitted_at",
+                    "reviewed_at",
+                    "observations",
+                    "display_name_snapshot",
+                    "driver",
+                    "comparison",
+                    "documents"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "approved",
+                        "rejected",
+                        "superseded"
+                      ]
+                    },
+                    "submitted_at": {
+                      "type": "string"
+                    },
+                    "reviewed_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "observations": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "display_name_snapshot": {
+                      "type": "string"
+                    },
+                    "comparison": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "previous_revision",
+                        "changed_document_count",
+                        "unchanged_document_count",
+                        "changed_identity_field_count",
+                        "has_material_changes",
+                        "document_changes",
+                        "identity_changes"
+                      ],
+                      "properties": {
+                        "previous_revision": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "changed_document_count": {
+                          "type": "integer"
+                        },
+                        "unchanged_document_count": {
+                          "type": "integer"
+                        },
+                        "changed_identity_field_count": {
+                          "type": "integer"
+                        },
+                        "has_material_changes": {
+                          "type": "boolean"
+                        },
+                        "document_changes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "kind",
+                              "status",
+                              "previous_version",
+                              "current_version",
+                              "previous_content_type",
+                              "current_content_type",
+                              "previous_expires_on",
+                              "current_expires_on"
+                            ],
+                            "properties": {
+                              "kind": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "unchanged",
+                                  "replaced",
+                                  "added",
+                                  "removed"
+                                ]
+                              },
+                              "previous_version": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "current_version": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "previous_content_type": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "current_content_type": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "previous_expires_on": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "format": "date"
+                              },
+                              "current_expires_on": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "format": "date"
+                              }
+                            }
+                          }
+                        },
+                        "identity_changes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "field",
+                              "previous_value",
+                              "current_value"
+                            ],
+                            "properties": {
+                              "field": {
+                                "type": "string",
+                                "enum": [
+                                  "display_name"
+                                ]
+                              },
+                              "previous_value": {
+                                "type": "string"
+                              },
+                              "current_value": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "driver": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "id",
+                        "display_name",
+                        "email"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "display_name": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "documents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "version",
+                          "kind",
+                          "content_type",
+                          "byte_size",
+                          "uploaded_at",
+                          "expires_on"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "version": {
+                            "type": "integer"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "content_type": {
+                            "type": "string"
+                          },
+                          "byte_size": {
+                            "type": "integer"
+                          },
+                          "uploaded_at": {
+                            "type": "string"
+                          },
+                          "expires_on": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "observations"
+                ],
+                "properties": {
+                  "observations": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

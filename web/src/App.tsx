@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ApiError, AuthApi } from "./api";
 import type { Identity } from "./api-types";
 import "./style.css";
+import { AdminValidationScreen, DriverOnboarding } from "./ValidationScreens";
 
 const api = new AuthApi();
 const marker = "furgoplus-signed-out";
@@ -13,6 +14,7 @@ export default function App() {
   const [state, setState] = useState<State>({ kind: "loading" });
   const [mode, setMode] = useState<"login" | "register">("login");
   const [message, setMessage] = useState("");
+  const [logoAvailable, setLogoAvailable] = useState(true);
 
   useEffect(() => {
     let live = true;
@@ -101,6 +103,14 @@ export default function App() {
     } catch (error) {
       if (error instanceof ApiError && error.code === "csrf_failed")
         setMessage("La verificación caducó. Repite la acción.");
+      else if (
+        mode === "login" &&
+        error instanceof ApiError &&
+        error.status === 400 &&
+        error.code === "validation_error" &&
+        "credentials" in error.fields
+      )
+        setMessage("Correo o contraseña incorrectos.");
       else
         setMessage(
           error instanceof ApiError
@@ -127,10 +137,44 @@ export default function App() {
   return (
     <div className="shell">
       <header className="site-header">
-        <span>FurgoPlus</span>
-        <small>Cuenta</small>
+        <div className="header-inner">
+          <div className="brand-group">
+            {logoAvailable ? (
+              <img
+                className="brand-logo"
+                src="/brand/furgoplus-logo.png"
+                alt="FurgoPlus Transporte Escolar"
+                onError={() => setLogoAvailable(false)}
+              />
+            ) : (
+              <span className="brand-wordmark">FurgoPlus</span>
+            )}
+            <span className="header-context">
+              {state.kind === "authenticated"
+                ? state.user.role === "admin"
+                  ? "Validaciones de conductores"
+                  : "Validación del conductor"
+                : "Acceso a tu cuenta"}
+            </span>
+          </div>
+          {state.kind === "authenticated" && (
+            <div className="account-actions">
+              <span className="account-name">
+                {state.user.display_name || state.user.email}
+              </span>
+              <button
+                className="button button-quiet"
+                onClick={() => void signOut()}
+              >
+                Cerrar sesión
+              </button>
+            </div>
+          )}
+        </div>
       </header>
-      <main className="card" aria-live="polite">
+      <main
+        className={state.kind === "authenticated" ? "workspace" : "auth-card"}
+      >
         {state.kind === "loading" && <p>Restaurando sesión…</p>}
         {state.kind === "error" && (
           <>
@@ -141,15 +185,9 @@ export default function App() {
         {state.kind === "expired" && <p>La sesión caducó.</p>}
         {state.kind === "authenticated" && (
           <>
-            <h1>
-              {state.user.role === "driver"
-                ? "Área del conductor"
-                : state.user.role === "admin"
-                  ? "Área de administración"
-                  : "Usa la aplicación móvil"}
-            </h1>
-            <p>{state.user.display_name || state.user.email}</p>
-            <button onClick={() => void signOut()}>Cerrar sesión</button>
+            {state.user.role === "driver" && <DriverOnboarding api={api} />}
+            {state.user.role === "admin" && <AdminValidationScreen api={api} />}
+            {state.user.role === "parent" && <h1>Usa la aplicación móvil</h1>}
           </>
         )}
         {(state.kind === "signed-out" || state.kind === "expired") && (
