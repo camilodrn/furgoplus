@@ -1,6 +1,6 @@
 # Architecture
 
-Status: intended October architecture, frozen at documentation level on 23 September 2026. Nothing described here is implemented yet. [Product scope](PRODUCT_SCOPE.md) owns feature boundaries and open questions; [data model](DATA_MODEL.md) owns entities/states; ADRs own the decisions linked below.
+Status: intended October architecture, frozen at documentation level on 23 September 2026. Task 01 implements only the repository foundation and health request; product workflows described below remain planned. [Product scope](PRODUCT_SCOPE.md) owns feature boundaries and open questions; [data model](DATA_MODEL.md) owns entities/states; ADRs own the decisions linked below.
 
 ```text
 Flutter mobile (parent + driver)
