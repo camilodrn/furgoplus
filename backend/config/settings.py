@@ -32,7 +32,13 @@ API_PUBLIC_ORIGIN = os.getenv("API_PUBLIC_ORIGIN", "")
 WEB_PUBLIC_ORIGIN = os.getenv("WEB_PUBLIC_ORIGIN", "")
 PRIVATE_UPLOAD_ROOT = Path(
     os.getenv("PRIVATE_UPLOAD_ROOT", "/var/lib/furgoplus/private")
-)
+).resolve()
+if not PRIVATE_UPLOAD_ROOT.is_absolute() or PRIVATE_UPLOAD_ROOT.is_relative_to(
+    BASE_DIR
+):
+    raise ImproperlyConfigured(
+        "PRIVATE_UPLOAD_ROOT must be outside the application tree"
+    )
 if not DEBUG and (
     not API_PUBLIC_ORIGIN.startswith("https://")
     or not WEB_PUBLIC_ORIGIN.startswith("https://")
@@ -52,6 +58,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "accounts",
+    "drivers",
     "api",
 ]
 MIDDLEWARE = [

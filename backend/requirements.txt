@@ -6,3 +6,5 @@ asgiref==3.9.1
 sqlparse==0.5.3
 psycopg-binary==3.2.10
 typing-extensions==4.15.0
+Pillow==12.3.0
+pypdf==6.10.0

@@ -18,6 +18,7 @@ function typeOf(schema) {
   if (schema.type === "string") return "string";
   if (schema.type === "integer" || schema.type === "number") return "number";
   if (schema.type === "boolean") return "boolean";
+  if (schema.type === "array") return `${typeOf(schema.items)}[]`;
   if (schema.type === "null") return "null";
   if (schema.type === "object") {
     return `{ ${Object.entries(schema.properties ?? {})
@@ -38,6 +39,21 @@ const types = [
   ["RegisterRequest", "/api/v1/auth/register/", "post", "request"],
   ["LoginRequest", "/api/v1/auth/login/", "post", "request"],
   ["LogoutResponse", "/api/v1/auth/logout/", "post", "200"],
+  ["DriverProfile", "/api/v1/driver/profile/", "get", "200"],
+  ["DriverProfileUpdate", "/api/v1/driver/profile/", "patch", "request"],
+  ["DriverChecklist", "/api/v1/driver/validation/checklist/", "get", "200"],
+  ["DriverDocuments", "/api/v1/driver/documents/", "get", "200"],
+  ["DriverDocument", "/api/v1/driver/documents/", "post", "201"],
+  ["DriverValidations", "/api/v1/driver/validations/", "get", "200"],
+  ["DriverValidation", "/api/v1/driver/validations/submit/", "post", "200"],
+  ["AdminValidations", "/api/v1/admin/validations/", "get", "200"],
+  ["AdminValidation", "/api/v1/admin/validations/{id}/", "get", "200"],
+  [
+    "ObservationInput",
+    "/api/v1/admin/validations/{id}/approve/",
+    "post",
+    "request",
+  ],
 ];
 const raw = `// Generated from backend/openapi.json. Do not edit by hand.\n${types
   .map(([name, path, method, status]) => {
