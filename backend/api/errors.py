@@ -1,13 +1,28 @@
 from django.http import JsonResponse
 from django.views.defaults import page_not_found
 from rest_framework import status
+from rest_framework.exceptions import ParseError
 from rest_framework.views import exception_handler as drf_exception_handler
+
+
+def csrf_failure(request, reason=""):
+    return JsonResponse(
+        {"code": "csrf_failed", "message": "CSRF verification failed.", "fields": {}},
+        status=403,
+    )
 
 
 def exception_handler(exc, context):
     response = drf_exception_handler(exc, context)
     if response is None:
         return None
+    if isinstance(exc, ParseError):
+        response.data = {
+            "code": "parse_error",
+            "message": "Invalid JSON.",
+            "fields": {},
+        }
+        return response
 
     detail = response.data
     fields = {}

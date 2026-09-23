@@ -32,7 +32,7 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health/', timeout=3)"]
+      test: ["CMD", "python", "-c", "import http.client, json; connection = http.client.HTTPConnection('127.0.0.1', 8000, timeout=3); connection.request('GET', '/api/v1/health/', headers={'X-Forwarded-Proto': 'https'}); response = connection.getresponse(); assert response.status == 200 and json.load(response) == {'status': 'ok'}"]
       interval: 5s
       timeout: 4s
       retries: 20
@@ -56,4 +56,3 @@ volumes:
   pg_data:
   private_uploads:
   web_node_modules:
-

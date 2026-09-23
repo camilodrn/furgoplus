@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
 import 'api_config.dart';
-import 'health_api.dart';
+import 'auth_app.dart';
+import 'auth_controller.dart';
 import 'health_controller.dart';
+import 'session_api.dart';
 
 void main() {
   try {
     runApp(
-      FurgoPlusApp(
-        controller: HealthController(HttpHealthApi(ApiConfig.fromEnvironment)),
+      AuthApp(
+        controller: AuthController(
+          NativeSessionApi(ApiConfig.fromEnvironment, SecureAuthStorage()),
+        ),
       ),
     );
   } on FormatException catch (error) {

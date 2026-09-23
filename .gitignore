@@ -9,6 +9,7 @@
 .ruff_cache/
 web/node_modules/
 web/dist/
+web/.vite/
 web/coverage/
 web/*.tsbuildinfo
 mobile/.dart_tool/

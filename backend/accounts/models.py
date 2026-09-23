@@ -74,3 +74,30 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class ParentProfile(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.PROTECT, related_name="parent_profile"
+    )
+    display_name = models.CharField(max_length=100)
+
+
+class DriverProfile(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.PROTECT, related_name="driver_profile"
+    )
+    display_name = models.CharField(max_length=100)
+    service_summary = models.TextField(blank=True)
+    service_contact_email = models.EmailField(blank=True)
+    status = models.CharField(max_length=11, default="active")
+    publication_requested = models.BooleanField(default=False)
+    validation_state = models.CharField(max_length=8, default="draft")
+    current_validation_revision = models.PositiveIntegerField(default=1)
+    approved_revision = models.PositiveIntegerField(null=True, blank=True)
+
+
+class AuthThrottle(models.Model):
+    key = models.CharField(max_length=64, primary_key=True)
+    window_started_at = models.DateTimeField()
+    attempts = models.PositiveIntegerField(default=0)
