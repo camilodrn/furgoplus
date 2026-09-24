@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { ApiError, AuthApi } from "./api";
-import type { Identity } from "./api-types";
+import type { Identity, Publication } from "./api-types";
 import "./style.css";
 import { AdminValidationScreen, DriverOnboarding } from "./ValidationScreens";
+import { DriverPublicationScreen } from "./PublicationScreens";
 
 const api = new AuthApi();
 const marker = "furgoplus-signed-out";
@@ -15,6 +16,11 @@ export default function App() {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [message, setMessage] = useState("");
   const [logoAvailable, setLogoAvailable] = useState(true);
+  const [driverSection, setDriverSection] = useState<
+    "profile" | "documents" | "validation" | "publication" | "routes"
+  >("profile");
+  const [publication, setPublication] = useState<Publication | null>(null);
+  const [publicationRefreshKey, setPublicationRefreshKey] = useState(0);
 
   useEffect(() => {
     let live = true;
@@ -185,7 +191,31 @@ export default function App() {
         {state.kind === "expired" && <p>La sesión caducó.</p>}
         {state.kind === "authenticated" && (
           <>
-            {state.user.role === "driver" && <DriverOnboarding api={api} />}
+            {state.user.role === "driver" && (
+              <>
+                <DriverOnboarding
+                  api={api}
+                  activeSection={driverSection}
+                  onSectionChange={setDriverSection}
+                  publication={publication}
+                  onRelevantChange={() =>
+                    setPublicationRefreshKey((key) => key + 1)
+                  }
+                />
+                <DriverPublicationScreen
+                  api={api}
+                  refreshKey={publicationRefreshKey}
+                  onPublicationChange={setPublication}
+                  activeSection={
+                    driverSection === "publication" ? "publication" : "routes"
+                  }
+                  visible={
+                    driverSection === "publication" ||
+                    driverSection === "routes"
+                  }
+                />
+              </>
+            )}
             {state.user.role === "admin" && <AdminValidationScreen api={api} />}
             {state.user.role === "parent" && <h1>Usa la aplicación móvil</h1>}
           </>

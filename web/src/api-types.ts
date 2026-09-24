@@ -180,3 +180,230 @@ export type AdminValidation = {
   }[];
 };
 export type ObservationInput = { observations: string };
+export type Publication = {
+  publication_requested: boolean;
+  eligible: boolean;
+  blockers: {
+    code:
+      | "account_inactive"
+      | "driver_suspended"
+      | "driver_deactivated"
+      | "publication_not_requested"
+      | "validation_not_approved"
+      | "approved_revision_stale"
+      | "required_document_missing"
+      | "required_document_expired"
+      | "subscription_missing"
+      | "subscription_inactive"
+      | "subscription_suspended"
+      | "subscription_not_started"
+      | "subscription_expired"
+      | "profile_display_name_missing"
+      | "profile_summary_missing"
+      | "service_contact_email_missing"
+      | "active_route_missing";
+    message: string;
+  }[];
+  validation_state: "draft" | "pending" | "approved" | "rejected";
+  current_validation_revision: number;
+  approved_revision: number | null;
+  subscription: {
+    plan_code: "basic" | "pro" | "elite";
+    plan_label: string;
+    status: "inactive" | "active" | "suspended";
+    starts_at: string | null;
+    ends_at: string | null;
+  } | null;
+  active_route_count: number;
+  coverage: { code: string; display_name: string }[];
+};
+export type PublicationInput = { publication_requested: boolean };
+export type Communes = { communes: { code: string; display_name: string }[] };
+export type Routes = {
+  routes: {
+    id: number;
+    revision: number;
+    label: string;
+    status: "active" | "inactive";
+    weekdays: (
+      | "monday"
+      | "tuesday"
+      | "wednesday"
+      | "thursday"
+      | "friday"
+      | "saturday"
+      | "sunday"
+    )[];
+    start_time: string;
+    end_time: string;
+    seat_capacity: number;
+    destination_label: string;
+    destination_address: string;
+    coverage_codes: string[];
+  }[];
+};
+export type Route = {
+  id: number;
+  revision: number;
+  label: string;
+  status: "active" | "inactive";
+  weekdays: (
+    | "monday"
+    | "tuesday"
+    | "wednesday"
+    | "thursday"
+    | "friday"
+    | "saturday"
+    | "sunday"
+  )[];
+  start_time: string;
+  end_time: string;
+  seat_capacity: number;
+  destination_label: string;
+  destination_address: string;
+  coverage_codes: string[];
+};
+export type RouteInput = {
+  label: string;
+  status: "active" | "inactive";
+  weekdays: (
+    | "monday"
+    | "tuesday"
+    | "wednesday"
+    | "thursday"
+    | "friday"
+    | "saturday"
+    | "sunday"
+  )[];
+  start_time: string;
+  end_time: string;
+  seat_capacity: number;
+  destination_label: string;
+  destination_address: string;
+  coverage_codes: string[];
+};
+export type RouteUpdate = {
+  label: string;
+  status: "active" | "inactive";
+  weekdays: (
+    | "monday"
+    | "tuesday"
+    | "wednesday"
+    | "thursday"
+    | "friday"
+    | "saturday"
+    | "sunday"
+  )[];
+  start_time: string;
+  end_time: string;
+  seat_capacity: number;
+  destination_label: string;
+  destination_address: string;
+  coverage_codes: string[];
+  expected_revision: number;
+};
+export type Plans = {
+  plans: { code: "basic" | "pro" | "elite"; display_label: string }[];
+};
+export type AdminSubscription = {
+  publication: {
+    publication_requested: boolean;
+    eligible: boolean;
+    blockers: {
+      code:
+        | "account_inactive"
+        | "driver_suspended"
+        | "driver_deactivated"
+        | "publication_not_requested"
+        | "validation_not_approved"
+        | "approved_revision_stale"
+        | "required_document_missing"
+        | "required_document_expired"
+        | "subscription_missing"
+        | "subscription_inactive"
+        | "subscription_suspended"
+        | "subscription_not_started"
+        | "subscription_expired"
+        | "profile_display_name_missing"
+        | "profile_summary_missing"
+        | "service_contact_email_missing"
+        | "active_route_missing";
+      message: string;
+    }[];
+    validation_state: "draft" | "pending" | "approved" | "rejected";
+    current_validation_revision: number;
+    approved_revision: number | null;
+    subscription: {
+      plan_code: "basic" | "pro" | "elite";
+      plan_label: string;
+      status: "inactive" | "active" | "suspended";
+      starts_at: string | null;
+      ends_at: string | null;
+    } | null;
+    active_route_count: number;
+    coverage: { code: string; display_name: string }[];
+  };
+  version: number | null;
+};
+export type SubscriptionInput = {
+  plan_code: "basic" | "pro" | "elite";
+  status: "inactive" | "active" | "suspended";
+  starts_at: string | null;
+  ends_at: string | null;
+  reason: string;
+  expected_version: number | null;
+};
+export type DiscoveryDrivers = {
+  results: {
+    id: number;
+    display_name: string;
+    service_summary: string;
+    validation_label: "Validado";
+    coverage: { code: string; display_name: string }[];
+    routes: {
+      id: number;
+      label: string;
+      weekdays: (
+        | "monday"
+        | "tuesday"
+        | "wednesday"
+        | "thursday"
+        | "friday"
+        | "saturday"
+        | "sunday"
+      )[];
+      start_time: string;
+      end_time: string;
+      seat_capacity: number;
+      available_seats: number;
+      next_service_date: string;
+      coverage: { code: string; display_name: string }[];
+    }[];
+  }[];
+};
+export type DiscoveryDriver = {
+  id: number;
+  display_name: string;
+  service_summary: string;
+  validation_label: "Validado";
+  coverage: { code: string; display_name: string }[];
+  routes: {
+    id: number;
+    label: string;
+    weekdays: (
+      | "monday"
+      | "tuesday"
+      | "wednesday"
+      | "thursday"
+      | "friday"
+      | "saturday"
+      | "sunday"
+    )[];
+    start_time: string;
+    end_time: string;
+    seat_capacity: number;
+    available_seats: number;
+    next_service_date: string;
+    coverage: { code: string; display_name: string }[];
+  }[];
+};

@@ -1,5 +1,12 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import App from "./App";
 
 const ok = (body: unknown) =>
@@ -19,6 +26,20 @@ const driver = {
 };
 
 const domain = (path: string) => {
+  if (path.includes("driver/publication"))
+    return ok({
+      publication_requested: false,
+      eligible: false,
+      blockers: [],
+      validation_state: "draft",
+      current_validation_revision: 1,
+      approved_revision: null,
+      subscription: null,
+      active_route_count: 0,
+      coverage: [],
+    });
+  if (path.includes("driver/routes")) return ok({ routes: [] });
+  if (path.includes("driver/communes")) return ok({ communes: [] });
   if (path.includes("driver/profile"))
     return ok({
       display_name: "Sample",
@@ -75,6 +96,40 @@ test("restores a driver through csrf then me", async () => {
     "/api/v1/auth/me/",
   ]);
   expect(fetchMock.mock.calls[1]![1].credentials).toBe("same-origin");
+});
+
+test("successful profile update automatically fetches publication state", async () => {
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValueOnce(csrf)
+    .mockResolvedValueOnce(ok(driver))
+    .mockImplementation((path: string) => Promise.resolve(domain(path)));
+  vi.stubGlobal("fetch", fetchMock);
+  render(<App />);
+  await screen.findByLabelText("Nombre visible");
+  await waitFor(() =>
+    expect(
+      fetchMock.mock.calls.filter(
+        ([path, options]) =>
+          path.includes("driver/publication") && options.method === "GET",
+      ),
+    ).toHaveLength(1),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }));
+  await screen.findByText("Cambios guardados correctamente.");
+  await waitFor(() =>
+    expect(
+      fetchMock.mock.calls.filter(
+        ([path, options]) =>
+          path.includes("driver/publication") && options.method === "GET",
+      ),
+    ).toHaveLength(2),
+  );
+  expect(
+    within(
+      screen.getByRole("navigation", { name: "Secciones del conductor" }),
+    ).getByRole("button", { name: "Perfil" }),
+  ).toBeTruthy();
 });
 
 test("brand falls back to a wordmark when the logo cannot load", async () => {
@@ -177,7 +232,8 @@ test("login keeps CSRF and throttling errors distinct from credentials", async (
         .mockResolvedValueOnce(csrf)
         .mockResolvedValueOnce(fail(403, "not_authenticated"))
         .mockResolvedValueOnce(fail(status, code))
-        .mockResolvedValueOnce(csrf),
+        .mockResolvedValueOnce(csrf)
+        .mockResolvedValueOnce(fail(status, code)),
     );
     render(<App />);
     await screen.findByText("Iniciar sesión");

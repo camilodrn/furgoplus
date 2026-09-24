@@ -28,6 +28,9 @@
 * {
   box-sizing: border-box;
 }
+[hidden] {
+  display: none !important;
+}
 body {
   margin: 0;
   min-width: 320px;
@@ -222,10 +225,16 @@ button:not([class]):hover:not(:disabled) {
   color: white;
   background: var(--danger);
 }
+.button-danger:hover:not(:disabled) {
+  background: #85202b;
+}
 .button-text-danger {
   color: var(--danger);
   background: transparent;
   border-color: #deaeb4;
+}
+.button-text-danger:hover:not(:disabled) {
+  background: var(--danger-soft);
 }
 .page-heading {
   display: flex;
@@ -923,5 +932,286 @@ button:not([class]):hover:not(:disabled) {
   }
   .details-hint {
     width: 100%;
+  }
+}
+.publication-area {
+  margin-top: 1.5rem;
+}
+.section-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 22px;
+}
+.section-nav-button {
+  min-height: 48px;
+  background: #fff;
+  border: 2px solid #8dadd3;
+  color: var(--brand-dark);
+  font-size: 1rem;
+}
+.section-nav-button:hover:not(:disabled) {
+  background: var(--brand-soft);
+}
+.section-nav-button.is-current {
+  background: var(--brand-dark);
+  border-color: var(--brand-dark);
+  color: #fff;
+}
+.section-nav-button.is-current:hover:not(:disabled) {
+  background: var(--brand);
+}
+.section-selector {
+  display: none;
+}
+.detail-nav {
+  margin-top: 22px;
+}
+.next-step {
+  background: var(--brand-soft);
+  border-left: 4px solid var(--brand);
+  border-radius: 9px;
+  color: var(--ink);
+  padding: 12px 16px;
+  margin: -6px 0 22px;
+}
+.publication-state {
+  font-size: 1.28rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 18px;
+}
+.publication-visible {
+  color: var(--positive);
+}
+.publication-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-bottom: 18px;
+}
+.publication-heading h2 {
+  margin-bottom: 0;
+}
+.publication-refresh {
+  min-height: 32px;
+  padding: 3px 0;
+  font-size: 0.9rem;
+}
+.publication-summary {
+  max-width: 660px;
+}
+.publication-facts {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 0 0 22px;
+}
+.publication-facts li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-weight: 650;
+}
+.publication-facts li span {
+  width: 1.2rem;
+  flex: none;
+  color: var(--muted);
+}
+.publication-facts li.is-success span {
+  color: var(--positive);
+}
+.plan-block {
+  background: var(--brand-soft);
+  border: 1px solid #bad5f5;
+  border-radius: 13px;
+  padding: 18px 20px;
+  margin-bottom: 22px;
+  min-width: 0;
+}
+.plan-block h3 {
+  color: var(--brand-dark);
+  font-size: 0.92rem;
+  margin-bottom: 10px;
+}
+.plan-name,
+.plan-empty {
+  display: block;
+  font-size: 1.65rem;
+  line-height: 1.15;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.plan-empty {
+  font-size: 1.2rem;
+}
+.plan-status {
+  display: inline-block;
+  border-radius: 20px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 700;
+  text-transform: capitalize;
+  padding: 4px 10px;
+  margin-top: 10px;
+}
+.plan-status.is-success {
+  background: var(--positive-soft);
+  color: var(--positive);
+}
+.plan-validity {
+  margin: 12px 0 0;
+  color: var(--muted);
+}
+.publication-blockers {
+  margin-bottom: 20px;
+}
+.publication-blockers h3 {
+  margin-bottom: 8px;
+}
+.publication-blockers ul {
+  margin: 0;
+  padding-left: 22px;
+}
+.route-row {
+  border-top: 1px solid #d5dce3;
+  padding: 1rem 0;
+}
+.route-form,
+.subscription-form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.route-form fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  border: 1px solid #d5dce3;
+  border-radius: 0.5rem;
+  min-width: 0;
+  padding: 16px;
+}
+.route-form .route-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.route-form .route-group > fieldset {
+  grid-column: 1 / -1;
+}
+.route-form legend {
+  font-weight: 750;
+  padding: 0 5px;
+}
+.route-form fieldset label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.route-form .route-group > label {
+  display: grid;
+  align-items: start;
+  gap: 8px;
+}
+.route-form fieldset fieldset label {
+  min-height: 44px;
+  padding: 8px;
+}
+.route-form input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--brand);
+}
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.subscription-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.subscription-form .form-explanation,
+.subscription-form .helper-text,
+.subscription-form label:has(textarea),
+.subscription-form > button {
+  grid-column: 1 / -1;
+}
+.subscription-form > button {
+  justify-self: start;
+}
+@media (max-width: 680px) {
+  .driver-section-nav {
+    display: none;
+  }
+  .section-selector {
+    display: grid;
+    gap: 8px;
+    margin: 0 0 22px;
+    position: relative;
+  }
+  .section-selector-label {
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .section-selector-trigger {
+    min-height: 48px;
+    width: 100%;
+    background: #fff;
+    border: 2px solid #8dadd3;
+    color: var(--brand-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+  }
+  .section-selector-options {
+    display: grid;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .section-selector-options button {
+    min-height: 48px;
+    background: #fff;
+    color: var(--ink);
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    text-align: left;
+  }
+  .section-selector-options button:last-child {
+    border-bottom: 0;
+  }
+  .section-selector-options button[aria-current="page"] {
+    background: var(--brand-soft);
+    font-weight: 700;
+  }
+  .plan-block {
+    padding: 16px;
+  }
+  .route-form .route-group,
+  .subscription-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .subscription-form .form-explanation,
+  .subscription-form .helper-text,
+  .subscription-form label:has(textarea),
+  .subscription-form > button {
+    grid-column: 1;
+  }
+  .form-actions > button,
+  .subscription-form > button {
+    width: 100%;
+  }
+  .route-row,
+  .review-document,
+  .history-document {
+    overflow-wrap: anywhere;
   }
 }

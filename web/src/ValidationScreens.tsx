@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ApiError, AuthApi } from "./api";
 import { ChileanDateField, visibleExpiry } from "./ChileanDateField";
+import { AdminPublicationScreen } from "./PublicationScreens";
 import { humanChileanDate, parseChileanDate } from "./dates";
 import type {
   AdminValidation,
@@ -9,6 +10,7 @@ import type {
   DriverDocuments,
   DriverProfile,
   DriverValidations,
+  Publication,
 } from "./api-types";
 
 const demoNotice =
@@ -148,7 +150,90 @@ function Notice({
   );
 }
 
-export function DriverOnboarding({ api }: { api: AuthApi }) {
+type DriverSection =
+  | "profile"
+  | "documents"
+  | "validation"
+  | "publication"
+  | "routes";
+const driverSections: { id: DriverSection; label: string }[] = [
+  { id: "profile", label: "Perfil" },
+  { id: "documents", label: "Documentos" },
+  { id: "validation", label: "Validación" },
+  { id: "publication", label: "Publicación" },
+  { id: "routes", label: "Rutas" },
+];
+
+function nextStep(
+  publication: Publication | null | undefined,
+  profile: DriverProfile,
+  blockers: string[],
+) {
+  if (publication?.eligible)
+    return "Tu servicio ya está publicado. Los apoderados pueden encontrarlo mientras mantengas tus requisitos vigentes.";
+  if (profile.validation_state === "pending")
+    return "Espera el resultado de tu revisión.";
+  if (profile.validation_state === "rejected")
+    return "Revisa las correcciones solicitadas.";
+  if (profile.validation_state !== "approved")
+    return blockers[0] ?? "Envía tus documentos a revisión.";
+  if (publication === null) return "Consultando el estado de tu servicio…";
+  if (publication) {
+    const otherBlockers = publication.blockers.filter(
+      (item) => item.code !== "publication_not_requested",
+    );
+    const first = otherBlockers[0];
+    if (first) {
+      if (first.code === "subscription_missing")
+        return "Pide al equipo de FurgoPlus que te asigne un plan vigente.";
+      if (
+        first.code === "subscription_inactive" ||
+        first.code === "subscription_suspended" ||
+        first.code === "subscription_expired"
+      )
+        return "Pide al equipo de FurgoPlus que revise la vigencia de tu plan.";
+      if (first.code === "subscription_not_started")
+        return "Tu plan aún no comienza. Podrás aparecer cuando llegue la fecha de inicio.";
+      if (first.code === "active_route_missing")
+        return "Crea una ruta activa y completa.";
+      if (first.code === "profile_summary_missing")
+        return "Completa la descripción del servicio.";
+      if (first.code === "service_contact_email_missing")
+        return "Agrega el correo de contacto del servicio.";
+      if (first.code === "profile_display_name_missing")
+        return "Agrega tu nombre visible.";
+      if (
+        first.code === "required_document_missing" ||
+        first.code === "required_document_expired"
+      )
+        return "Revisa y actualiza tus documentos.";
+      if (
+        first.code === "account_inactive" ||
+        first.code === "driver_suspended" ||
+        first.code === "driver_deactivated"
+      )
+        return "Contacta al equipo de FurgoPlus para revisar el estado de tu cuenta.";
+      return first.message.endsWith(".") ? first.message : `${first.message}.`;
+    }
+    if (!publication.publication_requested)
+      return "Tu configuración está lista. Solicita la publicación cuando quieras aparecer ante los apoderados.";
+  }
+  return "Tu solicitud está registrada. Tu servicio aún no aparece ante los apoderados.";
+}
+
+export function DriverOnboarding({
+  api,
+  activeSection,
+  onSectionChange,
+  publication,
+  onRelevantChange,
+}: {
+  api: AuthApi;
+  activeSection?: DriverSection;
+  onSectionChange?: (section: DriverSection) => void;
+  publication?: Publication | null;
+  onRelevantChange?: () => void;
+}) {
   const [profile, setProfile] = useState<DriverProfile | null>(null);
   const [checklist, setChecklist] = useState<DriverChecklist | null>(null);
   const [documents, setDocuments] = useState<DriverDocuments | null>(null);
@@ -158,6 +243,7 @@ export function DriverOnboarding({ api }: { api: AuthApi }) {
   const [files, setFiles] = useState<Record<string, File | undefined>>({});
   const [expiries, setExpiries] = useState<Record<string, string>>({});
   const [expiryErrors, setExpiryErrors] = useState<Record<string, boolean>>({});
+  const [sectionMenuOpen, setSectionMenuOpen] = useState(false);
 
   async function refresh() {
     const [p, c, d, h] = await Promise.all([
@@ -190,6 +276,7 @@ export function DriverOnboarding({ api }: { api: AuthApi }) {
       if (area.startsWith("upload:"))
         setFiles((previous) => ({ ...previous, [area.slice(7)]: undefined }));
       if (!area.startsWith("download:")) await refresh();
+      if (!area.startsWith("download:")) onRelevantChange?.();
       setFeedback({ area, message: success, error: false });
     } catch (reason) {
       setFeedback({ area, message: errorText(reason, checklist), error: true });
@@ -223,32 +310,117 @@ export function DriverOnboarding({ api }: { api: AuthApi }) {
       <div className="page-heading">
         <div>
           <p className="eyebrow">Tu cuenta de conductor</p>
-          <h1>Completa tu validación</h1>
+          <h1>
+            {activeSection === "publication" || activeSection === "routes"
+              ? "Gestiona tu servicio"
+              : "Completa tu validación"}
+          </h1>
           <p className="intro">
-            Prepara tu perfil y los documentos. Luego envíalos para que podamos
-            revisarlos.
+            {activeSection === "publication" || activeSection === "routes"
+              ? "Consulta tu visibilidad y mantén al día tus rutas."
+              : "Prepara tu perfil y los documentos. Luego envíalos para que podamos revisarlos."}
           </p>
         </div>
         {profile && <StatusBadge state={profile.validation_state} />}
       </div>
       <p className="demo-notice">{demoNotice}</p>
-      <ol className="progress-guide" aria-label="Pasos de la validación">
-        <li>
-          <span>1</span> Perfil
-        </li>
-        <li>
-          <span>2</span> Documentos
-        </li>
-        <li>
-          <span>3</span> Enviar revisión
-        </li>
-      </ol>
+      {activeSection && onSectionChange && (
+        <>
+          <nav
+            className="section-nav driver-section-nav"
+            aria-label="Secciones del conductor"
+          >
+            {driverSections.map(({ id, label }) => (
+              <button
+                key={id}
+                type="button"
+                className={`section-nav-button ${activeSection === id ? "is-current" : ""}`}
+                aria-current={activeSection === id ? "page" : undefined}
+                onClick={() => onSectionChange(id)}
+              >
+                {label}
+              </button>
+            ))}
+          </nav>
+          <nav
+            className="section-selector"
+            aria-label="Selector de sección"
+            onKeyDown={(event) => {
+              if (event.key === "Escape" && sectionMenuOpen) {
+                setSectionMenuOpen(false);
+                event.currentTarget.querySelector("button")?.focus();
+              }
+            }}
+          >
+            <span className="section-selector-label">Sección</span>
+            <button
+              type="button"
+              className="section-selector-trigger"
+              aria-label={`Sección: ${driverSections.find((item) => item.id === activeSection)?.label}`}
+              aria-expanded={sectionMenuOpen}
+              aria-controls="driver-section-list"
+              onClick={() => setSectionMenuOpen((open) => !open)}
+            >
+              <span>
+                {
+                  driverSections.find((item) => item.id === activeSection)
+                    ?.label
+                }
+              </span>
+              <span aria-hidden="true">▾</span>
+            </button>
+            <div
+              id="driver-section-list"
+              className="section-selector-options"
+              hidden={!sectionMenuOpen}
+            >
+              {driverSections.map(({ id, label }) => (
+                <button
+                  key={id}
+                  type="button"
+                  aria-current={activeSection === id ? "page" : undefined}
+                  onClick={() => {
+                    onSectionChange(id);
+                    setSectionMenuOpen(false);
+                  }}
+                >
+                  {label}
+                  {activeSection === id ? " (actual)" : ""}
+                </button>
+              ))}
+            </div>
+          </nav>
+        </>
+      )}
+      {activeSection && profile && checklist && documents && (
+        <p className="next-step">
+          <strong>Siguiente paso: </strong>
+          {nextStep(publication, profile, blockers)}
+        </p>
+      )}
+      {!activeSection && (
+        <ol className="progress-guide" aria-label="Pasos de la validación">
+          <li>
+            <span>1</span> Perfil
+          </li>
+          <li>
+            <span>2</span> Documentos
+          </li>
+          <li>
+            <span>3</span> Enviar revisión
+          </li>
+        </ol>
+      )}
       <Notice feedback={feedback} area="page" />
       {!profile || !checklist || !documents || !history ? (
         <p className="loading-text">Cargando tu información…</p>
       ) : (
         <div className="content-stack">
-          <section className="panel" aria-labelledby="profile-heading">
+          <section
+            className="panel"
+            aria-labelledby="profile-heading"
+            hidden={!!activeSection && activeSection !== "profile"}
+          >
             <div className="panel-heading">
               <span className="step-number">1</span>
               <div>
@@ -321,7 +493,11 @@ export function DriverOnboarding({ api }: { api: AuthApi }) {
             </form>
           </section>
 
-          <section className="panel" aria-labelledby="documents-heading">
+          <section
+            className="panel"
+            aria-labelledby="documents-heading"
+            hidden={!!activeSection && activeSection !== "documents"}
+          >
             <div className="panel-heading">
               <span className="step-number">2</span>
               <div>
@@ -477,6 +653,7 @@ export function DriverOnboarding({ api }: { api: AuthApi }) {
           <section
             className="panel validation-panel"
             aria-labelledby="validation-heading"
+            hidden={!!activeSection && activeSection !== "validation"}
           >
             <div className="panel-heading">
               <span className="step-number">3</span>
@@ -553,6 +730,7 @@ export function DriverOnboarding({ api }: { api: AuthApi }) {
           <section
             className="panel history-panel"
             aria-labelledby="history-heading"
+            hidden={!!activeSection && activeSection !== "validation"}
           >
             <h2 id="history-heading">Historial de revisiones</h2>
             <p className="panel-subtitle">
@@ -630,6 +808,9 @@ export function AdminValidationScreen({ api }: { api: AuthApi }) {
   const [decisionMode, setDecisionMode] = useState<"approve" | "reject">(
     "approve",
   );
+  const [detailSection, setDetailSection] = useState<
+    "validation" | "publication"
+  >("validation");
   const [busy, setBusy] = useState("");
   const [feedback, setFeedback] = useState<Feedback | null>(null);
 
@@ -650,6 +831,7 @@ export function AdminValidationScreen({ api }: { api: AuthApi }) {
     setFeedback(null);
     try {
       setDetail(await api.adminValidation(id));
+      setDetailSection("validation");
       setObservations("");
       setDecisionMode("approve");
     } catch (reason) {
@@ -784,272 +966,307 @@ export function AdminValidationScreen({ api }: { api: AuthApi }) {
                 </div>
                 <StatusBadge state={detail.state} />
               </div>
-              <dl className="review-facts">
-                <div>
-                  <dt>Enviada</dt>
-                  <dd>{dateText(detail.submitted_at)}</dd>
-                </div>
-                <div>
-                  <dt>Nombre informado</dt>
-                  <dd>{detail.display_name_snapshot}</dd>
-                </div>
-                {detail.reviewed_at && (
-                  <div>
-                    <dt>Decisión</dt>
-                    <dd>{dateText(detail.reviewed_at)}</dd>
-                  </div>
-                )}
-              </dl>
-              {detail.observations && (
-                <div className="correction-note">
-                  <strong>Observaciones de esta revisión</strong>
-                  <p>{detail.observations}</p>
-                </div>
-              )}
-              <section
-                className="revision-comparison"
-                aria-labelledby="comparison-heading"
+              <nav
+                className="section-nav detail-nav"
+                aria-label="Secciones del conductor seleccionado"
               >
-                <h3 id="comparison-heading">
-                  {detail.comparison.previous_revision === null
-                    ? "Primera revisión"
-                    : `Cambios desde la revisión ${detail.comparison.previous_revision}`}
-                </h3>
-                {detail.comparison.previous_revision === null ? (
-                  <p>Este es el primer envío del conductor.</p>
-                ) : (
-                  <>
-                    <p className="comparison-summary">
-                      {detail.comparison.has_material_changes
-                        ? `${detail.comparison.changed_document_count} ${detail.comparison.changed_document_count === 1 ? "documento modificado" : "documentos modificados"} · ${detail.comparison.unchanged_document_count} sin cambios`
-                        : "Sin cambios materiales respecto de la revisión anterior."}
-                    </p>
-                    <div className="comparison-list">
-                      {detail.comparison.document_changes.map((change) => (
-                        <div
-                          className={`comparison-item ${change.status === "unchanged" ? "comparison-unchanged" : "comparison-changed"}`}
-                          key={change.kind}
-                        >
-                          <div className="comparison-title">
-                            <strong>{documentLabel(change.kind)}</strong>
-                            <span className="change-badge">
-                              {change.status === "unchanged"
-                                ? "SIN CAMBIOS"
-                                : change.status === "added"
-                                  ? "AGREGADO"
-                                  : change.status === "removed"
-                                    ? "ELIMINADO"
-                                    : "CAMBIADO"}
-                            </span>
-                          </div>
-                          <p>
-                            {change.previous_version && change.current_version
-                              ? change.status === "unchanged"
-                                ? `Versión ${change.current_version}`
-                                : `Versión ${change.previous_version} → Versión ${change.current_version}`
-                              : change.current_version
-                                ? `Versión ${change.current_version}`
-                                : `Versión ${change.previous_version}`}
-                            {change.previous_content_type !==
-                              change.current_content_type && (
-                              <>
-                                {" "}
-                                ·{" "}
-                                {change.previous_content_type
-                                  ? fileType(change.previous_content_type)
-                                  : "Sin archivo"}{" "}
-                                →{" "}
-                                {change.current_content_type
-                                  ? fileType(change.current_content_type)
-                                  : "Sin archivo"}
-                              </>
-                            )}
-                            {change.previous_expires_on !==
-                            change.current_expires_on ? (
-                              <>
-                                {" "}
-                                · Vence:{" "}
-                                {visibleExpiry(
-                                  change.previous_expires_on,
-                                )} → {visibleExpiry(change.current_expires_on)}
-                              </>
-                            ) : change.current_expires_on ? (
-                              <>
-                                {" "}
-                                · vence{" "}
-                                {dateText(change.current_expires_on, true)}
-                              </>
-                            ) : null}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                    {detail.comparison.identity_changes.length > 0 && (
-                      <div className="identity-changes">
-                        <h4>Datos del conductor modificados</h4>
-                        {detail.comparison.identity_changes.map((change) => (
-                          <p key={change.field}>
-                            <strong>
-                              {change.field === "display_name"
-                                ? "Nombre visible"
-                                : change.field}
-                              :
-                            </strong>{" "}
-                            <span>
-                              “{change.previous_value}” → “
-                              {change.current_value}”
-                            </span>
-                          </p>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                )}
-                <p className="comparison-explanation">
-                  Los cambios se comparan con la revisión anterior. La
-                  aprobación siempre corresponde a la revisión completa
-                  mostrada.
-                </p>
-              </section>
-              <div className="review-documents">
-                <h3>Documentos enviados</h3>
-                {detail.documents.map((document) => (
-                  <div className="review-document" key={document.id}>
-                    <div>
-                      <strong>{documentLabel(document.kind)}</strong>
-                      <p>
-                        Versión {document.version} ·{" "}
-                        {fileType(document.content_type)} ·{" "}
-                        {document.expires_on
-                          ? `Vence: ${visibleExpiry(document.expires_on)}`
-                          : "Sin vencimiento"}
-                      </p>
-                    </div>
-                    <button
-                      className="button button-outline"
-                      disabled={!!busy}
-                      onClick={() => {
-                        setBusy(`download:${document.id}`);
-                        setFeedback(null);
-                        void download(api, document.id, true)
-                          .then(() =>
-                            setFeedback({
-                              area: `download:${document.id}`,
-                              message: "Descarga iniciada.",
-                              error: false,
-                            }),
-                          )
-                          .catch((reason: unknown) =>
-                            setFeedback({
-                              area: `download:${document.id}`,
-                              message: errorText(reason),
-                              error: true,
-                            }),
-                          )
-                          .finally(() => setBusy(""));
-                      }}
-                    >
-                      {busy === `download:${document.id}`
-                        ? "Descargando…"
-                        : "Descargar"}
-                    </button>
-                    <Notice
-                      feedback={feedback}
-                      area={`download:${document.id}`}
-                    />
+                <button
+                  type="button"
+                  className={`section-nav-button ${detailSection === "validation" ? "is-current" : ""}`}
+                  aria-current={
+                    detailSection === "validation" ? "page" : undefined
+                  }
+                  onClick={() => setDetailSection("validation")}
+                >
+                  Validación
+                </button>
+                <button
+                  type="button"
+                  className={`section-nav-button ${detailSection === "publication" ? "is-current" : ""}`}
+                  aria-current={
+                    detailSection === "publication" ? "page" : undefined
+                  }
+                  onClick={() => setDetailSection("publication")}
+                >
+                  Plan y publicación
+                </button>
+              </nav>
+              <div hidden={detailSection !== "validation"}>
+                <dl className="review-facts">
+                  <div>
+                    <dt>Enviada</dt>
+                    <dd>{dateText(detail.submitted_at)}</dd>
                   </div>
-                ))}
-              </div>
-              {detail.state === "pending" && (
-                <div className="decision-section">
-                  <h3>Decisión</h3>
-                  {decisionMode === "reject" ? (
-                    <>
-                      <p>
-                        Explica al conductor qué debe corregir antes de enviar
-                        una nueva revisión.
-                      </p>
-                      <label>
-                        Indica qué debe corregir el conductor
-                        <textarea
-                          value={observations}
-                          maxLength={1000}
-                          required
-                          rows={4}
-                          onChange={(event) =>
-                            setObservations(event.target.value)
-                          }
-                        />
-                      </label>
-                      <div className="decision-actions">
-                        <button
-                          className="button button-danger"
-                          disabled={!!busy || !observations.trim()}
-                          onClick={() => void act("reject")}
-                        >
-                          {busy === "decision"
-                            ? "Guardando…"
-                            : "Enviar correcciones"}
-                        </button>
-                        <button
-                          className="button button-quiet"
-                          disabled={!!busy}
-                          onClick={() => {
-                            setDecisionMode("approve");
-                            setObservations("");
-                          }}
-                        >
-                          Cancelar
-                        </button>
-                      </div>
-                    </>
+                  <div>
+                    <dt>Nombre informado</dt>
+                    <dd>{detail.display_name_snapshot}</dd>
+                  </div>
+                  {detail.reviewed_at && (
+                    <div>
+                      <dt>Decisión</dt>
+                      <dd>{dateText(detail.reviewed_at)}</dd>
+                    </div>
+                  )}
+                </dl>
+                {detail.observations && (
+                  <div className="correction-note">
+                    <strong>Observaciones de esta revisión</strong>
+                    <p>{detail.observations}</p>
+                  </div>
+                )}
+                <section
+                  className="revision-comparison"
+                  aria-labelledby="comparison-heading"
+                >
+                  <h3 id="comparison-heading">
+                    {detail.comparison.previous_revision === null
+                      ? "Primera revisión"
+                      : `Cambios desde la revisión ${detail.comparison.previous_revision}`}
+                  </h3>
+                  {detail.comparison.previous_revision === null ? (
+                    <p>Este es el primer envío del conductor.</p>
                   ) : (
                     <>
-                      <p>
-                        Si todos los documentos están correctos, añade una nota
-                        breve y aprueba la revisión.
+                      <p className="comparison-summary">
+                        {detail.comparison.has_material_changes
+                          ? `${detail.comparison.changed_document_count} ${detail.comparison.changed_document_count === 1 ? "documento modificado" : "documentos modificados"} · ${detail.comparison.unchanged_document_count} sin cambios`
+                          : "Sin cambios materiales respecto de la revisión anterior."}
                       </p>
-                      <label>
-                        Nota para la aprobación
-                        <textarea
-                          value={observations}
-                          maxLength={1000}
-                          required
-                          rows={3}
-                          onChange={(event) =>
-                            setObservations(event.target.value)
-                          }
-                        />
-                      </label>
-                      <div className="decision-actions">
-                        <button
-                          className="button button-positive"
-                          disabled={!!busy || !observations.trim()}
-                          onClick={() => void act("approve")}
-                        >
-                          {busy === "decision"
-                            ? "Guardando…"
-                            : "Aprobar validación"}
-                        </button>
-                        <button
-                          className="button button-text-danger"
-                          disabled={!!busy}
-                          onClick={() => {
-                            setDecisionMode("reject");
-                            setObservations("");
-                          }}
-                        >
-                          Solicitar correcciones
-                        </button>
+                      <div className="comparison-list">
+                        {detail.comparison.document_changes.map((change) => (
+                          <div
+                            className={`comparison-item ${change.status === "unchanged" ? "comparison-unchanged" : "comparison-changed"}`}
+                            key={change.kind}
+                          >
+                            <div className="comparison-title">
+                              <strong>{documentLabel(change.kind)}</strong>
+                              <span className="change-badge">
+                                {change.status === "unchanged"
+                                  ? "SIN CAMBIOS"
+                                  : change.status === "added"
+                                    ? "AGREGADO"
+                                    : change.status === "removed"
+                                      ? "ELIMINADO"
+                                      : "CAMBIADO"}
+                              </span>
+                            </div>
+                            <p>
+                              {change.previous_version && change.current_version
+                                ? change.status === "unchanged"
+                                  ? `Versión ${change.current_version}`
+                                  : `Versión ${change.previous_version} → Versión ${change.current_version}`
+                                : change.current_version
+                                  ? `Versión ${change.current_version}`
+                                  : `Versión ${change.previous_version}`}
+                              {change.previous_content_type !==
+                                change.current_content_type && (
+                                <>
+                                  {" "}
+                                  ·{" "}
+                                  {change.previous_content_type
+                                    ? fileType(change.previous_content_type)
+                                    : "Sin archivo"}{" "}
+                                  →{" "}
+                                  {change.current_content_type
+                                    ? fileType(change.current_content_type)
+                                    : "Sin archivo"}
+                                </>
+                              )}
+                              {change.previous_expires_on !==
+                              change.current_expires_on ? (
+                                <>
+                                  {" "}
+                                  · Vence:{" "}
+                                  {visibleExpiry(
+                                    change.previous_expires_on,
+                                  )} →{" "}
+                                  {visibleExpiry(change.current_expires_on)}
+                                </>
+                              ) : change.current_expires_on ? (
+                                <>
+                                  {" "}
+                                  · vence{" "}
+                                  {dateText(change.current_expires_on, true)}
+                                </>
+                              ) : null}
+                            </p>
+                          </div>
+                        ))}
                       </div>
+                      {detail.comparison.identity_changes.length > 0 && (
+                        <div className="identity-changes">
+                          <h4>Datos del conductor modificados</h4>
+                          {detail.comparison.identity_changes.map((change) => (
+                            <p key={change.field}>
+                              <strong>
+                                {change.field === "display_name"
+                                  ? "Nombre visible"
+                                  : change.field}
+                                :
+                              </strong>{" "}
+                              <span>
+                                “{change.previous_value}” → “
+                                {change.current_value}”
+                              </span>
+                            </p>
+                          ))}
+                        </div>
+                      )}
                     </>
                   )}
-                  <Notice feedback={feedback} area="decision" />
+                  <p className="comparison-explanation">
+                    Los cambios se comparan con la revisión anterior. La
+                    aprobación siempre corresponde a la revisión completa
+                    mostrada.
+                  </p>
+                </section>
+                <div className="review-documents">
+                  <h3>Documentos enviados</h3>
+                  {detail.documents.map((document) => (
+                    <div className="review-document" key={document.id}>
+                      <div>
+                        <strong>{documentLabel(document.kind)}</strong>
+                        <p>
+                          Versión {document.version} ·{" "}
+                          {fileType(document.content_type)} ·{" "}
+                          {document.expires_on
+                            ? `Vence: ${visibleExpiry(document.expires_on)}`
+                            : "Sin vencimiento"}
+                        </p>
+                      </div>
+                      <button
+                        className="button button-outline"
+                        disabled={!!busy}
+                        onClick={() => {
+                          setBusy(`download:${document.id}`);
+                          setFeedback(null);
+                          void download(api, document.id, true)
+                            .then(() =>
+                              setFeedback({
+                                area: `download:${document.id}`,
+                                message: "Descarga iniciada.",
+                                error: false,
+                              }),
+                            )
+                            .catch((reason: unknown) =>
+                              setFeedback({
+                                area: `download:${document.id}`,
+                                message: errorText(reason),
+                                error: true,
+                              }),
+                            )
+                            .finally(() => setBusy(""));
+                        }}
+                      >
+                        {busy === `download:${document.id}`
+                          ? "Descargando…"
+                          : "Descargar"}
+                      </button>
+                      <Notice
+                        feedback={feedback}
+                        area={`download:${document.id}`}
+                      />
+                    </div>
+                  ))}
                 </div>
-              )}
-              {detail.state !== "pending" && (
-                <Notice feedback={feedback} area="decision" />
-              )}
+                {detail.state === "pending" && (
+                  <div className="decision-section">
+                    <h3>Decisión</h3>
+                    {decisionMode === "reject" ? (
+                      <>
+                        <p>
+                          Explica al conductor qué debe corregir antes de enviar
+                          una nueva revisión.
+                        </p>
+                        <label>
+                          Indica qué debe corregir el conductor
+                          <textarea
+                            value={observations}
+                            maxLength={1000}
+                            required
+                            rows={4}
+                            onChange={(event) =>
+                              setObservations(event.target.value)
+                            }
+                          />
+                        </label>
+                        <div className="decision-actions">
+                          <button
+                            className="button button-danger"
+                            disabled={!!busy || !observations.trim()}
+                            onClick={() => void act("reject")}
+                          >
+                            {busy === "decision"
+                              ? "Guardando…"
+                              : "Enviar correcciones"}
+                          </button>
+                          <button
+                            className="button button-quiet"
+                            disabled={!!busy}
+                            onClick={() => {
+                              setDecisionMode("approve");
+                              setObservations("");
+                            }}
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p>
+                          Si todos los documentos están correctos, añade una
+                          nota breve y aprueba la revisión.
+                        </p>
+                        <label>
+                          Nota para la aprobación
+                          <textarea
+                            value={observations}
+                            maxLength={1000}
+                            required
+                            rows={3}
+                            onChange={(event) =>
+                              setObservations(event.target.value)
+                            }
+                          />
+                        </label>
+                        <div className="decision-actions">
+                          <button
+                            className="button button-positive"
+                            disabled={!!busy || !observations.trim()}
+                            onClick={() => void act("approve")}
+                          >
+                            {busy === "decision"
+                              ? "Guardando…"
+                              : "Aprobar validación"}
+                          </button>
+                          <button
+                            className="button button-text-danger"
+                            disabled={!!busy}
+                            onClick={() => {
+                              setDecisionMode("reject");
+                              setObservations("");
+                            }}
+                          >
+                            Solicitar correcciones
+                          </button>
+                        </div>
+                      </>
+                    )}
+                    <Notice feedback={feedback} area="decision" />
+                  </div>
+                )}
+                {detail.state !== "pending" && (
+                  <Notice feedback={feedback} area="decision" />
+                )}
+              </div>
+              <div hidden={detailSection !== "publication"}>
+                <AdminPublicationScreen
+                  key={`${detail.driver.id}:${detail.state}:${detail.revision}`}
+                  api={api}
+                  driverId={detail.driver.id}
+                />
+              </div>
             </>
           )}
         </section>

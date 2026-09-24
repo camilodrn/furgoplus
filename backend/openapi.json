@@ -2400,6 +2400,2142 @@
           }
         }
       }
+    },
+    "/api/v1/driver/publication/": {
+      "patch": {
+        "operationId": "patchDriverPublication",
+        "summary": "Request or withdraw publication",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "publication_requested",
+                    "eligible",
+                    "blockers",
+                    "validation_state",
+                    "current_validation_revision",
+                    "approved_revision",
+                    "subscription",
+                    "active_route_count",
+                    "coverage"
+                  ],
+                  "properties": {
+                    "publication_requested": {
+                      "type": "boolean"
+                    },
+                    "eligible": {
+                      "type": "boolean"
+                    },
+                    "blockers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "code",
+                          "message"
+                        ],
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "account_inactive",
+                              "driver_suspended",
+                              "driver_deactivated",
+                              "publication_not_requested",
+                              "validation_not_approved",
+                              "approved_revision_stale",
+                              "required_document_missing",
+                              "required_document_expired",
+                              "subscription_missing",
+                              "subscription_inactive",
+                              "subscription_suspended",
+                              "subscription_not_started",
+                              "subscription_expired",
+                              "profile_display_name_missing",
+                              "profile_summary_missing",
+                              "service_contact_email_missing",
+                              "active_route_missing"
+                            ]
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "validation_state": {
+                      "type": "string",
+                      "enum": [
+                        "draft",
+                        "pending",
+                        "approved",
+                        "rejected"
+                      ]
+                    },
+                    "current_validation_revision": {
+                      "type": "integer"
+                    },
+                    "approved_revision": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "subscription": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "plan_code",
+                            "plan_label",
+                            "status",
+                            "starts_at",
+                            "ends_at"
+                          ],
+                          "properties": {
+                            "plan_code": {
+                              "type": "string",
+                              "enum": [
+                                "basic",
+                                "pro",
+                                "elite"
+                              ]
+                            },
+                            "plan_label": {
+                              "type": "string"
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "inactive",
+                                "active",
+                                "suspended"
+                              ]
+                            },
+                            "starts_at": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "format": "date-time"
+                            },
+                            "ends_at": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "format": "date-time"
+                            }
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "active_route_count": {
+                      "type": "integer"
+                    },
+                    "coverage": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "code",
+                          "display_name"
+                        ],
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "display_name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "publication_requested"
+                ],
+                "properties": {
+                  "publication_requested": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "get": {
+        "operationId": "getDriverPublication",
+        "summary": "Own publication status",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "publication_requested",
+                    "eligible",
+                    "blockers",
+                    "validation_state",
+                    "current_validation_revision",
+                    "approved_revision",
+                    "subscription",
+                    "active_route_count",
+                    "coverage"
+                  ],
+                  "properties": {
+                    "publication_requested": {
+                      "type": "boolean"
+                    },
+                    "eligible": {
+                      "type": "boolean"
+                    },
+                    "blockers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "code",
+                          "message"
+                        ],
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "account_inactive",
+                              "driver_suspended",
+                              "driver_deactivated",
+                              "publication_not_requested",
+                              "validation_not_approved",
+                              "approved_revision_stale",
+                              "required_document_missing",
+                              "required_document_expired",
+                              "subscription_missing",
+                              "subscription_inactive",
+                              "subscription_suspended",
+                              "subscription_not_started",
+                              "subscription_expired",
+                              "profile_display_name_missing",
+                              "profile_summary_missing",
+                              "service_contact_email_missing",
+                              "active_route_missing"
+                            ]
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "validation_state": {
+                      "type": "string",
+                      "enum": [
+                        "draft",
+                        "pending",
+                        "approved",
+                        "rejected"
+                      ]
+                    },
+                    "current_validation_revision": {
+                      "type": "integer"
+                    },
+                    "approved_revision": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "subscription": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "plan_code",
+                            "plan_label",
+                            "status",
+                            "starts_at",
+                            "ends_at"
+                          ],
+                          "properties": {
+                            "plan_code": {
+                              "type": "string",
+                              "enum": [
+                                "basic",
+                                "pro",
+                                "elite"
+                              ]
+                            },
+                            "plan_label": {
+                              "type": "string"
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "inactive",
+                                "active",
+                                "suspended"
+                              ]
+                            },
+                            "starts_at": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "format": "date-time"
+                            },
+                            "ends_at": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "format": "date-time"
+                            }
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "active_route_count": {
+                      "type": "integer"
+                    },
+                    "coverage": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "code",
+                          "display_name"
+                        ],
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "display_name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/driver/communes/": {
+      "get": {
+        "operationId": "getDriverCommunes",
+        "summary": "Standardized commune catalog",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "communes"
+                  ],
+                  "properties": {
+                    "communes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "code",
+                          "display_name"
+                        ],
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "display_name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/driver/routes/": {
+      "post": {
+        "operationId": "createDriverRoute",
+        "summary": "Create own route",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "revision",
+                    "label",
+                    "status",
+                    "weekdays",
+                    "start_time",
+                    "end_time",
+                    "seat_capacity",
+                    "destination_label",
+                    "destination_address",
+                    "coverage_codes"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "inactive"
+                      ]
+                    },
+                    "weekdays": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "monday",
+                          "tuesday",
+                          "wednesday",
+                          "thursday",
+                          "friday",
+                          "saturday",
+                          "sunday"
+                        ]
+                      }
+                    },
+                    "start_time": {
+                      "type": "string"
+                    },
+                    "end_time": {
+                      "type": "string"
+                    },
+                    "seat_capacity": {
+                      "type": "integer"
+                    },
+                    "destination_label": {
+                      "type": "string"
+                    },
+                    "destination_address": {
+                      "type": "string"
+                    },
+                    "coverage_codes": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "label",
+                  "status",
+                  "weekdays",
+                  "start_time",
+                  "end_time",
+                  "seat_capacity",
+                  "destination_label",
+                  "destination_address",
+                  "coverage_codes"
+                ],
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "active",
+                      "inactive"
+                    ]
+                  },
+                  "weekdays": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "monday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "friday",
+                        "saturday",
+                        "sunday"
+                      ]
+                    }
+                  },
+                  "start_time": {
+                    "type": "string"
+                  },
+                  "end_time": {
+                    "type": "string"
+                  },
+                  "seat_capacity": {
+                    "type": "integer"
+                  },
+                  "destination_label": {
+                    "type": "string"
+                  },
+                  "destination_address": {
+                    "type": "string"
+                  },
+                  "coverage_codes": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "get": {
+        "operationId": "getDriverRoutes",
+        "summary": "Own routes",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "routes"
+                  ],
+                  "properties": {
+                    "routes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "revision",
+                          "label",
+                          "status",
+                          "weekdays",
+                          "start_time",
+                          "end_time",
+                          "seat_capacity",
+                          "destination_label",
+                          "destination_address",
+                          "coverage_codes"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "revision": {
+                            "type": "integer"
+                          },
+                          "label": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "active",
+                              "inactive"
+                            ]
+                          },
+                          "weekdays": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "monday",
+                                "tuesday",
+                                "wednesday",
+                                "thursday",
+                                "friday",
+                                "saturday",
+                                "sunday"
+                              ]
+                            }
+                          },
+                          "start_time": {
+                            "type": "string"
+                          },
+                          "end_time": {
+                            "type": "string"
+                          },
+                          "seat_capacity": {
+                            "type": "integer"
+                          },
+                          "destination_label": {
+                            "type": "string"
+                          },
+                          "destination_address": {
+                            "type": "string"
+                          },
+                          "coverage_codes": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/driver/routes/{id}/": {
+      "patch": {
+        "operationId": "patchDriverRoute",
+        "summary": "Update own route",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "revision",
+                    "label",
+                    "status",
+                    "weekdays",
+                    "start_time",
+                    "end_time",
+                    "seat_capacity",
+                    "destination_label",
+                    "destination_address",
+                    "coverage_codes"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "inactive"
+                      ]
+                    },
+                    "weekdays": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "monday",
+                          "tuesday",
+                          "wednesday",
+                          "thursday",
+                          "friday",
+                          "saturday",
+                          "sunday"
+                        ]
+                      }
+                    },
+                    "start_time": {
+                      "type": "string"
+                    },
+                    "end_time": {
+                      "type": "string"
+                    },
+                    "seat_capacity": {
+                      "type": "integer"
+                    },
+                    "destination_label": {
+                      "type": "string"
+                    },
+                    "destination_address": {
+                      "type": "string"
+                    },
+                    "coverage_codes": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "label",
+                  "status",
+                  "weekdays",
+                  "start_time",
+                  "end_time",
+                  "seat_capacity",
+                  "destination_label",
+                  "destination_address",
+                  "coverage_codes",
+                  "expected_revision"
+                ],
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "active",
+                      "inactive"
+                    ]
+                  },
+                  "weekdays": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "monday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "friday",
+                        "saturday",
+                        "sunday"
+                      ]
+                    }
+                  },
+                  "start_time": {
+                    "type": "string"
+                  },
+                  "end_time": {
+                    "type": "string"
+                  },
+                  "seat_capacity": {
+                    "type": "integer"
+                  },
+                  "destination_label": {
+                    "type": "string"
+                  },
+                  "destination_address": {
+                    "type": "string"
+                  },
+                  "coverage_codes": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "expected_revision": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getDriverRoute",
+        "summary": "Own route",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "revision",
+                    "label",
+                    "status",
+                    "weekdays",
+                    "start_time",
+                    "end_time",
+                    "seat_capacity",
+                    "destination_label",
+                    "destination_address",
+                    "coverage_codes"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "inactive"
+                      ]
+                    },
+                    "weekdays": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "monday",
+                          "tuesday",
+                          "wednesday",
+                          "thursday",
+                          "friday",
+                          "saturday",
+                          "sunday"
+                        ]
+                      }
+                    },
+                    "start_time": {
+                      "type": "string"
+                    },
+                    "end_time": {
+                      "type": "string"
+                    },
+                    "seat_capacity": {
+                      "type": "integer"
+                    },
+                    "destination_label": {
+                      "type": "string"
+                    },
+                    "destination_address": {
+                      "type": "string"
+                    },
+                    "coverage_codes": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/plans/": {
+      "get": {
+        "operationId": "getAdminPlans",
+        "summary": "Plan catalog",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "plans"
+                  ],
+                  "properties": {
+                    "plans": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "code",
+                          "display_label"
+                        ],
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "basic",
+                              "pro",
+                              "elite"
+                            ]
+                          },
+                          "display_label": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/drivers/{id}/publication/": {
+      "get": {
+        "operationId": "getAdminPublication",
+        "summary": "Driver publication status",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "publication_requested",
+                    "eligible",
+                    "blockers",
+                    "validation_state",
+                    "current_validation_revision",
+                    "approved_revision",
+                    "subscription",
+                    "active_route_count",
+                    "coverage"
+                  ],
+                  "properties": {
+                    "publication_requested": {
+                      "type": "boolean"
+                    },
+                    "eligible": {
+                      "type": "boolean"
+                    },
+                    "blockers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "code",
+                          "message"
+                        ],
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "account_inactive",
+                              "driver_suspended",
+                              "driver_deactivated",
+                              "publication_not_requested",
+                              "validation_not_approved",
+                              "approved_revision_stale",
+                              "required_document_missing",
+                              "required_document_expired",
+                              "subscription_missing",
+                              "subscription_inactive",
+                              "subscription_suspended",
+                              "subscription_not_started",
+                              "subscription_expired",
+                              "profile_display_name_missing",
+                              "profile_summary_missing",
+                              "service_contact_email_missing",
+                              "active_route_missing"
+                            ]
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "validation_state": {
+                      "type": "string",
+                      "enum": [
+                        "draft",
+                        "pending",
+                        "approved",
+                        "rejected"
+                      ]
+                    },
+                    "current_validation_revision": {
+                      "type": "integer"
+                    },
+                    "approved_revision": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "subscription": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "plan_code",
+                            "plan_label",
+                            "status",
+                            "starts_at",
+                            "ends_at"
+                          ],
+                          "properties": {
+                            "plan_code": {
+                              "type": "string",
+                              "enum": [
+                                "basic",
+                                "pro",
+                                "elite"
+                              ]
+                            },
+                            "plan_label": {
+                              "type": "string"
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "inactive",
+                                "active",
+                                "suspended"
+                              ]
+                            },
+                            "starts_at": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "format": "date-time"
+                            },
+                            "ends_at": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "format": "date-time"
+                            }
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "active_route_count": {
+                      "type": "integer"
+                    },
+                    "coverage": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "code",
+                          "display_name"
+                        ],
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "display_name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/drivers/{id}/subscription/": {
+      "post": {
+        "operationId": "changeAdminSubscription",
+        "summary": "Audited subscription mutation",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "publication",
+                    "version"
+                  ],
+                  "properties": {
+                    "publication": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "publication_requested",
+                        "eligible",
+                        "blockers",
+                        "validation_state",
+                        "current_validation_revision",
+                        "approved_revision",
+                        "subscription",
+                        "active_route_count",
+                        "coverage"
+                      ],
+                      "properties": {
+                        "publication_requested": {
+                          "type": "boolean"
+                        },
+                        "eligible": {
+                          "type": "boolean"
+                        },
+                        "blockers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "code",
+                              "message"
+                            ],
+                            "properties": {
+                              "code": {
+                                "type": "string",
+                                "enum": [
+                                  "account_inactive",
+                                  "driver_suspended",
+                                  "driver_deactivated",
+                                  "publication_not_requested",
+                                  "validation_not_approved",
+                                  "approved_revision_stale",
+                                  "required_document_missing",
+                                  "required_document_expired",
+                                  "subscription_missing",
+                                  "subscription_inactive",
+                                  "subscription_suspended",
+                                  "subscription_not_started",
+                                  "subscription_expired",
+                                  "profile_display_name_missing",
+                                  "profile_summary_missing",
+                                  "service_contact_email_missing",
+                                  "active_route_missing"
+                                ]
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "validation_state": {
+                          "type": "string",
+                          "enum": [
+                            "draft",
+                            "pending",
+                            "approved",
+                            "rejected"
+                          ]
+                        },
+                        "current_validation_revision": {
+                          "type": "integer"
+                        },
+                        "approved_revision": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "subscription": {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "plan_code",
+                                "plan_label",
+                                "status",
+                                "starts_at",
+                                "ends_at"
+                              ],
+                              "properties": {
+                                "plan_code": {
+                                  "type": "string",
+                                  "enum": [
+                                    "basic",
+                                    "pro",
+                                    "elite"
+                                  ]
+                                },
+                                "plan_label": {
+                                  "type": "string"
+                                },
+                                "status": {
+                                  "type": "string",
+                                  "enum": [
+                                    "inactive",
+                                    "active",
+                                    "suspended"
+                                  ]
+                                },
+                                "starts_at": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "format": "date-time"
+                                },
+                                "ends_at": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "format": "date-time"
+                                }
+                              }
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "active_route_count": {
+                          "type": "integer"
+                        },
+                        "coverage": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "code",
+                              "display_name"
+                            ],
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "display_name": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "version": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "plan_code",
+                  "status",
+                  "starts_at",
+                  "ends_at",
+                  "reason",
+                  "expected_version"
+                ],
+                "properties": {
+                  "plan_code": {
+                    "type": "string",
+                    "enum": [
+                      "basic",
+                      "pro",
+                      "elite"
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "inactive",
+                      "active",
+                      "suspended"
+                    ]
+                  },
+                  "starts_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date-time"
+                  },
+                  "ends_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date-time"
+                  },
+                  "reason": {
+                    "type": "string"
+                  },
+                  "expected_version": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getAdminSubscription",
+        "summary": "Current subscription and version",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "publication",
+                    "version"
+                  ],
+                  "properties": {
+                    "publication": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "publication_requested",
+                        "eligible",
+                        "blockers",
+                        "validation_state",
+                        "current_validation_revision",
+                        "approved_revision",
+                        "subscription",
+                        "active_route_count",
+                        "coverage"
+                      ],
+                      "properties": {
+                        "publication_requested": {
+                          "type": "boolean"
+                        },
+                        "eligible": {
+                          "type": "boolean"
+                        },
+                        "blockers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "code",
+                              "message"
+                            ],
+                            "properties": {
+                              "code": {
+                                "type": "string",
+                                "enum": [
+                                  "account_inactive",
+                                  "driver_suspended",
+                                  "driver_deactivated",
+                                  "publication_not_requested",
+                                  "validation_not_approved",
+                                  "approved_revision_stale",
+                                  "required_document_missing",
+                                  "required_document_expired",
+                                  "subscription_missing",
+                                  "subscription_inactive",
+                                  "subscription_suspended",
+                                  "subscription_not_started",
+                                  "subscription_expired",
+                                  "profile_display_name_missing",
+                                  "profile_summary_missing",
+                                  "service_contact_email_missing",
+                                  "active_route_missing"
+                                ]
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "validation_state": {
+                          "type": "string",
+                          "enum": [
+                            "draft",
+                            "pending",
+                            "approved",
+                            "rejected"
+                          ]
+                        },
+                        "current_validation_revision": {
+                          "type": "integer"
+                        },
+                        "approved_revision": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "subscription": {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "plan_code",
+                                "plan_label",
+                                "status",
+                                "starts_at",
+                                "ends_at"
+                              ],
+                              "properties": {
+                                "plan_code": {
+                                  "type": "string",
+                                  "enum": [
+                                    "basic",
+                                    "pro",
+                                    "elite"
+                                  ]
+                                },
+                                "plan_label": {
+                                  "type": "string"
+                                },
+                                "status": {
+                                  "type": "string",
+                                  "enum": [
+                                    "inactive",
+                                    "active",
+                                    "suspended"
+                                  ]
+                                },
+                                "starts_at": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "format": "date-time"
+                                },
+                                "ends_at": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "format": "date-time"
+                                }
+                              }
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "active_route_count": {
+                          "type": "integer"
+                        },
+                        "coverage": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "code",
+                              "display_name"
+                            ],
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "display_name": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "version": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/discovery/drivers/": {
+      "get": {
+        "operationId": "listDiscoverableDrivers",
+        "summary": "Eligible drivers",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "results"
+                  ],
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "display_name",
+                          "service_summary",
+                          "validation_label",
+                          "coverage",
+                          "routes"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "display_name": {
+                            "type": "string"
+                          },
+                          "service_summary": {
+                            "type": "string"
+                          },
+                          "validation_label": {
+                            "type": "string",
+                            "enum": [
+                              "Validado"
+                            ]
+                          },
+                          "coverage": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "code",
+                                "display_name"
+                              ],
+                              "properties": {
+                                "code": {
+                                  "type": "string"
+                                },
+                                "display_name": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "routes": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "id",
+                                "label",
+                                "weekdays",
+                                "start_time",
+                                "end_time",
+                                "seat_capacity",
+                                "available_seats",
+                                "next_service_date",
+                                "coverage"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "label": {
+                                  "type": "string"
+                                },
+                                "weekdays": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "enum": [
+                                      "monday",
+                                      "tuesday",
+                                      "wednesday",
+                                      "thursday",
+                                      "friday",
+                                      "saturday",
+                                      "sunday"
+                                    ]
+                                  }
+                                },
+                                "start_time": {
+                                  "type": "string"
+                                },
+                                "end_time": {
+                                  "type": "string"
+                                },
+                                "seat_capacity": {
+                                  "type": "integer"
+                                },
+                                "available_seats": {
+                                  "type": "integer"
+                                },
+                                "next_service_date": {
+                                  "type": "string",
+                                  "format": "date"
+                                },
+                                "coverage": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "code",
+                                      "display_name"
+                                    ],
+                                    "properties": {
+                                      "code": {
+                                        "type": "string"
+                                      },
+                                      "display_name": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "commune",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/discovery/drivers/{id}/": {
+      "get": {
+        "operationId": "getDiscoverableDriver",
+        "summary": "Eligible driver detail",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "display_name",
+                    "service_summary",
+                    "validation_label",
+                    "coverage",
+                    "routes"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "display_name": {
+                      "type": "string"
+                    },
+                    "service_summary": {
+                      "type": "string"
+                    },
+                    "validation_label": {
+                      "type": "string",
+                      "enum": [
+                        "Validado"
+                      ]
+                    },
+                    "coverage": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "code",
+                          "display_name"
+                        ],
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "display_name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "routes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "label",
+                          "weekdays",
+                          "start_time",
+                          "end_time",
+                          "seat_capacity",
+                          "available_seats",
+                          "next_service_date",
+                          "coverage"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "label": {
+                            "type": "string"
+                          },
+                          "weekdays": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "monday",
+                                "tuesday",
+                                "wednesday",
+                                "thursday",
+                                "friday",
+                                "saturday",
+                                "sunday"
+                              ]
+                            }
+                          },
+                          "start_time": {
+                            "type": "string"
+                          },
+                          "end_time": {
+                            "type": "string"
+                          },
+                          "seat_capacity": {
+                            "type": "integer"
+                          },
+                          "available_seats": {
+                            "type": "integer"
+                          },
+                          "next_service_date": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "coverage": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "code",
+                                "display_name"
+                              ],
+                              "properties": {
+                                "code": {
+                                  "type": "string"
+                                },
+                                "display_name": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
     }
   },
   "components": {

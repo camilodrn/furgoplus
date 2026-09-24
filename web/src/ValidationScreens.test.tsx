@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { afterEach, expect, test, vi } from "vitest";
 import {
   cleanup,
@@ -5,10 +6,11 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { AdminValidationScreen, DriverOnboarding } from "./ValidationScreens";
 import { ApiError, AuthApi } from "./api";
-import type { AdminValidation } from "./api-types";
+import type { AdminValidation, Publication } from "./api-types";
 
 const checklist = {
   demo_only: true as const,
@@ -148,7 +150,8 @@ afterEach(() => {
 
 test("driver sees Spanish state, missing item, selects, uploads, and submits", async () => {
   const { api, upload, submitValidation } = driverApi();
-  render(<DriverOnboarding api={api} />);
+  const onRelevantChange = vi.fn();
+  render(<DriverOnboarding api={api} onRelevantChange={onRelevantChange} />);
   expect(await screen.findByText("Documento de identidad")).toBeTruthy();
   expect(screen.getAllByText("Borrador").length).toBeGreaterThan(0);
   expect(screen.getByText("Falta subir Documento de identidad.")).toBeTruthy();
@@ -180,6 +183,7 @@ test("driver sees Spanish state, missing item, selects, uploads, and submits", a
     await screen.findByText(/Documentos enviados a revisión/),
   ).toBeTruthy();
   expect(submitValidation).toHaveBeenCalledTimes(1);
+  expect(onRelevantChange).toHaveBeenCalledTimes(2);
 });
 
 test("driver sees rejected observations and accessible history", async () => {
@@ -232,6 +236,180 @@ test("driver sees pending confirmation without a duplicate submit action", async
   ).toBeNull();
 });
 
+test("driver section navigation keeps profile drafts and existing validation and document flows", async () => {
+  const { api } = driverApi();
+  function Harness() {
+    const [section, setSection] = useState<
+      "profile" | "documents" | "validation" | "publication" | "routes"
+    >("profile");
+    return (
+      <DriverOnboarding
+        api={api}
+        activeSection={section}
+        onSectionChange={setSection}
+      />
+    );
+  }
+  render(<Harness />);
+  const nav = screen.getByRole("navigation", {
+    name: "Secciones del conductor",
+  });
+  expect(nav).toBeTruthy();
+  const profileTab = within(nav).getByRole("button", { name: "Perfil" });
+  expect(profileTab.getAttribute("aria-current")).toBe("page");
+  await screen.findByLabelText("Nombre visible");
+  fireEvent.change(screen.getByLabelText("Descripción del servicio"), {
+    target: { value: "Servicio de prueba" },
+  });
+  const documentsTab = within(nav).getByRole("button", { name: "Documentos" });
+  documentsTab.focus();
+  expect(globalThis.document.activeElement).toBe(documentsTab);
+  expect(documentsTab.tabIndex).toBe(0);
+  fireEvent.click(documentsTab);
+  expect(documentsTab.getAttribute("aria-current")).toBe("page");
+  expect(
+    screen.getByRole("heading", { name: "Documentos requeridos" }),
+  ).toBeTruthy();
+  expect(
+    screen.queryByRole("heading", { name: "Perfil del servicio" }),
+  ).toBeNull();
+  fireEvent.click(within(nav).getByRole("button", { name: "Validación" }));
+  expect(
+    screen.getByRole("heading", { name: "Estado de tu validación" }),
+  ).toBeTruthy();
+  expect(
+    screen.getByRole("heading", { name: "Historial de revisiones" }),
+  ).toBeTruthy();
+  fireEvent.click(profileTab);
+  expect(
+    (screen.getByLabelText("Descripción del servicio") as HTMLTextAreaElement)
+      .value,
+  ).toBe("Servicio de prueba");
+});
+
+test("mobile section selector identifies the current section and keeps profile drafts", async () => {
+  const { api } = driverApi();
+  function Harness() {
+    const [section, setSection] = useState<
+      "profile" | "documents" | "validation" | "publication" | "routes"
+    >("profile");
+    return (
+      <DriverOnboarding
+        api={api}
+        activeSection={section}
+        onSectionChange={setSection}
+      />
+    );
+  }
+  render(<Harness />);
+  await screen.findByLabelText("Nombre visible");
+  const selector = screen.getByRole("navigation", {
+    name: "Selector de sección",
+  });
+  const trigger = within(selector).getByRole("button", { name: /Perfil/ });
+  expect(trigger.getAttribute("aria-expanded")).toBe("false");
+  expect(trigger.getAttribute("aria-controls")).toBe("driver-section-list");
+  fireEvent.change(screen.getByLabelText("Descripción del servicio"), {
+    target: { value: "Borrador móvil" },
+  });
+  trigger.focus();
+  fireEvent.keyDown(trigger, { key: "Enter" });
+  fireEvent.click(trigger);
+  expect(trigger.getAttribute("aria-expanded")).toBe("true");
+  expect(
+    within(selector)
+      .getByRole("button", { name: "Perfil (actual)" })
+      .getAttribute("aria-current"),
+  ).toBe("page");
+  expect(within(selector).getAllByRole("button")).toHaveLength(6);
+  fireEvent.click(
+    within(selector).getByRole("button", { name: "Publicación" }),
+  );
+  expect(trigger.textContent).toContain("Publicación");
+  expect(trigger.getAttribute("aria-expanded")).toBe("false");
+  fireEvent.click(trigger);
+  expect(
+    within(selector)
+      .getByRole("button", { name: "Publicación (actual)" })
+      .getAttribute("aria-current"),
+  ).toBe("page");
+  fireEvent.keyDown(selector, { key: "Escape" });
+  expect(trigger.getAttribute("aria-expanded")).toBe("false");
+  expect(globalThis.document.activeElement).toBe(trigger);
+  fireEvent.click(trigger);
+  fireEvent.click(within(selector).getByRole("button", { name: "Perfil" }));
+  expect(
+    (screen.getByLabelText("Descripción del servicio") as HTMLTextAreaElement)
+      .value,
+  ).toBe("Borrador móvil");
+  expect(
+    within(
+      screen.getByRole("navigation", { name: "Secciones del conductor" }),
+    ).getAllByRole("button"),
+  ).toHaveLength(5);
+});
+
+test("next step reflects published, ready, and blocked publication states", async () => {
+  const { api } = driverApi({ state: "approved", documents: [document] });
+  const base: Publication = {
+    publication_requested: true,
+    eligible: true,
+    blockers: [],
+    validation_state: "approved",
+    current_validation_revision: 1,
+    approved_revision: 1,
+    subscription: null,
+    active_route_count: 1,
+    coverage: [],
+  };
+  const view = render(
+    <DriverOnboarding
+      api={api}
+      activeSection="publication"
+      publication={base}
+    />,
+  );
+  expect(await screen.findByText(/Tu servicio ya está publicado/)).toBeTruthy();
+  expect(screen.queryByText(/Revisa Publicación/)).toBeNull();
+  view.rerender(
+    <DriverOnboarding
+      api={api}
+      activeSection="publication"
+      publication={{
+        ...base,
+        eligible: false,
+        publication_requested: false,
+        blockers: [
+          {
+            code: "publication_not_requested",
+            message: "Solicita la publicación",
+          },
+        ],
+      }}
+    />,
+  );
+  expect(screen.getByText(/Tu configuración está lista/)).toBeTruthy();
+  view.rerender(
+    <DriverOnboarding
+      api={api}
+      activeSection="publication"
+      publication={{
+        ...base,
+        eligible: false,
+        blockers: [
+          {
+            code: "active_route_missing",
+            message: "Falta al menos una ruta activa y completa",
+          },
+          { code: "subscription_missing", message: "Falta un plan asignado" },
+        ],
+      }}
+    />,
+  );
+  expect(screen.getByText("Crea una ruta activa y completa.")).toBeTruthy();
+  expect(screen.queryByText(/Falta un plan asignado/)).toBeNull();
+});
+
 test("admin queue uses Spanish labels, opens detail, and downloads via binary action", async () => {
   const create = vi.fn(() => "blob:demo");
   const revoke = vi.fn();
@@ -245,6 +423,52 @@ test("admin queue uses Spanish labels, opens detail, and downloads via binary ac
   fireEvent.click(screen.getByRole("button", { name: "Descargar" }));
   await waitFor(() => expect(downloadDocument).toHaveBeenCalledWith(7, true));
   expect(create).toHaveBeenCalled();
+});
+
+test("admin detail switches validation and plan without duplicating review content", async () => {
+  const { api } = adminApi();
+  Object.assign(api, {
+    adminSubscription: async () => ({
+      publication: {
+        publication_requested: false,
+        eligible: false,
+        blockers: [],
+        validation_state: "pending",
+        current_validation_revision: 1,
+        approved_revision: null,
+        subscription: null,
+        active_route_count: 0,
+        coverage: [],
+      },
+      version: null,
+    }),
+    plans: async () => ({ plans: [{ code: "basic", display_label: "Basic" }] }),
+  });
+  render(<AdminValidationScreen api={api} />);
+  fireEvent.click(await screen.findByRole("button", { name: "Revisar" }));
+  expect(
+    await screen.findByRole("heading", { name: "Documentos enviados" }),
+  ).toBeTruthy();
+  const planTab = screen.getByRole("button", { name: "Plan y publicación" });
+  planTab.focus();
+  expect(globalThis.document.activeElement).toBe(planTab);
+  expect(planTab.tabIndex).toBe(0);
+  fireEvent.click(planTab);
+  expect(planTab.getAttribute("aria-current")).toBe("page");
+  expect(
+    screen.getByRole("heading", { name: "Plan y publicación" }),
+  ).toBeTruthy();
+  expect(
+    screen.queryByRole("heading", { name: "Documentos enviados" }),
+  ).toBeNull();
+  expect(screen.getAllByText("Plan actual:", { exact: false })).toHaveLength(1);
+  fireEvent.click(screen.getByRole("button", { name: "Validación" }));
+  expect(
+    screen.getByRole("heading", { name: "Documentos enviados" }),
+  ).toBeTruthy();
+  expect(
+    screen.queryByRole("heading", { name: "Plan y publicación" }),
+  ).toBeNull();
 });
 
 test("admin queue distinguishes first, unchanged, and changed submissions", async () => {

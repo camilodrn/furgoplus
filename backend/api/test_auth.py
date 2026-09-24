@@ -5,6 +5,7 @@ from django.test import Client, TestCase, override_settings
 from django.utils import timezone
 
 from accounts.models import AuthThrottle, DriverProfile, ParentProfile, User
+from drivers.models import DriverSubscription
 
 BASE = "/api/v1/auth/"
 PASSWORD = "Synthetic-Only-Password-781!"
@@ -42,6 +43,39 @@ class AuthTests(TestCase):
     def login(self, email="person@example.test", password=PASSWORD):
         token = self.csrf()
         return self.post("login/", {"email": email, "password": password}, token)
+
+    @override_settings(
+        ALLOWED_HOSTS=["localhost", "backend"], SECURE_SSL_REDIRECT=False
+    )
+    def test_local_vite_proxy_origin_requires_matching_browser_host(self):
+        User.objects.create_user("local@example.test", PASSWORD, role=User.Role.DRIVER)
+        host = "localhost:5173"
+        origin = "http://localhost:5173"
+        csrf_response = self.client.get(BASE + "csrf/", HTTP_HOST=host)
+        self.assertEqual(csrf_response.status_code, 200)
+        token = csrf_response.json()["csrf_token"]
+        credentials = {"email": "local@example.test", "password": PASSWORD}
+
+        def login_with(request_host, request_origin):
+            return self.client.post(
+                BASE + "login/",
+                credentials,
+                content_type="application/json",
+                HTTP_HOST=request_host,
+                HTTP_ORIGIN=request_origin,
+                HTTP_X_CSRFTOKEN=token,
+            )
+
+        mismatched = login_with("backend:8000", origin)
+        self.assertEqual(mismatched.status_code, 403)
+        self.assertEqual(mismatched.json()["code"], "csrf_failed")
+        foreign = login_with(host, "http://foreign.example")
+        self.assertEqual(foreign.status_code, 403)
+        self.assertEqual(foreign.json()["code"], "csrf_failed")
+        accepted = login_with(host, origin)
+        self.assertEqual(accepted.status_code, 200)
+        self.assertEqual(accepted.json()["role"], "driver")
+        self.assertIn("sessionid", accepted.cookies)
 
     def test_registration_is_csrf_protected_and_does_not_login(self):
         token = self.csrf()
@@ -82,6 +116,7 @@ class AuthTests(TestCase):
         )
         self.assertEqual(profile.current_validation_revision, 1)
         self.assertIsNone(profile.approved_revision)
+        self.assertFalse(DriverSubscription.objects.filter(driver=profile).exists())
         token = self.csrf()
         for role in ("admin", "unknown"):
             response = self.post(
