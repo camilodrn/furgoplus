@@ -99,9 +99,10 @@ class Fixture:
 
     def as_user(self, user):
         self.client.force_login(user)
-        self.token = self.client.get(BASE + "auth/csrf/", secure=True).json()[
-            "csrf_token"
-        ]
+        self.token = self.get("auth/csrf/").json()["csrf_token"]
+
+    def get(self, path):
+        return self.client.get(BASE + path, secure=True)
 
     def post(self, path, body):
         return self.client.post(
@@ -127,7 +128,7 @@ class ContactTests(Fixture, TestCase):
 
     def test_communes_and_role_gate(self):
         self.as_user(self.parent_user)
-        response = self.client.get(BASE + "discovery/communes/")
+        response = self.get("discovery/communes/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json()["communes"],
@@ -135,15 +136,13 @@ class ContactTests(Fixture, TestCase):
         )
         for user in (self.driver_user, self.admin):
             self.as_user(user)
-            self.assertEqual(
-                self.client.get(BASE + "discovery/communes/").status_code, 403
-            )
+            self.assertEqual(self.get("discovery/communes/").status_code, 403)
         self.client.logout()
-        self.assertEqual(self.client.get(BASE + "discovery/communes/").status_code, 403)
+        self.assertEqual(self.get("discovery/communes/").status_code, 403)
 
     def test_reviews_public_boundary_and_constraints(self):
         self.as_user(self.parent_user)
-        empty = self.client.get(BASE + f"discovery/drivers/{self.driver.pk}/").json()
+        empty = self.get(f"discovery/drivers/{self.driver.pk}/").json()
         self.assertEqual(
             (empty["review_average"], empty["review_count"], empty["reviews"]),
             (None, 0, []),
@@ -163,7 +162,7 @@ class ContactTests(Fixture, TestCase):
             text="Oculta",
             status="hidden",
         )
-        detail = self.client.get(BASE + f"discovery/drivers/{self.driver.pk}/").json()
+        detail = self.get(f"discovery/drivers/{self.driver.pk}/").json()
         self.assertEqual((detail["review_average"], detail["review_count"]), (5, 1))
         self.assertEqual(len(detail["reviews"]), 1)
         self.assertTrue(detail["reviews"][0]["is_demo"])
@@ -198,23 +197,17 @@ class ContactTests(Fixture, TestCase):
             f"{self.driver.pk},{self.driver.pk}",
             "abc,2",
         ):
-            self.assertEqual(
-                self.client.get(BASE + f"discovery/compare/?ids={ids}").status_code, 400
-            )
+            self.assertEqual(self.get(f"discovery/compare/?ids={ids}").status_code, 400)
         self.assertEqual(
-            self.client.get(
-                BASE + f"discovery/compare/?ids={self.driver.pk},{self.other_driver.pk}"
+            self.get(
+                f"discovery/compare/?ids={self.driver.pk},{self.other_driver.pk}"
             ).status_code,
             404,
         )
         self.as_user(self.driver_user)
-        self.assertEqual(
-            self.client.get(BASE + "discovery/compare/?ids=1,2").status_code, 403
-        )
+        self.assertEqual(self.get("discovery/compare/?ids=1,2").status_code, 403)
         self.as_user(self.admin)
-        self.assertEqual(
-            self.client.get(BASE + "discovery/compare/?ids=1,2").status_code, 403
-        )
+        self.assertEqual(self.get("discovery/compare/?ids=1,2").status_code, 403)
 
     def _eligible_extra(self, number):
         user = User.objects.create_user(
@@ -267,14 +260,10 @@ class ContactTests(Fixture, TestCase):
         second = self._eligible_extra(2)
         third = self._eligible_extra(3)
         self.as_user(self.parent_user)
-        search = self.client.get(BASE + "discovery/drivers/?commune=demo-norte").json()[
-            "results"
-        ]
+        search = self.get("discovery/drivers/?commune=demo-norte").json()["results"]
         by_id = {item["id"]: item for item in search}
         for ids in ([second.pk, self.driver.pk], [third.pk, second.pk, self.driver.pk]):
-            response = self.client.get(
-                BASE + "discovery/compare/?ids=" + ",".join(map(str, ids))
-            )
+            response = self.get("discovery/compare/?ids=" + ",".join(map(str, ids)))
             self.assertEqual(response.status_code, 200, response.content)
             self.assertEqual(response["Cache-Control"], "no-store")
             self.assertEqual(response.json()["results"], [by_id[id] for id in ids])
@@ -315,13 +304,11 @@ class ContactTests(Fixture, TestCase):
         created = self.post("parent/contact-requests/", self.payload()).json()
         path = f"parent/contact-requests/{created['id']}/"
         self.as_user(self.other_parent_user)
-        self.assertEqual(self.client.get(BASE + path).status_code, 404)
+        self.assertEqual(self.get(path).status_code, 404)
         self.assertEqual(self.post(path + "cancel/", {}).status_code, 404)
         self.as_user(self.other_driver_user)
         self.assertEqual(
-            self.client.get(
-                BASE + f"driver/contact-requests/{created['id']}/"
-            ).status_code,
+            self.get(f"driver/contact-requests/{created['id']}/").status_code,
             404,
         )
         self.assertEqual(
@@ -331,16 +318,10 @@ class ContactTests(Fixture, TestCase):
             404,
         )
         self.as_user(self.admin)
-        self.assertEqual(
-            self.client.get(BASE + "driver/contact-requests/").status_code, 403
-        )
-        self.assertEqual(
-            self.client.get(BASE + "parent/contact-requests/").status_code, 403
-        )
+        self.assertEqual(self.get("driver/contact-requests/").status_code, 403)
+        self.assertEqual(self.get("parent/contact-requests/").status_code, 403)
         self.as_user(self.driver_user)
-        incoming = self.client.get(
-            BASE + f"driver/contact-requests/{created['id']}/"
-        ).json()
+        incoming = self.get(f"driver/contact-requests/{created['id']}/").json()
         self.assertEqual(incoming["parent_email"], self.parent_user.email)
         self.assertNotIn("driver_service_email", incoming)
         self.driver.service_contact_email = "updated@example.test"
@@ -360,18 +341,18 @@ class ContactTests(Fixture, TestCase):
         self.subscription.status = "suspended"
         self.subscription.save(update_fields=["status"])
         self.as_user(self.parent_user)
-        history = self.client.get(BASE + path).json()
+        history = self.get(path).json()
         self.assertEqual(history["driver_service_email"], "updated@example.test")
         self.assertEqual(
             self.post("parent/contact-requests/", self.payload()).status_code, 404
         )
         self.assertEqual(
-            self.client.get(BASE + f"discovery/drivers/{self.driver.pk}/").status_code,
+            self.get(f"discovery/drivers/{self.driver.pk}/").status_code,
             404,
         )
         self.assertEqual(
-            self.client.get(
-                BASE + f"discovery/compare/?ids={self.driver.pk},{self.other_driver.pk}"
+            self.get(
+                f"discovery/compare/?ids={self.driver.pk},{self.other_driver.pk}"
             ).status_code,
             404,
         )
@@ -401,7 +382,7 @@ class ContactTests(Fixture, TestCase):
             self.post(f"parent/contact-requests/{second}/cancel/", {}).status_code, 200
         )
         self.assertIsNone(
-            self.client.get(BASE + f"parent/contact-requests/{second}/").json()[
+            self.get(f"parent/contact-requests/{second}/").json()[
                 "driver_service_email"
             ]
         )
@@ -409,9 +390,7 @@ class ContactTests(Fixture, TestCase):
     def test_parent_profile_only_name(self):
         self.as_user(self.parent_user)
         path = "parent/profile/"
-        self.assertEqual(
-            self.client.get(BASE + path).json()["display_name"], "Familia Demo"
-        )
+        self.assertEqual(self.get(path).json()["display_name"], "Familia Demo")
         self.assertEqual(
             self.client.patch(
                 BASE + path,
