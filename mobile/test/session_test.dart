@@ -147,6 +147,28 @@ void main() {
     }
   });
 
+  test('parent domain writes reuse session CSRF adapter and origin', () async {
+    final transport = FakeTransport()
+      ..responses.addAll([
+        reply(200, {'csrf_token': csrf}, [csrfCookie]),
+        reply(201, {'id': 7, 'status': 'pending'}),
+      ]);
+    final api = NativeSessionApi(config, MemoryStorage(), transport: transport);
+    final result = await api.write('parent/contact-requests/', {
+      'driver_id': 1,
+      'message': 'Consulta sintética',
+      'consent_share_email': true,
+    });
+    expect(result['status'], 'pending');
+    final call = transport.calls.last;
+    expect(
+      call.uri.toString(),
+      'https://api.example.test/api/v1/parent/contact-requests/',
+    );
+    expect(call.headers['X-CSRFToken'], csrf);
+    expect(call.headers['Origin'], 'https://api.example.test');
+  });
+
   test('main Android manifest permits network access and disables backup', () {
     final manifest = File(
       'android/app/src/main/AndroidManifest.xml',
@@ -309,6 +331,41 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Inicio para conductores'), findsNothing);
+  });
+
+  testWidgets('parent role lands on discovery while driver keeps driver home', (
+    tester,
+  ) async {
+    final parentTransport = FakeTransport()
+      ..responses.addAll([
+        reply(200, {'csrf_token': csrf}, [csrfCookie]),
+        reply(200, {...identity, 'role': 'parent'}),
+        reply(200, {'communes': []}),
+      ]);
+    final parentController = AuthController(
+      NativeSessionApi(config, MemoryStorage(), transport: parentTransport),
+    );
+    await tester.pumpWidget(
+      AuthApp(key: const ValueKey('parent-app'), controller: parentController),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Buscar'), findsOneWidget);
+    expect(find.text('Solicitudes'), findsOneWidget);
+    final driverTransport = FakeTransport()
+      ..responses.addAll([
+        reply(200, {'csrf_token': csrf}, [csrfCookie]),
+        reply(200, identity),
+      ]);
+    await tester.pumpWidget(
+      AuthApp(
+        key: const ValueKey('driver-app'),
+        controller: AuthController(
+          NativeSessionApi(config, MemoryStorage(), transport: driverTransport),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Inicio para conductores'), findsOneWidget);
   });
 
   testWidgets('login sends entered password unchanged before clearing field', (

@@ -26,6 +26,8 @@ import type {
   Plans,
   AdminSubscription,
   SubscriptionInput,
+  DriverContactRequests,
+  DriverContactRequest,
 } from "./api-types";
 
 export class ApiError extends Error {
@@ -238,6 +240,18 @@ export class AuthApi {
     return downloadPrivateDocument(
       `${admin ? "admin" : "driver"}/documents/${id}/download/`,
     );
+  }
+  driverContactRequests(): Promise<DriverContactRequests> {
+    return request("driver/contact-requests/", "GET");
+  }
+  driverContactRequest(id: number): Promise<DriverContactRequest> {
+    return request(`driver/contact-requests/${id}/`, "GET");
+  }
+  decideContactRequest(
+    id: number,
+    decision: "accept" | "decline",
+  ): Promise<DriverContactRequest> {
+    return this.unsafe(`driver/contact-requests/${id}/${decision}/`, {});
   }
 
   clear(): void {

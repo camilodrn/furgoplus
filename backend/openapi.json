@@ -4230,7 +4230,9 @@
                           "service_summary",
                           "validation_label",
                           "coverage",
-                          "routes"
+                          "routes",
+                          "review_average",
+                          "review_count"
                         ],
                         "properties": {
                           "id": {
@@ -4342,6 +4344,15 @@
                                 }
                               }
                             }
+                          },
+                          "review_average": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "review_count": {
+                            "type": "integer"
                           }
                         }
                       }
@@ -4396,7 +4407,10 @@
                     "service_summary",
                     "validation_label",
                     "coverage",
-                    "routes"
+                    "routes",
+                    "review_average",
+                    "review_count",
+                    "reviews"
                   ],
                   "properties": {
                     "id": {
@@ -4508,6 +4522,50 @@
                           }
                         }
                       }
+                    },
+                    "review_average": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "review_count": {
+                      "type": "integer"
+                    },
+                    "reviews": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "score",
+                          "text",
+                          "created_at",
+                          "created_on",
+                          "is_demo"
+                        ],
+                        "properties": {
+                          "score": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 5
+                          },
+                          "text": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "created_on": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "is_demo": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -4532,6 +4590,1202 @@
             "required": true,
             "schema": {
               "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/discovery/communes/": {
+      "get": {
+        "operationId": "getDiscoveryCommunes",
+        "summary": "Active parent communes",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "communes"
+                  ],
+                  "properties": {
+                    "communes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "code",
+                          "display_name"
+                        ],
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "display_name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/discovery/compare/": {
+      "get": {
+        "operationId": "compareDiscoverableDrivers",
+        "summary": "Compare 2–3 eligible drivers",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "results"
+                  ],
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "display_name",
+                          "service_summary",
+                          "validation_label",
+                          "coverage",
+                          "routes",
+                          "review_average",
+                          "review_count"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "display_name": {
+                            "type": "string"
+                          },
+                          "service_summary": {
+                            "type": "string"
+                          },
+                          "validation_label": {
+                            "type": "string",
+                            "enum": [
+                              "Validado"
+                            ]
+                          },
+                          "coverage": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "code",
+                                "display_name"
+                              ],
+                              "properties": {
+                                "code": {
+                                  "type": "string"
+                                },
+                                "display_name": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "routes": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "id",
+                                "label",
+                                "weekdays",
+                                "start_time",
+                                "end_time",
+                                "seat_capacity",
+                                "available_seats",
+                                "next_service_date",
+                                "coverage"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "label": {
+                                  "type": "string"
+                                },
+                                "weekdays": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "enum": [
+                                      "monday",
+                                      "tuesday",
+                                      "wednesday",
+                                      "thursday",
+                                      "friday",
+                                      "saturday",
+                                      "sunday"
+                                    ]
+                                  }
+                                },
+                                "start_time": {
+                                  "type": "string"
+                                },
+                                "end_time": {
+                                  "type": "string"
+                                },
+                                "seat_capacity": {
+                                  "type": "integer"
+                                },
+                                "available_seats": {
+                                  "type": "integer"
+                                },
+                                "next_service_date": {
+                                  "type": "string",
+                                  "format": "date"
+                                },
+                                "coverage": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "code",
+                                      "display_name"
+                                    ],
+                                    "properties": {
+                                      "code": {
+                                        "type": "string"
+                                      },
+                                      "display_name": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "review_average": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "review_count": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/parent/profile/": {
+      "patch": {
+        "operationId": "patchParentProfile",
+        "summary": "Edit parent display name",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "display_name",
+                    "email"
+                  ],
+                  "properties": {
+                    "display_name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "display_name"
+                ],
+                "properties": {
+                  "display_name": {
+                    "type": "string",
+                    "maxLength": 100
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "get": {
+        "operationId": "getParentProfile",
+        "summary": "Own parent profile",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "display_name",
+                    "email"
+                  ],
+                  "properties": {
+                    "display_name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/parent/contact-requests/": {
+      "post": {
+        "operationId": "createParentContactRequest",
+        "summary": "Create consented contact request",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "message",
+                    "status",
+                    "created_at",
+                    "updated_at",
+                    "resolved_at",
+                    "driver_id",
+                    "driver_display_name",
+                    "driver_service_email"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "accepted",
+                        "declined",
+                        "cancelled"
+                      ]
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "resolved_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    },
+                    "driver_id": {
+                      "type": "integer"
+                    },
+                    "driver_display_name": {
+                      "type": "string"
+                    },
+                    "driver_service_email": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "driver_id",
+                  "message",
+                  "consent_share_email"
+                ],
+                "properties": {
+                  "driver_id": {
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "consent_share_email": {
+                    "type": "boolean",
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "get": {
+        "operationId": "getParentContactRequests",
+        "summary": "Own contact history",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "results"
+                  ],
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "message",
+                          "status",
+                          "created_at",
+                          "updated_at",
+                          "resolved_at",
+                          "driver_id",
+                          "driver_display_name",
+                          "driver_service_email"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "pending",
+                              "accepted",
+                              "declined",
+                              "cancelled"
+                            ]
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "resolved_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "driver_id": {
+                            "type": "integer"
+                          },
+                          "driver_display_name": {
+                            "type": "string"
+                          },
+                          "driver_service_email": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "email"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/parent/contact-requests/{id}/": {
+      "get": {
+        "operationId": "getParentContactRequest",
+        "summary": "Own contact detail",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "message",
+                    "status",
+                    "created_at",
+                    "updated_at",
+                    "resolved_at",
+                    "driver_id",
+                    "driver_display_name",
+                    "driver_service_email"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "accepted",
+                        "declined",
+                        "cancelled"
+                      ]
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "resolved_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    },
+                    "driver_id": {
+                      "type": "integer"
+                    },
+                    "driver_display_name": {
+                      "type": "string"
+                    },
+                    "driver_service_email": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/parent/contact-requests/{id}/cancel/": {
+      "post": {
+        "operationId": "cancelParentContactRequest",
+        "summary": "Cancel pending request",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "message",
+                    "status",
+                    "created_at",
+                    "updated_at",
+                    "resolved_at",
+                    "driver_id",
+                    "driver_display_name",
+                    "driver_service_email"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "accepted",
+                        "declined",
+                        "cancelled"
+                      ]
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "resolved_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    },
+                    "driver_id": {
+                      "type": "integer"
+                    },
+                    "driver_display_name": {
+                      "type": "string"
+                    },
+                    "driver_service_email": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/driver/contact-requests/": {
+      "get": {
+        "operationId": "getDriverContactRequests",
+        "summary": "Own incoming requests",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "results"
+                  ],
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "message",
+                          "status",
+                          "created_at",
+                          "updated_at",
+                          "resolved_at",
+                          "parent_display_name",
+                          "parent_email"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "pending",
+                              "accepted",
+                              "declined",
+                              "cancelled"
+                            ]
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "resolved_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "parent_display_name": {
+                            "type": "string"
+                          },
+                          "parent_email": {
+                            "type": "string",
+                            "format": "email"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/driver/contact-requests/{id}/": {
+      "get": {
+        "operationId": "getDriverContactRequest",
+        "summary": "Own incoming detail",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "message",
+                    "status",
+                    "created_at",
+                    "updated_at",
+                    "resolved_at",
+                    "parent_display_name",
+                    "parent_email"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "accepted",
+                        "declined",
+                        "cancelled"
+                      ]
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "resolved_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    },
+                    "parent_display_name": {
+                      "type": "string"
+                    },
+                    "parent_email": {
+                      "type": "string",
+                      "format": "email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/driver/contact-requests/{id}/accept/": {
+      "post": {
+        "operationId": "acceptDriverContactRequest",
+        "summary": "Accept pending request",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "message",
+                    "status",
+                    "created_at",
+                    "updated_at",
+                    "resolved_at",
+                    "parent_display_name",
+                    "parent_email"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "accepted",
+                        "declined",
+                        "cancelled"
+                      ]
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "resolved_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    },
+                    "parent_display_name": {
+                      "type": "string"
+                    },
+                    "parent_email": {
+                      "type": "string",
+                      "format": "email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/driver/contact-requests/{id}/decline/": {
+      "post": {
+        "operationId": "declineDriverContactRequest",
+        "summary": "Decline pending request",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "message",
+                    "status",
+                    "created_at",
+                    "updated_at",
+                    "resolved_at",
+                    "parent_display_name",
+                    "parent_email"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "accepted",
+                        "declined",
+                        "cancelled"
+                      ]
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "resolved_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    },
+                    "parent_display_name": {
+                      "type": "string"
+                    },
+                    "parent_email": {
+                      "type": "string",
+                      "format": "email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
             }
           }
         ]

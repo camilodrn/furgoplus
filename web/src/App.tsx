@@ -4,6 +4,7 @@ import type { Identity, Publication } from "./api-types";
 import "./style.css";
 import { AdminValidationScreen, DriverOnboarding } from "./ValidationScreens";
 import { DriverPublicationScreen } from "./PublicationScreens";
+import { DriverRequests } from "./DriverRequests";
 
 const api = new AuthApi();
 const marker = "furgoplus-signed-out";
@@ -17,7 +18,12 @@ export default function App() {
   const [message, setMessage] = useState("");
   const [logoAvailable, setLogoAvailable] = useState(true);
   const [driverSection, setDriverSection] = useState<
-    "profile" | "documents" | "validation" | "publication" | "routes"
+    | "profile"
+    | "documents"
+    | "validation"
+    | "publication"
+    | "routes"
+    | "requests"
   >("profile");
   const [publication, setPublication] = useState<Publication | null>(null);
   const [publicationRefreshKey, setPublicationRefreshKey] = useState(0);
@@ -214,6 +220,7 @@ export default function App() {
                     driverSection === "routes"
                   }
                 />
+                {driverSection === "requests" && <DriverRequests api={api} />}
               </>
             )}
             {state.user.role === "admin" && <AdminValidationScreen api={api} />}

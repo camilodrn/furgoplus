@@ -717,6 +717,8 @@ DISCOVERY_DRIVER = {
         "validation_label",
         "coverage",
         "routes",
+        "review_average",
+        "review_count",
     ],
     "properties": {
         "id": INTEGER,
@@ -725,6 +727,8 @@ DISCOVERY_DRIVER = {
         "validation_label": {"type": "string", "enum": ["Validado"]},
         "coverage": {"type": "array", "items": COMMUNE},
         "routes": {"type": "array", "items": DISCOVERY_ROUTE},
+        "review_average": {"type": ["number", "null"]},
+        "review_count": INTEGER,
     },
 }
 SUBSCRIPTION_INPUT = {
@@ -896,6 +900,216 @@ ENDPOINTS += (
     ),
 )
 
+REVIEW = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["score", "text", "created_at", "created_on", "is_demo"],
+    "properties": {
+        "score": {"type": "integer", "minimum": 1, "maximum": 5},
+        "text": STRING,
+        "created_at": {"type": "string", "format": "date-time"},
+        "created_on": {"type": "string", "format": "date"},
+        "is_demo": {"type": "boolean"},
+    },
+}
+DISCOVERY_DETAIL = {
+    **DISCOVERY_DRIVER,
+    "required": [*DISCOVERY_DRIVER["required"], "reviews"],
+    "properties": {
+        **DISCOVERY_DRIVER["properties"],
+        "reviews": {"type": "array", "items": REVIEW},
+    },
+}
+CONTACT_STATUS = {
+    "type": "string",
+    "enum": ["pending", "accepted", "declined", "cancelled"],
+}
+CONTACT_COMMON = {
+    "id": INTEGER,
+    "message": STRING,
+    "status": CONTACT_STATUS,
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "resolved_at": {"type": ["string", "null"], "format": "date-time"},
+}
+PARENT_CONTACT = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        *CONTACT_COMMON,
+        "driver_id",
+        "driver_display_name",
+        "driver_service_email",
+    ],
+    "properties": {
+        **CONTACT_COMMON,
+        "driver_id": INTEGER,
+        "driver_display_name": STRING,
+        "driver_service_email": {"type": ["string", "null"], "format": "email"},
+    },
+}
+DRIVER_CONTACT = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [*CONTACT_COMMON, "parent_display_name", "parent_email"],
+    "properties": {
+        **CONTACT_COMMON,
+        "parent_display_name": STRING,
+        "parent_email": {"type": "string", "format": "email"},
+    },
+}
+PARENT_PROFILE = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["display_name", "email"],
+    "properties": {
+        "display_name": STRING,
+        "email": {"type": "string", "format": "email"},
+    },
+}
+ENDPOINTS += (
+    Endpoint(
+        "discovery/communes/",
+        "discovery-communes",
+        "get",
+        "getDiscoveryCommunes",
+        "Active parent communes",
+        COMMUNES,
+    ),
+    Endpoint(
+        "discovery/compare/",
+        "discovery-compare",
+        "get",
+        "compareDiscoverableDrivers",
+        "Compare 2–3 eligible drivers",
+        {
+            "type": "object",
+            "required": ["results"],
+            "properties": {"results": {"type": "array", "items": DISCOVERY_DRIVER}},
+        },
+    ),
+    Endpoint(
+        "parent/profile/",
+        "parent-profile-get",
+        "get",
+        "getParentProfile",
+        "Own parent profile",
+        PARENT_PROFILE,
+    ),
+    Endpoint(
+        "parent/profile/",
+        "parent-profile-patch",
+        "patch",
+        "patchParentProfile",
+        "Edit parent display name",
+        PARENT_PROFILE,
+        200,
+        {
+            "type": "object",
+            "required": ["display_name"],
+            "properties": {"display_name": {"type": "string", "maxLength": 100}},
+        },
+    ),
+    Endpoint(
+        "parent/contact-requests/",
+        "parent-requests-get",
+        "get",
+        "getParentContactRequests",
+        "Own contact history",
+        {
+            "type": "object",
+            "required": ["results"],
+            "properties": {"results": {"type": "array", "items": PARENT_CONTACT}},
+        },
+    ),
+    Endpoint(
+        "parent/contact-requests/",
+        "parent-requests-post",
+        "post",
+        "createParentContactRequest",
+        "Create consented contact request",
+        PARENT_CONTACT,
+        201,
+        {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["driver_id", "message", "consent_share_email"],
+            "properties": {
+                "driver_id": INTEGER,
+                "message": {"type": "string", "minLength": 1, "maxLength": 500},
+                "consent_share_email": {"type": "boolean", "const": True},
+            },
+        },
+    ),
+    Endpoint(
+        "parent/contact-requests/{id}/",
+        "parent-request-detail",
+        "get",
+        "getParentContactRequest",
+        "Own contact detail",
+        PARENT_CONTACT,
+    ),
+    Endpoint(
+        "parent/contact-requests/{id}/cancel/",
+        "parent-request-cancel",
+        "post",
+        "cancelParentContactRequest",
+        "Cancel pending request",
+        PARENT_CONTACT,
+    ),
+    Endpoint(
+        "driver/contact-requests/",
+        "driver-requests-get",
+        "get",
+        "getDriverContactRequests",
+        "Own incoming requests",
+        {
+            "type": "object",
+            "required": ["results"],
+            "properties": {"results": {"type": "array", "items": DRIVER_CONTACT}},
+        },
+    ),
+    Endpoint(
+        "driver/contact-requests/{id}/",
+        "driver-request-detail",
+        "get",
+        "getDriverContactRequest",
+        "Own incoming detail",
+        DRIVER_CONTACT,
+    ),
+    Endpoint(
+        "driver/contact-requests/{id}/accept/",
+        "driver-request-accept",
+        "post",
+        "acceptDriverContactRequest",
+        "Accept pending request",
+        DRIVER_CONTACT,
+    ),
+    Endpoint(
+        "driver/contact-requests/{id}/decline/",
+        "driver-request-decline",
+        "post",
+        "declineDriverContactRequest",
+        "Decline pending request",
+        DRIVER_CONTACT,
+    ),
+)
+
+# Detail adds published review display; search and comparison stay on one summary.
+ENDPOINTS = tuple(
+    Endpoint(
+        e.path,
+        e.name,
+        e.method,
+        e.operation_id,
+        e.summary,
+        DISCOVERY_DETAIL if e.name == "discovery-detail" else e.response_schema,
+        e.success_status,
+        e.request_schema,
+    )
+    for e in ENDPOINTS
+)
+
 # The original generated schema builder is retained for auth; enrich Task 03 operations.
 _base_openapi_document = openapi_document
 
@@ -964,6 +1178,10 @@ def openapi_document():
         if endpoint.name == "discovery-list":
             operation.setdefault("parameters", []).append(
                 {"name": "commune", "in": "query", "schema": STRING}
+            )
+        if endpoint.name == "discovery-compare":
+            operation.setdefault("parameters", []).append(
+                {"name": "ids", "in": "query", "required": True, "schema": STRING}
             )
         if endpoint.request_schema:
             mime = (

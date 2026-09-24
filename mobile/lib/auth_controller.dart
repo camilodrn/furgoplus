@@ -20,6 +20,13 @@ class AuthController extends ChangeNotifier {
   String? displayName;
   String? error;
 
+  void expire() {
+    displayName = null;
+    error = null;
+    state = AuthState.signedOut;
+    notifyListeners();
+  }
+
   void _home(Map<String, dynamic> identity) {
     displayName = identity['display_name'] is String
         ? identity['display_name'] as String

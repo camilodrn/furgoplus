@@ -379,6 +379,8 @@ export type DiscoveryDrivers = {
       next_service_date: string;
       coverage: { code: string; display_name: string }[];
     }[];
+    review_average: number | null;
+    review_count: number;
   }[];
 };
 export type DiscoveryDriver = {
@@ -406,4 +408,35 @@ export type DiscoveryDriver = {
     next_service_date: string;
     coverage: { code: string; display_name: string }[];
   }[];
+  review_average: number | null;
+  review_count: number;
+  reviews: {
+    score: number;
+    text: string;
+    created_at: string;
+    created_on: string;
+    is_demo: boolean;
+  }[];
+};
+export type DriverContactRequests = {
+  results: {
+    id: number;
+    message: string;
+    status: "pending" | "accepted" | "declined" | "cancelled";
+    created_at: string;
+    updated_at: string;
+    resolved_at: string | null;
+    parent_display_name: string;
+    parent_email: string;
+  }[];
+};
+export type DriverContactRequest = {
+  id: number;
+  message: string;
+  status: "pending" | "accepted" | "declined" | "cancelled";
+  created_at: string;
+  updated_at: string;
+  resolved_at: string | null;
+  parent_display_name: string;
+  parent_email: string;
 };
