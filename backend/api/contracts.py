@@ -547,6 +547,355 @@ ENDPOINTS += (
     ),
 )
 
+PLAN_CODE = {"type": "string", "enum": ["basic", "pro", "elite"]}
+SUBSCRIPTION_STATUS = {"type": "string", "enum": ["inactive", "active", "suspended"]}
+ROUTE_STATUS = {"type": "string", "enum": ["active", "inactive"]}
+WEEKDAY = {
+    "type": "string",
+    "enum": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+    ],
+}
+BLOCKER_CODE = {
+    "type": "string",
+    "enum": [
+        "account_inactive",
+        "driver_suspended",
+        "driver_deactivated",
+        "publication_not_requested",
+        "validation_not_approved",
+        "approved_revision_stale",
+        "required_document_missing",
+        "required_document_expired",
+        "subscription_missing",
+        "subscription_inactive",
+        "subscription_suspended",
+        "subscription_not_started",
+        "subscription_expired",
+        "profile_display_name_missing",
+        "profile_summary_missing",
+        "service_contact_email_missing",
+        "active_route_missing",
+    ],
+}
+COMMUNE = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["code", "display_name"],
+    "properties": {"code": STRING, "display_name": STRING},
+}
+COMMUNES = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["communes"],
+    "properties": {"communes": {"type": "array", "items": COMMUNE}},
+}
+SUBSCRIPTION = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["plan_code", "plan_label", "status", "starts_at", "ends_at"],
+    "properties": {
+        "plan_code": PLAN_CODE,
+        "plan_label": STRING,
+        "status": SUBSCRIPTION_STATUS,
+        "starts_at": {"type": ["string", "null"], "format": "date-time"},
+        "ends_at": {"type": ["string", "null"], "format": "date-time"},
+    },
+}
+PUBLICATION = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "publication_requested",
+        "eligible",
+        "blockers",
+        "validation_state",
+        "current_validation_revision",
+        "approved_revision",
+        "subscription",
+        "active_route_count",
+        "coverage",
+    ],
+    "properties": {
+        "publication_requested": {"type": "boolean"},
+        "eligible": {"type": "boolean"},
+        "blockers": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["code", "message"],
+                "properties": {"code": BLOCKER_CODE, "message": STRING},
+            },
+        },
+        "validation_state": {
+            "type": "string",
+            "enum": ["draft", "pending", "approved", "rejected"],
+        },
+        "current_validation_revision": INTEGER,
+        "approved_revision": NULLABLE_INTEGER,
+        "subscription": {"oneOf": [SUBSCRIPTION, {"type": "null"}]},
+        "active_route_count": INTEGER,
+        "coverage": {"type": "array", "items": COMMUNE},
+    },
+}
+ROUTE_INPUT = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "label",
+        "status",
+        "weekdays",
+        "start_time",
+        "end_time",
+        "seat_capacity",
+        "destination_label",
+        "destination_address",
+        "coverage_codes",
+    ],
+    "properties": {
+        "label": STRING,
+        "status": ROUTE_STATUS,
+        "weekdays": {"type": "array", "minItems": 1, "items": WEEKDAY},
+        "start_time": STRING,
+        "end_time": STRING,
+        "seat_capacity": INTEGER,
+        "destination_label": STRING,
+        "destination_address": STRING,
+        "coverage_codes": {"type": "array", "minItems": 1, "items": STRING},
+    },
+}
+ROUTE = {
+    **ROUTE_INPUT,
+    "required": ["id", "revision", *ROUTE_INPUT["required"]],
+    "properties": {"id": INTEGER, "revision": INTEGER, **ROUTE_INPUT["properties"]},
+}
+ROUTE_UPDATE = {
+    **ROUTE_INPUT,
+    "required": [*ROUTE_INPUT["required"], "expected_revision"],
+    "properties": {**ROUTE_INPUT["properties"], "expected_revision": INTEGER},
+}
+DISCOVERY_ROUTE = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "id",
+        "label",
+        "weekdays",
+        "start_time",
+        "end_time",
+        "seat_capacity",
+        "available_seats",
+        "next_service_date",
+        "coverage",
+    ],
+    "properties": {
+        "id": INTEGER,
+        "label": STRING,
+        "weekdays": {"type": "array", "items": WEEKDAY},
+        "start_time": STRING,
+        "end_time": STRING,
+        "seat_capacity": INTEGER,
+        "available_seats": INTEGER,
+        "next_service_date": {"type": "string", "format": "date"},
+        "coverage": {"type": "array", "items": COMMUNE},
+    },
+}
+DISCOVERY_DRIVER = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "id",
+        "display_name",
+        "service_summary",
+        "validation_label",
+        "coverage",
+        "routes",
+    ],
+    "properties": {
+        "id": INTEGER,
+        "display_name": STRING,
+        "service_summary": STRING,
+        "validation_label": {"type": "string", "enum": ["Validado"]},
+        "coverage": {"type": "array", "items": COMMUNE},
+        "routes": {"type": "array", "items": DISCOVERY_ROUTE},
+    },
+}
+SUBSCRIPTION_INPUT = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "plan_code",
+        "status",
+        "starts_at",
+        "ends_at",
+        "reason",
+        "expected_version",
+    ],
+    "properties": {
+        "plan_code": PLAN_CODE,
+        "status": SUBSCRIPTION_STATUS,
+        "starts_at": {"type": ["string", "null"], "format": "date-time"},
+        "ends_at": {"type": ["string", "null"], "format": "date-time"},
+        "reason": STRING,
+        "expected_version": NULLABLE_INTEGER,
+    },
+}
+ENDPOINTS += (
+    Endpoint(
+        "driver/publication/",
+        "driver-publication-get",
+        "get",
+        "getDriverPublication",
+        "Own publication status",
+        PUBLICATION,
+    ),
+    Endpoint(
+        "driver/publication/",
+        "driver-publication-patch",
+        "patch",
+        "patchDriverPublication",
+        "Request or withdraw publication",
+        PUBLICATION,
+        200,
+        {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["publication_requested"],
+            "properties": {"publication_requested": {"type": "boolean"}},
+        },
+    ),
+    Endpoint(
+        "driver/communes/",
+        "driver-communes",
+        "get",
+        "getDriverCommunes",
+        "Standardized commune catalog",
+        COMMUNES,
+    ),
+    Endpoint(
+        "driver/routes/",
+        "driver-routes-get",
+        "get",
+        "getDriverRoutes",
+        "Own routes",
+        {
+            "type": "object",
+            "required": ["routes"],
+            "properties": {"routes": {"type": "array", "items": ROUTE}},
+        },
+    ),
+    Endpoint(
+        "driver/routes/",
+        "driver-routes-post",
+        "post",
+        "createDriverRoute",
+        "Create own route",
+        ROUTE,
+        201,
+        ROUTE_INPUT,
+    ),
+    Endpoint(
+        "driver/routes/{id}/",
+        "driver-route-get",
+        "get",
+        "getDriverRoute",
+        "Own route",
+        ROUTE,
+    ),
+    Endpoint(
+        "driver/routes/{id}/",
+        "driver-route-patch",
+        "patch",
+        "patchDriverRoute",
+        "Update own route",
+        ROUTE,
+        200,
+        ROUTE_UPDATE,
+    ),
+    Endpoint(
+        "admin/plans/",
+        "admin-plans",
+        "get",
+        "getAdminPlans",
+        "Plan catalog",
+        {
+            "type": "object",
+            "required": ["plans"],
+            "properties": {
+                "plans": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": ["code", "display_label"],
+                        "properties": {"code": PLAN_CODE, "display_label": STRING},
+                    },
+                }
+            },
+        },
+    ),
+    Endpoint(
+        "admin/drivers/{id}/publication/",
+        "admin-publication",
+        "get",
+        "getAdminPublication",
+        "Driver publication status",
+        PUBLICATION,
+    ),
+    Endpoint(
+        "admin/drivers/{id}/subscription/",
+        "admin-subscription-get",
+        "get",
+        "getAdminSubscription",
+        "Current subscription and version",
+        {
+            "type": "object",
+            "required": ["publication", "version"],
+            "properties": {"publication": PUBLICATION, "version": NULLABLE_INTEGER},
+        },
+    ),
+    Endpoint(
+        "admin/drivers/{id}/subscription/",
+        "admin-subscription-post",
+        "post",
+        "changeAdminSubscription",
+        "Audited subscription mutation",
+        {
+            "type": "object",
+            "required": ["publication", "version"],
+            "properties": {"publication": PUBLICATION, "version": INTEGER},
+        },
+        200,
+        SUBSCRIPTION_INPUT,
+    ),
+    Endpoint(
+        "discovery/drivers/",
+        "discovery-list",
+        "get",
+        "listDiscoverableDrivers",
+        "Eligible drivers",
+        {
+            "type": "object",
+            "required": ["results"],
+            "properties": {"results": {"type": "array", "items": DISCOVERY_DRIVER}},
+        },
+    ),
+    Endpoint(
+        "discovery/drivers/{id}/",
+        "discovery-detail",
+        "get",
+        "getDiscoverableDriver",
+        "Eligible driver detail",
+        DISCOVERY_DRIVER,
+    ),
+)
+
 # The original generated schema builder is retained for auth; enrich Task 03 operations.
 _base_openapi_document = openapi_document
 
@@ -611,6 +960,10 @@ def openapi_document():
                         "default": "pending",
                     },
                 }
+            )
+        if endpoint.name == "discovery-list":
+            operation.setdefault("parameters", []).append(
+                {"name": "commune", "in": "query", "schema": STRING}
             )
         if endpoint.request_schema:
             mime = (

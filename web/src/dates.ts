@@ -62,3 +62,54 @@ export function humanChileanDate(
     parts.find((item) => item.type === type)?.value ?? "";
   return `${Number(part("day"))} ${months[Number(part("month")) - 1]} ${part("year")} · ${part("hour")}:${part("minute")}`;
 }
+
+export function chileInstant(
+  dateText: string,
+  timeText: string,
+): string | null {
+  const day = parseChileanDate(dateText);
+  if (!day || !/^([01]\d|2[0-3]):[0-5]\d$/.test(timeText)) return null;
+  const wanted = `${day}T${timeText}`;
+  const format = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Santiago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  });
+  const matches = ["-03:00", "-04:00"]
+    .map((offset) => new Date(`${wanted}:00${offset}`))
+    .filter((candidate) => {
+      const parts = format.formatToParts(candidate);
+      const part = (type: string) =>
+        parts.find((item) => item.type === type)?.value;
+      return (
+        `${part("year")}-${part("month")}-${part("day")}T${part("hour")}:${part("minute")}` ===
+        wanted
+      );
+    });
+  return matches.length === 1 ? matches[0]!.toISOString() : null;
+}
+
+export function chileDateTimeParts(instant: string): {
+  date: string;
+  time: string;
+} {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "America/Santiago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date(instant));
+  const part = (type: string) =>
+    parts.find((item) => item.type === type)?.value ?? "";
+  return {
+    date: `${part("day")}/${part("month")}/${part("year")}`,
+    time: `${part("hour")}:${part("minute")}`,
+  };
+}

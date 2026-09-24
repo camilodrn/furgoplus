@@ -50,11 +50,13 @@ export function ChileanDateField({
   onChange,
   error,
   id,
+  label = "Fecha de vencimiento",
 }: {
   value: string;
   onChange: (value: string) => void;
   error: boolean;
   id: string;
+  label?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [visibleMonth, setVisibleMonth] = useState(() => {
@@ -113,7 +115,7 @@ export function ChileanDateField({
       }}
     >
       <label className="expiry-label" htmlFor={id}>
-        Fecha de vencimiento
+        {label}
       </label>
       <div className="expiry-input-wrap">
         <input
@@ -122,7 +124,9 @@ export function ChileanDateField({
           type="text"
           inputMode="numeric"
           autoComplete="off"
-          placeholder="dd/mm/aaaa"
+          placeholder={
+            label === "Fecha de vencimiento" ? "dd/mm/aaaa" : "DD/MM/AAAA"
+          }
           maxLength={10}
           value={value}
           aria-invalid={error}
@@ -133,7 +137,11 @@ export function ChileanDateField({
           ref={calendarButtonRef}
           className="expiry-calendar-trigger"
           type="button"
-          aria-label="Abrir calendario"
+          aria-label={
+            label === "Fecha de vencimiento"
+              ? "Abrir calendario"
+              : `Abrir calendario de ${label.toLowerCase()}`
+          }
           aria-expanded={open}
           aria-controls={`${id}-calendar`}
           onClick={() => (open ? setOpen(false) : openCalendar())}
@@ -159,7 +167,7 @@ export function ChileanDateField({
           className="expiry-calendar"
           id={`${id}-calendar`}
           role="dialog"
-          aria-label="Calendario de fecha de vencimiento"
+          aria-label={`Calendario de ${label.toLowerCase()}`}
         >
           <div className="expiry-calendar-heading">
             <button

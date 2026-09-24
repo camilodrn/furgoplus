@@ -16,6 +16,16 @@ import type {
   LogoutResponse,
   ObservationInput,
   RegisterRequest,
+  Publication,
+  PublicationInput,
+  Communes,
+  Routes,
+  Route,
+  RouteInput,
+  RouteUpdate,
+  Plans,
+  AdminSubscription,
+  SubscriptionInput,
 } from "./api-types";
 
 export class ApiError extends Error {
@@ -119,9 +129,10 @@ export class AuthApi {
     try {
       return await request<T>(path, method, body, this.csrfToken!);
     } catch (error) {
-      if (error instanceof ApiError && error.code === "csrf_failed")
-        await this.csrf();
-      throw error;
+      if (!(error instanceof ApiError && error.code === "csrf_failed"))
+        throw error;
+      await this.csrf();
+      return request<T>(path, method, body, this.csrfToken!);
     }
   }
 
@@ -192,6 +203,36 @@ export class AuthApi {
     input: ObservationInput,
   ): Promise<AdminValidation> {
     return this.unsafe(`admin/validations/${id}/${action}/`, input);
+  }
+  publication(): Promise<Publication> {
+    return request("driver/publication/", "GET");
+  }
+  setPublication(input: PublicationInput): Promise<Publication> {
+    return this.unsafe("driver/publication/", input, "PATCH");
+  }
+  communes(): Promise<Communes> {
+    return request("driver/communes/", "GET");
+  }
+  routes(): Promise<Routes> {
+    return request("driver/routes/", "GET");
+  }
+  createRoute(input: RouteInput): Promise<Route> {
+    return this.unsafe("driver/routes/", input);
+  }
+  updateRoute(id: number, input: RouteUpdate): Promise<Route> {
+    return this.unsafe(`driver/routes/${id}/`, input, "PATCH");
+  }
+  plans(): Promise<Plans> {
+    return request("admin/plans/", "GET");
+  }
+  adminSubscription(id: number): Promise<AdminSubscription> {
+    return request(`admin/drivers/${id}/subscription/`, "GET");
+  }
+  changeSubscription(
+    id: number,
+    input: SubscriptionInput,
+  ): Promise<AdminSubscription> {
+    return this.unsafe(`admin/drivers/${id}/subscription/`, input);
   }
   downloadDocument(id: number, admin: boolean): Promise<Blob> {
     return downloadPrivateDocument(

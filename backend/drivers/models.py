@@ -160,6 +160,8 @@ class AdminActionLog(models.Model):
     reason = models.CharField(max_length=1000, blank=True)
     before_state = models.CharField(max_length=16, blank=True)
     after_state = models.CharField(max_length=16, blank=True)
+    before_detail = models.JSONField(default=dict)
+    after_detail = models.JSONField(default=dict)
 
     def save(self, *args, **kwargs):
         if self.pk:
@@ -170,3 +172,107 @@ class AdminActionLog(models.Model):
 
     def delete(self, *args, **kwargs):
         raise ValidationError("Admin audit entries are retained")
+
+
+class Plan(models.Model):
+    code = models.CharField(max_length=8, unique=True)
+    display_label = models.CharField(max_length=32)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(code__in=["basic", "pro", "elite"]),
+                name="plan_code_valid",
+            )
+        ]
+
+    def __str__(self):
+        return self.display_label
+
+
+class DriverSubscription(models.Model):
+    class Status(models.TextChoices):
+        INACTIVE = "inactive"
+        ACTIVE = "active"
+        SUSPENDED = "suspended"
+
+    driver = models.OneToOneField(
+        DriverProfile, on_delete=models.PROTECT, related_name="subscription"
+    )
+    plan = models.ForeignKey(Plan, on_delete=models.PROTECT)
+    status = models.CharField(max_length=9, choices=Status.choices)
+    starts_at = models.DateTimeField(null=True, blank=True)
+    ends_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(status__in=["inactive", "active", "suspended"]),
+                name="subscription_status_valid",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(starts_at__isnull=True, ends_at__isnull=True)
+                    | Q(starts_at__isnull=False, ends_at__gt=models.F("starts_at"))
+                ),
+                name="subscription_window_valid",
+            ),
+            models.CheckConstraint(
+                condition=~Q(status="active") | Q(starts_at__isnull=False),
+                name="active_subscription_has_start",
+            ),
+        ]
+
+
+class Commune(models.Model):
+    code = models.CharField(max_length=64, unique=True)
+    display_name = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+
+
+class Route(models.Model):
+    class Status(models.TextChoices):
+        ACTIVE = "active"
+        INACTIVE = "inactive"
+
+    driver = models.ForeignKey(
+        DriverProfile, on_delete=models.PROTECT, related_name="routes"
+    )
+    label = models.CharField(max_length=100)
+    status = models.CharField(max_length=8, choices=Status.choices)
+    weekdays = models.JSONField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    seat_capacity = models.PositiveIntegerField()
+    destination_label = models.CharField(max_length=120)
+    destination_address = models.CharField(max_length=255)
+    revision = models.PositiveIntegerField(default=1)
+    communes = models.ManyToManyField(Commune, through="RouteCoverage")
+
+    class Meta:
+        indexes = [models.Index(fields=["driver", "status"])]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(status__in=["active", "inactive"]),
+                name="route_status_valid",
+            ),
+            models.CheckConstraint(
+                condition=Q(seat_capacity__gt=0), name="route_capacity_positive"
+            ),
+            models.CheckConstraint(
+                condition=Q(start_time__lt=models.F("end_time")),
+                name="route_same_day_window",
+            ),
+        ]
+
+
+class RouteCoverage(models.Model):
+    route = models.ForeignKey(Route, on_delete=models.PROTECT)
+    commune = models.ForeignKey(Commune, on_delete=models.PROTECT)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["route", "commune"], name="unique_route_commune"
+            )
+        ]
