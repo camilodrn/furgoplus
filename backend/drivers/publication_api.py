@@ -322,6 +322,8 @@ class DiscoveryListView(ParentView):
 
 class DiscoveryDetailView(ParentView):
     def get(self, request, id):
+        from drivers.contact_api import ReviewDetailMixin
+
         now = timezone.now()
         driver = get_object_or_404(DriverProfile.objects.select_related("user"), pk=id)
         state = publication_state(driver, now)
@@ -329,6 +331,11 @@ class DiscoveryDetailView(ParentView):
             raise Http404()
         return no_store(
             Response(
-                discovery_json(driver, state, timezone.localtime(now, CHILE).date())
+                ReviewDetailMixin.with_reviews(
+                    discovery_json(
+                        driver, state, timezone.localtime(now, CHILE).date()
+                    ),
+                    driver,
+                )
             )
         )

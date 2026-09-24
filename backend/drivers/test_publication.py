@@ -5,13 +5,15 @@ from django.db import IntegrityError, transaction
 from django.test import Client, TestCase
 from django.utils import timezone
 
-from accounts.models import DriverProfile, User
+from accounts.models import DriverProfile, ParentProfile, User
 from drivers.models import (
     AdminActionLog,
     Commune,
+    ContactRequest,
     DriverDocument,
     DriverSubscription,
     Plan,
+    Review,
     Route,
     RouteCoverage,
 )
@@ -233,12 +235,47 @@ class PublicationTests(TestCase):
         )
 
     def test_discovery_allowlist_and_immediate_hiding(self):
+        reviewer = ParentProfile.objects.create(
+            user=self.parent, display_name="Identidad privada de reseña"
+        )
+        Review.objects.create(
+            parent=reviewer,
+            driver=self.driver,
+            score=5,
+            text="Servicio puntual",
+            status=Review.Status.PUBLISHED,
+        )
+        ContactRequest.objects.create(
+            parent=reviewer,
+            driver=self.driver,
+            driver_display_name_snapshot=self.driver.display_name,
+            message="Historia privada de contacto",
+            consented_at=self.now,
+            parent_email_snapshot=self.parent.email,
+            driver_email_snapshot=self.driver.service_contact_email,
+            status=ContactRequest.Status.ACCEPTED,
+            resolved_at=self.now,
+        )
         self.as_user(self.parent)
         listing = self.client.get(
             BASE + "discovery/drivers/?commune=demo-norte", secure=True
         )
         self.assertEqual(listing.status_code, 200)
         self.assertEqual(len(listing.json()["results"]), 1)
+        self.assertEqual(
+            set(listing.json()["results"][0]),
+            {
+                "id",
+                "display_name",
+                "service_summary",
+                "validation_label",
+                "coverage",
+                "routes",
+                "review_average",
+                "review_count",
+            },
+        )
+        self.assertEqual(listing.json()["results"][0]["review_count"], 1)
         self.assertEqual(
             self.client.get(
                 BASE + "discovery/drivers/?commune=demo-sur", secure=True
@@ -258,12 +295,40 @@ class PublicationTests(TestCase):
                 "validation_label",
                 "coverage",
                 "routes",
+                "review_average",
+                "review_count",
+                "reviews",
             },
         )
-        self.assertNotIn("Dirección sintética", detail.content.decode())
-        self.assertNotIn("service@example.test", detail.content.decode())
+        self.assertEqual(
+            (detail.json()["review_average"], detail.json()["review_count"]),
+            (5, 1),
+        )
+        self.assertEqual(len(detail.json()["reviews"]), 1)
+        self.assertEqual(
+            set(detail.json()["reviews"][0]),
+            {"score", "text", "created_at", "created_on", "is_demo"},
+        )
+        self.assertEqual(detail.json()["reviews"][0]["text"], "Servicio puntual")
+        for response in (listing, detail):
+            payload = response.content.decode()
+            for private in (
+                "Dirección sintética",
+                "service@example.test",
+                "parent@example.test",
+                "Identidad privada de reseña",
+                "Historia privada de contacto",
+                "destination_address",
+                "service_contact_email",
+                "document",
+                "subscription",
+                "audit",
+                "contact_request",
+                "parent_id",
+                "parent_email",
+            ):
+                self.assertNotIn(private, payload)
         self.assertEqual(detail["Cache-Control"], "no-store")
-        self.assertNotIn("service@example.test", listing.content.decode())
         self.subscription.status = "suspended"
         self.subscription.save(update_fields=["status"])
         self.assertEqual(

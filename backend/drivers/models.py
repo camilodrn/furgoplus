@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 
-from accounts.models import DriverProfile
+from accounts.models import DriverProfile, ParentProfile
 
 
 class DriverDocument(models.Model):
@@ -275,4 +275,87 @@ class RouteCoverage(models.Model):
             models.UniqueConstraint(
                 fields=["route", "commune"], name="unique_route_commune"
             )
+        ]
+
+
+class Review(models.Model):
+    class Status(models.TextChoices):
+        PUBLISHED = "published"
+        HIDDEN = "hidden"
+
+    parent = models.ForeignKey(ParentProfile, on_delete=models.PROTECT)
+    driver = models.ForeignKey(DriverProfile, on_delete=models.PROTECT)
+    score = models.PositiveSmallIntegerField()
+    text = models.CharField(max_length=500, blank=True)
+    status = models.CharField(max_length=9, choices=Status.choices)
+    is_demo = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("Review history is retained")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["parent", "driver"], name="one_review_per_pair"
+            ),
+            models.CheckConstraint(
+                condition=Q(score__gte=1, score__lte=5), name="review_score_1_5"
+            ),
+            models.CheckConstraint(
+                condition=Q(status__in=["published", "hidden"]),
+                name="review_status_valid",
+            ),
+        ]
+        indexes = [models.Index(fields=["driver", "status"])]
+
+
+class ContactRequest(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending"
+        ACCEPTED = "accepted"
+        DECLINED = "declined"
+        CANCELLED = "cancelled"
+
+    parent = models.ForeignKey(ParentProfile, on_delete=models.PROTECT)
+    driver = models.ForeignKey(DriverProfile, on_delete=models.PROTECT)
+    driver_display_name_snapshot = models.CharField(max_length=100)
+    message = models.CharField(max_length=500)
+    consented_at = models.DateTimeField()
+    parent_email_snapshot = models.EmailField()
+    driver_email_snapshot = models.EmailField(null=True, blank=True)
+    status = models.CharField(
+        max_length=9, choices=Status.choices, default=Status.PENDING
+    )
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    resolved_at = models.DateTimeField(null=True, blank=True)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("Contact history is retained")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["parent", "driver"],
+                condition=Q(status="pending"),
+                name="one_pending_contact_per_pair",
+            ),
+            models.CheckConstraint(
+                condition=Q(
+                    status__in=["pending", "accepted", "declined", "cancelled"]
+                ),
+                name="contact_status_valid",
+            ),
+            models.CheckConstraint(
+                condition=~Q(message=""), name="contact_message_nonempty"
+            ),
+            models.CheckConstraint(
+                condition=Q(driver_email_snapshot__isnull=True) | Q(status="accepted"),
+                name="contact_driver_email_accepted",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=["parent", "status"]),
+            models.Index(fields=["driver", "status"]),
         ]

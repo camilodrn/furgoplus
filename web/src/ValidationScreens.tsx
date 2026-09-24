@@ -155,13 +155,15 @@ type DriverSection =
   | "documents"
   | "validation"
   | "publication"
-  | "routes";
+  | "routes"
+  | "requests";
 const driverSections: { id: DriverSection; label: string }[] = [
   { id: "profile", label: "Perfil" },
   { id: "documents", label: "Documentos" },
   { id: "validation", label: "Validación" },
   { id: "publication", label: "Publicación" },
   { id: "routes", label: "Rutas" },
+  { id: "requests", label: "Solicitudes" },
 ];
 
 function nextStep(

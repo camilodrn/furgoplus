@@ -240,7 +240,12 @@ test("driver section navigation keeps profile drafts and existing validation and
   const { api } = driverApi();
   function Harness() {
     const [section, setSection] = useState<
-      "profile" | "documents" | "validation" | "publication" | "routes"
+      | "profile"
+      | "documents"
+      | "validation"
+      | "publication"
+      | "routes"
+      | "requests"
     >("profile");
     return (
       <DriverOnboarding
@@ -291,7 +296,12 @@ test("mobile section selector identifies the current section and keeps profile d
   const { api } = driverApi();
   function Harness() {
     const [section, setSection] = useState<
-      "profile" | "documents" | "validation" | "publication" | "routes"
+      | "profile"
+      | "documents"
+      | "validation"
+      | "publication"
+      | "routes"
+      | "requests"
     >("profile");
     return (
       <DriverOnboarding
@@ -321,7 +331,7 @@ test("mobile section selector identifies the current section and keeps profile d
       .getByRole("button", { name: "Perfil (actual)" })
       .getAttribute("aria-current"),
   ).toBe("page");
-  expect(within(selector).getAllByRole("button")).toHaveLength(6);
+  expect(within(selector).getAllByRole("button")).toHaveLength(7);
   fireEvent.click(
     within(selector).getByRole("button", { name: "Publicación" }),
   );
@@ -346,7 +356,7 @@ test("mobile section selector identifies the current section and keeps profile d
     within(
       screen.getByRole("navigation", { name: "Secciones del conductor" }),
     ).getAllByRole("button"),
-  ).toHaveLength(5);
+  ).toHaveLength(6);
 });
 
 test("next step reflects published, ready, and blocked publication states", async () => {

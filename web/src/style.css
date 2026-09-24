@@ -1215,3 +1215,59 @@ button:not([class]):hover:not(:disabled) {
     overflow-wrap: anywhere;
   }
 }
+
+.request-layout {
+  display: grid;
+  grid-template-columns: minmax(13rem, 1fr) minmax(18rem, 2fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.request-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.request-list li {
+  margin-bottom: 0.5rem;
+}
+.request-list button {
+  width: 100%;
+  text-align: left;
+  padding: 0.8rem;
+  border: 1px solid #ccd8e2;
+  border-radius: 0.5rem;
+  background: white;
+  color: #164672;
+  cursor: pointer;
+}
+.request-detail {
+  border: 1px solid #ccd8e2;
+  border-radius: 0.6rem;
+  padding: 1.2rem;
+  background: white;
+}
+.request-message {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.request-actions {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+.button-danger {
+  background: #a72c35;
+  color: white;
+}
+.request-accepted {
+  color: #137347;
+}
+.request-declined,
+.request-cancelled {
+  color: #a72c35;
+}
+@media (max-width: 700px) {
+  .request-layout {
+    grid-template-columns: 1fr;
+  }
+}

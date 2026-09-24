@@ -77,6 +77,13 @@ const types = [
   ],
   ["DiscoveryDrivers", "/api/v1/discovery/drivers/", "get", "200"],
   ["DiscoveryDriver", "/api/v1/discovery/drivers/{id}/", "get", "200"],
+  ["DriverContactRequests", "/api/v1/driver/contact-requests/", "get", "200"],
+  [
+    "DriverContactRequest",
+    "/api/v1/driver/contact-requests/{id}/",
+    "get",
+    "200",
+  ],
 ];
 const raw = `// Generated from backend/openapi.json. Do not edit by hand.\n${types
   .map(([name, path, method, status]) => {

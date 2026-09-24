@@ -6,6 +6,7 @@ from datetime import UTC, date
 from zoneinfo import ZoneInfo
 
 from django.db import transaction
+from django.db.models import Avg, Count
 from django.utils import timezone
 from rest_framework.exceptions import APIException, ValidationError
 
@@ -15,6 +16,7 @@ from drivers.models import (
     DriverDocument,
     DriverSubscription,
     Plan,
+    Review,
     Route,
 )
 from drivers.services import CHECKLIST
@@ -222,6 +224,9 @@ def discovery_json(driver, state, today=None):
                 ),
             }
         )
+    rating = Review.objects.filter(
+        driver=driver, status=Review.Status.PUBLISHED
+    ).aggregate(average=Avg("score"), count=Count("id"))
     return {
         "id": driver.pk,
         "display_name": driver.display_name,
@@ -229,6 +234,10 @@ def discovery_json(driver, state, today=None):
         "validation_label": "Validado",
         "coverage": sorted(coverage.values(), key=lambda item: item["code"]),
         "routes": routes,
+        "review_average": round(rating["average"], 2)
+        if rating["average"] is not None
+        else None,
+        "review_count": rating["count"],
     }
 
 

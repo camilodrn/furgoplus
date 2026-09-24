@@ -4,7 +4,7 @@ from api.auth import CsrfView, LoginView, LogoutView, MeView, RegisterView
 from api.contracts import ENDPOINTS
 from api.views import HealthView
 from drivers import api as driver_api
-from drivers import publication_api
+from drivers import contact_api, publication_api
 
 VIEWS = {
     "health": HealthView,
@@ -39,6 +39,18 @@ VIEWS = {
     "admin-subscription-post": publication_api.AdminSubscriptionView,
     "discovery-list": publication_api.DiscoveryListView,
     "discovery-detail": publication_api.DiscoveryDetailView,
+    "discovery-communes": contact_api.ParentCommunesView,
+    "discovery-compare": contact_api.CompareView,
+    "parent-profile-get": contact_api.ParentProfileView,
+    "parent-profile-patch": contact_api.ParentProfileView,
+    "parent-requests-get": contact_api.ParentRequestsView,
+    "parent-requests-post": contact_api.ParentRequestsView,
+    "parent-request-detail": contact_api.ParentRequestDetailView,
+    "parent-request-cancel": contact_api.ParentCancelView,
+    "driver-requests-get": contact_api.DriverRequestsView,
+    "driver-request-detail": contact_api.DriverRequestDetailView,
+    "driver-request-accept": contact_api.DriverAcceptView,
+    "driver-request-decline": contact_api.DriverDeclineView,
 }
 
 urlpatterns = []

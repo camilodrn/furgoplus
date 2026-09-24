@@ -146,7 +146,7 @@ class NativeSessionApi {
     String method, {
     Map<String, Object?>? data,
   }) async {
-    final uri = config.endpoint('api/v1/auth/$path');
+    final uri = config.endpoint('api/v1/$path');
     if (uri.scheme != _origin.scheme ||
         uri.host != _origin.host ||
         uri.port != _origin.port) {
@@ -215,7 +215,7 @@ class NativeSessionApi {
     }
     if (response.status >= 400) {
       final code = body['code'] is String ? body['code'] as String : 'error';
-      if (code == 'csrf_failed') await csrf();
+      if (code == 'csrf_failed' && path != 'auth/csrf/') await csrf();
       if (code == 'not_authenticated') await clear();
       throw AuthFailure(
         response.status,
@@ -229,7 +229,7 @@ class NativeSessionApi {
   }
 
   Future<void> csrf() async {
-    final body = await _request('csrf/', 'GET');
+    final body = await _request('auth/csrf/', 'GET');
     final token = body['csrf_token'];
     if (token is! String || token.isEmpty)
       throw const FormatException('Invalid CSRF response');
@@ -243,7 +243,7 @@ class NativeSessionApi {
   ) async {
     if (_csrfToken == null) await csrf();
     await _request(
-      'register/',
+      'auth/register/',
       'POST',
       data: {
         'email': email,
@@ -257,7 +257,7 @@ class NativeSessionApi {
   Future<Map<String, dynamic>> login(String email, String password) async {
     if (_csrfToken == null) await csrf();
     final body = await _request(
-      'login/',
+      'auth/login/',
       'POST',
       data: {'email': email, 'password': password},
     );
@@ -268,7 +268,18 @@ class NativeSessionApi {
     return body;
   }
 
-  Future<Map<String, dynamic>> me() => _request('me/', 'GET');
+  Future<Map<String, dynamic>> me() => _request('auth/me/', 'GET');
+
+  Future<Map<String, dynamic>> get(String path) => _request(path, 'GET');
+
+  Future<Map<String, dynamic>> write(
+    String path,
+    Map<String, Object?> data, {
+    String method = 'POST',
+  }) async {
+    if (_csrfToken == null) await csrf();
+    return _request(path, method, data: data);
+  }
 
   Future<void> clear() async {
     _session = null;
@@ -280,7 +291,7 @@ class NativeSessionApi {
   Future<bool> logout() async {
     try {
       if (_csrfToken == null) await csrf();
-      await _request('logout/', 'POST', data: {});
+      await _request('auth/logout/', 'POST', data: {});
       return true;
     } catch (_) {
       return false;
