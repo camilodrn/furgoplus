@@ -1342,6 +1342,123 @@ ENDPOINTS += (
     ),
 )
 
+RUN = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "id",
+        "route_id",
+        "service_date",
+        "state",
+        "start_time",
+        "end_time",
+        "seat_capacity",
+        "destination_label",
+        "destination_address",
+        "started_at",
+        "ended_at",
+    ],
+    "properties": {
+        "id": INTEGER,
+        "route_id": INTEGER,
+        "service_date": {"type": "string", "format": "date"},
+        "state": {"type": "string", "enum": ["planned", "in_progress", "completed"]},
+        "start_time": STRING,
+        "end_time": STRING,
+        "seat_capacity": INTEGER,
+        "destination_label": STRING,
+        "destination_address": STRING,
+        "started_at": {"type": ["string", "null"], "format": "date-time"},
+        "ended_at": {"type": ["string", "null"], "format": "date-time"},
+    },
+}
+TODAY_ROSTER = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "student_display_name",
+        "pickup_instruction",
+        "guardian_display_name",
+        "guardian_contact",
+    ],
+    "properties": {
+        "student_display_name": STRING,
+        "pickup_instruction": STRING,
+        "guardian_display_name": STRING,
+        "guardian_contact": STRING,
+    },
+}
+TODAY_ROUTE = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "route_id",
+        "label",
+        "start_time",
+        "end_time",
+        "seat_capacity",
+        "used_seats",
+        "available_seats",
+        "destination_label",
+        "destination_address",
+        "roster",
+        "run",
+    ],
+    "properties": {
+        "route_id": INTEGER,
+        "label": STRING,
+        "start_time": STRING,
+        "end_time": STRING,
+        "seat_capacity": INTEGER,
+        "used_seats": INTEGER,
+        "available_seats": INTEGER,
+        "destination_label": STRING,
+        "destination_address": STRING,
+        "roster": {"type": "array", "items": TODAY_ROSTER},
+        "run": {"anyOf": [RUN, {"type": "null"}]},
+    },
+}
+UNFINISHED_RUN = {
+    **RUN,
+    "required": [*RUN["required"], "label"],
+    "properties": {**RUN["properties"], "label": STRING},
+}
+ENDPOINTS += (
+    Endpoint(
+        "driver/today/",
+        "driver-today",
+        "get",
+        "getDriverToday",
+        "Today's owner routes and unfinished earlier runs",
+        {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["service_date", "routes", "unfinished_runs"],
+            "properties": {
+                "service_date": {"type": "string", "format": "date"},
+                "routes": {"type": "array", "items": TODAY_ROUTE},
+                "unfinished_runs": {"type": "array", "items": UNFINISHED_RUN},
+            },
+        },
+    ),
+    Endpoint(
+        "driver/routes/{id}/start/",
+        "route-start",
+        "post",
+        "startDriverRoute",
+        "Start today's scheduled owner route",
+        RUN,
+    ),
+    Endpoint(
+        "driver/runs/{id}/end/",
+        "run-end",
+        "post",
+        "endDriverRun",
+        "Complete own current or earlier unfinished run",
+        RUN,
+    ),
+)
+
 # Detail adds published review display; search and comparison stay on one summary.
 ENDPOINTS = tuple(
     Endpoint(

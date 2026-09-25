@@ -219,6 +219,22 @@ class RouteDetailView(DriverView):
             )
             if route.revision != request.data["expected_revision"]:
                 raise StateConflict()
+            from drivers.daily_operation import RunConflict, frozen_today
+
+            frozen_fields = (
+                "status",
+                "weekdays",
+                "start_time",
+                "end_time",
+                "seat_capacity",
+                "destination_label",
+                "destination_address",
+            )
+            if frozen_today(route) and any(
+                getattr(route, field) != form.validated_data[field]
+                for field in frozen_fields
+            ):
+                raise RunConflict()
             validate_capacity(
                 route,
                 weekdays=form.validated_data["weekdays"],

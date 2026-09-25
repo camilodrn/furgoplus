@@ -9,6 +9,7 @@ from rest_framework.response import Response
 
 from accounts.models import DriverProfile
 from drivers.capacity import capacity_snapshot, local_today, validate_capacity
+from drivers.daily_operation import active_on, frozen_today
 from drivers.models import PassengerAssignment, PaymentRecord, Route
 from drivers.publication import publication_json, utc_instant
 from drivers.publication_api import DriverView
@@ -87,6 +88,13 @@ class AssignmentsView(DriverView):
                 pk=data["route_id"],
                 driver=self.driver(request),
             )
+            today = local_today()
+            if (
+                frozen_today(route, today)
+                and data["starts_on"] <= today
+                and (data["ends_on"] is None or today <= data["ends_on"])
+            ):
+                raise OperationConflict()
             validate_capacity(
                 route, replacement=(None, data["starts_on"], data["ends_on"])
             )
@@ -128,6 +136,25 @@ class AssignmentDetailView(DriverView):
             row = get_object_or_404(
                 PassengerAssignment.objects.select_for_update(), pk=id, route=route
             )
+            today = local_today()
+            before = active_on(row, today)
+            after = data["starts_on"] <= today and (
+                data["ends_on"] is None or today <= data["ends_on"]
+            )
+            roster_fields = (
+                "student_display_name",
+                "pickup_instruction",
+                "guardian_display_name",
+                "guardian_contact",
+            )
+            if frozen_today(route, today) and (
+                before != after
+                or (
+                    before
+                    and any(getattr(row, key) != data[key] for key in roster_fields)
+                )
+            ):
+                raise OperationConflict()
             validate_capacity(
                 route, replacement=(row.pk, data["starts_on"], data["ends_on"])
             )
@@ -157,6 +184,9 @@ class AssignmentEndView(DriverView):
                     {"ends_on": ["El término debe ser igual o posterior al inicio."]}
                 )
             if row.ends_on is not None and end >= row.ends_on:
+                raise OperationConflict()
+            today = local_today()
+            if frozen_today(route, today) and active_on(row, today) and end < today:
                 raise OperationConflict()
             validate_capacity(route, replacement=(row.pk, row.starts_on, end))
             row.ends_on = end

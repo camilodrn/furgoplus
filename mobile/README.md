@@ -13,4 +13,4 @@ flutter test
 flutter run --dart-define=API_BASE_URL=https://app.example.test
 ```
 
-Parent signup is on mobile. Drivers register on React and can log in on mobile. Admin accounts receive an unsupported mobile shell with logout. All role navigation comes from server identity. This task includes no discovery or operational content.
+Parent signup, discovery and contact requests are on mobile. Drivers register on React and can log in on mobile to inspect the server-derived Chilean service date, today's private roster and capacity, start or complete a run, recover an unfinished earlier run, and open the destination in an external maps application. The map action shares only the destination with that provider and requests no device location permission. Admin accounts receive an unsupported mobile shell with logout. All role navigation comes from server identity; logout disposes private role-specific screen state.

@@ -89,7 +89,7 @@ class _ParentHomeState extends State<ParentHome> {
       await action();
     } on AuthFailure catch (failure) {
       if (failure.code == 'not_authenticated') {
-        widget.auth.expire();
+        if (mounted) widget.auth.expire();
         return;
       }
       if (mounted)

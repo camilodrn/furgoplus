@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'auth_controller.dart';
+import 'driver_home.dart';
 import 'parent_home.dart';
 
 class AuthApp extends StatefulWidget {
@@ -38,7 +39,12 @@ class _AuthAppState extends State<AuthApp> {
       title: 'FurgoPlus',
       home: widget.controller.state == AuthState.parent
           ? ParentHome(
-              key: ValueKey(widget.controller.displayName),
+              key: ValueKey(widget.controller.sessionVersion),
+              auth: widget.controller,
+            )
+          : widget.controller.state == AuthState.driver
+          ? DriverHome(
+              key: ValueKey(widget.controller.sessionVersion),
               auth: widget.controller,
             )
           : Scaffold(

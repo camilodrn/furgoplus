@@ -19,8 +19,10 @@ class AuthController extends ChangeNotifier {
   AuthState state = AuthState.restoring;
   String? displayName;
   String? error;
+  int sessionVersion = 0;
 
   void expire() {
+    sessionVersion++;
     displayName = null;
     error = null;
     state = AuthState.signedOut;
@@ -28,6 +30,7 @@ class AuthController extends ChangeNotifier {
   }
 
   void _home(Map<String, dynamic> identity) {
+    sessionVersion++;
     displayName = identity['display_name'] is String
         ? identity['display_name'] as String
         : identity['email'] as String?;
@@ -97,9 +100,12 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    final confirmed = await api.logout();
+    sessionVersion++;
     displayName = null;
     error = null;
+    state = AuthState.restoring;
+    notifyListeners();
+    final confirmed = await api.logout();
     state = confirmed ? AuthState.signedOut : AuthState.logoutUnconfirmed;
     notifyListeners();
   }
