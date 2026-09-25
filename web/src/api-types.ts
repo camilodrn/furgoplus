@@ -223,6 +223,9 @@ export type Routes = {
   routes: {
     id: number;
     revision: number;
+    next_service_date: string;
+    used_seats: number;
+    available_seats: number;
     label: string;
     status: "active" | "inactive";
     weekdays: (
@@ -245,6 +248,9 @@ export type Routes = {
 export type Route = {
   id: number;
   revision: number;
+  next_service_date: string;
+  used_seats: number;
+  available_seats: number;
   label: string;
   status: "active" | "inactive";
   weekdays: (
@@ -301,6 +307,133 @@ export type RouteUpdate = {
   destination_address: string;
   coverage_codes: string[];
   expected_revision: number;
+};
+export type DriverSummary = {
+  publication: {
+    publication_requested: boolean;
+    eligible: boolean;
+    blockers: {
+      code:
+        | "account_inactive"
+        | "driver_suspended"
+        | "driver_deactivated"
+        | "publication_not_requested"
+        | "validation_not_approved"
+        | "approved_revision_stale"
+        | "required_document_missing"
+        | "required_document_expired"
+        | "subscription_missing"
+        | "subscription_inactive"
+        | "subscription_suspended"
+        | "subscription_not_started"
+        | "subscription_expired"
+        | "profile_display_name_missing"
+        | "profile_summary_missing"
+        | "service_contact_email_missing"
+        | "active_route_missing";
+      message: string;
+    }[];
+    validation_state: "draft" | "pending" | "approved" | "rejected";
+    current_validation_revision: number;
+    approved_revision: number | null;
+    subscription: {
+      plan_code: "basic" | "pro" | "elite";
+      plan_label: string;
+      status: "inactive" | "active" | "suspended";
+      starts_at: string | null;
+      ends_at: string | null;
+    } | null;
+    active_route_count: number;
+    coverage: { code: string; display_name: string }[];
+  };
+  routes: {
+    id: number;
+    label: string;
+    status: "active" | "inactive";
+    seat_capacity: number;
+    next_service_date: string;
+    used_seats: number;
+    available_seats: number;
+  }[];
+  active_assignments: number;
+  payment_counts: { pending: number; paid: number; void: number };
+};
+export type Assignments = {
+  assignments: {
+    route_id: number;
+    student_display_name: string;
+    pickup_instruction: string;
+    guardian_display_name: string;
+    guardian_contact: string;
+    starts_on: string;
+    ends_on: string | null;
+    id: number;
+    created_at: string;
+    updated_at: string;
+  }[];
+};
+export type Assignment = {
+  route_id: number;
+  student_display_name: string;
+  pickup_instruction: string;
+  guardian_display_name: string;
+  guardian_contact: string;
+  starts_on: string;
+  ends_on: string | null;
+  id: number;
+  created_at: string;
+  updated_at: string;
+};
+export type AssignmentInput = {
+  route_id: number;
+  student_display_name: string;
+  pickup_instruction: string;
+  guardian_display_name: string;
+  guardian_contact: string;
+  starts_on: string;
+  ends_on: string | null;
+};
+export type AssignmentUpdate = {
+  route_id?: number;
+  student_display_name?: string;
+  pickup_instruction?: string;
+  guardian_display_name?: string;
+  guardian_contact?: string;
+  starts_on?: string;
+  ends_on?: string | null;
+};
+export type Payments = {
+  payments: {
+    assignment_id: number;
+    service_period_start: string;
+    service_period_end: string;
+    amount_clp: number;
+    due_on: string;
+    id: number;
+    status: "pending" | "paid" | "void";
+    paid_at: string | null;
+    created_at: string;
+    updated_at: string;
+  }[];
+};
+export type Payment = {
+  assignment_id: number;
+  service_period_start: string;
+  service_period_end: string;
+  amount_clp: number;
+  due_on: string;
+  id: number;
+  status: "pending" | "paid" | "void";
+  paid_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+export type PaymentInput = {
+  assignment_id: number;
+  service_period_start: string;
+  service_period_end: string;
+  amount_clp: number;
+  due_on: string;
 };
 export type Plans = {
   plans: { code: "basic" | "pro" | "elite"; display_label: string }[];
@@ -375,6 +508,7 @@ export type DiscoveryDrivers = {
       start_time: string;
       end_time: string;
       seat_capacity: number;
+      used_seats: number;
       available_seats: number;
       next_service_date: string;
       coverage: { code: string; display_name: string }[];
@@ -404,6 +538,7 @@ export type DiscoveryDriver = {
     start_time: string;
     end_time: string;
     seat_capacity: number;
+    used_seats: number;
     available_seats: number;
     next_service_date: string;
     coverage: { code: string; display_name: string }[];

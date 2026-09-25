@@ -2,7 +2,7 @@
 
 import uuid
 from dataclasses import dataclass
-from datetime import UTC, date
+from datetime import UTC
 from zoneinfo import ZoneInfo
 
 from django.db import transaction
@@ -191,6 +191,8 @@ def publication_json(driver, now=None):
 
 
 def discovery_json(driver, state, today=None):
+    from drivers.capacity import capacity_snapshot
+
     today = today or timezone.localtime(timezone.now(), CHILE).date()
     coverage = {
         commune.code: {"code": commune.code, "display_name": commune.display_name}
@@ -200,10 +202,7 @@ def discovery_json(driver, state, today=None):
     }
     routes = []
     for route in state.routes:
-        days_ahead = min(
-            (WEEKDAYS.index(day) - today.weekday()) % 7 for day in route.weekdays
-        )
-        next_date = date.fromordinal(today.toordinal() + days_ahead)
+        snapshot = capacity_snapshot(route, today)
         routes.append(
             {
                 "id": route.pk,
@@ -212,8 +211,7 @@ def discovery_json(driver, state, today=None):
                 "start_time": route.start_time.strftime("%H:%M"),
                 "end_time": route.end_time.strftime("%H:%M"),
                 "seat_capacity": route.seat_capacity,
-                "available_seats": route.seat_capacity,
-                "next_service_date": next_date.isoformat(),
+                **snapshot,
                 "coverage": sorted(
                     (
                         {"code": c.code, "display_name": c.display_name}

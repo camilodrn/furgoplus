@@ -246,6 +246,9 @@ test("driver section navigation keeps profile drafts and existing validation and
       | "publication"
       | "routes"
       | "requests"
+      | "summary"
+      | "roster"
+      | "payments"
     >("profile");
     return (
       <DriverOnboarding
@@ -302,6 +305,9 @@ test("mobile section selector identifies the current section and keeps profile d
       | "publication"
       | "routes"
       | "requests"
+      | "summary"
+      | "roster"
+      | "payments"
     >("profile");
     return (
       <DriverOnboarding
@@ -331,7 +337,7 @@ test("mobile section selector identifies the current section and keeps profile d
       .getByRole("button", { name: "Perfil (actual)" })
       .getAttribute("aria-current"),
   ).toBe("page");
-  expect(within(selector).getAllByRole("button")).toHaveLength(7);
+  expect(within(selector).getAllByRole("button")).toHaveLength(10);
   fireEvent.click(
     within(selector).getByRole("button", { name: "Publicación" }),
   );
@@ -356,7 +362,7 @@ test("mobile section selector identifies the current section and keeps profile d
     within(
       screen.getByRole("navigation", { name: "Secciones del conductor" }),
     ).getAllByRole("button"),
-  ).toHaveLength(6);
+  ).toHaveLength(9);
 });
 
 test("next step reflects published, ready, and blocked publication states", async () => {

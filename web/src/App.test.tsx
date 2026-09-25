@@ -132,6 +132,146 @@ test("successful profile update automatically fetches publication state", async 
   ).toBeTruthy();
 });
 
+test("assignment create, edit and end refresh server capacity in routes and summary", async () => {
+  let usedSeats = 0;
+  let availableSeats = 12;
+  let assignment: Record<string, unknown> | null = null;
+  const route = () => ({
+    id: 2,
+    revision: 1,
+    label: "Ruta ficticia",
+    status: "active",
+    weekdays: ["monday"],
+    start_time: "07:00",
+    end_time: "08:00",
+    seat_capacity: 12,
+    next_service_date: "2026-09-28",
+    used_seats: usedSeats,
+    available_seats: availableSeats,
+    destination_label: "Escuela ficticia",
+    destination_address: "Dirección ficticia",
+    coverage_codes: ["demo"],
+  });
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValueOnce(csrf)
+    .mockResolvedValueOnce(ok(driver))
+    .mockImplementation((path: string, options: RequestInit) => {
+      if (path.endsWith("driver/routes/") && options.method === "GET")
+        return Promise.resolve(ok({ routes: [route()] }));
+      if (path.endsWith("driver/summary/"))
+        return Promise.resolve(
+          ok({
+            publication: {
+              publication_requested: false,
+              eligible: false,
+              blockers: [],
+              validation_state: "draft",
+              current_validation_revision: 1,
+              approved_revision: null,
+              subscription: null,
+              active_route_count: 1,
+              coverage: [],
+            },
+            routes: [route()],
+            active_assignments: assignment ? 1 : 0,
+            payment_counts: { pending: 0, paid: 0, void: 0 },
+          }),
+        );
+      if (path.endsWith("driver/passenger-assignments/")) {
+        if (options.method === "GET")
+          return Promise.resolve(
+            ok({ assignments: assignment ? [assignment] : [] }),
+          );
+        usedSeats = 4;
+        availableSeats = 8;
+        assignment = {
+          ...JSON.parse(options.body as string),
+          id: 5,
+          created_at: "2026-09-24T00:00:00Z",
+          updated_at: "2026-09-24T00:00:00Z",
+        };
+        return Promise.resolve(ok(assignment));
+      }
+      if (path.endsWith("driver/passenger-assignments/5/")) {
+        usedSeats = 6;
+        availableSeats = 6;
+        assignment = { ...assignment, ...JSON.parse(options.body as string) };
+        return Promise.resolve(ok(assignment));
+      }
+      if (path.endsWith("driver/passenger-assignments/5/end/")) {
+        usedSeats = 0;
+        availableSeats = 12;
+        assignment = { ...assignment, ends_on: "2026-09-28" };
+        return Promise.resolve(ok(assignment));
+      }
+      return Promise.resolve(domain(path));
+    });
+  vi.stubGlobal("fetch", fetchMock);
+  const prompt = vi.spyOn(window, "prompt").mockReturnValue("28/09/2026");
+  const section = (name: string) =>
+    within(
+      screen.getByRole("navigation", { name: "Secciones del conductor" }),
+    ).getByRole("button", { name });
+  render(<App />);
+  await screen.findByRole("navigation", { name: "Secciones del conductor" });
+  fireEvent.click(section("Rutas"));
+  expect(await screen.findByText(/0 usados · 12 disponibles/)).toBeTruthy();
+
+  fireEvent.click(section("Pasajeros"));
+  await screen.findByText("Aún no hay pasajeros asignados.");
+  fireEvent.change(screen.getByLabelText("Ruta"), { target: { value: "2" } });
+  for (const [label, value] of [
+    ["Nombre visible del estudiante", "Estudiante Ficticio"],
+    ["Recogida / instrucciones", "Parada ficticia"],
+    ["Nombre del apoderado", "Apoderado Ficticio"],
+    ["Teléfono del apoderado", "912345678"],
+    ["Desde", "28/09/2026"],
+  ] as const)
+    fireEvent.change(screen.getByLabelText(label), { target: { value } });
+  fireEvent.click(screen.getByRole("button", { name: "Crear asignación" }));
+  expect(await screen.findByText("Estudiante Ficticio")).toBeTruthy();
+  fireEvent.click(section("Rutas"));
+  expect(await screen.findByText(/4 usados · 8 disponibles/)).toBeTruthy();
+  fireEvent.click(section("Resumen"));
+  expect(
+    await screen.findByText(/4 usados \/ 8 disponibles de 12/),
+  ).toBeTruthy();
+
+  fireEvent.click(section("Pasajeros"));
+  fireEvent.click(await screen.findByRole("button", { name: "Editar" }));
+  fireEvent.change(screen.getByLabelText("Hasta (opcional)"), {
+    target: { value: "30/09/2026" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }));
+  await screen.findByText(/28\/09\/2026–30\/09\/2026/);
+  fireEvent.click(section("Rutas"));
+  expect(await screen.findByText(/6 usados · 6 disponibles/)).toBeTruthy();
+
+  fireEvent.click(section("Pasajeros"));
+  fireEvent.click(await screen.findByRole("button", { name: "Terminar" }));
+  await screen.findByText(/28\/09\/2026–28\/09\/2026/);
+  fireEvent.click(section("Rutas"));
+  expect(await screen.findByText(/0 usados · 12 disponibles/)).toBeTruthy();
+  fireEvent.click(section("Resumen"));
+  expect(
+    await screen.findByText(/0 usados \/ 12 disponibles de 12/),
+  ).toBeTruthy();
+  expect(
+    fetchMock.mock.calls.filter(
+      ([path, options]) =>
+        path.includes("driver/routes/") && options.method !== "GET",
+    ),
+  ).toHaveLength(0);
+  expect(
+    fetchMock.mock.calls.filter(
+      ([path, options]) =>
+        path.endsWith("driver/routes/") && options.method === "GET",
+    ).length,
+  ).toBeGreaterThanOrEqual(4);
+  prompt.mockRestore();
+});
+
 test("brand falls back to a wordmark when the logo cannot load", async () => {
   vi.stubGlobal(
     "fetch",

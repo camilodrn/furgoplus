@@ -10,6 +10,7 @@ import type {
 import {
   chileDateTimeParts,
   chileInstant,
+  formatChileanDate,
   humanChileanDate,
   parseChileanDate,
 } from "./dates";
@@ -297,6 +298,10 @@ export function DriverPublicationScreen({
             <strong>{route.label}</strong> ·{" "}
             {route.status === "active" ? "Activa" : "Inactiva"} ·{" "}
             {route.start_time}–{route.end_time} · {route.seat_capacity} cupos
+            <p>
+              Próximo servicio: {formatChileanDate(route.next_service_date)} ·{" "}
+              {route.used_seats} usados · {route.available_seats} disponibles
+            </p>
             <p>
               {route.weekdays
                 .map((day) => days.find(([code]) => code === day)?.[1] ?? day)
