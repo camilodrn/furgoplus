@@ -28,6 +28,14 @@ import type {
   SubscriptionInput,
   DriverContactRequests,
   DriverContactRequest,
+  DriverSummary,
+  Assignments,
+  Assignment,
+  AssignmentInput,
+  AssignmentUpdate,
+  Payments,
+  Payment,
+  PaymentInput,
 } from "./api-types";
 
 export class ApiError extends Error {
@@ -223,6 +231,38 @@ export class AuthApi {
   }
   updateRoute(id: number, input: RouteUpdate): Promise<Route> {
     return this.unsafe(`driver/routes/${id}/`, input, "PATCH");
+  }
+  summary(): Promise<DriverSummary> {
+    return request("driver/summary/", "GET");
+  }
+  assignments(routeId?: number): Promise<Assignments> {
+    return request(
+      `driver/passenger-assignments/${routeId ? `?route_id=${routeId}` : ""}`,
+      "GET",
+    );
+  }
+  createAssignment(input: AssignmentInput): Promise<Assignment> {
+    return this.unsafe("driver/passenger-assignments/", input);
+  }
+  updateAssignment(id: number, input: AssignmentUpdate): Promise<Assignment> {
+    return this.unsafe(`driver/passenger-assignments/${id}/`, input, "PATCH");
+  }
+  endAssignment(id: number, endsOn: string): Promise<Assignment> {
+    return this.unsafe(`driver/passenger-assignments/${id}/end/`, {
+      ends_on: endsOn,
+    });
+  }
+  payments(): Promise<Payments> {
+    return request("driver/payments/", "GET");
+  }
+  createPayment(input: PaymentInput): Promise<Payment> {
+    return this.unsafe("driver/payments/", input);
+  }
+  markPaymentPaid(id: number): Promise<Payment> {
+    return this.unsafe(`driver/payments/${id}/mark-paid/`, {});
+  }
+  voidPayment(id: number): Promise<Payment> {
+    return this.unsafe(`driver/payments/${id}/void/`, {});
   }
   plans(): Promise<Plans> {
     return request("admin/plans/", "GET");

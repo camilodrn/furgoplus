@@ -48,6 +48,9 @@ const route: Route = {
   start_time: "07:00",
   end_time: "08:00",
   seat_capacity: 3,
+  next_service_date: "2026-09-28",
+  used_seats: 0,
+  available_seats: 3,
   destination_label: "Escuela demo",
   destination_address: "Dirección privada",
   coverage_codes: ["demo-norte"],
@@ -75,7 +78,12 @@ function driverApi() {
         input: RouteInput & { expected_revision: number },
       ) => {
         routes = [
-          { ...input, id: route.id, revision: input.expected_revision + 1 },
+          {
+            ...route,
+            ...input,
+            id: route.id,
+            revision: input.expected_revision + 1,
+          },
         ];
         return routes[0];
       },
@@ -125,6 +133,7 @@ test("driver sees blockers, requests publication, creates and deactivates a rout
     expect.objectContaining({ start_time: "07:30", end_time: "08:30" }),
   );
   expect(await screen.findByText(/Ida demo/)).toBeTruthy();
+  expect(screen.getByText(/Próximo servicio: 28\/09\/2026/)).toBeTruthy();
   fireEvent.click(screen.getByText("Editar"));
   fireEvent.change(screen.getByLabelText("Nombre de la ruta"), {
     target: { value: "Ida corregida" },

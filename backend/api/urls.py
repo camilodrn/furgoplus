@@ -4,7 +4,7 @@ from api.auth import CsrfView, LoginView, LogoutView, MeView, RegisterView
 from api.contracts import ENDPOINTS
 from api.views import HealthView
 from drivers import api as driver_api
-from drivers import contact_api, publication_api
+from drivers import contact_api, operations_api, publication_api
 
 VIEWS = {
     "health": HealthView,
@@ -33,6 +33,17 @@ VIEWS = {
     "driver-routes-post": publication_api.RoutesView,
     "driver-route-get": publication_api.RouteDetailView,
     "driver-route-patch": publication_api.RouteDetailView,
+    "driver-summary": operations_api.DriverSummaryView,
+    "assignments-get": operations_api.AssignmentsView,
+    "assignments-post": operations_api.AssignmentsView,
+    "assignment-get": operations_api.AssignmentDetailView,
+    "assignment-patch": operations_api.AssignmentDetailView,
+    "assignment-end": operations_api.AssignmentEndView,
+    "payments-get": operations_api.PaymentsView,
+    "payments-post": operations_api.PaymentsView,
+    "payment-get": operations_api.PaymentDetailView,
+    "payment-paid": operations_api.PaymentPaidView,
+    "payment-void": operations_api.PaymentVoidView,
     "admin-plans": publication_api.PlansView,
     "admin-publication": publication_api.AdminPublicationView,
     "admin-subscription-get": publication_api.AdminSubscriptionView,

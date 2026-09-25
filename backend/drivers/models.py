@@ -278,6 +278,108 @@ class RouteCoverage(models.Model):
         ]
 
 
+class PassengerAssignment(models.Model):
+    route = models.ForeignKey(
+        Route, on_delete=models.PROTECT, related_name="assignments"
+    )
+    student_display_name = models.CharField(max_length=100)
+    pickup_instruction = models.CharField(max_length=255)
+    guardian_display_name = models.CharField(max_length=100)
+    guardian_contact = models.CharField(max_length=150)
+    starts_on = models.DateField()
+    ends_on = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if self.pk and type(self).objects.get(pk=self.pk).route_id != self.route_id:
+            raise ValidationError("Assignment route history is immutable")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("Assignment history is retained")
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(ends_on__isnull=True)
+                | Q(ends_on__gte=models.F("starts_on")),
+                name="assignment_interval_valid",
+            )
+        ]
+        indexes = [
+            models.Index(
+                fields=["route", "starts_on", "ends_on"],
+                name="assignment_route_dates_idx",
+            )
+        ]
+
+
+class PaymentRecord(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending"
+        PAID = "paid"
+        VOID = "void"
+
+    driver = models.ForeignKey(
+        DriverProfile, on_delete=models.PROTECT, related_name="transport_payments"
+    )
+    assignment = models.ForeignKey(
+        PassengerAssignment, on_delete=models.PROTECT, related_name="payments"
+    )
+    service_period_start = models.DateField()
+    service_period_end = models.DateField()
+    amount_clp = models.PositiveIntegerField()
+    due_on = models.DateField()
+    status = models.CharField(
+        max_length=7, choices=Status.choices, default=Status.PENDING
+    )
+    paid_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            original = type(self).objects.get(pk=self.pk)
+            if (original.driver_id, original.assignment_id) != (
+                self.driver_id,
+                self.assignment_id,
+            ):
+                raise ValidationError("Payment ownership is immutable")
+        if self.assignment.route.driver_id != self.driver_id:
+            raise ValidationError("Payment and assignment drivers must match")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("Payment history is retained")
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(amount_clp__gt=0), name="payment_amount_positive"
+            ),
+            models.CheckConstraint(
+                condition=Q(service_period_end__gte=models.F("service_period_start")),
+                name="payment_period_valid",
+            ),
+            models.CheckConstraint(
+                condition=Q(status__in=["pending", "paid", "void"]),
+                name="payment_status_valid",
+            ),
+            models.CheckConstraint(
+                condition=~Q(status="pending") | Q(paid_at__isnull=True),
+                name="pending_payment_unpaid",
+            ),
+            models.CheckConstraint(
+                condition=~Q(status="paid") | Q(paid_at__isnull=False),
+                name="paid_payment_timestamp",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=["driver", "status"], name="payment_driver_status_idx")
+        ]
+
+
 class Review(models.Model):
     class Status(models.TextChoices):
         PUBLISHED = "published"

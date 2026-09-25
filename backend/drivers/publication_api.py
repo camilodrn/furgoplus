@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 
 from accounts.models import DriverProfile, User
 from api.auth import JsonSessionAuthentication, no_store
+from drivers.capacity import capacity_snapshot, validate_capacity
 from drivers.models import (
     AdminActionLog,
     Commune,
@@ -140,6 +141,7 @@ def route_json(route):
         "destination_address": route.destination_address,
         "revision": route.revision,
         "coverage_codes": sorted(route.communes.values_list("code", flat=True)),
+        **capacity_snapshot(route),
     }
 
 
@@ -217,6 +219,11 @@ class RouteDetailView(DriverView):
             )
             if route.revision != request.data["expected_revision"]:
                 raise StateConflict()
+            validate_capacity(
+                route,
+                weekdays=form.validated_data["weekdays"],
+                capacity=form.validated_data["seat_capacity"],
+            )
             route.revision += 1
             route = save_route(driver, dict(form.validated_data), route)
         return no_store(Response(route_json(route)))
