@@ -142,7 +142,7 @@ class OperationsTests(TestCase):
                 {**self.payload, "guardian_contact": value},
             )
             self.assertEqual(response.status_code, 400)
-            self.assertIn("guardian_contact", response.json())
+            self.assertIn("guardian_contact", response.json()["fields"])
         response = self.post("driver/passenger-assignments/", self.payload)
         self.assertEqual(response.status_code, 201)
         assignment_id = response.json()["id"]
