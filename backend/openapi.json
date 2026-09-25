@@ -7308,6 +7308,503 @@
           }
         ]
       }
+    },
+    "/api/v1/driver/today/": {
+      "get": {
+        "operationId": "getDriverToday",
+        "summary": "Today's owner routes and unfinished earlier runs",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "service_date",
+                    "routes",
+                    "unfinished_runs"
+                  ],
+                  "properties": {
+                    "service_date": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "routes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "route_id",
+                          "label",
+                          "start_time",
+                          "end_time",
+                          "seat_capacity",
+                          "used_seats",
+                          "available_seats",
+                          "destination_label",
+                          "destination_address",
+                          "roster",
+                          "run"
+                        ],
+                        "properties": {
+                          "route_id": {
+                            "type": "integer"
+                          },
+                          "label": {
+                            "type": "string"
+                          },
+                          "start_time": {
+                            "type": "string"
+                          },
+                          "end_time": {
+                            "type": "string"
+                          },
+                          "seat_capacity": {
+                            "type": "integer"
+                          },
+                          "used_seats": {
+                            "type": "integer"
+                          },
+                          "available_seats": {
+                            "type": "integer"
+                          },
+                          "destination_label": {
+                            "type": "string"
+                          },
+                          "destination_address": {
+                            "type": "string"
+                          },
+                          "roster": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "student_display_name",
+                                "pickup_instruction",
+                                "guardian_display_name",
+                                "guardian_contact"
+                              ],
+                              "properties": {
+                                "student_display_name": {
+                                  "type": "string"
+                                },
+                                "pickup_instruction": {
+                                  "type": "string"
+                                },
+                                "guardian_display_name": {
+                                  "type": "string"
+                                },
+                                "guardian_contact": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "run": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": [
+                                  "id",
+                                  "route_id",
+                                  "service_date",
+                                  "state",
+                                  "start_time",
+                                  "end_time",
+                                  "seat_capacity",
+                                  "destination_label",
+                                  "destination_address",
+                                  "started_at",
+                                  "ended_at"
+                                ],
+                                "properties": {
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "route_id": {
+                                    "type": "integer"
+                                  },
+                                  "service_date": {
+                                    "type": "string",
+                                    "format": "date"
+                                  },
+                                  "state": {
+                                    "type": "string",
+                                    "enum": [
+                                      "planned",
+                                      "in_progress",
+                                      "completed"
+                                    ]
+                                  },
+                                  "start_time": {
+                                    "type": "string"
+                                  },
+                                  "end_time": {
+                                    "type": "string"
+                                  },
+                                  "seat_capacity": {
+                                    "type": "integer"
+                                  },
+                                  "destination_label": {
+                                    "type": "string"
+                                  },
+                                  "destination_address": {
+                                    "type": "string"
+                                  },
+                                  "started_at": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ],
+                                    "format": "date-time"
+                                  },
+                                  "ended_at": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ],
+                                    "format": "date-time"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "unfinished_runs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "route_id",
+                          "service_date",
+                          "state",
+                          "start_time",
+                          "end_time",
+                          "seat_capacity",
+                          "destination_label",
+                          "destination_address",
+                          "started_at",
+                          "ended_at",
+                          "label"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "route_id": {
+                            "type": "integer"
+                          },
+                          "service_date": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "state": {
+                            "type": "string",
+                            "enum": [
+                              "planned",
+                              "in_progress",
+                              "completed"
+                            ]
+                          },
+                          "start_time": {
+                            "type": "string"
+                          },
+                          "end_time": {
+                            "type": "string"
+                          },
+                          "seat_capacity": {
+                            "type": "integer"
+                          },
+                          "destination_label": {
+                            "type": "string"
+                          },
+                          "destination_address": {
+                            "type": "string"
+                          },
+                          "started_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "ended_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "label": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/driver/routes/{id}/start/": {
+      "post": {
+        "operationId": "startDriverRoute",
+        "summary": "Start today's scheduled owner route",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "route_id",
+                    "service_date",
+                    "state",
+                    "start_time",
+                    "end_time",
+                    "seat_capacity",
+                    "destination_label",
+                    "destination_address",
+                    "started_at",
+                    "ended_at"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "route_id": {
+                      "type": "integer"
+                    },
+                    "service_date": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "planned",
+                        "in_progress",
+                        "completed"
+                      ]
+                    },
+                    "start_time": {
+                      "type": "string"
+                    },
+                    "end_time": {
+                      "type": "string"
+                    },
+                    "seat_capacity": {
+                      "type": "integer"
+                    },
+                    "destination_label": {
+                      "type": "string"
+                    },
+                    "destination_address": {
+                      "type": "string"
+                    },
+                    "started_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    },
+                    "ended_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/driver/runs/{id}/end/": {
+      "post": {
+        "operationId": "endDriverRun",
+        "summary": "Complete own current or earlier unfinished run",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "route_id",
+                    "service_date",
+                    "state",
+                    "start_time",
+                    "end_time",
+                    "seat_capacity",
+                    "destination_label",
+                    "destination_address",
+                    "started_at",
+                    "ended_at"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "route_id": {
+                      "type": "integer"
+                    },
+                    "service_date": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "planned",
+                        "in_progress",
+                        "completed"
+                      ]
+                    },
+                    "start_time": {
+                      "type": "string"
+                    },
+                    "end_time": {
+                      "type": "string"
+                    },
+                    "seat_capacity": {
+                      "type": "integer"
+                    },
+                    "destination_label": {
+                      "type": "string"
+                    },
+                    "destination_address": {
+                      "type": "string"
+                    },
+                    "started_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    },
+                    "ended_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "description": "Masked token from auth/csrf or login, paired with the CSRF cookie",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
     }
   },
   "components": {

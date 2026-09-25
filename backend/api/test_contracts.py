@@ -46,3 +46,31 @@ class Task06ContractTests(SimpleTestCase):
         ):
             self.assertIn("get", paths[path])
             self.assertIn("post", paths[path])
+
+    def test_daily_operation_is_private_and_public_contract_remains_allowlisted(self):
+        paths = openapi_document()["paths"]
+        today = paths["/api/v1/driver/today/"]["get"]
+        self.assertEqual(today["security"], [{"SessionCookie": []}])
+        self.assertIn(
+            "unfinished_runs",
+            today["responses"]["200"]["content"]["application/json"]["schema"][
+                "properties"
+            ],
+        )
+        for path in (
+            "/api/v1/discovery/drivers/",
+            "/api/v1/discovery/drivers/{id}/",
+            "/api/v1/discovery/compare/",
+            "/api/v1/parent/contact-requests/",
+        ):
+            body = str(paths[path]["get"]["responses"]["200"])
+            for secret in (
+                "roster",
+                "guardian_contact",
+                "pickup_instruction",
+                "destination_address",
+                "started_at",
+                "ended_at",
+                "run_state",
+            ):
+                self.assertNotIn(secret, body)

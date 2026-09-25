@@ -278,6 +278,61 @@ class RouteCoverage(models.Model):
         ]
 
 
+class RouteRun(models.Model):
+    class State(models.TextChoices):
+        PLANNED = "planned"
+        IN_PROGRESS = "in_progress"
+        COMPLETED = "completed"
+
+    route = models.ForeignKey(Route, on_delete=models.PROTECT, related_name="runs")
+    service_date = models.DateField()
+    state = models.CharField(max_length=11, choices=State.choices)
+    weekdays_snapshot = models.JSONField()
+    start_time_snapshot = models.TimeField()
+    end_time_snapshot = models.TimeField()
+    seat_capacity_snapshot = models.PositiveIntegerField()
+    destination_label_snapshot = models.CharField(max_length=120)
+    destination_address_snapshot = models.CharField(max_length=255)
+    started_at = models.DateTimeField(null=True, blank=True)
+    ended_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["route", "service_date"], name="unique_route_service_date"
+            ),
+            models.CheckConstraint(
+                condition=Q(state__in=["planned", "in_progress", "completed"]),
+                name="route_run_state_valid",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(state="planned", started_at__isnull=True, ended_at__isnull=True)
+                    | Q(
+                        state="in_progress",
+                        started_at__isnull=False,
+                        ended_at__isnull=True,
+                    )
+                    | Q(
+                        state="completed",
+                        started_at__isnull=False,
+                        ended_at__isnull=False,
+                    )
+                ),
+                name="route_run_timestamps_valid",
+            ),
+            models.CheckConstraint(
+                condition=Q(seat_capacity_snapshot__gt=0),
+                name="route_run_capacity_positive",
+            ),
+            models.CheckConstraint(
+                condition=Q(ended_at__isnull=True)
+                | Q(ended_at__gte=models.F("started_at")),
+                name="route_run_end_after_start",
+            ),
+        ]
+
+
 class PassengerAssignment(models.Model):
     route = models.ForeignKey(
         Route, on_delete=models.PROTECT, related_name="assignments"

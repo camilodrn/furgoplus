@@ -355,6 +355,11 @@ void main() {
       ..responses.addAll([
         reply(200, {'csrf_token': csrf}, [csrfCookie]),
         reply(200, identity),
+        reply(200, {
+          'service_date': '2026-09-28',
+          'routes': [],
+          'unfinished_runs': [],
+        }),
       ]);
     await tester.pumpWidget(
       AuthApp(
@@ -365,7 +370,9 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Inicio para conductores'), findsOneWidget);
+    expect(find.text('FurgoPlus · Conductor'), findsOneWidget);
+    expect(find.text('Hoy en Chile: 28-09-2026'), findsOneWidget);
+    expect(find.text('No hay rutas programadas para hoy.'), findsOneWidget);
   });
 
   testWidgets('login sends entered password unchanged before clearing field', (
