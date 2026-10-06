@@ -214,7 +214,6 @@ test("assignment create, edit and end refresh server capacity in routes and summ
       return Promise.resolve(domain(path));
     });
   vi.stubGlobal("fetch", fetchMock);
-  const prompt = vi.spyOn(window, "prompt").mockReturnValue("28/09/2026");
   const section = (name: string) =>
     within(
       screen.getByRole("navigation", { name: "Secciones del conductor" }),
@@ -222,47 +221,54 @@ test("assignment create, edit and end refresh server capacity in routes and summ
   render(<App />);
   await screen.findByRole("navigation", { name: "Secciones del conductor" });
   fireEvent.click(section("Rutas"));
-  expect(await screen.findByText(/0 usados · 12 disponibles/)).toBeTruthy();
+  expect(await screen.findByText(/0 de 12 cupos utilizados/)).toBeTruthy();
 
   fireEvent.click(section("Pasajeros"));
-  await screen.findByText("Aún no hay pasajeros asignados.");
+  await screen.findByText("Aún no tienes pasajeros asignados.");
+  fireEvent.click(
+    screen.getByRole("button", { name: "Agregar primer pasajero" }),
+  );
   fireEvent.change(screen.getByLabelText("Ruta"), { target: { value: "2" } });
   for (const [label, value] of [
-    ["Nombre visible del estudiante", "Estudiante Ficticio"],
-    ["Recogida / instrucciones", "Parada ficticia"],
+    ["Nombre del estudiante", "Estudiante Ficticio"],
+    ["Instrucciones de recogida", "Parada ficticia"],
     ["Nombre del apoderado", "Apoderado Ficticio"],
     ["Teléfono del apoderado", "912345678"],
-    ["Desde", "28/09/2026"],
+    ["Fecha de inicio", "28/09/2026"],
   ] as const)
     fireEvent.change(screen.getByLabelText(label), { target: { value } });
   fireEvent.click(screen.getByRole("button", { name: "Crear asignación" }));
   expect(await screen.findByText("Estudiante Ficticio")).toBeTruthy();
   fireEvent.click(section("Rutas"));
-  expect(await screen.findByText(/4 usados · 8 disponibles/)).toBeTruthy();
+  expect(await screen.findByText(/4 de 12 cupos utilizados/)).toBeTruthy();
   fireEvent.click(section("Inicio"));
-  expect(
-    await screen.findByText(/4 usados \/ 8 disponibles de 12/),
-  ).toBeTruthy();
+  expect(await screen.findByText(/4 de 12 cupos utilizados/)).toBeTruthy();
 
   fireEvent.click(section("Pasajeros"));
   fireEvent.click(await screen.findByRole("button", { name: "Editar" }));
-  fireEvent.change(screen.getByLabelText("Hasta (opcional)"), {
+  fireEvent.change(screen.getByLabelText("Fecha de término (opcional)"), {
     target: { value: "30/09/2026" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }));
   await screen.findByText(/28\/09\/2026–30\/09\/2026/);
   fireEvent.click(section("Rutas"));
-  expect(await screen.findByText(/6 usados · 6 disponibles/)).toBeTruthy();
+  expect(await screen.findByText(/6 de 12 cupos utilizados/)).toBeTruthy();
 
   fireEvent.click(section("Pasajeros"));
-  fireEvent.click(await screen.findByRole("button", { name: "Terminar" }));
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Finalizar asignación" }),
+  );
+  fireEvent.change(screen.getByLabelText("Último día de traslado"), {
+    target: { value: "28/09/2026" },
+  });
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar finalización" }),
+  );
   await screen.findByText(/28\/09\/2026–28\/09\/2026/);
   fireEvent.click(section("Rutas"));
-  expect(await screen.findByText(/0 usados · 12 disponibles/)).toBeTruthy();
+  expect(await screen.findByText(/0 de 12 cupos utilizados/)).toBeTruthy();
   fireEvent.click(section("Inicio"));
-  expect(
-    await screen.findByText(/0 usados \/ 12 disponibles de 12/),
-  ).toBeTruthy();
+  expect(await screen.findByText(/0 de 12 cupos utilizados/)).toBeTruthy();
   expect(
     fetchMock.mock.calls.filter(
       ([path, options]) =>
@@ -275,7 +281,6 @@ test("assignment create, edit and end refresh server capacity in routes and summ
         path.endsWith("driver/routes/") && options.method === "GET",
     ).length,
   ).toBeGreaterThanOrEqual(4);
-  prompt.mockRestore();
 });
 
 test("brand falls back to a wordmark when the logo cannot load", async () => {

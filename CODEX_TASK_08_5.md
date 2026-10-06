@@ -323,3 +323,306 @@ Git status: eight modified tracked files, no untracked project files. HEAD remai
 `7850e45` on `task/08-5-product-ux-privacy`. No commit, push, merge, deployment,
 reset, revert, discarded changes, branch switch or history rewrite occurred.
 Slice 2 remains pending human visual and synthetic journey acceptance.
+
+## Slice 3 — driver web operational experience
+
+Prepared for human review on `task/08-5-product-ux-privacy`. The earlier Slice 2
+working-tree notes above are historical: Slice 1 and Slice 2 are preserved in
+commits `7850e45` and `7b69bb0`. This slice changes React UX and documentation
+only, without changing backend, API, OpenAPI, administrator controls, Flutter,
+legal documents or child-consent persistence. No backend blocker was found.
+Task 08.5 is not complete. Slice 3 remains pending human visual and workflow
+acceptance; all of its changes are uncommitted.
+
+### Implementation and protected behavior
+
+1. **Inicio:** one service-visibility card answers whether parents can find the
+   driver. Approval and visibility remain separate. The first authoritative
+   blocker supplies the next action; other blockers appear in a disclosure in
+   their original server order, without a newly invented business priority.
+   Navigation opens the matching existing service task. The onboarding panel
+   stays mounted for profile drafts but is hidden on Inicio, so approved drivers
+   see operational content there. Greeting uses the authenticated display name.
+   Route snapshots, today's active-assignment count and payment counts come from
+   the summary endpoint. A separate complete contact-list read supplies pending
+   request count; failure never becomes a false zero. No cross-route capacity sum.
+2. **Publication:** `eligible` alone supplies Visible/No visible para apoderados.
+   Request intent, blockers, validation and plan are distinct. Known server codes
+   become plain Spanish, including stale approval, documents, plan and profile
+   requirements. Requested-but-blocked is explicit. Solicitar que mi servicio sea
+   visible and Dejar de mostrar mi servicio explain consequences; a request never
+   promises instant visibility. Successful intent writes re-read authoritative
+   state. Focus, returning to the section and relevant profile/assignment changes
+   also refresh existing reads. No publication predicate is implemented in React.
+3. **Routes:** recurring configuration cards show label/status, Spanish weekdays,
+   local time range, destination, catalog commune labels and dated server capacity.
+   Create/edit groups are Datos de la ruta, Horario, Capacidad and Destino y
+   cobertura. Capacity means total passenger seats. Activate/deactivate uses the
+   same owner API and expected revision; no raw route IDs are displayed. Empty
+   state links to the existing form. Server validation stays visible near fields.
+   `run_conflict` explains today's started/frozen operation, including completed
+   runs; no client bypass. Assignment `operation_conflict` has more than one cause,
+   so its copy does not falsely assert that every such conflict is a started day.
+4. **Passengers:** cards prioritize student, route, current/future/end status,
+   pickup instructions and guardian contact. Nombre del estudiante has the help
+   “Usa el nombre habitual y el apellido necesario para distinguirlo.” One privacy
+   notice says “Esta información es privada y solo debe usarse para coordinar el
+   traslado.” Synthetic data remains required for tests/demo. Future starts and
+   inclusive end dates are explained. Edit keeps the route immutable. Finalizar
+   asignación opens an inline dated confirmation instead of a browser prompt;
+   it calls the same end-date endpoint and preserves the record. Current route
+   capacity is date-labeled, with an explanation that other assignment dates are
+   checked when saving. Capacity rejection is translated without reproducing
+   interval-overlap logic. No identity/medical fields or consent claims were added.
+5. **Contacts:** readable private list/detail, plain lifecycle labels, pending
+   guards, empty/error/retry and restrained success. The parent-email snapshot is
+   shown only in participant detail, as already authorized at request creation.
+   Accept explicitly shares the service-email snapshot with the parent; decline
+   closes without that disclosure. Neither action reserves capacity or creates a
+   passenger. Existing eligibility/conflict/terminal semantics are preserved.
+6. **Payments:** Registro de pagos explains that records are informative and
+   FurgoPlus does not process the payment. Existing integer `amount_clp` establishes
+   CLP formatting; Chilean service-period/due/payment dates remain. Create pending,
+   mark paid and void are the same APIs. Void confirmation explains terminal
+   record status and that it does not refund money; the record and paid timestamp
+   remain server-owned. No gateway, subscription billing or automation is added.
+7. **Accessibility/responsive:** driver cards wrap, action groups stack, forms cap
+   at 720px and use one column at narrow widths. Routine buttons retain 48px
+   targets, visible focus and labeled native inputs. Loading/success use status;
+   failures use alert/retry; field errors retain control names and accessible
+   descriptions. Date popovers use the existing Chilean controls with a viewport
+   width limit. Color supplements text. Browser overflow/zoom is not claimed tested.
+8. **Session/privacy:** new resource state, drafts, selection and confirmations
+   live inside the original identity-keyed workspace. Local lifetime/read ordering
+   rejects obsolete results after unmount/expiry; confirmed standalone expiry also
+   clears draft/data state. Mutations have synchronous duplicate guards; outdated
+   writes cannot invoke saved callbacks or restore private state. Success messages
+   expire after five seconds. AuthApi, central not_authenticated, CSRF, download
+   guards, logout cleanup and same-role replacement are unchanged.
+9. **Business boundaries:** Task 04 publication truth/direct-ID hiding and public
+   allowlists, Task 05 consented participant snapshots, Task 06 owner isolation,
+   dated inclusive assignments, interval capacity and manual-payment summaries,
+   and Task 07 started-day guards remain authoritative on the backend. Inspected
+   backend tests were not rerun because no backend/model/contract code changed.
+10. **Tests:** five existing web test files were adapted. There are 21 additional
+    cases: approved-blocked/visible home and next action, request/stop/refresh and
+    blocker translation, route server validation/frozen conflict, future passenger
+    wording/capacity errors, read loading/error/retry/empty states, manual payment
+    wording, contact disclosure and duplicate decisions, and per-screen account
+    replacement/expiry/late-read/late-write cleanup. Existing API, restore,
+    download, admin and privacy regressions remain in the full passing suite.
+
+### Exact final validation
+
+Commands run from `web/`, except the repository-wide diff check.
+
+| Check | Result |
+| --- | --- |
+| `npm run format:check` | Exit 0; all matched files use Prettier style |
+| `npm run contract:check` | Exit 0; generated contract unchanged |
+| `npm run lint` | Exit 0; no warnings reported |
+| `npm run typecheck` | Exit 0 |
+| `npm test` | Exit 0; 156 tests in 11 files passed |
+| `npm run build -- --outDir /tmp/furgoplus-slice3-web-dist` | Exit 0; 38 modules transformed; temporary build produced |
+| `git diff --check` | Exit 0 |
+
+Vite's build notice states that the temporary output is outside the project and
+will not be emptied; this is expected and is not a failure. No Flutter validation
+was required or run; there are no Flutter changes.
+
+Environment blockers: `npm run dev -- --host 127.0.0.1` exited 1 because binding
+127.0.0.1:5173 is denied (`listen EPERM`). Computer-use inventory reported no apps
+or browsers. Desktop, 390px, keyboard/zoom and synthetic workflow acceptance must
+therefore run on the host; no visual acceptance or accessibility certification
+is claimed. Issue #19 was successfully inspected using the GitHub read connector.
+
+### Human acceptance checklist — pending
+
+Use synthetic accounts, students, contact requests and payment amounts only.
+
+1. Approved driver: open Inicio and verify visible and approved-but-blocked cases;
+   follow the next action and inspect the other server requirements.
+2. Request visibility while blocked, resolve existing requirements in the normal
+   product workflow, refresh, then stop showing the service. Verify the parent
+   visibility result follows the server response.
+3. Create, edit, deactivate and activate a recurring route. Check days, local
+   times, destination, commune labels, total capacity and dated used/free seats.
+   For an existing synthetic started-day run, verify the route conflict explanation.
+4. Create/edit/end a synthetic passenger, including future starts and inclusive
+   end dates; trigger capacity rejection and check that the draft remains editable.
+5. Open a contact request, check consented disclosure explanation, accept/decline
+   existing pending requests and inspect terminal history and ineligible feedback.
+6. Create a manual pending CLP record, mark it paid, then confirm void. Inspect
+   dates, retained record, manual-only explanation and empty states.
+7. Repeat Inicio, route list/form, passenger list/form and requests at about 390px;
+   inspect stacking, long content, date popovers and absence of core horizontal
+   scrolling. Check keyboard order, focus, labels, 48px targets and 200% zoom.
+8. Log out, replace an account and expire a session with private forms/details
+   open; ensure old content and pending responses do not reappear.
+
+### Files and git state
+
+| Area | Files |
+| --- | --- |
+| Contract/audit/report | `CODEX_TASK_08_5.md`, `docs/UX_FOUNDATION.md` |
+| Driver shell/home/management | `web/src/App.tsx`, `web/src/DriverOperations.tsx`, `web/src/PublicationScreens.tsx`, `web/src/DriverRequests.tsx` |
+| Shared driver presentation/read lifecycle (new) | `web/src/DriverExperience.tsx` |
+| Driver responsive presentation | `web/src/style.css` |
+| Behavior/privacy tests | `web/src/App.test.tsx`, `web/src/DriverOperations.test.tsx`, `web/src/PublicationScreens.test.tsx`, `web/src/DriverRequests.test.tsx`, `web/src/SessionPrivacy.test.tsx` |
+
+Final git state: 12 modified tracked files and one new untracked file on
+`task/08-5-product-ux-privacy`; HEAD is `7b69bb0`, with `7850e45` preserved below it.
+All Slice 3 work is uncommitted. No commit, push, merge, deployment, reset, revert,
+discard, branch switch or history rewrite occurred. Slice 3 remains pending human
+visual and workflow acceptance; Task 08.5 is not complete.
+
+## Slice 3 visual redesign after manual rejection — 2026-10-06
+
+The earlier Slice 3 implementation/report above is historical. The product owner
+rejected its visual/interaction layer despite correct behavior. This new pass
+remains **uncommitted and pending visual approval**; Task 08.5 is not complete.
+
+1. **Home:** large visible/blocked hero answers “¿Está visible mi servicio?”,
+   explains parent discoverability and offers “Ver qué me falta”. Raw backend
+   summaries and revision numbers are absent.
+2. **Activation:** shared visual checklist for information approval, current
+   plan, complete active route and publication request, with grouped server
+   blockers, separate account/service restrictions, and contextual navigation.
+   `eligible` remains the server's decision; presentation never grants eligibility.
+3. **Operational overview:** four cards only: active routes, passengers assigned
+   today, requests awaiting response, pending payments. Dated route meters show
+   actual capacity. The summary contract does not supply route days/times;
+   these appear only in Mis rutas. No today-route inference or numbered seats.
+4. **Routes:** list-first header, create action, icon/explanation/action when empty,
+   route cards with Spanish days, times, capacity, commune labels and edit/status
+   actions. No IDs are displayed.
+5. **Route form:** a focused three-stage create/edit panel: days/time,
+   capacity/coverage, review. Back retains values; Close/Escape clears the draft.
+   Required controls, exact payload and optimistic revision remain unchanged;
+   field errors return to the relevant stage, and started-day conflicts persist.
+6. **Passengers:** list-first filter/cards/empty state; create/edit opens only
+   after action. Private cards retain route, pickup, guardian contact, current/
+   future/finalized state and inclusive dates. Approved student-name wording/help
+   and the short contextual privacy notice remain.
+7. **Contacts:** inbox cards, actual-lifecycle chips/counts, useful empty/filter
+   states, “Ver solicitud”, focused detail and existing accept/reject actions.
+   Consent/disclosure rules and the absence of automatic seat/roster creation
+   remain unchanged.
+8. **Payments:** truthful pending/paid/void counts, named CLP cards with due date,
+   native “Ver registro” disclosures for dates/actions, and Registrar interaction
+   opening a focused manual form. Exact fields/transitions and retained paid-at
+   audit information are preserved. No processing/charging is introduced.
+9. **Interaction:** semantic inline icons, activation path, native capacity
+   meters, route stepper, focused nonmodal panels, inbox filters and expandable
+   records. No dependency/framework/illustration was added.
+10. **Accessibility/responsive:** text accompanies meaningful icons/states;
+    semantic lists/meter/regions and current-step/pressed attributes; panel heading
+    focus, Escape and return focus; 48px targets; wrapping/single-column mobile
+    layouts; existing visible focus and reduced-motion styles. Real browser,
+    390px and zoom verification remain pending because no browser/app is enabled.
+11. **Protected semantics:** no backend/API/OpenAPI or session-service changes.
+    Publication blockers, ownership, capacity intervals, dates, optimistic
+    route revisions, started-day guards, contact consent and payment state/audit
+    stay server-owned. Account replacement and session expiry clear focused
+    drafts/details; late private reads/writes cannot repopulate them.
+12. **Tests:** all prior behavior/privacy coverage is retained with explicit UI
+    opening/stage/disclosure actions. Added seven cases for route disclosure/
+    back/review/Escape/focus, home task path/four cards/dated meter, passenger and
+    payment default-list/focus/draft clearing, inbox lifecycle/disclosure, and
+    live passenger/payment draft expiry. Full suite: **163 passing tests in 11 files**.
+
+Validation from `web/`: `npm run format:check`, `npm run contract:check`,
+`npm run lint`, `npm run typecheck`, and `npm test` pass. Temporary production
+build: `npm run build -- --outDir /tmp/furgoplus-slice3-redesign-final-dist` passes;
+its outside-project output notice is expected. Repository `git diff --check`
+passes. No backend tests were rerun because only web presentation/tests and
+these task/design notes changed.
+
+Files: `CODEX_TASK_08_5.md`, `docs/UX_FOUNDATION.md`, `web/src/App.tsx`,
+`web/src/App.test.tsx`, `web/src/DriverExperience.tsx` (new),
+`web/src/DriverOperations.tsx`, `web/src/DriverOperations.test.tsx`,
+`web/src/DriverRequests.tsx`, `web/src/DriverRequests.test.tsx`,
+`web/src/PublicationScreens.tsx`, `web/src/PublicationScreens.test.tsx`,
+`web/src/SessionPrivacy.test.tsx`, `web/src/style.css`.
+
+Git remains on `task/08-5-product-ux-privacy`, HEAD `7b69bb0`: 12 modified
+tracked files and one untracked new file. No commit, push, merge, deployment,
+reset, revert, discarded changes, branch switch or history rewrite occurred.
+
+Manual acceptance must now review the hero/checklist and all four list-first
+journeys on desktop and at approximately 390px, including create/edit/back/
+review/close, request filters/disclosure, payment expansion/transitions, keyboard
+focus/zoom, long content and account/expiry cleanup using synthetic data only.
+
+## Slice 3 manual acceptance correction — action feedback
+
+The backend correctly rejected an assignment beyond a two-seat route's capacity.
+The UI put the mutation error at the section's top while the submit viewport was
+farther down, so the tester perceived no result. The shared read/error component
+also offered a generic retry for this domain failure.
+
+Introduced a React/CSS viewport notice owned by the identity-keyed workspace,
+with operation/result-only Spanish text, a status marker and accessible 48px
+close control. One notice replaces prior feedback; action errors persist and
+success expires after eight seconds (paused for pointer/keyboard reading).
+Routes, passengers, publication request/stop, contact decisions and manual
+payment create/status/void now confirm their results visibly. Contextual and
+field errors remain; passenger/route/payment submit errors sit by the action,
+receive focus/nearest instant scrolling and preserve the failed draft.
+
+Capacity errors say exactly “Esta ruta no tiene cupos disponibles para esas
+fechas.” and suggest changing the route or dates. Domain/validation errors have
+no generic retry. Transient read/network/server errors retain a read-only retry;
+confirmed mutation success survives a failed following refresh. Expiry asks for
+sign-in instead of retrying an expired session. No API/backend/error-code,
+capacity calculation, ownership, payment/contact state or auth-service changes.
+
+The provider and portal unmount on logout/expiry/account replacement. Global
+messages never copy arbitrary server fields or passenger/contact/payment data.
+Existing stale API generations, local lifetime/read ordering and private draft
+cleanup are retained. Error alert/status semantics, polite success, keyboard
+close/focus restoration and reduced-motion behavior are covered in tests.
+
+New/updated coverage includes a full two-seat route rejecting a third create,
+exact global/contextual capacity copy, no retry, all retained draft fields,
+dismissal, representative real mutation success, persistent errors, success
+expiry/hover/focus pause, shared feedback across screen navigation, error focus,
+post-save read failure/retry without another write, safe global payment-error
+copy and already-visible notice cleanup on replacement/expiry/logout. Existing
+mutation, session-generation and late private read/write tests remain.
+
+Correction files: `web/src/ActionFeedback.tsx` and
+`web/src/ActionFeedback.test.tsx` (new), `web/src/DriverExperience.tsx` (existing
+untracked Slice 3 file), `web/src/App.tsx`, `web/src/DriverOperations.tsx`,
+`web/src/DriverOperations.test.tsx`, `web/src/DriverRequests.tsx`,
+`web/src/DriverRequests.test.tsx`, `web/src/PublicationScreens.tsx`,
+`web/src/PublicationScreens.test.tsx`, `web/src/SessionPrivacy.test.tsx`,
+`web/src/style.css`, and these task/design notes. Prior Slice 3 changes including
+`web/src/App.test.tsx` are preserved.
+
+Validation results are recorded below. No commit or prohibited git/deployment
+action is authorized. Slice 3 remains pending final acceptance, including manual
+desktop/390px/zoom and screen-reader review. Computer-use inventory for this pass
+returned no enabled app or browser, so no rendered visual pass is claimed.
+
+The shared privacy fixture now answers Inicio's contact-request read with an
+empty synthetic inbox. Previously that absent fixture response could generate
+an unrelated second read alert and make the permission-denied assertion flaky.
+The tested session/authorization expectations are unchanged.
+
+| Final correction check (from `web/`) | Result |
+| --- | --- |
+| `npm run format:check` | Exit 0; all matched files formatted |
+| `npm run contract:check` | Exit 0; generated contract unchanged |
+| `npm run lint` | Exit 0 |
+| `npm run typecheck` | Exit 0 |
+| `npm test` | Exit 0; 172 tests in 12 files passed |
+| `npm run build -- --outDir /tmp/furgoplus-slice3-feedback-dist` | Exit 0; 40 modules transformed; expected outside-project output notice |
+| Repository `git diff --check` | Exit 0 |
+
+Final git state: branch `task/08-5-product-ux-privacy`, 12 modified tracked files
+and three untracked files (the prior `DriverExperience.tsx` plus the new feedback
+component/test). All prior Slice 3 work and the correction remain uncommitted.
+No backend/mobile checks were rerun because only web presentation/tests and notes
+changed. No commit, push, merge, deployment, reset, revert, discard, branch switch
+or history rewrite occurred. **Slice 3 remains pending final acceptance.**

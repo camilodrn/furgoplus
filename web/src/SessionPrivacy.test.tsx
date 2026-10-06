@@ -144,6 +144,8 @@ function fixture(role: "driver" | "admin") {
       return Promise.resolve(ok(publication));
     if (path.endsWith("driver/routes/"))
       return Promise.resolve(ok({ routes: [] }));
+    if (path.endsWith("driver/contact-requests/"))
+      return Promise.resolve(ok({ results: [] }));
     if (path.endsWith("driver/communes/"))
       return Promise.resolve(ok({ communes: [] }));
     if (path.endsWith("checklist/"))
@@ -269,7 +271,7 @@ test("same-role driver A to B discards loaded profile, summary, publication and 
   mock.intercept((path) =>
     path.endsWith("driver/summary/") ? oldRead.promise : undefined,
   );
-  fireEvent.click(screen.getByText("Actualizar resumen / Reintentar"));
+  fireEvent.click(screen.getByRole("button", { name: "Actualizar" }));
   const bProfile = deferred<Response>();
   const bPublication = deferred<Response>();
   mock.replace();
@@ -286,9 +288,7 @@ test("same-role driver A to B discards loaded profile, summary, publication and 
   expect(screen.queryByDisplayValue("contact-1@example.test")).toBeNull();
   expect(screen.queryByDisplayValue("Private unsaved A")).toBeNull();
   expect(screen.queryByText(/Private route 1/)).toBeNull();
-  expect(
-    screen.queryByText("Tu servicio está visible para apoderados"),
-  ).toBeNull();
+  expect(screen.queryByText("Visible para apoderados")).toBeNull();
   await waitFor(() =>
     expect(
       mock.fetchMock.mock.calls.filter(([path]) =>
@@ -355,10 +355,10 @@ test("driver private-read expiry clears loaded forms, publication and summary; l
   await screen.findByDisplayValue("contact-1@example.test");
   fireEvent.click(section("Inicio"));
   await screen.findByText(/Private route 1/);
-  expect(screen.getByText(/2 pendientes/)).toBeTruthy();
   expect(
-    screen.getByText("Tu servicio está visible para apoderados"),
-  ).toBeTruthy();
+    screen.getByRole("region", { name: "Resumen de pagos" }).textContent,
+  ).toContain("2 pendientes");
+  expect(screen.getByText("Visible para apoderados")).toBeTruthy();
   const oldSummary = mock.summary();
   const oldRead = deferred<Response>();
   const oldIdentity = deferred<Response>();
@@ -369,12 +369,12 @@ test("driver private-read expiry clears loaded forms, publication and summary; l
         ? oldIdentity.promise
         : undefined,
   );
-  fireEvent.click(screen.getByText("Actualizar resumen / Reintentar"));
+  fireEvent.click(screen.getByRole("button", { name: "Actualizar" }));
   refreshIdentity();
   mock.intercept((path) =>
     path.endsWith("driver/summary/") ? Promise.resolve(denied()) : undefined,
   );
-  fireEvent.click(screen.getByText("Actualizar resumen / Reintentar"));
+  fireEvent.click(screen.getByRole("button", { name: "Actualizar" }));
   await screen.findByText(
     "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
   );
@@ -384,9 +384,7 @@ test("driver private-read expiry clears loaded forms, publication and summary; l
   expect(
     screen.queryByRole("navigation", { name: "Secciones del conductor" }),
   ).toBeNull();
-  expect(
-    screen.queryByText("Tu servicio está visible para apoderados"),
-  ).toBeNull();
+  expect(screen.queryByText("Visible para apoderados")).toBeNull();
   await act(async () => {
     oldRead.resolve(ok(oldSummary));
     oldIdentity.resolve(
@@ -504,7 +502,7 @@ test("permission_denied does not expire a loaded driver's session or erase its s
       ? Promise.resolve(denied("permission_denied"))
       : undefined,
   );
-  fireEvent.click(screen.getByText("Actualizar resumen / Reintentar"));
+  fireEvent.click(screen.getByRole("button", { name: "Actualizar" }));
   await screen.findByRole("alert");
   expect(screen.getByText(/Private route 1/)).toBeTruthy();
   expect(screen.getByText("Account A")).toBeTruthy();
@@ -669,3 +667,460 @@ test("account replacement clears selected upload bytes, filename and saved docum
   await screen.findByLabelText("Nombre del servicio");
   expect(screen.queryByText("synthetic-private-A.pdf")).toBeNull();
 });
+
+// Slice 3 private cards, drafts, details and inline confirmations remain inside
+// the same identity-keyed workspace as Task 08. Use synthetic records only.
+function operationalReads(
+  mock: ReturnType<typeof fixture>,
+  path: string,
+): Promise<Response> | undefined {
+  const suffix = mock.profile().service_contact_email.includes("-1@")
+    ? "A"
+    : "B";
+  const assignment = {
+    id: 5,
+    route_id: 9,
+    student_display_name: `Synthetic student ${suffix}`,
+    pickup_instruction: `Synthetic pickup ${suffix}`,
+    guardian_display_name: `Synthetic guardian ${suffix}`,
+    guardian_contact: "912345678",
+    starts_on: "2099-01-01",
+    ends_on: null,
+    created_at: "2026-09-28T12:00:00Z",
+    updated_at: "2026-09-28T12:00:00Z",
+  };
+  const route = {
+    ...mock.summary().routes[0],
+    label: `Synthetic route ${suffix}`,
+    destination_label: "Synthetic school",
+    destination_address: "Synthetic destination",
+    coverage_codes: ["demo"],
+  };
+  if (path.endsWith("driver/routes/"))
+    return Promise.resolve(ok({ routes: [route] }));
+  if (path.endsWith("driver/communes/"))
+    return Promise.resolve(
+      ok({ communes: [{ code: "demo", display_name: "Comuna Demo" }] }),
+    );
+  if (path.endsWith("driver/passenger-assignments/"))
+    return Promise.resolve(ok({ assignments: [assignment] }));
+  if (path.endsWith("driver/payments/"))
+    return Promise.resolve(
+      ok({
+        payments: [
+          {
+            id: 8,
+            assignment_id: 5,
+            service_period_start: "2026-09-28",
+            service_period_end: "2026-10-28",
+            due_on: "2026-10-05",
+            amount_clp: 50000,
+            status: "pending",
+            paid_at: null,
+            created_at: "2026-09-28T12:00:00Z",
+            updated_at: "2026-09-28T12:00:00Z",
+          },
+        ],
+      }),
+    );
+  const request = {
+    id: 7,
+    parent_display_name: `Synthetic parent ${suffix}`,
+    parent_email: `synthetic-${suffix}@example.test`,
+    message: `Synthetic message ${suffix}`,
+    status: "pending",
+    created_at: "2026-09-28T12:00:00Z",
+    updated_at: "2026-09-28T12:00:00Z",
+    resolved_at: null,
+  };
+  if (path.endsWith("driver/contact-requests/"))
+    return Promise.resolve(ok({ results: [request] }));
+  if (path.endsWith("driver/contact-requests/7/"))
+    return Promise.resolve(ok(request));
+}
+const operationalCases = [
+  ["Rutas", "Nombre de la ruta", "Actualizar rutas", "driver/routes/"],
+  [
+    "Pasajeros",
+    "Nombre del estudiante",
+    "Actualizar pasajeros",
+    "driver/passenger-assignments/",
+  ],
+  ["Pagos", "Monto CLP", "Actualizar pagos", "driver/payments/"],
+  ["Solicitudes", "", "Actualizar solicitudes", "driver/contact-requests/"],
+] as const;
+
+test.each(operationalCases)(
+  "%s account replacement clears drafts/details and rejects a late A read",
+  async (destination, field, refresh, endpoint) => {
+    const mock = fixture("driver");
+    mock.intercept((path) => operationalReads(mock, path));
+    render(<App />);
+    await screen.findByRole("navigation", { name: "Secciones del conductor" });
+    fireEvent.click(section(destination));
+    await screen.findByText(
+      destination === "Solicitudes"
+        ? "Synthetic parent A"
+        : destination === "Rutas"
+          ? "Synthetic route A"
+          : "Synthetic student A",
+    );
+    if (destination === "Solicitudes") {
+      fireEvent.click(
+        screen.getByRole("button", { name: /Synthetic parent A/ }),
+      );
+      await screen.findByText("Synthetic message A");
+      await waitFor(() =>
+        expect(
+          (
+            screen.getByRole("button", {
+              name: "Actualizar solicitudes",
+            }) as HTMLButtonElement
+          ).disabled,
+        ).toBe(false),
+      );
+    } else {
+      fireEvent.click(
+        screen.getByRole("button", {
+          name:
+            destination === "Rutas"
+              ? "Crear ruta"
+              : destination === "Pasajeros"
+                ? "Agregar pasajero"
+                : "Registrar pago",
+        }),
+      );
+      fireEvent.change(screen.getByLabelText(field), {
+        target: {
+          value: destination === "Pagos" ? "98765" : "Private draft A",
+        },
+      });
+    }
+    const old = deferred<Response>();
+    mock.intercept((path) =>
+      path.endsWith(endpoint) ? old.promise : operationalReads(mock, path),
+    );
+    fireEvent.click(screen.getByRole("button", { name: refresh }));
+    mock.replace();
+    refreshIdentity();
+    await screen.findByText("Account B");
+    expect(screen.queryByDisplayValue("Private draft A")).toBeNull();
+    expect(screen.queryByDisplayValue("98765")).toBeNull();
+    expect(screen.queryByText("Synthetic message A")).toBeNull();
+    expect(screen.queryByText("synthetic-A@example.test")).toBeNull();
+    await act(async () =>
+      old.resolve(
+        ok(
+          destination === "Rutas"
+            ? { routes: [] }
+            : destination === "Pasajeros"
+              ? { assignments: [] }
+              : destination === "Pagos"
+                ? { payments: [] }
+                : {
+                    results: [
+                      { id: 70, parent_display_name: "Late A private parent" },
+                    ],
+                  },
+        ),
+      ),
+    );
+    expect(screen.queryByText("Late A private parent")).toBeNull();
+    mock.intercept((path) => operationalReads(mock, path));
+    fireEvent.click(section(destination));
+    await screen.findByText(
+      destination === "Solicitudes"
+        ? "Synthetic parent B"
+        : destination === "Rutas"
+          ? "Synthetic route B"
+          : "Synthetic student B",
+    );
+    if (field) {
+      expect(screen.queryByLabelText(field)).toBeNull();
+      fireEvent.click(
+        screen.getByRole("button", {
+          name:
+            destination === "Rutas"
+              ? "Crear ruta"
+              : destination === "Pasajeros"
+                ? "Agregar pasajero"
+                : "Registrar pago",
+        }),
+      );
+      expect((screen.getByLabelText(field) as HTMLInputElement).value).toBe("");
+    }
+  },
+);
+
+test.each(operationalCases)(
+  "%s expiry removes private drafts/cards/confirmation before late reads return",
+  async (destination, field, refresh, endpoint) => {
+    const mock = fixture("driver");
+    mock.intercept((path) => operationalReads(mock, path));
+    render(<App />);
+    await screen.findByRole("navigation", { name: "Secciones del conductor" });
+    fireEvent.click(section(destination));
+    await screen.findByText(
+      destination === "Solicitudes"
+        ? "Synthetic parent A"
+        : destination === "Rutas"
+          ? "Synthetic route A"
+          : "Synthetic student A",
+    );
+    if (destination === "Solicitudes") {
+      fireEvent.click(
+        screen.getByRole("button", { name: /Synthetic parent A/ }),
+      );
+      await screen.findByText("Synthetic message A");
+      await waitFor(() =>
+        expect(
+          (screen.getByRole("button", { name: refresh }) as HTMLButtonElement)
+            .disabled,
+        ).toBe(false),
+      );
+    } else {
+      fireEvent.click(
+        screen.getByRole("button", {
+          name:
+            destination === "Rutas"
+              ? "Crear ruta"
+              : destination === "Pasajeros"
+                ? "Agregar pasajero"
+                : "Registrar pago",
+        }),
+      );
+      fireEvent.change(screen.getByLabelText(field), {
+        target: {
+          value: destination === "Pagos" ? "98765" : "Private draft A",
+        },
+      });
+      if (destination !== "Rutas")
+        fireEvent.click(screen.getByRole("button", { name: "Cerrar" }));
+      if (destination === "Pasajeros")
+        fireEvent.click(
+          screen.getByRole("button", { name: "Finalizar asignación" }),
+        );
+      if (destination === "Pagos") {
+        fireEvent.click(screen.getByText("Ver registro"));
+        fireEvent.click(screen.getByRole("button", { name: "Anular" }));
+      }
+    }
+    const old = deferred<Response>();
+    mock.intercept((path) =>
+      path.endsWith(endpoint) ? old.promise : operationalReads(mock, path),
+    );
+    fireEvent.click(screen.getByRole("button", { name: refresh }));
+    mock.intercept((path) =>
+      path.endsWith("auth/me/")
+        ? Promise.resolve(denied())
+        : operationalReads(mock, path),
+    );
+    refreshIdentity();
+    await screen.findByText(
+      "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
+    );
+    expect(screen.queryByDisplayValue("Private draft A")).toBeNull();
+    expect(screen.queryByDisplayValue("98765")).toBeNull();
+    expect(
+      screen.queryByText(/Synthetic (student|parent|message|route) A/),
+    ).toBeNull();
+    expect(
+      screen.queryByRole("button", {
+        name: /Confirmar (finalización|anulación)/,
+      }),
+    ).toBeNull();
+    await act(async () =>
+      old.resolve(
+        ok({
+          results: [{ id: 99, parent_display_name: "Late A private" }],
+          routes: [],
+          assignments: [],
+          payments: [],
+        }),
+      ),
+    );
+    expect(screen.queryByText("Late A private")).toBeNull();
+    expect(
+      screen.queryByRole("navigation", { name: "Secciones del conductor" }),
+    ).toBeNull();
+  },
+);
+
+test.each([
+  ["Rutas", "Desactivar", "driver/routes/9/"],
+  ["Pasajeros", "Guardar cambios", "driver/passenger-assignments/5/"],
+  ["Pagos", "Marcar pagado", "driver/payments/8/mark-paid/"],
+  ["Solicitudes", "Aceptar", "driver/contact-requests/7/accept/"],
+] as const)(
+  "%s late mutation cannot repopulate a replacement account",
+  async (destination, action, endpoint) => {
+    const mock = fixture("driver");
+    mock.intercept((path) => operationalReads(mock, path));
+    render(<App />);
+    await screen.findByRole("navigation", { name: "Secciones del conductor" });
+    fireEvent.click(section(destination));
+    await screen.findByText(
+      destination === "Solicitudes"
+        ? "Synthetic parent A"
+        : destination === "Rutas"
+          ? "Synthetic route A"
+          : "Synthetic student A",
+    );
+    if (destination === "Pasajeros")
+      fireEvent.click(screen.getByRole("button", { name: "Editar" }));
+    if (destination === "Solicitudes") {
+      fireEvent.click(
+        screen.getByRole("button", { name: /Synthetic parent A/ }),
+      );
+      await screen.findByText("Synthetic message A");
+      await waitFor(() =>
+        expect(
+          (screen.getByRole("button", { name: action }) as HTMLButtonElement)
+            .disabled,
+        ).toBe(false),
+      );
+    }
+    if (destination === "Pagos")
+      fireEvent.click(screen.getByText("Ver registro"));
+    const write = deferred<Response>();
+    mock.intercept((path) =>
+      path.endsWith(endpoint) ? write.promise : operationalReads(mock, path),
+    );
+    fireEvent.click(screen.getByRole("button", { name: action }));
+    await waitFor(() =>
+      expect(
+        mock.fetchMock.mock.calls.some(([path]) => path.endsWith(endpoint)),
+      ).toBe(true),
+    );
+    mock.replace();
+    mock.intercept((path) => operationalReads(mock, path));
+    refreshIdentity();
+    await screen.findByText("Account B");
+    await act(async () =>
+      write.resolve(
+        ok({
+          id: 99,
+          parent_display_name: "Late A private",
+          student_display_name: "Late A student",
+          status: "accepted",
+        }),
+      ),
+    );
+    expect(screen.queryByText("Late A private")).toBeNull();
+    expect(screen.queryByText("Late A student")).toBeNull();
+    expect(
+      screen.queryByText(
+        /Ruta desactivada|Pasajero actualizado|Pago marcado como pagado|Solicitud aceptada/,
+      ),
+    ).toBeNull();
+    fireEvent.click(section(destination));
+    await screen.findByText(
+      destination === "Solicitudes"
+        ? "Synthetic parent B"
+        : destination === "Rutas"
+          ? "Synthetic route B"
+          : "Synthetic student B",
+    );
+  },
+);
+
+test.each([
+  [
+    "Pasajeros",
+    "Agregar pasajero",
+    "Nombre del estudiante",
+    "Borrador privado ficticio",
+  ],
+  ["Pagos", "Registrar pago", "Monto CLP", "45678"],
+])(
+  "%s session expiry removes an open focused draft immediately",
+  async (destination, action, field, value) => {
+    const mock = fixture("driver");
+    mock.intercept((path) => operationalReads(mock, path));
+    render(<App />);
+    await screen.findByRole("navigation", { name: "Secciones del conductor" });
+    fireEvent.click(section(destination));
+    await screen.findByText("Synthetic student A");
+    fireEvent.click(screen.getByRole("button", { name: action }));
+    fireEvent.change(screen.getByLabelText(field), { target: { value } });
+    expect(screen.getByDisplayValue(value)).toBeTruthy();
+    mock.intercept((path) =>
+      path.endsWith("auth/me/")
+        ? Promise.resolve(denied())
+        : operationalReads(mock, path),
+    );
+    refreshIdentity();
+    await screen.findByText(
+      "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
+    );
+    expect(screen.queryByDisplayValue(value)).toBeNull();
+    expect(screen.queryByLabelText(field)).toBeNull();
+    expect(screen.queryByText("Synthetic student A")).toBeNull();
+  },
+);
+
+test.each(["replacement", "expiry", "logout"] as const)(
+  "%s removes an already visible action notice and its contextual error",
+  async (boundary) => {
+    const mock = fixture("driver");
+    mock.intercept((path) =>
+      path.endsWith("driver/passenger-assignments/5/")
+        ? Promise.resolve({
+            ok: false,
+            status: 400,
+            json: async () => ({
+              code: "validation_error",
+              message: "Private failure A",
+              fields: { seat_capacity: ["Private failure A"] },
+            }),
+          } as Response)
+        : operationalReads(mock, path),
+    );
+    render(<App />);
+    await screen.findByRole("navigation", { name: "Secciones del conductor" });
+    fireEvent.click(section("Pasajeros"));
+    await screen.findByText("Synthetic student A");
+    fireEvent.click(screen.getByRole("button", { name: "Editar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }));
+    const notice = await screen.findByRole("complementary", {
+      name: "Aviso de la acción",
+    });
+    expect(within(notice).getByRole("alert").textContent).toContain(
+      "No pudimos actualizar al pasajero",
+    );
+    expect(notice.textContent).not.toMatch(
+      /Synthetic|Private failure|912345678/,
+    );
+    if (boundary === "replacement") {
+      mock.replace();
+      mock.intercept((path) => operationalReads(mock, path));
+      refreshIdentity();
+      await screen.findByText("Account B");
+      fireEvent.click(section("Pasajeros"));
+      await screen.findByText("Synthetic student B");
+    } else if (boundary === "expiry") {
+      mock.intercept((path) =>
+        path.endsWith("auth/me/")
+          ? Promise.resolve(denied())
+          : operationalReads(mock, path),
+      );
+      refreshIdentity();
+      await screen.findByRole("button", { name: "Iniciar sesión" });
+    } else {
+      mock.intercept((path) =>
+        path.endsWith("auth/logout/")
+          ? Promise.resolve(ok({}))
+          : operationalReads(mock, path),
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Cerrar sesión" }));
+      await screen.findByRole("button", { name: "Iniciar sesión" });
+    }
+    expect(
+      screen.queryByRole("complementary", { name: "Aviso de la acción" }),
+    ).toBeNull();
+    expect(
+      screen.queryByRole("group", { name: "Revisa esta acción" }),
+    ).toBeNull();
+    expect(screen.queryByText("Synthetic student A")).toBeNull();
+  },
+);

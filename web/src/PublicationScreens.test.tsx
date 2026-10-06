@@ -12,7 +12,7 @@ import {
   DriverPublicationScreen,
 } from "./PublicationScreens";
 import { chileDateTimeParts, chileInstant } from "./dates";
-import { AuthApi } from "./api";
+import { ApiError, AuthApi } from "./api";
 import type {
   AdminSubscription,
   Publication,
@@ -27,7 +27,10 @@ const blocked: Publication = {
   publication_requested: false,
   eligible: false,
   blockers: [
-    { code: "subscription_missing", message: "Falta un plan asignado" },
+    {
+      code: "subscription_missing",
+      message: "Aún no tienes un plan asignado.",
+    },
     {
       code: "active_route_missing",
       message: "Falta al menos una ruta activa y completa",
@@ -96,26 +99,37 @@ function driverApi() {
 test("driver sees blockers, requests publication, creates and deactivates a route", async () => {
   const api = driverApi();
   render(<DriverPublicationScreen api={api as unknown as AuthApi} />);
+  expect(await screen.findByText("Aún no visible")).toBeTruthy();
+  expect(screen.getByText("Aún no tienes un plan asignado.")).toBeTruthy();
   expect(
-    await screen.findByText("Tu servicio no está visible para apoderados"),
-  ).toBeTruthy();
-  expect(screen.getByText("Falta un plan asignado")).toBeTruthy();
-  expect(
-    screen.getByRole("button", { name: "Solicitar publicación" }).className,
+    screen.getByRole("button", {
+      name: "Solicitar que mi servicio sea visible",
+    }).className,
   ).toContain("button-primary");
-  fireEvent.click(screen.getByText("Solicitar publicación"));
+  fireEvent.click(screen.getByText("Solicitar que mi servicio sea visible"));
+  expect(await screen.findByText("Dejar de mostrar mi servicio")).toBeTruthy();
+  fireEvent.click(screen.getByText("Dejar de mostrar mi servicio"));
   expect(
-    await screen.findByText("Retirar solicitud de publicación"),
+    await screen.findByText("Solicitar que mi servicio sea visible"),
   ).toBeTruthy();
-  fireEvent.click(screen.getByText("Retirar solicitud de publicación"));
-  expect(await screen.findByText("Solicitar publicación")).toBeTruthy();
   expect(api.setPublication).toHaveBeenLastCalledWith({
     publication_requested: false,
   });
+  expect(screen.queryByLabelText("Nombre de la ruta")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Crear primera ruta" }));
   fireEvent.change(screen.getByLabelText("Nombre de la ruta"), {
     target: { value: "Ida demo" },
   });
   fireEvent.click(screen.getByLabelText("Lunes"));
+  fireEvent.change(screen.getByLabelText("Hora de inicio"), {
+    target: { value: "07:30" },
+  });
+  fireEvent.change(screen.getByLabelText("Hora de término"), {
+    target: { value: "08:30" },
+  });
+  fireEvent.click(
+    screen.getByRole("button", { name: "Continuar: cupos y cobertura" }),
+  );
   fireEvent.click(screen.getByLabelText("Comuna Demo Norte"));
   fireEvent.change(screen.getByLabelText("Nombre del destino"), {
     target: { value: "Escuela demo" },
@@ -123,12 +137,7 @@ test("driver sees blockers, requests publication, creates and deactivates a rout
   fireEvent.change(screen.getByLabelText("Dirección del destino (privada)"), {
     target: { value: "Dirección privada" },
   });
-  fireEvent.change(screen.getByLabelText("Hora de inicio"), {
-    target: { value: "07:30" },
-  });
-  fireEvent.change(screen.getByLabelText("Hora de término"), {
-    target: { value: "08:30" },
-  });
+  fireEvent.click(screen.getByRole("button", { name: "Revisar ruta" }));
   fireEvent.click(screen.getByRole("button", { name: "Crear ruta" }));
   expect(api.createRoute).toHaveBeenCalledWith(
     expect.objectContaining({ start_time: "07:30", end_time: "08:30" }),
@@ -139,6 +148,10 @@ test("driver sees blockers, requests publication, creates and deactivates a rout
   fireEvent.change(screen.getByLabelText("Nombre de la ruta"), {
     target: { value: "Ida corregida" },
   });
+  fireEvent.click(
+    screen.getByRole("button", { name: "Continuar: cupos y cobertura" }),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Revisar ruta" }));
   fireEvent.click(screen.getByText("Guardar cambios"));
   expect(await screen.findByText(/Ida corregida/)).toBeTruthy();
   expect(api.updateRoute).toHaveBeenCalledWith(
@@ -175,18 +188,25 @@ test("eligible driver sees success and plan summary", async () => {
     },
   });
   render(<DriverPublicationScreen api={api as unknown as AuthApi} />);
-  expect(
-    await screen.findByText("Tu servicio está visible para apoderados"),
-  ).toBeTruthy();
+  expect(await screen.findByText("Visible para apoderados")).toBeTruthy();
   const plan = screen.getByLabelText("Plan actual");
-  expect(plan.querySelector(".plan-name")?.textContent).toBe("BASIC");
+  expect(plan.querySelector(".plan-name")?.textContent).toBe("Basic");
   expect(plan.textContent).toContain("Activo");
   expect(plan.textContent).toContain("Vigente hasta");
-  expect(screen.getByText("Validación aprobada")).toBeTruthy();
-  expect(screen.getByText("1 ruta activa completa")).toBeTruthy();
+  expect(screen.getByText("Información aprobada")).toBeTruthy();
+  expect(screen.getByText("Ruta activa y completa")).toBeTruthy();
   expect(
     screen.getByRole("button", { name: "Actualizar estado" }).className,
   ).toContain("button-link");
+  expect(api.routes).toHaveBeenCalledOnce();
+  expect(screen.queryByRole("button", { name: "Reintentar" })).toBeNull();
+  const refresh = screen.getByRole("button", { name: "Actualizar rutas" });
+  expect(refresh.className).toContain("button-link driver-refresh");
+  fireEvent.click(refresh);
+  await waitFor(() => expect(api.routes).toHaveBeenCalledTimes(2));
+  await waitFor(() =>
+    expect((refresh as HTMLButtonElement).disabled).toBe(false),
+  );
 });
 
 test("switching publication and routes keeps an unfinished route", async () => {
@@ -207,13 +227,16 @@ test("switching publication and routes keeps an unfinished route", async () => {
     );
   }
   render(<Harness />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Crear primera ruta" }),
+  );
   await screen.findByLabelText("Nombre de la ruta");
   fireEvent.change(screen.getByLabelText("Nombre de la ruta"), {
     target: { value: "Ruta por guardar" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Ver publicación" }));
   expect(
-    screen.getByRole("heading", { name: "Estado de publicación" }),
+    screen.getByRole("heading", { name: "Visibilidad de tu servicio" }),
   ).toBeTruthy();
   expect(screen.queryByRole("heading", { name: "Mis rutas" })).toBeNull();
   fireEvent.click(screen.getByRole("button", { name: "Ver rutas" }));
@@ -256,7 +279,9 @@ test("admin sees blockers and saves an audited bounded plan action with Chilean 
   render(
     <AdminPublicationScreen api={api as unknown as AuthApi} driverId={7} />,
   );
-  expect(await screen.findByText("Falta un plan asignado")).toBeTruthy();
+  expect(
+    await screen.findByText("Aún no tienes un plan asignado."),
+  ).toBeTruthy();
   fireEvent.change(screen.getByLabelText("Fecha de inicio"), {
     target: { value: "01/10/2026" },
   });
@@ -346,7 +371,8 @@ test("Chile local conversion never assumes US ordering and rejects ambiguous tra
 test("route and subscription times use native minute controls and primary actions stay blue", async () => {
   const driver = driverApi();
   render(<DriverPublicationScreen api={driver as unknown as AuthApi} />);
-  await screen.findByText("Tu servicio no está visible para apoderados");
+  await screen.findByText("Aún no visible");
+  fireEvent.click(screen.getByRole("button", { name: "Crear primera ruta" }));
   expect(screen.getByLabelText("Hora de inicio").getAttribute("type")).toBe(
     "time",
   );
@@ -354,7 +380,8 @@ test("route and subscription times use native minute controls and primary action
     "60",
   );
   expect(
-    screen.getByRole("button", { name: "Crear ruta" }).className,
+    screen.getByRole("button", { name: "Continuar: cupos y cobertura" })
+      .className,
   ).toContain("button-primary");
   cleanup();
   const api = {
@@ -373,7 +400,7 @@ test("route and subscription times use native minute controls and primary action
   render(
     <AdminPublicationScreen api={api as unknown as AuthApi} driverId={7} />,
   );
-  await screen.findByText("Falta un plan asignado");
+  await screen.findByText("Aún no tienes un plan asignado.");
   const startTime = screen.getByLabelText("Hora de inicio") as HTMLInputElement;
   const endTime = screen.getByLabelText("Hora de término") as HTMLInputElement;
   for (const input of [startTime, endTime]) {
@@ -405,7 +432,7 @@ test("calendar-selected subscription dates and native times submit exact Chilean
   render(
     <AdminPublicationScreen api={api as unknown as AuthApi} driverId={7} />,
   );
-  await screen.findByText("Falta un plan asignado");
+  await screen.findByText("Aún no tienes un plan asignado.");
   fireEvent.change(screen.getByLabelText("Fecha de inicio"), {
     target: { value: "01/10/2026" },
   });
@@ -447,4 +474,172 @@ test("calendar-selected subscription dates and native times submit exact Chilean
       }),
     ),
   );
+});
+
+test("route server validation remains inline and frozen-day conflicts explain the protection", async () => {
+  const api = driverApi();
+  api.routes.mockResolvedValue({ routes: [route] });
+  api.updateRoute.mockRejectedValueOnce(
+    new ApiError(400, "validation_error", "Invalid", {
+      end_time: ["El horario final debe ser posterior al inicial."],
+    }),
+  );
+  render(
+    <DriverPublicationScreen
+      api={api as unknown as AuthApi}
+      activeSection="routes"
+    />,
+  );
+  await screen.findByText("Ida demo");
+  expect(screen.getByText("Lun")).toBeTruthy();
+  expect(screen.getByText("07:00 → 08:00")).toBeTruthy();
+  expect(screen.getByText(/Cobertura: Comuna Demo Norte/)).toBeTruthy();
+  expect(screen.getByText("0 de 3 cupos utilizados")).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "Editar" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Continuar: cupos y cobertura" }),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Revisar ruta" }));
+  fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }));
+  await waitFor(() =>
+    expect(
+      screen.getByLabelText("Hora de término").getAttribute("aria-invalid"),
+    ).toBe("true"),
+  );
+  expect(
+    screen.getByLabelText("Hora de término").getAttribute("aria-describedby"),
+  ).toContain("driver-end_time-error");
+  api.updateRoute.mockRejectedValueOnce(
+    new ApiError(409, "run_conflict", "frozen"),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Desactivar" }));
+  expect((await screen.findByRole("alert")).textContent).toContain(
+    "No puedes cambiar esta ruta porque el servicio de hoy ya comenzó",
+  );
+  expect(screen.queryByRole("button", { name: "Reintentar" })).toBeNull();
+  expect(
+    (screen.getByLabelText("Nombre de la ruta") as HTMLInputElement).value,
+  ).toBe("Ida demo");
+});
+
+test("publication retry never treats requested-but-blocked as visible", async () => {
+  const api = driverApi();
+  api.publication.mockRejectedValueOnce(new Error("network"));
+  render(
+    <DriverPublicationScreen
+      api={api as unknown as AuthApi}
+      activeSection="publication"
+    />,
+  );
+  await screen.findByRole("alert");
+  expect(screen.queryByText("Visible para apoderados")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Reintentar" }));
+  await screen.findByText("Aún no visible");
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: "Solicitar que mi servicio sea visible",
+    }),
+  );
+  await screen.findByText(
+    /Pediste que tu servicio sea visible, pero aún falta/,
+  );
+  expect(screen.getByText("Aún no visible")).toBeTruthy();
+  expect(api.setPublication).toHaveBeenCalledWith({
+    publication_requested: true,
+  });
+  expect(api.publication).toHaveBeenCalledTimes(3);
+});
+
+test("technical blockers become actionable Spanish without revision numbers or raw codes", async () => {
+  const api = driverApi();
+  api.publication.mockResolvedValue({
+    ...blocked,
+    publication_requested: true,
+    current_validation_revision: 8,
+    blockers: [
+      { code: "approved_revision_stale", message: "approved_revision_stale" },
+      {
+        code: "required_document_expired",
+        message: "required_document_expired",
+      },
+      { code: "subscription_suspended", message: "subscription_suspended" },
+      {
+        code: "profile_display_name_missing",
+        message: "profile_display_name_missing",
+      },
+    ],
+  });
+  render(
+    <DriverPublicationScreen
+      api={api as unknown as AuthApi}
+      activeSection="publication"
+    />,
+  );
+  await screen.findByText("Aún no visible");
+  expect(
+    screen.getByText(
+      "Los cambios en tu información necesitan una nueva revisión.",
+    ),
+  ).toBeTruthy();
+  expect(screen.getByText("Un documento requerido está vencido.")).toBeTruthy();
+  expect(screen.getByText("Tu plan está suspendido.")).toBeTruthy();
+  expect(screen.getByText("Completa el nombre de tu servicio.")).toBeTruthy();
+  expect(
+    screen.queryByText(
+      /approved_revision_stale|subscription_suspended|Revisión 8/,
+    ),
+  ).toBeNull();
+});
+
+test("route creation discloses one stage at a time, reviews exact data, and Escape returns to the list", async () => {
+  const api = driverApi();
+  render(
+    <DriverPublicationScreen
+      api={api as unknown as AuthApi}
+      activeSection="routes"
+    />,
+  );
+  const start = await screen.findByRole("button", {
+    name: "Crear primera ruta",
+  });
+  expect(screen.queryByLabelText("Nombre de la ruta")).toBeNull();
+  start.focus();
+  fireEvent.click(start);
+  const panel = screen.getByRole("region", { name: "Crear ruta" });
+  expect(document.activeElement).toBe(
+    screen.getByRole("heading", { name: "Crear ruta" }),
+  );
+  expect(screen.queryByLabelText("Nombre del destino")).toBeNull();
+  fireEvent.change(screen.getByLabelText("Nombre de la ruta"), {
+    target: { value: "Ruta nueva ficticia" },
+  });
+  fireEvent.click(screen.getByLabelText("Lunes"));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Continuar: cupos y cobertura" }),
+  );
+  expect(screen.queryByLabelText("Nombre de la ruta")).toBeNull();
+  fireEvent.change(screen.getByLabelText("Nombre del destino"), {
+    target: { value: "Destino ficticio" },
+  });
+  fireEvent.change(screen.getByLabelText("Dirección del destino (privada)"), {
+    target: { value: "Dirección ficticia" },
+  });
+  fireEvent.click(screen.getByLabelText("Comuna Demo Norte"));
+  fireEvent.click(screen.getByRole("button", { name: "Revisar ruta" }));
+  expect(screen.queryByLabelText("Nombre del destino")).toBeNull();
+  expect(
+    screen.getByRole("region", { name: "Revisión de la ruta" }).textContent,
+  ).toContain("Ruta nueva ficticia");
+  expect(api.createRoute).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole("button", { name: "Atrás" }));
+  expect(
+    (screen.getByLabelText("Nombre del destino") as HTMLInputElement).value,
+  ).toBe("Destino ficticio");
+  fireEvent.keyDown(panel, { key: "Escape" });
+  expect(screen.queryByRole("region", { name: "Crear ruta" })).toBeNull();
+  expect(document.activeElement).toBe(start);
+  fireEvent.click(screen.getByRole("button", { name: "Crear ruta" }));
+  expect(
+    (screen.getByLabelText("Nombre de la ruta") as HTMLInputElement).value,
+  ).toBe("");
 });

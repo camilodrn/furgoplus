@@ -163,3 +163,118 @@ contract and freeze ID/revision/state/observations in each pending confirmation.
 
 Human acceptance remains required at desktop and approximately 390px, using only
 synthetic accounts, profile information and documents. Task 08.5 is not complete.
+
+## Slice 3 pre-edit audit and behavior map
+
+Issue [#19](https://github.com/camilodrn/furgoplus/issues/19), the task contract,
+product scope/data model/architecture and ADRs 0002/0004/0005/0006 govern this
+React-only slice. Commits 7850e45 and 7b69bb0 are preserved.
+
+| Existing screen / journey | Contract inspected | UX problem / intended change |
+| --- | --- | --- |
+| Inicio | DriverSummaryView returns publication, all route capacity snapshots, today's active assignments and all payment status counts. Contact list is complete (no pagination). | Duplicate onboarding/status panels, raw states/revision and dense paragraphs. One server-derived visibility card, ordered server blockers with contextual actions, dated capacity per route, separate request read, payment counts. No summed capacity or new eligibility computation. |
+| Publicación | publication_json supplies eligible/requested/blockers, validation, subscription, active-route count and coverage; intent POST then refreshed read. Task 04 truth table/direct-ID tests. | Requested is confused with visible; raw profile state and technical blockers. Translate existing codes; explain request/stop consequences and requested-but-blocked. |
+| Rutas | Owner list/create/update; required label/status/weekdays/times/capacity/destination/coverage; expected_revision on update. Task 04/06 tests. | Dense rows, coverage codes, no empty/read retry. Recurring cards with Spanish weekdays, catalog labels, grouped form and dated server capacity. |
+| Started-day edits | Route changes return run_conflict for frozen fields after today's run starts (including completed). Assignments return operation_conflict for frozen roster changes, but that code also covers end-date conflicts. | Explain route freeze exactly; assignment conflict offers both possible causes without asserting an unknown one. Future-only assignment changes stay server-owned. |
+| Pasajeros | Owner assignments list/create/edit/end, inclusive starts_on/ends_on. Route relation immutable on edit. Nine-digit guardian phone. Capacity returns 400 seat_capacity field error; Task 06 interval/owner tests. | Browser prompt, technical label, dense private data and no read states. Cards, minimal student-name help, one privacy notice, future-date explanation, inline dated end confirmation. No deletion/consent claims. |
+| Solicitudes | Driver receives consented parent-email snapshot even while pending; driver accept discloses current service-email snapshot to parent; decline and parent cancellation are terminal. driver_ineligible/contact_conflict preserved (Task 05 tests). | Unstructured list/detail, conflated success/error, duplicate actions possible. Explain disclosure and outside-platform coordination, pending actions, empty/retry and plain status. No roster/seat creation. |
+| Pagos | Complete owner records in CLP, pending create; paid/void transitions, paid timestamp retained after void. Task 06 payment/summary tests. | Dense rows and missing read/retry/empty hierarchy. Manual records, formatted CLP/dates, same fields/transitions with explicit void consequence. |
+| Session | AuthApi rejects obsolete generations; central not_authenticated clears identity-keyed workspace including persisted onboarding/route drafts. Task 08 api/session tests. | All added state remains inside keyed workspace. Read ordering and unmount guards protect local work; expiry clears standalone screen state too. No auth/API changes. |
+
+The shell retains Inicio, Mi servicio, Pasajeros, Solicitudes and Pagos;
+Datos/Documentos/Revisión/Publicación/Rutas remain subordinate service tasks.
+Forms cap at 720px, cards stack with wrapped actions at 390px, routine targets
+remain at least 48px. Browser layout/workflow acceptance is separate from tests.
+No administrator controls, Flutter, legal text, consent storage or backend changes.
+
+## Slice 3 redesign after product-owner rejection — pending approval
+
+The first Slice 3 presentation was manually rejected. Functional correctness and
+passing tests did not constitute UX approval. This redesign follows
+**show state → explain consequence → offer an obvious action** within the Slice 1
+tokens and the same Task 04–06 contracts.
+
+Inicio leads with a large visibility hero using `publication.eligible` directly.
+The activation path groups the server's blockers into information, plan, route,
+and publication intent; account/service restrictions get a separate visible
+attention step. Group completion and pending-step counts are presentation only,
+never a new eligibility predicate. Every blocker remains available in plain
+Spanish with the existing destination where possible. No raw state/revision/code
+is primary content. Four operational cards summarize active routes, assignments
+active today, requests awaiting response and pending payment records. Route
+capacity meters use only server-provided used/total/available seats and the
+associated next-service date; Inicio's summary lacks recurring days/times, so it
+does not invent these, a today's route, numbered seats or seat selection.
+
+Routes and passengers open as lists with useful empty states. Create/edit opens
+a focused nonmodal panel in document flow; the list is hidden during editing.
+Route fields are disclosed in three stages: days/time, capacity/coverage, review.
+Back preserves the draft; Close/Escape clears it and restores focus when its
+trigger still exists. The server still receives the exact existing fields and
+expected route revision. Passenger fields are private, use “Nombre del estudiante”
+and the approved minimal-name help, and preserve immutable route relation,
+assignment dates, phone/capacity checks and dated finalization.
+
+Solicitudes is an inbox filtered by the actual pending/accepted/declined/cancelled
+lifecycle. Cards show identity, state and received date; opening a focused detail
+shows the existing consented email/message and existing actions. No route context
+is fabricated, no contact is disclosed in the list, and acceptance still shares
+only the existing service-contact snapshot. Payments open with three truthful
+counts and record cards; “Ver registro” expands dates and existing transitions.
+“Registrar pago” opens only the existing manual fields and explicitly says:
+“FurgoPlus solo registra este pago. No procesa ni cobra dinero.”
+
+Inline semantic SVGs, text-labeled markers/chips, native capacity meters, a route
+stepper, inbox chips, record disclosures and focused panels add interaction
+without dependencies. Small-screen CSS stacks cards/forms, wraps text/actions,
+retains 48px targets, and inherits visible focus and reduced-motion handling.
+No backend, API/OpenAPI, administrator workflow, child-data intake or Flutter
+changes were introduced. Identity-keyed workspaces, generation guards, stale
+read/write rejection and expiry cleanup remain intact.
+
+Automated semantics and interaction tests are required but do not prove layout
+acceptance. Desktop, approximately 390px, keyboard/zoom and synthetic end-to-end
+visual review remain a product-owner gate. The current environment's computer-use
+inventory has no enabled browser or app. **Slice 3 is pending visual approval.**
+
+## Slice 3 action feedback correction — pending final acceptance
+
+Important explicit driver mutations use one shared, viewport-visible FurgoPlus
+notice: operation title, text and a visible status marker, using the existing
+colors, typography and focus rules. React/CSS only; no browser alert, dependency,
+modal, private record content or persistent storage. Routes (create/edit/active
+state), passengers (create/edit/end), publication intent, contact decisions and
+manual payment creation/status/void share this pattern. Small disclosures and
+ordinary reads do not generate success notices.
+
+Errors and warnings persist until dismissed or superseded by the next action.
+Success uses polite status semantics and an eight-second timer, paused while
+hovered or focused. Errors use assertive alert semantics. The explicit “Cerrar
+aviso” control has a 48px target and restores keyboard focus when its originating
+control still exists. Success does not move focus. No animation is introduced.
+
+The notice is portaled to the body to escape hidden/clipped panels but owned by
+the identity-keyed workspace. Only static operation/result copy is allowed in
+it. Logout, confirmed expiry and same-role identity replacement remove notices;
+existing API generations and local lifetime/read guards reject obsolete results.
+Server details remain in the private screen, never copied arbitrarily to notices.
+
+Separate read errors from action errors. Only transient read/network/server
+failures offer “Reintentar”, which performs a read. Validation/domain conflicts
+retain their contextual explanation and require corrected data or a fresh read
+through the existing update control. Session expiry directs the user to sign in.
+A confirmed save remains successful even if the following refresh fails.
+
+The capacity rejection retains the server-owned seat_capacity meaning:
+“Esta ruta no tiene cupos disponibles para esas fechas.” The global notice says
+“No pudimos agregar al pasajero” (or the edit equivalent); a contextual region
+beside the submit action repeats the explanation and suggests another route or
+different dates, with no unchanged-data retry. Focus/nearest instant scrolling
+locates the contextual region, including repeated failures, without resetting
+any draft. Field errors stay associated with their original controls.
+
+The top viewport notice wraps text, uses a bounded width and height and remains
+dismissible, away from the usual bottom submit action. Contextual error scrolling
+reserves space above the region. Desktop/approximately 390px/zoom and actual
+screen-reader acceptance still require human review; DOM tests do not prove
+rendered layout. Slice 3 remains pending final acceptance.

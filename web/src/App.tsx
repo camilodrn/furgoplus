@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ApiError, AuthApi } from "./api";
 import type { Identity, Publication } from "./api-types";
 import "./style.css";
+import { ActionFeedbackProvider } from "./ActionFeedback";
 import { AdminValidationScreen, DriverOnboarding } from "./ValidationScreens";
 import { DriverPublicationScreen } from "./PublicationScreens";
 import { AdminControlScreen } from "./AdminControls";
@@ -222,12 +223,13 @@ export default function App() {
 
   if (state.kind === "authenticated")
     return (
-      <AuthenticatedWorkspace
-        key={`${state.user.id}:${state.user.role}`}
-        api={api}
-        user={state.user}
-        onSignOut={() => void signOut()}
-      />
+      <ActionFeedbackProvider key={`${state.user.id}:${state.user.role}`}>
+        <AuthenticatedWorkspace
+          api={api}
+          user={state.user}
+          onSignOut={() => void signOut()}
+        />
+      </ActionFeedbackProvider>
     );
 
   return (
@@ -640,11 +642,13 @@ function AuthenticatedWorkspace({
                 }
               </h1>
             )}
-            <div hidden={!inService && driverSection !== "summary"}>
+            <div hidden={!inService}>
               <DriverOnboarding
                 showNavigation={false}
                 api={api}
-                activeSection={driverSection}
+                activeSection={
+                  driverSection === "summary" ? "profile" : driverSection
+                }
                 onSectionChange={setDriverSection}
                 publication={publication}
                 onRelevantChange={() =>
@@ -656,6 +660,9 @@ function AuthenticatedWorkspace({
               api={api}
               refreshKey={publicationRefreshKey}
               onPublicationChange={setPublication}
+              onNavigate={(destination) =>
+                navigate(() => setDriverSection(destination))
+              }
               activeSection={
                 driverSection === "publication" ? "publication" : "routes"
               }
@@ -664,7 +671,15 @@ function AuthenticatedWorkspace({
               }
             />
             {driverSection === "requests" && <DriverRequests api={api} />}
-            {driverSection === "summary" && <DriverSummaryScreen api={api} />}
+            {driverSection === "summary" && (
+              <DriverSummaryScreen
+                api={api}
+                name={user.display_name ?? ""}
+                onNavigate={(destination) =>
+                  navigate(() => setDriverSection(destination))
+                }
+              />
+            )}
             {driverSection === "roster" && (
               <DriverRoster
                 api={api}
