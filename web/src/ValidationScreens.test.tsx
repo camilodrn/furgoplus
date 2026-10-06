@@ -368,6 +368,7 @@ test("mobile section selector identifies the current section and keeps profile d
 test("next step reflects published, ready, and blocked publication states", async () => {
   const { api } = driverApi({ state: "approved", documents: [document] });
   const base: Publication = {
+    profile_status: "active",
     publication_requested: true,
     eligible: true,
     blockers: [],
@@ -446,6 +447,7 @@ test("admin detail switches validation and plan without duplicating review conte
   Object.assign(api, {
     adminSubscription: async () => ({
       publication: {
+        profile_status: "active",
         publication_requested: false,
         eligible: false,
         blockers: [],

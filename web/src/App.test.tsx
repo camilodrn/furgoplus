@@ -28,6 +28,7 @@ const driver = {
 const domain = (path: string) => {
   if (path.includes("driver/publication"))
     return ok({
+      profile_status: "active",
       publication_requested: false,
       eligible: false,
       blockers: [],
@@ -77,6 +78,7 @@ afterEach(() => {
   cleanup();
   sessionStorage.clear();
   vi.unstubAllGlobals();
+  vi.useRealTimers();
 });
 
 test("restores a driver through csrf then me", async () => {
@@ -133,6 +135,8 @@ test("successful profile update automatically fetches publication state", async 
 });
 
 test("assignment create, edit and end refresh server capacity in routes and summary", async () => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-09-28T12:00:00Z"));
   let usedSeats = 0;
   let availableSeats = 12;
   let assignment: Record<string, unknown> | null = null;
@@ -163,6 +167,7 @@ test("assignment create, edit and end refresh server capacity in routes and summ
         return Promise.resolve(
           ok({
             publication: {
+              profile_status: "active",
               publication_requested: false,
               eligible: false,
               blockers: [],
@@ -464,8 +469,42 @@ test("a confirmed session expiry clears the authenticated shell", async () => {
     );
   vi.stubGlobal("fetch", fetchMock);
   render(<App />);
-  expect(await screen.findByText("Completa tu validación")).toBeTruthy();
+  await screen.findByDisplayValue("Sample");
+  fireEvent.change(screen.getByLabelText("Descripción del servicio"), {
+    target: { value: "Private loaded draft" },
+  });
+  expect(screen.getByDisplayValue("Private loaded draft")).toBeTruthy();
   document.dispatchEvent(new Event("visibilitychange"));
   expect(await screen.findByText("La sesión caducó.")).toBeTruthy();
   expect(screen.queryByText("Completa tu validación")).toBeNull();
+  expect(screen.queryByDisplayValue("Private loaded draft")).toBeNull();
+});
+
+test("administrator can open control queue and retain the authorized document review workflow", async () => {
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValueOnce(csrf)
+    .mockResolvedValueOnce(ok({ ...driver, role: "admin" }))
+    .mockImplementation((path: string) =>
+      Promise.resolve(
+        path.includes("admin/validations/")
+          ? ok({ results: [] })
+          : ok({ results: [], count: 0 }),
+      ),
+    );
+  vi.stubGlobal("fetch", fetchMock);
+  render(<App />);
+  await screen.findByText("No hay conductores con estos filtros.");
+  fireEvent.click(screen.getByText("Revisión de documentos"));
+  await screen.findByText("No hay solicitudes en este estado.");
+  expect(
+    fetchMock.mock.calls.some(([path]) =>
+      path.startsWith("/api/v1/admin/drivers/?"),
+    ),
+  ).toBe(true);
+  expect(
+    fetchMock.mock.calls.some(
+      ([path]) => path === "/api/v1/admin/validations/?state=pending",
+    ),
+  ).toBe(true);
 });

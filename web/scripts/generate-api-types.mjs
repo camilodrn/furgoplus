@@ -47,6 +47,21 @@ const types = [
   ["DriverDocument", "/api/v1/driver/documents/", "post", "201"],
   ["DriverValidations", "/api/v1/driver/validations/", "get", "200"],
   ["DriverValidation", "/api/v1/driver/validations/submit/", "post", "200"],
+  ["AdminDrivers", "/api/v1/admin/drivers/", "get", "200"],
+  ["AdminDriver", "/api/v1/admin/drivers/{id}/", "get", "200"],
+  [
+    "ProfileStatusInput",
+    "/api/v1/admin/drivers/{id}/status/",
+    "post",
+    "request",
+  ],
+  ["AdminDriverHistory", "/api/v1/admin/drivers/{id}/history/", "get", "200"],
+  [
+    "AdminDriverValidations",
+    "/api/v1/admin/drivers/{id}/validations/",
+    "get",
+    "200",
+  ],
   ["AdminValidations", "/api/v1/admin/validations/", "get", "200"],
   ["AdminValidation", "/api/v1/admin/validations/{id}/", "get", "200"],
   [

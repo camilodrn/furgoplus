@@ -23,6 +23,7 @@ import type {
 
 afterEach(cleanup);
 const blocked: Publication = {
+  profile_status: "active",
   publication_requested: false,
   eligible: false,
   blockers: [
@@ -289,6 +290,14 @@ test("admin sees blockers and saves an audited bounded plan action with Chilean 
   fireEvent.change(screen.getByLabelText("Motivo"), {
     target: { value: "Suspensión demo" },
   });
+  expect((screen.getByText("Guardar plan") as HTMLButtonElement).disabled).toBe(
+    true,
+  );
+  fireEvent.click(
+    screen.getByLabelText(
+      "Confirmo que este plan dejará de habilitar publicación",
+    ),
+  );
   fireEvent.click(screen.getByText("Guardar plan"));
   await waitFor(() =>
     expect(changeSubscription).toHaveBeenLastCalledWith(

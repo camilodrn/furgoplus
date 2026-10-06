@@ -99,3 +99,109 @@ test("network errors are surfaced without retrying an ambiguous write", async ()
   );
   expect(fetchMock).toHaveBeenCalledTimes(2);
 });
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((done) => {
+    resolve = done;
+  });
+  return { promise, resolve };
+}
+
+test("confirmed expiry invalidates late private queue and identity responses and notifies once", async () => {
+  const queue = deferred<Response>();
+  const me = deferred<Response>();
+  const expired = vi.fn();
+  vi.stubGlobal(
+    "fetch",
+    vi.fn((path: string) =>
+      path.includes("admin/drivers/?")
+        ? queue.promise
+        : path.endsWith("auth/me/")
+          ? me.promise
+          : Promise.resolve(fail(403, "not_authenticated")),
+    ),
+  );
+  const api = new AuthApi(expired);
+  const queueResult = expect(
+    api.adminDrivers(new URLSearchParams()),
+  ).rejects.toMatchObject({ code: "stale_request" });
+  const identityResult = expect(api.me()).rejects.toMatchObject({
+    code: "stale_request",
+  });
+  await expect(api.adminDriver(7)).rejects.toMatchObject({
+    code: "not_authenticated",
+  });
+  queue.resolve(
+    ok({ results: [{ email: "old-private@example.test" }], count: 1 }),
+  );
+  me.resolve(ok(identity));
+  await Promise.all([queueResult, identityResult]);
+  expect(expired).toHaveBeenCalledTimes(1);
+});
+
+test.each(["permission_denied", "csrf_failed"])(
+  "%s keeps the session generation and does not notify expiration",
+  async (code) => {
+    const pending = deferred<Response>();
+    const expired = vi.fn();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((path: string) =>
+        path.endsWith("auth/me/")
+          ? pending.promise
+          : Promise.resolve(fail(403, code)),
+      ),
+    );
+    const api = new AuthApi(expired);
+    const me = api.me();
+    await expect(api.adminDriver(7)).rejects.toMatchObject({ code });
+    pending.resolve(ok(identity));
+    await expect(me).resolves.toEqual(identity);
+    expect(expired).not.toHaveBeenCalled();
+  },
+);
+
+test("account invalidation blocks a pending document download", async () => {
+  const pending = deferred<Response>();
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(() => pending.promise),
+  );
+  const api = new AuthApi();
+  const result = expect(api.downloadDocument(7, true)).rejects.toMatchObject({
+    code: "stale_request",
+  });
+  api.invalidateRequests();
+  pending.resolve({
+    ok: true,
+    blob: async () => new Blob(["Synthetic private bytes"]),
+  } as Response);
+  await result;
+});
+
+test("expiration during CSRF bootstrap prevents a pending write from being sent", async () => {
+  const bootstrap = deferred<Response>();
+  const fetchMock = vi.fn((path: string) =>
+    path.endsWith("auth/csrf/")
+      ? bootstrap.promise
+      : Promise.resolve(fail(403, "not_authenticated")),
+  );
+  vi.stubGlobal("fetch", fetchMock);
+  const api = new AuthApi();
+  const write = expect(
+    api.changeProfileStatus(7, {
+      status: "suspended",
+      expected_status: "active",
+      expected_version: null,
+      reason: "Synthetic review",
+    }),
+  ).rejects.toMatchObject({ code: "stale_request" });
+  await expect(api.me()).rejects.toMatchObject({ code: "not_authenticated" });
+  bootstrap.resolve(ok({ csrf_token: "obsolete" }));
+  await write;
+  expect(fetchMock.mock.calls.map(([path]) => path)).toEqual([
+    "/api/v1/auth/csrf/",
+    "/api/v1/auth/me/",
+  ]);
+});

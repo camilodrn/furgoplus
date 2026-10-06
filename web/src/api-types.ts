@@ -104,6 +104,145 @@ export type DriverValidation = {
     expires_on: string | null;
   }[];
 };
+export type AdminDrivers = {
+  results: {
+    id: number;
+    display_name: string;
+    email: string;
+    profile_version: number | null;
+    publication: {
+      profile_status: "active" | "suspended" | "deactivated";
+      publication_requested: boolean;
+      eligible: boolean;
+      blockers: {
+        code:
+          | "account_inactive"
+          | "driver_suspended"
+          | "driver_deactivated"
+          | "publication_not_requested"
+          | "validation_not_approved"
+          | "approved_revision_stale"
+          | "required_document_missing"
+          | "required_document_expired"
+          | "subscription_missing"
+          | "subscription_inactive"
+          | "subscription_suspended"
+          | "subscription_not_started"
+          | "subscription_expired"
+          | "profile_display_name_missing"
+          | "profile_summary_missing"
+          | "service_contact_email_missing"
+          | "active_route_missing";
+        message: string;
+      }[];
+      validation_state: "draft" | "pending" | "approved" | "rejected";
+      current_validation_revision: number;
+      approved_revision: number | null;
+      subscription: {
+        plan_code: "basic" | "pro" | "elite";
+        plan_label: string;
+        status: "inactive" | "active" | "suspended";
+        starts_at: string | null;
+        ends_at: string | null;
+      } | null;
+      active_route_count: number;
+      coverage: { code: string; display_name: string }[];
+    };
+  }[];
+  count: number;
+};
+export type AdminDriver = {
+  id: number;
+  display_name: string;
+  email: string;
+  profile_version: number | null;
+  publication: {
+    profile_status: "active" | "suspended" | "deactivated";
+    publication_requested: boolean;
+    eligible: boolean;
+    blockers: {
+      code:
+        | "account_inactive"
+        | "driver_suspended"
+        | "driver_deactivated"
+        | "publication_not_requested"
+        | "validation_not_approved"
+        | "approved_revision_stale"
+        | "required_document_missing"
+        | "required_document_expired"
+        | "subscription_missing"
+        | "subscription_inactive"
+        | "subscription_suspended"
+        | "subscription_not_started"
+        | "subscription_expired"
+        | "profile_display_name_missing"
+        | "profile_summary_missing"
+        | "service_contact_email_missing"
+        | "active_route_missing";
+      message: string;
+    }[];
+    validation_state: "draft" | "pending" | "approved" | "rejected";
+    current_validation_revision: number;
+    approved_revision: number | null;
+    subscription: {
+      plan_code: "basic" | "pro" | "elite";
+      plan_label: string;
+      status: "inactive" | "active" | "suspended";
+      starts_at: string | null;
+      ends_at: string | null;
+    } | null;
+    active_route_count: number;
+    coverage: { code: string; display_name: string }[];
+  };
+};
+export type ProfileStatusInput = {
+  status: "active" | "suspended" | "deactivated";
+  expected_status: "active" | "suspended" | "deactivated";
+  expected_version: number | null;
+  reason: string;
+};
+export type AdminDriverHistory = {
+  results: {
+    id: number;
+    actor: { id: number; display_name: string };
+    action:
+      | "profile_status_changed"
+      | "subscription_changed"
+      | "validation_approved"
+      | "validation_rejected"
+      | "document_read";
+    target_type: "driver_profile" | "subscription" | "validation" | "document";
+    target_id: number;
+    occurred_at: string;
+    correlation_id: string;
+    reason: string;
+    before: {
+      status?: string;
+      plan_code?: "basic" | "pro" | "elite";
+      starts_at?: string | null;
+      ends_at?: string | null;
+    };
+    after: {
+      status?: string;
+      plan_code?: "basic" | "pro" | "elite";
+      starts_at?: string | null;
+      ends_at?: string | null;
+    };
+  }[];
+  count: number;
+};
+export type AdminDriverValidations = {
+  results: {
+    id: number;
+    revision: number;
+    state: "pending" | "approved" | "rejected" | "superseded";
+    submitted_at: string;
+    reviewed_at: string | null;
+    observations: string | null;
+    display_name_snapshot: string;
+  }[];
+  count: number;
+};
 export type AdminValidations = {
   results: {
     id: number;
@@ -181,6 +320,7 @@ export type AdminValidation = {
 };
 export type ObservationInput = { observations: string };
 export type Publication = {
+  profile_status: "active" | "suspended" | "deactivated";
   publication_requested: boolean;
   eligible: boolean;
   blockers: {
@@ -310,6 +450,7 @@ export type RouteUpdate = {
 };
 export type DriverSummary = {
   publication: {
+    profile_status: "active" | "suspended" | "deactivated";
     publication_requested: boolean;
     eligible: boolean;
     blockers: {
@@ -440,6 +581,7 @@ export type Plans = {
 };
 export type AdminSubscription = {
   publication: {
+    profile_status: "active" | "suspended" | "deactivated";
     publication_requested: boolean;
     eligible: boolean;
     blockers: {

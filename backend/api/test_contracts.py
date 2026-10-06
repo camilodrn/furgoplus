@@ -74,3 +74,81 @@ class Task06ContractTests(SimpleTestCase):
                 "run_state",
             ):
                 self.assertNotIn(secret, body)
+
+
+class Task08ContractTests(SimpleTestCase):
+    def test_profile_expected_version_is_nullable_positive_integer(self):
+        operation = openapi_document()["paths"]["/api/v1/admin/drivers/{id}/status/"][
+            "post"
+        ]
+        schema = operation["requestBody"]["content"]["application/json"]["schema"]
+        self.assertEqual(
+            schema["properties"]["expected_version"],
+            {"type": ["integer", "null"], "minimum": 1},
+        )
+
+    def test_control_schemas_are_narrow_and_session_protected(self):
+        paths = openapi_document()["paths"]
+        for suffix in ("", "status/", "history/", "validations/"):
+            method = "post" if suffix == "status/" else "get"
+            operation = paths["/api/v1/admin/drivers/{id}/" + suffix][method]
+            self.assertEqual(operation["security"], [{"SessionCookie": []}])
+            schema = operation["responses"]["200"]["content"]["application/json"][
+                "schema"
+            ]
+            self.assertFalse(schema["additionalProperties"])
+        status = paths["/api/v1/admin/drivers/{id}/status/"]["post"]
+        self.assertEqual(
+            set(
+                status["requestBody"]["content"]["application/json"]["schema"][
+                    "required"
+                ]
+            ),
+            {"status", "reason", "expected_status", "expected_version"},
+        )
+        history = paths["/api/v1/admin/drivers/{id}/history/"]
+        self.assertEqual(set(history), {"get"})
+        fields = history["get"]["responses"]["200"]["content"]["application/json"][
+            "schema"
+        ]["properties"]["results"]["items"]["properties"]
+        self.assertEqual(
+            set(fields),
+            {
+                "id",
+                "actor",
+                "action",
+                "target_type",
+                "target_id",
+                "occurred_at",
+                "correlation_id",
+                "reason",
+                "before",
+                "after",
+            },
+        )
+        self.assertFalse(fields["before"]["additionalProperties"])
+        self.assertEqual(
+            set(fields["before"]["properties"]),
+            {"status", "plan_code", "starts_at", "ends_at"},
+        )
+        self.assertIn(
+            "profile_status",
+            paths["/api/v1/driver/publication/"]["get"]["responses"]["200"]["content"][
+                "application/json"
+            ]["schema"]["required"],
+        )
+        filters = paths["/api/v1/admin/drivers/"]["get"]["parameters"]
+        self.assertEqual(
+            {p["name"] for p in filters},
+            {
+                "q",
+                "validation_state",
+                "profile_status",
+                "subscription_status",
+                "plan_code",
+                "publication",
+                "blocker",
+                "offset",
+                "limit",
+            },
+        )
