@@ -91,7 +91,7 @@ test("restores a driver through csrf then me", async () => {
   vi.stubGlobal("fetch", fetchMock);
   render(<App />);
   expect(screen.getByRole("status")).toBeTruthy();
-  expect(await screen.findByText("Completa tu validación")).toBeTruthy();
+  expect(await screen.findByText("Prepara tu información")).toBeTruthy();
   expect(screen.getByAltText("FurgoPlus Transporte Escolar")).toBeTruthy();
   expect(screen.getByText("Sample")).toBeTruthy();
   expect(fetchMock.mock.calls.map(([path]) => path).slice(0, 2)).toEqual([
@@ -109,7 +109,7 @@ test("successful profile update automatically fetches publication state", async 
     .mockImplementation((path: string) => Promise.resolve(domain(path)));
   vi.stubGlobal("fetch", fetchMock);
   render(<App />);
-  await screen.findByLabelText("Nombre visible");
+  await screen.findByLabelText("Nombre del servicio");
   await waitFor(() =>
     expect(
       fetchMock.mock.calls.filter(
@@ -119,7 +119,7 @@ test("successful profile update automatically fetches publication state", async 
     ).toHaveLength(1),
   );
   fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }));
-  await screen.findByText("Cambios guardados correctamente.");
+  await screen.findByText("Datos del servicio guardados.");
   await waitFor(() =>
     expect(
       fetchMock.mock.calls.filter(
@@ -131,7 +131,7 @@ test("successful profile update automatically fetches publication state", async 
   expect(
     within(
       screen.getByRole("navigation", { name: "Secciones del conductor" }),
-    ).getByRole("button", { name: "Perfil" }),
+    ).getByRole("button", { name: "Mi servicio" }),
   ).toBeTruthy();
 });
 
@@ -307,7 +307,7 @@ test("parent role is unsupported on web", async () => {
   );
   render(<App />);
   expect(await screen.findByText("Usa la aplicación móvil")).toBeTruthy();
-  expect(screen.queryByText("Completa tu validación")).toBeNull();
+  expect(screen.queryByText("Prepara tu información")).toBeNull();
 });
 
 test("signed-out state follows failed restore and driver registration", async () => {
@@ -644,7 +644,7 @@ test("a confirmed session expiry clears the authenticated shell", async () => {
       "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
     ),
   ).toBeTruthy();
-  expect(screen.queryByText("Completa tu validación")).toBeNull();
+  expect(screen.queryByText("Prepara tu información")).toBeNull();
   expect(screen.queryByDisplayValue("Private loaded draft")).toBeNull();
 });
 

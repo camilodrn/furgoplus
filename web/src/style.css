@@ -1539,3 +1539,165 @@ input[aria-invalid="true"] {
     scroll-behavior: auto !important;
   }
 }
+
+/* Slice 2: onboarding tasks and focused validation review. */
+.onboarding-screen .content-stack {
+  max-width: 720px;
+}
+.onboarding-screen .profile-form,
+.onboarding-screen .document-grid,
+.admin-validation-screen .admin-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+.onboarding-steps {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 24px 0;
+}
+.onboarding-steps li {
+  min-width: 0;
+}
+.onboarding-steps button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+  text-align: left;
+  padding: 16px;
+}
+.onboarding-steps [aria-current="step"] {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  color: var(--brand-dark);
+}
+.onboarding-steps small {
+  display: block;
+  font-size: 1rem;
+  color: var(--muted);
+  font-weight: 400;
+  margin-top: 4px;
+}
+.onboarding-screen label .helper-text {
+  font-weight: 400;
+  margin: 0;
+}
+.onboarding-screen .document-card,
+.onboarding-screen .upload-controls,
+.admin-validation-screen .detail-panel {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.onboarding-screen .document-title {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.onboarding-screen .file-picker input {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.onboarding-screen .step-continue,
+.validation-confirmation,
+.onboarding-home {
+  margin-top: 24px;
+}
+.submission-summary {
+  padding-left: 24px;
+}
+.submission-summary li {
+  margin-bottom: 12px;
+}
+.retained-observations,
+.correction-note p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.validation-confirmation {
+  padding: 24px;
+  border: 2px solid var(--brand);
+  border-radius: 12px;
+  background: var(--brand-soft);
+}
+.validation-confirmation button {
+  margin: 8px 12px 0 0;
+}
+.validation-workspace-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.admin-validation-screen .queue-item {
+  align-items: center;
+}
+.admin-validation-screen .queue-item p,
+.admin-validation-screen .review-facts dt,
+.admin-validation-screen .review-document p,
+.admin-validation-screen .comparison-explanation,
+.admin-validation-screen .change-badge {
+  font-size: 1rem;
+}
+.admin-validation-screen .revision-comparison summary {
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 48px;
+  align-content: center;
+}
+.admin-validation-screen .button-text-danger {
+  border: 1px solid var(--danger);
+  margin-left: 12px;
+}
+@media (max-width: 680px) {
+  .onboarding-steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .onboarding-screen .panel,
+  .admin-validation-screen .panel,
+  .validation-confirmation {
+    padding: 16px;
+  }
+  .admin-validation-screen .queue-heading,
+  .admin-validation-screen .detail-heading,
+  .admin-validation-screen .queue-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .admin-validation-screen .queue-actions {
+    justify-items: start;
+  }
+  .admin-validation-screen .review-facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .onboarding-screen .file-picker,
+  .onboarding-screen .action-line button,
+  .validation-confirmation button {
+    width: 100%;
+  }
+}
+
+.admin-validation-screen .detail-panel {
+  max-width: 960px;
+}
+.admin-validation-screen .decision-section {
+  max-width: 720px;
+}
+.onboarding-screen .expiry-calendar {
+  right: 50%;
+  transform: translateX(50%);
+  width: min(370px, calc(100vw - 16px));
+}
+.onboarding-screen .expiry-calendar-trigger,
+.onboarding-screen .expiry-calendar-heading button {
+  width: 48px;
+}
+.onboarding-screen .field-error {
+  font-size: 1rem;
+}

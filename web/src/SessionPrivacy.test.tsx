@@ -9,7 +9,12 @@ import {
 } from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
 import App from "./App";
-import type { AdminDriver, Identity, Publication } from "./api-types";
+import type {
+  AdminDriver,
+  AdminValidation,
+  Identity,
+  Publication,
+} from "./api-types";
 
 const ok = (body: unknown) =>
   ({ ok: true, status: 200, json: async () => body }) as Response;
@@ -91,6 +96,40 @@ function fixture(role: "driver" | "admin") {
     active_assignments: 1,
     payment_counts: { pending: 2, paid: 1, void: 0 },
   });
+  const validation = (): AdminValidation => ({
+    id: 4,
+    revision: 1,
+    state: "pending",
+    display_name_snapshot: `Private service ${account.id}`,
+    submitted_at: "2026-10-01T12:00:00Z",
+    reviewed_at: null,
+    observations: `Private review note ${account.id}`,
+    driver: {
+      id: 7,
+      display_name: `Private service ${account.id}`,
+      email: `private-${account.id}@example.test`,
+    },
+    documents: [
+      {
+        id: 17,
+        version: 1,
+        kind: "demo_identity_document",
+        content_type: "application/pdf",
+        byte_size: 20,
+        uploaded_at: "2026-10-01T11:00:00Z",
+        expires_on: null,
+      },
+    ],
+    comparison: {
+      previous_revision: null,
+      changed_document_count: 0,
+      unchanged_document_count: 0,
+      changed_identity_field_count: 0,
+      has_material_changes: false,
+      document_changes: [],
+      identity_changes: [],
+    },
+  });
   const fetchMock = vi.fn((path: string): Promise<Response> => {
     const custom = override(path);
     if (custom) return custom;
@@ -120,6 +159,10 @@ function fixture(role: "driver" | "admin") {
       return Promise.resolve(ok({ documents: [] }));
     if (path.endsWith("driver/validations/"))
       return Promise.resolve(ok({ ...profile(), validations: [] }));
+    if (path.includes("admin/validations/?"))
+      return Promise.resolve(ok({ results: [validation()] }));
+    if (path.endsWith("admin/validations/4/"))
+      return Promise.resolve(ok(validation()));
     if (path.includes("admin/drivers/?"))
       return Promise.resolve(ok({ results: [control()], count: 1 }));
     if (path.endsWith("admin/drivers/7/"))
@@ -173,6 +216,7 @@ function fixture(role: "driver" | "admin") {
   return {
     fetchMock,
     control,
+    validation,
     profile,
     summary,
     replace: () => {
@@ -209,13 +253,14 @@ afterEach(() => {
   cleanup();
   sessionStorage.clear();
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
 });
 
 test("same-role driver A to B discards loaded profile, summary, publication and drafts while B reads are pending", async () => {
   const mock = fixture("driver");
   render(<App />);
   await screen.findByDisplayValue("contact-1@example.test");
-  fireEvent.change(screen.getByLabelText("Nombre visible"), {
+  fireEvent.change(screen.getByLabelText("Nombre del servicio"), {
     target: { value: "Private unsaved A" },
   });
   fireEvent.click(section("Inicio"));
@@ -468,4 +513,159 @@ test("permission_denied does not expire a loaded driver's session or erase its s
       "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
     ),
   ).toBeNull();
+});
+
+test("account replacement removes validation documents and a frozen decision; a late private download creates no URL", async () => {
+  const mock = fixture("admin");
+  const create = vi.fn(() => "blob:synthetic-private");
+  vi.stubGlobal("URL", { createObjectURL: create, revokeObjectURL: vi.fn() });
+  vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+  render(<App />);
+  fireEvent.click(await screen.findByRole("button", { name: "Validaciones" }));
+  fireEvent.click(await screen.findByRole("button", { name: "Revisar" }));
+  fireEvent.change(
+    await screen.findByLabelText("Comentario para el conductor"),
+    {
+      target: { value: "Private frozen decision A" },
+    },
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Aprobar" }));
+  expect(screen.getByRole("alertdialog")).toBeTruthy();
+  const lateDownload = deferred<Response>();
+  mock.intercept((path) =>
+    path.endsWith("admin/documents/17/download/")
+      ? lateDownload.promise
+      : undefined,
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Descargar" }));
+  expect(
+    await screen.findByRole("button", { name: "Descargando…" }),
+  ).toBeTruthy();
+  const bQueue = deferred<Response>();
+  mock.replace();
+  mock.intercept((path) =>
+    path.includes("admin/drivers/?") ? bQueue.promise : undefined,
+  );
+  refreshIdentity();
+  await screen.findByText("Account B");
+  expect(screen.queryByText("Private service 1")).toBeNull();
+  expect(screen.queryByText("Private review note 1")).toBeNull();
+  expect(screen.queryByText("Private frozen decision A")).toBeNull();
+  expect(screen.queryByRole("alertdialog")).toBeNull();
+  expect(screen.queryByRole("button", { name: "Descargar" })).toBeNull();
+  await act(async () => {
+    lateDownload.resolve({
+      ok: true,
+      status: 200,
+      blob: async () =>
+        new Blob(["Synthetic private bytes"], { type: "application/pdf" }),
+    } as Response);
+    bQueue.resolve(ok({ results: [mock.control()], count: 1 }));
+  });
+  expect(create).not.toHaveBeenCalled();
+  expect(screen.queryByText("Private service 1")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Validaciones" }));
+  fireEvent.click(await screen.findByRole("button", { name: "Revisar" }));
+  const comment = (await screen.findByLabelText(
+    "Comentario para el conductor",
+  )) as HTMLTextAreaElement;
+  expect(comment.value).toBe("");
+  expect(screen.queryByText("Private frozen decision A")).toBeNull();
+});
+
+test("document authorization expiry removes the review, observations and confirmation immediately", async () => {
+  const mock = fixture("admin");
+  const create = vi.fn(() => "blob:private");
+  vi.stubGlobal("URL", { createObjectURL: create, revokeObjectURL: vi.fn() });
+  render(<App />);
+  fireEvent.click(await screen.findByRole("button", { name: "Validaciones" }));
+  fireEvent.click(await screen.findByRole("button", { name: "Revisar" }));
+  fireEvent.change(
+    await screen.findByLabelText("Comentario para el conductor"),
+    {
+      target: { value: "Private expiring note" },
+    },
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Aprobar" }));
+  mock.intercept((path) =>
+    path.endsWith("admin/documents/17/download/")
+      ? Promise.resolve(denied())
+      : undefined,
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Descargar" }));
+  await screen.findByText(
+    "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
+  );
+  expect(screen.queryByText("Private service 1")).toBeNull();
+  expect(screen.queryByText("Private review note 1")).toBeNull();
+  expect(screen.queryByText("Private expiring note")).toBeNull();
+  expect(screen.queryByRole("alertdialog")).toBeNull();
+  expect(screen.queryByRole("button", { name: "Descargar" })).toBeNull();
+  expect(create).not.toHaveBeenCalled();
+});
+
+test("account replacement clears selected upload bytes, filename and saved document metadata", async () => {
+  const mock = fixture("driver");
+  mock.intercept((path) =>
+    path.endsWith("checklist/")
+      ? Promise.resolve(
+          ok({
+            demo_only: true,
+            allowed_content_types: ["application/pdf"],
+            max_bytes: 10485760,
+            items: [
+              {
+                kind: "demo_identity_document",
+                label: "Documento sintético",
+                requires_expiry: false,
+              },
+            ],
+          }),
+        )
+      : path.endsWith("driver/documents/")
+        ? Promise.resolve(
+            ok({
+              documents: [
+                {
+                  id: 17,
+                  version: 1,
+                  kind: "demo_identity_document",
+                  content_type: "application/pdf",
+                  byte_size: 20,
+                  uploaded_at: "2026-10-01T11:00:00Z",
+                  expires_on: null,
+                  is_current: true,
+                },
+              ],
+            }),
+          )
+        : undefined,
+  );
+  render(<App />);
+  await screen.findByLabelText("Nombre del servicio");
+  fireEvent.click(screen.getByRole("button", { name: /Documentos.*1 de 1/ }));
+  fireEvent.change(screen.getByLabelText("Archivo para Documento sintético"), {
+    target: {
+      files: [
+        new File(["synthetic-only"], "synthetic-private-A.pdf", {
+          type: "application/pdf",
+        }),
+      ],
+    },
+  });
+  expect(screen.getByText("synthetic-private-A.pdf")).toBeTruthy();
+  const bProfile = deferred<Response>();
+  mock.replace();
+  mock.intercept((path) =>
+    path.endsWith("driver/profile/") ? bProfile.promise : undefined,
+  );
+  refreshIdentity();
+  await screen.findByText("Account B");
+  expect(screen.queryByText("synthetic-private-A.pdf")).toBeNull();
+  expect(
+    screen.queryByRole("button", { name: "Descargar documento" }),
+  ).toBeNull();
+  await act(async () => bProfile.resolve(ok(mock.profile())));
+  await screen.findByLabelText("Nombre del servicio");
+  expect(screen.queryByText("synthetic-private-A.pdf")).toBeNull();
 });

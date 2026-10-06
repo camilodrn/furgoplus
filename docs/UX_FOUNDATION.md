@@ -132,3 +132,34 @@ white 6.31:1, success on pale green 6.44:1, warning on pale amber 6.03:1, danger
 pale red 6.55:1. Interactive border on white is 4.51:1; the web focus ring on white
 is 4.97:1. These are token calculations, not a claim of full accessibility
 conformance. Browser zoom/device/screen-reader acceptance remains a manual gate.
+
+## Slice 2 audit and approved implementation boundary
+
+Read issue #19, Task 08.5, this foundation, scope/data/architecture, ADRs 0001,
+0002 and 0004, Task 03 services/API/tests and Task 04 publication policy/tests.
+The user authorizes only driver onboarding and administrative validation UX.
+
+| Existing surface | Finding | Slice 2 direction |
+| --- | --- | --- |
+| Mi servicio / profile | Five equal setup links; name semantics and contact boundary unclear | Three task steps in content; publication/routes remain reachable; concise field help |
+| Driver documents | Raw controls across three columns; hardcoded limits; versions dominate | Stacked checklist, server-provided kinds/formats/limit, selected filename, private download, replacement consequence |
+| Driver review | React duplicates submission predicate/date checks; promises an unimplemented notification | Server states and submission errors only; explicit send milestone without a notification promise |
+| Driver history | Revision-led logs | Dated events with retained observations, snapshot documents and subordinate traceability |
+| Admin queue/detail | Side-by-side cramped workspace; snapshot name subordinate to current name; direct decisions | Focused review workspace, snapshot-first identity, private document actions and captured decision confirmation |
+| Privacy | Existing identity-keyed workspace and AuthApi generation checks | Preserve account/expiry cleanup, stale binary rejection and audited authorized server access |
+
+Contract limits: checklist returns configuration, not submission readiness or
+per-document review/expiry verdicts. Display uploaded/missing metadata and dates;
+do not claim they are validated or recreate the submission predicate. Submission
+errors identify exact impediments. Publication may report an aggregate expired
+required-document blocker; do not infer which document from it. Admin profile
+snapshot includes the name only, not historical summary/contact; show only data
+actually supplied. No backend/API/OpenAPI change is needed for this presentation.
+Only name/current required document edits invalidate validation; description and
+contact edits do not. Admin decisions take immutable submission ID plus required
+observations, not expected_revision/state fields; the server locks the driver
+and submission and checks current revision and pending state. Preserve this exact
+contract and freeze ID/revision/state/observations in each pending confirmation.
+
+Human acceptance remains required at desktop and approximately 390px, using only
+synthetic accounts, profile information and documents. Task 08.5 is not complete.

@@ -568,9 +568,6 @@ function AuthenticatedWorkspace({
                     >
                       {(
                         [
-                          ["profile", "Perfil"],
-                          ["documents", "Documentos"],
-                          ["validation", "Validación"],
                           ["publication", "Publicación"],
                           ["routes", "Rutas"],
                         ] as const
@@ -643,7 +640,7 @@ function AuthenticatedWorkspace({
                 }
               </h1>
             )}
-            <div hidden={!inService}>
+            <div hidden={!inService && driverSection !== "summary"}>
               <DriverOnboarding
                 showNavigation={false}
                 api={api}
