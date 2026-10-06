@@ -608,10 +608,12 @@ SUBSCRIPTION = {
         "ends_at": {"type": ["string", "null"], "format": "date-time"},
     },
 }
+PROFILE_STATUS = {"type": "string", "enum": ["active", "suspended", "deactivated"]}
 PUBLICATION = {
     "type": "object",
     "additionalProperties": False,
     "required": [
+        "profile_status",
         "publication_requested",
         "eligible",
         "blockers",
@@ -623,6 +625,7 @@ PUBLICATION = {
         "coverage",
     ],
     "properties": {
+        "profile_status": PROFILE_STATUS,
         "publication_requested": {"type": "boolean"},
         "eligible": {"type": "boolean"},
         "blockers": {
@@ -1571,4 +1574,164 @@ def openapi_document():
                 }
             )
         document["paths"].setdefault(path, {})[endpoint.method] = operation
+    return document
+
+
+# Task 08: explicit per-driver administration, never generic model/log CRUD.
+def control_object(properties):
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "required": list(properties),
+        "properties": properties,
+    }
+
+
+ADMIN_DRIVER = control_object(
+    {
+        "id": INTEGER,
+        "display_name": STRING,
+        "email": {"type": "string", "format": "email"},
+        "profile_version": NULLABLE_INTEGER,
+        "publication": PUBLICATION,
+    }
+)
+PROFILE_STATUS_INPUT = control_object(
+    {
+        "status": PROFILE_STATUS,
+        "expected_status": PROFILE_STATUS,
+        "expected_version": {**NULLABLE_INTEGER, "minimum": 1},
+        "reason": {"type": "string", "minLength": 1, "maxLength": 1000},
+    }
+)
+AUDIT_STATE = {
+    "type": "object",
+    "additionalProperties": False,
+    "properties": {
+        "status": STRING,
+        "plan_code": PLAN_CODE,
+        "starts_at": {"type": ["string", "null"], "format": "date-time"},
+        "ends_at": {"type": ["string", "null"], "format": "date-time"},
+    },
+}
+ADMIN_ACTION = control_object(
+    {
+        "id": INTEGER,
+        "actor": control_object({"id": INTEGER, "display_name": STRING}),
+        "action": {
+            "type": "string",
+            "enum": [
+                "profile_status_changed",
+                "subscription_changed",
+                "validation_approved",
+                "validation_rejected",
+                "document_read",
+            ],
+        },
+        "target_type": {
+            "type": "string",
+            "enum": [
+                "driver_profile",
+                "subscription",
+                "validation",
+                "document",
+            ],
+        },
+        "target_id": INTEGER,
+        "occurred_at": {"type": "string", "format": "date-time"},
+        "correlation_id": STRING,
+        "reason": STRING,
+        "before": AUDIT_STATE,
+        "after": AUDIT_STATE,
+    }
+)
+
+
+def control_page(item):
+    return control_object(
+        {"results": {"type": "array", "items": item}, "count": INTEGER}
+    )
+
+
+ENDPOINTS += (
+    Endpoint(
+        "admin/drivers/",
+        "admin-drivers",
+        "get",
+        "getAdminDrivers",
+        "Search current driver control queue (admin only)",
+        control_page(ADMIN_DRIVER),
+    ),
+    Endpoint(
+        "admin/drivers/{id}/",
+        "admin-driver-detail",
+        "get",
+        "getAdminDriver",
+        "Selected driver control state (admin only)",
+        ADMIN_DRIVER,
+    ),
+    Endpoint(
+        "admin/drivers/{id}/status/",
+        "admin-driver-status",
+        "post",
+        "changeAdminDriverStatus",
+        "Audited profile transition with reason and optimistic version (admin only)",
+        ADMIN_DRIVER,
+        200,
+        PROFILE_STATUS_INPUT,
+    ),
+    Endpoint(
+        "admin/drivers/{id}/history/",
+        "admin-driver-history",
+        "get",
+        "getAdminDriverHistory",
+        "Allowlisted selected-driver audit history (admin only)",
+        control_page(ADMIN_ACTION),
+    ),
+    Endpoint(
+        "admin/drivers/{id}/validations/",
+        "admin-driver-validations",
+        "get",
+        "getAdminDriverValidations",
+        "Retained selected-driver validation observations (admin only)",
+        control_page(VALIDATION),
+    ),
+)
+
+_control_openapi_document = openapi_document
+
+
+def openapi_document():
+    document = _control_openapi_document()
+    for name in ("admin-drivers", "admin-driver-history", "admin-driver-validations"):
+        endpoint = next(e for e in ENDPOINTS if e.name == name)
+        operation = document["paths"][f"/api/v1/{endpoint.path}"]["get"]
+        filters = {
+            "offset": {"type": "integer", "minimum": 0, "default": 0},
+            "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 50 if name == "admin-drivers" else 100,
+                "default": 25,
+            },
+        }
+        if name == "admin-drivers":
+            filters.update(
+                {
+                    "q": {"type": "string", "maxLength": 100},
+                    "validation_state": PUBLICATION["properties"]["validation_state"],
+                    "profile_status": PROFILE_STATUS,
+                    "plan_code": PLAN_CODE,
+                    "subscription_status": {
+                        "type": "string",
+                        "enum": ["missing", "inactive", "active", "suspended"],
+                    },
+                    "publication": {"type": "string", "enum": ["eligible", "blocked"]},
+                    "blocker": BLOCKER_CODE,
+                }
+            )
+        operation.setdefault("parameters", []).extend(
+            {"name": key, "in": "query", "schema": value}
+            for key, value in filters.items()
+        )
     return document

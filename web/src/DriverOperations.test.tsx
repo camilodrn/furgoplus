@@ -1,7 +1,13 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, test, expect, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
-import type { AuthApi } from "./api";
+import { ApiError, type AuthApi } from "./api";
 import type { Assignment, Payment } from "./api-types";
 import {
   DriverPayments,
@@ -283,6 +289,13 @@ test("summary shows dated route capacity and payment state", async () => {
   const api = {
     summary: vi.fn(async () => ({
       publication: {
+        profile_status: "active",
+        publication_requested: true,
+        current_validation_revision: 1,
+        approved_revision: 1,
+        active_route_count: 1,
+        coverage: [],
+        blockers: [],
         validation_state: "approved",
         eligible: true,
         subscription: null,
@@ -296,4 +309,111 @@ test("summary shows dated route capacity and payment state", async () => {
   expect(await screen.findByText(/0 usados \/ 1 disponibles/)).toBeTruthy();
   expect(screen.getByText(/Próximo servicio: 28\/09\/2026/)).toBeTruthy();
   expect(screen.getByText(/1 pendientes/)).toBeTruthy();
+});
+
+test("driver summary refreshes suspension, deactivation and subscription blockers without hiding owner controls", async () => {
+  const base = {
+    profile_status: "active" as const,
+    publication_requested: true,
+    eligible: true,
+    blockers: [],
+    validation_state: "approved" as const,
+    current_validation_revision: 1,
+    approved_revision: 1,
+    subscription: {
+      plan_code: "basic" as const,
+      plan_label: "Basic",
+      status: "active" as const,
+      starts_at: "2026-10-01T03:00:00Z",
+      ends_at: "2026-11-01T03:00:00Z",
+    },
+    active_route_count: 1,
+    coverage: [],
+  };
+  const data = {
+    publication: base,
+    routes: [route],
+    active_assignments: 1,
+    payment_counts: { pending: 1, paid: 0, void: 0 },
+  };
+  const api = { summary: vi.fn(async () => data) };
+  render(<DriverSummaryScreen api={api as unknown as AuthApi} />);
+  await screen.findByText(/Perfil: active/);
+  expect(screen.getByText(/Publicación solicitada: Sí/)).toBeTruthy();
+  expect(screen.getByText(/Vigencia:/)).toBeTruthy();
+  for (const [status, code, message] of [
+    ["suspended", "driver_suspended", "Conductor suspendido"],
+    ["deactivated", "driver_deactivated", "Conductor desactivado"],
+    ["active", "subscription_suspended", "El plan está suspendido"],
+    ["active", "subscription_expired", "El plan terminó"],
+  ] as const) {
+    api.summary.mockResolvedValueOnce({
+      ...data,
+      publication: {
+        ...base,
+        profile_status: status,
+        eligible: false,
+        subscription: {
+          ...base.subscription,
+          status: code === "subscription_suspended" ? "suspended" : "active",
+          ends_at:
+            code === "subscription_expired"
+              ? "2026-10-02T03:00:00Z"
+              : base.subscription.ends_at,
+        },
+        blockers: [{ code, message }],
+      },
+    } as typeof data);
+    fireEvent.click(screen.getByText("Actualizar resumen / Reintentar"));
+    await screen.findByText(message);
+    expect(screen.getByText(/1 pendientes/)).toBeTruthy();
+    expect(screen.getByText(/Próximo servicio:/)).toBeTruthy();
+  }
+});
+
+test("driver summary clears previously loaded private state on confirmed expiry and ignores an older successful refresh", async () => {
+  const data = {
+    publication: {
+      profile_status: "active",
+      publication_requested: false,
+      eligible: false,
+      blockers: [{ code: "subscription_missing", message: "Sin plan" }],
+      validation_state: "approved",
+      current_validation_revision: 1,
+      approved_revision: 1,
+      subscription: null,
+      active_route_count: 1,
+      coverage: [],
+    },
+    routes: [route],
+    active_assignments: 1,
+    payment_counts: { pending: 1, paid: 0, void: 0 },
+  };
+  let resolveOld!: (value: typeof data) => void;
+  const old = new Promise<typeof data>((resolve) => {
+    resolveOld = resolve;
+  });
+  const api = {
+    summary: vi
+      .fn()
+      .mockResolvedValueOnce(data)
+      .mockReturnValueOnce(old)
+      .mockRejectedValueOnce(new ApiError(403, "not_authenticated", "Expired"))
+      .mockResolvedValueOnce(data),
+  };
+  render(<DriverSummaryScreen api={api as unknown as AuthApi} />);
+  await screen.findByText(/1 pendientes/);
+  expect(screen.getByText(new RegExp(route.label))).toBeTruthy();
+  fireEvent.click(screen.getByText("Actualizar resumen / Reintentar"));
+  fireEvent.click(screen.getByText("Actualizar resumen / Reintentar"));
+  expect((await screen.findByRole("alert")).textContent).toContain(
+    "La sesión caducó",
+  );
+  expect(screen.queryByText(/Pagos:/)).toBeNull();
+  await act(async () => resolveOld(data));
+  expect(screen.queryByText(new RegExp(route.label))).toBeNull();
+  expect(screen.queryByText(/Pagos:/)).toBeNull();
+  fireEvent.click(screen.getByText("Actualizar resumen / Reintentar"));
+  await screen.findByText(/1 pendientes/);
+  expect(api.summary).toHaveBeenCalledTimes(4);
 });

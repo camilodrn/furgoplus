@@ -1,5 +1,10 @@
 import type {
   AdminValidation,
+  AdminDrivers,
+  AdminDriver,
+  ProfileStatusInput,
+  AdminDriverHistory,
+  AdminDriverValidations,
   AdminValidations,
   Csrf,
   DriverChecklist,
@@ -122,11 +127,49 @@ export async function getHealth(signal?: AbortSignal): Promise<Health> {
 
 export class AuthApi {
   private csrfToken: string | null = null;
+  private generation = 0;
+
+  constructor(private readonly onExpired?: () => void) {}
+
+  invalidateRequests(): void {
+    this.generation += 1;
+  }
+
+  private assertCurrent(generation: number): void {
+    if (generation !== this.generation)
+      throw new ApiError(
+        0,
+        "stale_request",
+        "La solicitud ya no pertenece a la sesión actual.",
+      );
+  }
+
+  private async guarded<T>(operation: () => Promise<T>): Promise<T> {
+    const generation = this.generation;
+    try {
+      const result = await operation();
+      this.assertCurrent(generation);
+      return result;
+    } catch (error) {
+      this.assertCurrent(generation);
+      if (error instanceof ApiError && error.code === "not_authenticated") {
+        this.clear();
+        this.onExpired?.();
+      }
+      throw error;
+    }
+  }
+
+  private request<T>(...args: Parameters<typeof request>): Promise<T> {
+    return this.guarded(() => request<T>(...args));
+  }
 
   async csrf(): Promise<void> {
-    const body = await request<Csrf>("auth/csrf/", "GET");
+    const generation = this.generation;
+    const body = await this.request<Csrf>("auth/csrf/", "GET");
     if (typeof body?.csrf_token !== "string")
       throw new Error("Invalid CSRF response");
+    this.assertCurrent(generation);
     this.csrfToken = body.csrf_token;
   }
 
@@ -135,15 +178,21 @@ export class AuthApi {
     body: unknown,
     method: "POST" | "PATCH" = "POST",
   ): Promise<T> {
-    if (!this.csrfToken) await this.csrf();
-    try {
-      return await request<T>(path, method, body, this.csrfToken!);
-    } catch (error) {
-      if (!(error instanceof ApiError && error.code === "csrf_failed"))
-        throw error;
-      await this.csrf();
-      return request<T>(path, method, body, this.csrfToken!);
-    }
+    return this.guarded(async () => {
+      const generation = this.generation;
+      if (!this.csrfToken) await this.csrf();
+      this.assertCurrent(generation);
+      try {
+        return await request<T>(path, method, body, this.csrfToken!);
+      } catch (error) {
+        this.assertCurrent(generation);
+        if (!(error instanceof ApiError && error.code === "csrf_failed"))
+          throw error;
+        await this.csrf();
+        this.assertCurrent(generation);
+        return request<T>(path, method, body, this.csrfToken!);
+      }
+    });
   }
 
   register(input: RegisterRequest): Promise<Identity> {
@@ -151,9 +200,11 @@ export class AuthApi {
   }
 
   async login(input: LoginRequest): Promise<Identity> {
+    const generation = this.generation;
     const body = await this.unsafe<LoginResponse>("auth/login/", input);
     if (typeof body.csrf_token !== "string")
       throw new Error("Invalid login response");
+    this.assertCurrent(generation);
     this.csrfToken = body.csrf_token;
     return {
       id: body.id,
@@ -164,26 +215,28 @@ export class AuthApi {
   }
 
   me(): Promise<Identity> {
-    return request<Identity>("auth/me/", "GET");
+    return this.request<Identity>("auth/me/", "GET");
   }
 
   async logout(): Promise<LogoutResponse> {
+    const generation = this.generation;
     const result = await this.unsafe<LogoutResponse>("auth/logout/", {});
+    this.assertCurrent(generation);
     this.clear();
     return result;
   }
 
   driverProfile(): Promise<DriverProfile> {
-    return request("driver/profile/", "GET");
+    return this.request("driver/profile/", "GET");
   }
   updateDriverProfile(input: DriverProfileUpdate): Promise<DriverProfile> {
     return this.unsafe("driver/profile/", input, "PATCH");
   }
   checklist(): Promise<DriverChecklist> {
-    return request("driver/validation/checklist/", "GET");
+    return this.request("driver/validation/checklist/", "GET");
   }
   documents(): Promise<DriverDocuments> {
-    return request("driver/documents/", "GET");
+    return this.request("driver/documents/", "GET");
   }
   upload(kind: string, expiresOn: string, file: File): Promise<DriverDocument> {
     const form = new FormData();
@@ -193,19 +246,43 @@ export class AuthApi {
     return this.unsafe("driver/documents/", form);
   }
   validations(): Promise<DriverValidations> {
-    return request("driver/validations/", "GET");
+    return this.request("driver/validations/", "GET");
   }
   submitValidation(): Promise<DriverValidation> {
     return this.unsafe("driver/validations/submit/", {});
   }
+  adminDrivers(filters: URLSearchParams): Promise<AdminDrivers> {
+    return this.request(`admin/drivers/?${filters.toString()}`, "GET");
+  }
+  adminDriver(id: number): Promise<AdminDriver> {
+    return this.request(`admin/drivers/${id}/`, "GET");
+  }
+  adminDriverHistory(id: number, offset = 0): Promise<AdminDriverHistory> {
+    return this.request(`admin/drivers/${id}/history/?offset=${offset}`, "GET");
+  }
+  adminDriverValidations(
+    id: number,
+    offset = 0,
+  ): Promise<AdminDriverValidations> {
+    return this.request(
+      `admin/drivers/${id}/validations/?offset=${offset}`,
+      "GET",
+    );
+  }
+  changeProfileStatus(
+    id: number,
+    input: ProfileStatusInput,
+  ): Promise<AdminDriver> {
+    return this.unsafe(`admin/drivers/${id}/status/`, input);
+  }
   adminValidations(state: string): Promise<AdminValidations> {
-    return request(
+    return this.request(
       `admin/validations/?state=${encodeURIComponent(state)}`,
       "GET",
     );
   }
   adminValidation(id: number): Promise<AdminValidation> {
-    return request(`admin/validations/${id}/`, "GET");
+    return this.request(`admin/validations/${id}/`, "GET");
   }
   adminDecision(
     id: number,
@@ -215,16 +292,16 @@ export class AuthApi {
     return this.unsafe(`admin/validations/${id}/${action}/`, input);
   }
   publication(): Promise<Publication> {
-    return request("driver/publication/", "GET");
+    return this.request("driver/publication/", "GET");
   }
   setPublication(input: PublicationInput): Promise<Publication> {
     return this.unsafe("driver/publication/", input, "PATCH");
   }
   communes(): Promise<Communes> {
-    return request("driver/communes/", "GET");
+    return this.request("driver/communes/", "GET");
   }
   routes(): Promise<Routes> {
-    return request("driver/routes/", "GET");
+    return this.request("driver/routes/", "GET");
   }
   createRoute(input: RouteInput): Promise<Route> {
     return this.unsafe("driver/routes/", input);
@@ -233,10 +310,10 @@ export class AuthApi {
     return this.unsafe(`driver/routes/${id}/`, input, "PATCH");
   }
   summary(): Promise<DriverSummary> {
-    return request("driver/summary/", "GET");
+    return this.request("driver/summary/", "GET");
   }
   assignments(routeId?: number): Promise<Assignments> {
-    return request(
+    return this.request(
       `driver/passenger-assignments/${routeId ? `?route_id=${routeId}` : ""}`,
       "GET",
     );
@@ -253,7 +330,7 @@ export class AuthApi {
     });
   }
   payments(): Promise<Payments> {
-    return request("driver/payments/", "GET");
+    return this.request("driver/payments/", "GET");
   }
   createPayment(input: PaymentInput): Promise<Payment> {
     return this.unsafe("driver/payments/", input);
@@ -265,10 +342,10 @@ export class AuthApi {
     return this.unsafe(`driver/payments/${id}/void/`, {});
   }
   plans(): Promise<Plans> {
-    return request("admin/plans/", "GET");
+    return this.request("admin/plans/", "GET");
   }
   adminSubscription(id: number): Promise<AdminSubscription> {
-    return request(`admin/drivers/${id}/subscription/`, "GET");
+    return this.request(`admin/drivers/${id}/subscription/`, "GET");
   }
   changeSubscription(
     id: number,
@@ -277,15 +354,17 @@ export class AuthApi {
     return this.unsafe(`admin/drivers/${id}/subscription/`, input);
   }
   downloadDocument(id: number, admin: boolean): Promise<Blob> {
-    return downloadPrivateDocument(
-      `${admin ? "admin" : "driver"}/documents/${id}/download/`,
+    return this.guarded(() =>
+      downloadPrivateDocument(
+        `${admin ? "admin" : "driver"}/documents/${id}/download/`,
+      ),
     );
   }
   driverContactRequests(): Promise<DriverContactRequests> {
-    return request("driver/contact-requests/", "GET");
+    return this.request("driver/contact-requests/", "GET");
   }
   driverContactRequest(id: number): Promise<DriverContactRequest> {
-    return request(`driver/contact-requests/${id}/`, "GET");
+    return this.request(`driver/contact-requests/${id}/`, "GET");
   }
   decideContactRequest(
     id: number,
@@ -295,6 +374,7 @@ export class AuthApi {
   }
 
   clear(): void {
+    this.invalidateRequests();
     this.csrfToken = null;
   }
 }

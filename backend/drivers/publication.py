@@ -162,6 +162,7 @@ def publication_json(driver, now=None):
     }
     subscription = state.subscription
     return {
+        "profile_status": driver.status,
         "publication_requested": driver.publication_requested,
         "eligible": state.eligible,
         "blockers": [
@@ -305,3 +306,54 @@ def change_subscription(
             },
         )
         return current, log.pk
+
+
+PROFILE_TRANSITIONS = {
+    "active": {"suspended", "deactivated"},
+    "suspended": {"active", "deactivated"},
+    "deactivated": {"active"},
+}
+
+
+def profile_version(driver_id):
+    return (
+        AdminActionLog.objects.filter(
+            target_type="driver_profile",
+            target_id=driver_id,
+            action="profile_status_changed",
+        )
+        .order_by("-id")
+        .values_list("id", flat=True)
+        .first()
+    )
+
+
+def change_profile_status(
+    driver_id, actor, *, status, expected_status, expected_version, reason
+):
+    if not reason.strip():
+        raise ValidationError({"reason": ["Indica un motivo."]})
+    with transaction.atomic():
+        driver = DriverProfile.objects.select_for_update().get(pk=driver_id)
+        if (
+            driver.status != expected_status
+            or profile_version(driver_id) != expected_version
+            or status not in PROFILE_TRANSITIONS.get(driver.status, set())
+        ):
+            raise StateConflict()
+        before = driver.status
+        driver.status = status
+        driver.save(update_fields=["status"])
+        AdminActionLog.objects.create(
+            actor=actor,
+            action="profile_status_changed",
+            target_type="driver_profile",
+            target_id=driver_id,
+            correlation_id=str(uuid.uuid4()),
+            reason=reason.strip(),
+            before_state=before,
+            after_state=driver.status,
+            before_detail={"status": before},
+            after_detail={"status": driver.status},
+        )
+    return driver

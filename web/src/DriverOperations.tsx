@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ApiError, AuthApi } from "./api";
 import type {
   Assignment,
@@ -13,9 +13,12 @@ import {
   chileDateTimeParts,
   formatChileanDate,
   parseChileanDate,
+  humanChileanDate,
 } from "./dates";
 
 function message(cause: unknown): string {
+  if (cause instanceof ApiError && cause.code === "not_authenticated")
+    return "La sesión caducó. Vuelve a iniciar sesión.";
   if (cause instanceof ApiError)
     return Object.values(cause.fields).flat().join(" ") || cause.message;
   return "No se pudo completar la acción.";
@@ -529,20 +532,45 @@ export function DriverPayments({ api }: { api: AuthApi }) {
 export function DriverSummaryScreen({ api }: { api: AuthApi }) {
   const [summary, setSummary] = useState<DriverSummary | null>(null);
   const [error, setError] = useState("");
+  const requestGeneration = useRef(0);
+  async function refresh() {
+    const generation = ++requestGeneration.current;
+    setError("");
+    try {
+      const current = await api.summary();
+      if (generation === requestGeneration.current) setSummary(current);
+    } catch (cause) {
+      if (generation !== requestGeneration.current) return;
+      setError(message(cause));
+      if (cause instanceof ApiError && cause.code === "not_authenticated") {
+        requestGeneration.current += 1;
+        setSummary(null);
+      }
+    }
+  }
   useEffect(() => {
-    void api
-      .summary()
-      .then(setSummary)
-      .catch((cause: unknown) => setError(message(cause)));
-  }, []);
+    void refresh();
+    const focus = () => {
+      void refresh();
+    };
+    window.addEventListener("focus", focus);
+    return () => {
+      requestGeneration.current += 1;
+      window.removeEventListener("focus", focus);
+    };
+  }, [api]);
   return (
     <section className="panel publication-area" aria-label="Resumen operativo">
       <h2>Resumen operativo</h2>
+      <button onClick={() => void refresh()}>
+        Actualizar resumen / Reintentar
+      </button>
       {!summary && !error && <p>Cargando resumen…</p>}
       {summary && (
         <>
           <p>
-            Validación: {summary.publication.validation_state} · Publicación:{" "}
+            Perfil: {summary.publication.profile_status} · Validación:{" "}
+            {summary.publication.validation_state} · Publicación:{" "}
             {summary.publication.eligible ? "Visible" : "No visible"}
           </p>
           <p>
@@ -551,6 +579,23 @@ export function DriverSummaryScreen({ api }: { api: AuthApi }) {
               ? `${summary.publication.subscription.plan_label} · ${summary.publication.subscription.status}`
               : "Sin asignar"}
           </p>
+          <p>
+            Publicación solicitada:{" "}
+            {summary.publication.publication_requested ? "Sí" : "No"} · Revisión{" "}
+            {summary.publication.current_validation_revision}
+          </p>
+          {summary.publication.subscription && (
+            <p>
+              Vigencia:{" "}
+              {humanChileanDate(summary.publication.subscription.starts_at)}{" "}
+              hasta {humanChileanDate(summary.publication.subscription.ends_at)}
+            </p>
+          )}
+          <ul>
+            {summary.publication.blockers.map((blocker) => (
+              <li key={blocker.code}>{blocker.message}</li>
+            ))}
+          </ul>
           <p>
             Rutas: {summary.routes.length} · Asignaciones vigentes hoy:{" "}
             {summary.active_assignments}

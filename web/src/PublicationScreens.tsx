@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ApiError, AuthApi } from "./api";
 import type {
   Publication,
@@ -80,12 +80,15 @@ export function DriverPublicationScreen({
   const [editing, setEditing] = useState<Route | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const requestGeneration = useRef(0);
   async function refresh() {
+    const generation = ++requestGeneration.current;
     const [state, routeList, catalog] = await Promise.all([
       api.publication(),
       api.routes(),
       api.communes(),
     ]);
+    if (generation !== requestGeneration.current) return;
     setPublication(state);
     onPublicationChange?.(state);
     setRoutes(routeList.routes);
@@ -93,7 +96,15 @@ export function DriverPublicationScreen({
   }
   useEffect(() => {
     void refresh().catch((cause: unknown) => setError(errorMessage(cause)));
-  }, [refreshKey]);
+    const focus = () => {
+      void refresh().catch((cause: unknown) => setError(errorMessage(cause)));
+    };
+    window.addEventListener("focus", focus);
+    return () => {
+      requestGeneration.current += 1;
+      window.removeEventListener("focus", focus);
+    };
+  }, [refreshKey, visible, activeSection]);
   async function intent() {
     if (!publication) return;
     setBusy(true);
@@ -190,6 +201,7 @@ export function DriverPublicationScreen({
         </div>
         {publication ? (
           <div className="publication-summary">
+            <p>Estado del perfil: {publication.profile_status}</p>
             <p
               className={`publication-state ${publication.eligible ? "publication-visible" : ""}`}
             >
@@ -523,9 +535,13 @@ export function DriverPublicationScreen({
 export function AdminPublicationScreen({
   api,
   driverId,
+  refreshKey = 0,
+  onChanged,
 }: {
   api: AuthApi;
   driverId: number;
+  refreshKey?: number;
+  onChanged?: () => void;
 }) {
   const [data, setData] = useState<AdminSubscription | null>(null);
   const [plans, setPlans] = useState<Plans | null>(null);
@@ -540,11 +556,16 @@ export function AdminPublicationScreen({
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [feedback, setFeedback] = useState("");
+  const [confirmHidden, setConfirmHidden] = useState(false);
+  const requestGeneration = useRef(0);
   async function refresh() {
+    const generation = ++requestGeneration.current;
     const [current, catalog] = await Promise.all([
       api.adminSubscription(driverId),
       api.plans(),
     ]);
+    if (generation !== requestGeneration.current) return;
     setData(current);
     setPlans(catalog);
     if (current.publication.subscription) {
@@ -571,11 +592,17 @@ export function AdminPublicationScreen({
     }
   }
   useEffect(() => {
+    setError("");
+    setConfirmHidden(false);
     void refresh().catch((cause: unknown) => setError(errorMessage(cause)));
-  }, [driverId]);
+    return () => {
+      requestGeneration.current += 1;
+    };
+  }, [api, driverId, refreshKey]);
   async function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!data) return;
+    if (busy || !data || (status !== "active" && !confirmHidden)) return;
+    setFeedback("");
     const starts_at = chileInstant(startDate, startTime),
       ends_at = chileInstant(endDate, endTime);
     if (!starts_at || !ends_at) {
@@ -601,9 +628,22 @@ export function AdminPublicationScreen({
       });
       await refresh();
       setReason("");
+      setConfirmHidden(false);
+      setFeedback("Plan guardado. Estado de publicación actualizado.");
+      onChanged?.();
     } catch (cause) {
       setError(errorMessage(cause));
-      if (cause instanceof ApiError && cause.status === 409) await refresh();
+      if (cause instanceof ApiError && cause.code === "not_authenticated") {
+        setData(null);
+        setPlans(null);
+      }
+      if (cause instanceof ApiError && cause.status === 409) {
+        try {
+          await refresh();
+        } catch (refreshError) {
+          setError(errorMessage(refreshError));
+        }
+      }
     } finally {
       setBusy(false);
     }
@@ -614,6 +654,8 @@ export function AdminPublicationScreen({
       aria-label="Plan y publicación del conductor"
     >
       <h2>Plan y publicación</h2>
+      {!data && !error && <p>Cargando plan…</p>}
+      {feedback && <p role="status">{feedback}</p>}
       <button
         className="button button-quiet"
         disabled={busy}
@@ -635,9 +677,9 @@ export function AdminPublicationScreen({
               : "No visible para apoderados"}
           </p>
           <p>
-            Validación: {validationLabels[data.publication.validation_state]} ·
-            Publicación solicitada:{" "}
-            {data.publication.publication_requested ? "Sí" : "No"}
+            Perfil: {data.publication.profile_status} · Validación:{" "}
+            {validationLabels[data.publication.validation_state]} · Publicación
+            solicitada: {data.publication.publication_requested ? "Sí" : "No"}
           </p>
           <p>
             {data.publication.active_route_count} rutas activas completas ·
@@ -682,13 +724,33 @@ export function AdminPublicationScreen({
           Estado
           <select
             value={status}
-            onChange={(event) => setStatus(event.target.value as typeof status)}
+            onChange={(event) => {
+              setStatus(event.target.value as typeof status);
+              setConfirmHidden(false);
+            }}
           >
             <option value="inactive">Inactivo</option>
             <option value="active">Activo</option>
             <option value="suspended">Suspendido</option>
           </select>
         </label>
+        {status !== "active" && (
+          <>
+            <p>
+              Al guardar el plan{" "}
+              {status === "suspended" ? "suspendido" : "inactivo"}, el conductor
+              deja de ser elegible para publicación.
+            </p>
+            <label>
+              <input
+                type="checkbox"
+                checked={confirmHidden}
+                onChange={(event) => setConfirmHidden(event.target.checked)}
+              />
+              Confirmo que este plan dejará de habilitar publicación
+            </label>
+          </>
+        )}
         <p className="form-explanation">
           El plan estará vigente desde esta fecha y hora hasta la fecha y hora
           de término.
@@ -743,7 +805,12 @@ export function AdminPublicationScreen({
         </label>
         <button
           className="button button-primary"
-          disabled={busy || !data || !reason.trim()}
+          disabled={
+            busy ||
+            !data ||
+            !reason.trim() ||
+            (status !== "active" && !confirmHidden)
+          }
         >
           {busy ? "Guardando…" : "Guardar plan"}
         </button>

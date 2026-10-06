@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ApiError, AuthApi } from "./api";
 import type { Identity, Publication } from "./api-types";
 import "./style.css";
 import { AdminValidationScreen, DriverOnboarding } from "./ValidationScreens";
 import { DriverPublicationScreen } from "./PublicationScreens";
+import { AdminControlScreen } from "./AdminControls";
 import { DriverRequests } from "./DriverRequests";
 import {
   DriverPayments,
@@ -11,7 +12,6 @@ import {
   DriverSummaryScreen,
 } from "./DriverOperations";
 
-const api = new AuthApi();
 const marker = "furgoplus-signed-out";
 type State =
   | { kind: "loading" | "signed-out" | "expired" | "error"; message?: string }
@@ -22,19 +22,22 @@ export default function App() {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [message, setMessage] = useState("");
   const [logoAvailable, setLogoAvailable] = useState(true);
-  const [driverSection, setDriverSection] = useState<
-    | "profile"
-    | "documents"
-    | "validation"
-    | "publication"
-    | "routes"
-    | "requests"
-    | "summary"
-    | "roster"
-    | "payments"
-  >("profile");
-  const [publication, setPublication] = useState<Publication | null>(null);
-  const [publicationRefreshKey, setPublicationRefreshKey] = useState(0);
+  const identityKey = useRef<string | null>(null);
+  const [api] = useState(
+    () =>
+      new AuthApi(() => {
+        const wasAuthenticated = identityKey.current !== null;
+        identityKey.current = null;
+        setState({ kind: wasAuthenticated ? "expired" : "signed-out" });
+      }),
+  );
+
+  function authenticate(user: Identity) {
+    const key = `${user.id}:${user.role}`;
+    if (identityKey.current !== key) api.invalidateRequests();
+    identityKey.current = key;
+    setState({ kind: "authenticated", user });
+  }
 
   useEffect(() => {
     let live = true;
@@ -57,17 +60,20 @@ export default function App() {
           return;
         }
         const user = await api.me();
-        if (live) setState({ kind: "authenticated", user });
+        if (live) authenticate(user);
       } catch (error) {
         if (!live) return;
-        if (error instanceof ApiError && error.code === "not_authenticated") {
-          api.clear();
-          setState({ kind: "signed-out" });
-        } else
-          setState({
-            kind: "error",
-            message: "No se pudo restaurar la sesión.",
-          });
+        // AuthApi handles confirmed absence/expiration centrally. Superseded
+        // restores must leave the newer authentication state untouched.
+        if (
+          error instanceof ApiError &&
+          (error.code === "not_authenticated" || error.code === "stale_request")
+        )
+          return;
+        setState({
+          kind: "error",
+          message: "No se pudo restaurar la sesión.",
+        });
       }
     };
     void restore();
@@ -78,20 +84,24 @@ export default function App() {
 
   useEffect(() => {
     if (state.kind !== "authenticated") return;
+    let live = true;
+    let verification = 0;
     const verify = async () => {
+      const current = ++verification;
       if (document.visibilityState !== "visible") return;
       try {
         const user = await api.me();
-        setState({ kind: "authenticated", user });
-      } catch (error) {
-        if (error instanceof ApiError && error.code === "not_authenticated") {
-          api.clear();
-          setState({ kind: "expired" });
-        }
+        if (live && current === verification) authenticate(user);
+      } catch {
+        // AuthApi centrally invalidates confirmed expiration. Other failures
+        // preserve the last confirmed identity until verification succeeds.
       }
     };
     document.addEventListener("visibilitychange", verify);
-    return () => document.removeEventListener("visibilitychange", verify);
+    return () => {
+      live = false;
+      document.removeEventListener("visibilitychange", verify);
+    };
   }, [state.kind]);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -118,7 +128,7 @@ export default function App() {
         });
         form.reset();
         sessionStorage.removeItem(marker);
-        setState({ kind: "authenticated", user });
+        authenticate(user);
       }
     } catch (error) {
       if (error instanceof ApiError && error.code === "csrf_failed")
@@ -141,6 +151,8 @@ export default function App() {
   }
 
   async function signOut() {
+    api.invalidateRequests();
+    identityKey.current = null;
     sessionStorage.setItem(marker, "1");
     setState({ kind: "signed-out" });
     try {
@@ -204,48 +216,11 @@ export default function App() {
         )}
         {state.kind === "expired" && <p>La sesión caducó.</p>}
         {state.kind === "authenticated" && (
-          <>
-            {state.user.role === "driver" && (
-              <>
-                <DriverOnboarding
-                  api={api}
-                  activeSection={driverSection}
-                  onSectionChange={setDriverSection}
-                  publication={publication}
-                  onRelevantChange={() =>
-                    setPublicationRefreshKey((key) => key + 1)
-                  }
-                />
-                <DriverPublicationScreen
-                  api={api}
-                  refreshKey={publicationRefreshKey}
-                  onPublicationChange={setPublication}
-                  activeSection={
-                    driverSection === "publication" ? "publication" : "routes"
-                  }
-                  visible={
-                    driverSection === "publication" ||
-                    driverSection === "routes"
-                  }
-                />
-                {driverSection === "requests" && <DriverRequests api={api} />}
-                {driverSection === "summary" && (
-                  <DriverSummaryScreen api={api} />
-                )}
-                {driverSection === "roster" && (
-                  <DriverRoster
-                    api={api}
-                    onAssignmentChange={() =>
-                      setPublicationRefreshKey((key) => key + 1)
-                    }
-                  />
-                )}
-                {driverSection === "payments" && <DriverPayments api={api} />}
-              </>
-            )}
-            {state.user.role === "admin" && <AdminValidationScreen api={api} />}
-            {state.user.role === "parent" && <h1>Usa la aplicación móvil</h1>}
-          </>
+          <AuthenticatedWorkspace
+            key={`${state.user.id}:${state.user.role}`}
+            api={api}
+            user={state.user}
+          />
         )}
         {(state.kind === "signed-out" || state.kind === "expired") && (
           <>
@@ -297,5 +272,86 @@ export default function App() {
         {message && <p role="status">{message}</p>}
       </main>
     </div>
+  );
+}
+
+function AuthenticatedWorkspace({
+  api,
+  user,
+}: {
+  api: AuthApi;
+  user: Identity;
+}) {
+  const [driverSection, setDriverSection] = useState<
+    | "profile"
+    | "documents"
+    | "validation"
+    | "publication"
+    | "routes"
+    | "requests"
+    | "summary"
+    | "roster"
+    | "payments"
+  >("profile");
+  const [adminSection, setAdminSection] = useState<"control" | "validation">(
+    "control",
+  );
+  const [publication, setPublication] = useState<Publication | null>(null);
+  const [publicationRefreshKey, setPublicationRefreshKey] = useState(0);
+
+  return (
+    <>
+      {user.role === "driver" && (
+        <>
+          <DriverOnboarding
+            api={api}
+            activeSection={driverSection}
+            onSectionChange={setDriverSection}
+            publication={publication}
+            onRelevantChange={() => setPublicationRefreshKey((key) => key + 1)}
+          />
+          <DriverPublicationScreen
+            api={api}
+            refreshKey={publicationRefreshKey}
+            onPublicationChange={setPublication}
+            activeSection={
+              driverSection === "publication" ? "publication" : "routes"
+            }
+            visible={
+              driverSection === "publication" || driverSection === "routes"
+            }
+          />
+          {driverSection === "requests" && <DriverRequests api={api} />}
+          {driverSection === "summary" && <DriverSummaryScreen api={api} />}
+          {driverSection === "roster" && (
+            <DriverRoster
+              api={api}
+              onAssignmentChange={() =>
+                setPublicationRefreshKey((key) => key + 1)
+              }
+            />
+          )}
+          {driverSection === "payments" && <DriverPayments api={api} />}
+        </>
+      )}
+      {user.role === "admin" && (
+        <>
+          <nav className="section-nav" aria-label="Administración">
+            <button onClick={() => setAdminSection("control")}>
+              Control de conductores
+            </button>
+            <button onClick={() => setAdminSection("validation")}>
+              Revisión de documentos
+            </button>
+          </nav>
+          {adminSection === "control" ? (
+            <AdminControlScreen api={api} />
+          ) : (
+            <AdminValidationScreen api={api} />
+          )}
+        </>
+      )}
+      {user.role === "parent" && <h1>Usa la aplicación móvil</h1>}
+    </>
   );
 }
