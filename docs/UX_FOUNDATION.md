@@ -69,6 +69,34 @@ is absent and a useful next action; errors explain recovery without exposing
 private/server detail; success states confirm the result and next step. Use
 status/alert announcements, avoiding needless repetition.
 
+## Product-wide scroll density principle
+
+**Resumen primero -> acción -> detalle bajo demanda.**
+
+FurgoPlus minimizes unnecessary vertical travel, especially on mobile. Lead with
+lists and current state, then make the next action clear. Reveal secondary
+information only when requested. Prefer progressive disclosure, authoritative
+pagination/progressive reveal, focused dialogs for temporary forms or actions,
+collapsed secondary information and multi-step forms when complexity genuinely
+requires them. Action feedback must be discoverable without scrolling back and
+forth between the action and its result.
+
+For chronological or history-like data throughout the product, including upcoming
+Flutter slices, show a small recent batch in newest-first order, compact summaries,
+details on demand and progressive reveal backed by authoritative pagination.
+Do not dump an entire history into one long page. This applies equally to
+validation observations, administrative timelines and future history views.
+
+Avoid permanently expanded long forms, giant pages containing every possible
+detail and nested scroll containers without a strong reason. A history timeline
+uses the main page scroll; do not add a fixed-height inner scroll merely to hide
+its length. Preserve readable text, 48px web targets, keyboard focus and announced
+results while reducing density.
+
+This is product-wide guidance for current UX review and upcoming Task 08.5
+slices, including Flutter. It does not authorize unrelated screen refactors or
+changes to approved Slice 1–3 behavior.
+
 ## Shell and accessibility
 
 Stable left sidebar on desktop: brand, icons plus text, visibly selected primary
@@ -278,3 +306,110 @@ dismissible, away from the usual bottom submit action. Contextual error scrollin
 reserves space above the region. Desktop/approximately 390px/zoom and actual
 screen-reader acceptance still require human review; DOM tests do not prove
 rendered layout. Slice 3 remains pending final acceptance.
+
+## Slice 4 pre-edit audit — administrator controls only
+
+Issue [#19](https://github.com/camilodrn/furgoplus/issues/19), Task 08/08.5,
+AdminControls, the Slice 2 validation surfaces, subscription controls and their
+regression/privacy tests were inspected before implementation. Backend control
+serializers, publication/status/subscription services and Task 08 tests are read
+only semantic references. Commits 7850e45, 7b69bb0 and 83ea564 are preserved.
+
+| Surface | Finding | Slice 4 direction |
+| --- | --- | --- |
+| Conductores queue | Large permanent filter form; compressed status line; no plan in results | Search-first management cards, labeled status badges, compact filter disclosure, authoritative server filtering and bounded pagination |
+| Selected control | Queue and long technical detail coexist; every editor always visible | Focused detail, visibility summary first, compact facts and separate profile/plan/validation/history sections |
+| Profile mutation | Generic dropdown; weak consequence/focus handling | Contextual suspend/deactivate/reactivate actions, required reason, named current/result/consequence confirmation; preserve frozen expected status/version/reason |
+| Plan mutation | Permanent full form, duplicated publication facts, raw profile enum | Current plan first, on-demand focused editor, existing Chilean date/time and subscription-version contract; server visibility refresh independent of profile version |
+| Validation context | Technical revision states alongside the review workflow | Retained observations with readable states and navigation to Validaciones; no documents or duplicate decisions in Conductores |
+| Administrative history | References lead events; compact before/after log strings | Dated human events, actor/reason and known before/after fields; technical references disclosed separately; driver-scoped server pagination |
+| Feedback/privacy | Inline notices, insufficient write lifetime guards | Slice 3 ActionFeedback with static copy, contextual conflicts and no write replay; account-keyed drafts/detail/history/notices and obsolete-response guards |
+
+Only existing admin control endpoints and the plan catalog are needed. No driver
+roster/run/passenger/payment/contact components or endpoints are reused. Eligibility
+and every blocker remain server-supplied. No prices, benefits, billing, backend,
+OpenAPI, Flutter, legal or consent change is authorized. Desktop/~390px workflow,
+keyboard/zoom and visual acceptance remain a human gate after automated checks.
+
+### Slice 4 implementation and acceptance boundary
+
+Conductores now opens as a management list with separate labeled states and a
+compact filter disclosure. A selected service leads with server visibility and
+blockers; profile actions and the plan editor open only on explicit choice in
+native modal dialogs, with viewport-bounded scrolling and focus restoration.
+Validation observations and human administrative history use separate native
+disclosures. Technical references are subordinate. Current state, consequence
+and named confirmation precede profile writes; plan-hiding acknowledgment remains.
+The existing two admin destinations, bounded server pages and narrow privacy
+boundary are preserved. Administrative primitives do not import driver operational
+components. Version/status/reason snapshots and session-keyed feedback remain
+internal. React/CSS only; no API, business, Flutter or legal scope is added.
+
+Manual-review refinements center the server-backed Conductores navigation and
+initially show three blockers in server order. The primary blocker and visibility
+remain visible; total requirements and accessible disclosure retain every blocker.
+Profile/plan forms suppress native browser validation in favor of contextual
+Spanish field messages, retained drafts and first-invalid-field focus. Frozen
+confirmations, concurrency and post-write authoritative refresh remain intact.
+Secondary disclosures stay closed by default; modestly denser section spacing
+retains 16px body text and 48px controls.
+
+Automated checks passed (202 tests/12 files and temporary production build), but
+DOM tests do not establish rendered layout or formal accessibility conformance.
+The local server cannot bind its port (EPERM), and local automated Edge launch
+also fails in the sandbox. DOM viewport tests verify dialog semantics at 390px
+and 1280px without measuring layout.
+Desktop/~390px, keyboard/zoom and the synthetic suspend/restore profile/plan
+workflow remain a human acceptance gate. Exact evidence and changed files are in
+`CODEX_TASK_08_5.md`, Slice 4. All Slice 4 changes remain uncommitted.
+
+### Slice 4 final history and root-navigation refinement
+
+Expanded administrative history initially shows three compact newest-first
+events, with the full action count in its summary. Date/time, readable action,
+actor and the existing allowed reason lead each event. “Ver cambios” reveals
+Antes/Después and a separately collapsed technical disclosure. “Ver acciones
+anteriores” reveals up to three more loaded events, retaining prior events; only
+an exhausted loaded page requests the next existing 25-event server page. No
+complete-history fetch, prefetch or inner timeline scroll is added. A polite
+shown/total announcement and focus on the first newly revealed event make the
+progression understandable; the action disappears when no older events remain.
+At ~390px summaries stay compact and details remain closed until requested;
+existing wrapping and stacked state fields apply.
+
+The sidebar Conductores item represents the queue root. It clears the selected
+detail, dialogs, confirmation, drafts, event disclosures and driver-context notice
+while retaining the mounted queue's search, filters and page. Volver a conductores
+uses the same preserved queue context. Both return to the top; sidebar navigation
+focuses main and the explicit return focuses the queue heading. Detail unmount
+invalidates local reads/writes and plan responses; identity-keyed workspaces and
+Task 08 AuthApi generation rejection remain intact. Closed dialogs release the
+page scroll lock, including overlapping-panel cleanup.
+
+The overall Slice 4 visual language is approved; these final workflow refinements
+remain pending acceptance. DOM tests at 390px/1280px verify compact/disclosure
+behavior but do not establish rendered geometry or screen-reader acceptance.
+
+### Slice 4 validation-history density refinement
+
+“Validación y observaciones” keeps the current validation state in its summary
+and “Ir a Validaciones” as the dedicated review action. Opening the section shows
+only three recent entries with readable state, Chilean date/time and either
+“Ver observación” or “Sin observaciones.” Retained observation text renders only
+after an explicit disclosure; it is preserved exactly and can be hidden again.
+Conductores provides context/history, without document access or review decisions.
+
+“Ver validaciones anteriores” reveals up to three more loaded entries, including
+the last one or two on a page, before requesting another existing 25-entry server
+page. All revealed entries stay reachable in server newest-first order. No whole
+history fetch, prefetch or fixed-height nested scroll container is introduced.
+The control disappears at the end; a polite shown/total status and focus on the
+first new entry accompany each reveal. The same compact stacked rows, wrapping
+text and 48px controls apply at ~390px. Refresh resets the batch and observation
+disclosures; changing driver or session/account removes the private detail and
+rejects obsolete validation responses. Admin history, profile/plan controls,
+review workflow and approved Slice 1–3 screens are preserved.
+
+Automated viewport tests cover disclosure/pagination behavior at 390px and 1280px;
+rendered geometry remains part of final functional acceptance. All Slice 4 work
+remains uncommitted and pending that acceptance.

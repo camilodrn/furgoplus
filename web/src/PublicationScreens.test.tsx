@@ -279,9 +279,10 @@ test("admin sees blockers and saves an audited bounded plan action with Chilean 
   render(
     <AdminPublicationScreen api={api as unknown as AuthApi} driverId={7} />,
   );
-  expect(
-    await screen.findByText("Aún no tienes un plan asignado."),
-  ).toBeTruthy();
+  expect(await screen.findByText("Falta un plan activo.")).toBeTruthy();
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Administrar plan" }),
+  );
   fireEvent.change(screen.getByLabelText("Fecha de inicio"), {
     target: { value: "01/10/2026" },
   });
@@ -307,9 +308,12 @@ test("admin sees blockers and saves an audited bounded plan action with Chilean 
   expect(sent.starts_at).toBe(chileInstant("01/10/2026", "00:00"));
   expect(sent.ends_at).toBe(chileInstant("02/10/2026", "00:00"));
   await waitFor(() => expect(api.adminSubscription).toHaveBeenCalledTimes(2));
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Administrar plan" }),
+  );
   expect(screen.getAllByPlaceholderText("DD/MM/AAAA")).toHaveLength(2);
   fireEvent.change(screen.getByLabelText("Plan"), { target: { value: "pro" } });
-  fireEvent.change(screen.getByLabelText("Estado"), {
+  fireEvent.change(screen.getByLabelText("Estado del plan"), {
     target: { value: "suspended" },
   });
   fireEvent.change(screen.getByLabelText("Motivo"), {
@@ -320,7 +324,7 @@ test("admin sees blockers and saves an audited bounded plan action with Chilean 
   );
   fireEvent.click(
     screen.getByLabelText(
-      "Confirmo que este plan dejará de habilitar publicación",
+      "Confirmo que este plan dejará de habilitar la visibilidad",
     ),
   );
   fireEvent.click(screen.getByText("Guardar plan"));
@@ -336,7 +340,10 @@ test("admin sees blockers and saves an audited bounded plan action with Chilean 
     ),
   );
   await waitFor(() => expect(api.adminSubscription).toHaveBeenCalledTimes(3));
-  fireEvent.change(screen.getByLabelText("Estado"), {
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Administrar plan" }),
+  );
+  fireEvent.change(screen.getByLabelText("Estado del plan"), {
     target: { value: "active" },
   });
   fireEvent.change(screen.getByLabelText("Motivo"), {
@@ -400,7 +407,10 @@ test("route and subscription times use native minute controls and primary action
   render(
     <AdminPublicationScreen api={api as unknown as AuthApi} driverId={7} />,
   );
-  await screen.findByText("Aún no tienes un plan asignado.");
+  await screen.findAllByText("Sin plan asignado");
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Administrar plan" }),
+  );
   const startTime = screen.getByLabelText("Hora de inicio") as HTMLInputElement;
   const endTime = screen.getByLabelText("Hora de término") as HTMLInputElement;
   for (const input of [startTime, endTime]) {
@@ -432,7 +442,10 @@ test("calendar-selected subscription dates and native times submit exact Chilean
   render(
     <AdminPublicationScreen api={api as unknown as AuthApi} driverId={7} />,
   );
-  await screen.findByText("Aún no tienes un plan asignado.");
+  await screen.findAllByText("Sin plan asignado");
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Administrar plan" }),
+  );
   fireEvent.change(screen.getByLabelText("Fecha de inicio"), {
     target: { value: "01/10/2026" },
   });

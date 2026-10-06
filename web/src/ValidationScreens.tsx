@@ -1827,6 +1827,7 @@ export function AdminValidationScreen({ api }: { api: AuthApi }) {
                   key={`${detail.driver.id}:${detail.state}:${detail.revision}`}
                   api={api}
                   driverId={detail.driver.id}
+                  driverName={detail.driver.display_name}
                 />
               </div>
             </>

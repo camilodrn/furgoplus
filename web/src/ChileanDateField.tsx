@@ -51,12 +51,16 @@ export function ChileanDateField({
   error,
   id,
   label = "Fecha de vencimiento",
+  errorMessage = dateFormatError,
+  required = false,
 }: {
   value: string;
   onChange: (value: string) => void;
   error: boolean;
   id: string;
   label?: string;
+  errorMessage?: string;
+  required?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [visibleMonth, setVisibleMonth] = useState(() => {
@@ -130,6 +134,7 @@ export function ChileanDateField({
           maxLength={10}
           value={value}
           aria-invalid={error}
+          aria-required={required || undefined}
           aria-describedby={error ? `${id}-error` : undefined}
           onChange={(event) => onChange(event.target.value)}
         />
@@ -232,7 +237,7 @@ export function ChileanDateField({
       )}
       {error && (
         <span id={`${id}-error`} className="field-error" role="alert">
-          {dateFormatError}
+          {errorMessage}
         </span>
       )}
     </div>

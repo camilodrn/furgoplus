@@ -631,22 +631,18 @@ test("admin detail switches validation and plan without duplicating review conte
   expect(planTab.tabIndex).toBe(0);
   fireEvent.click(planTab);
   expect(planTab.getAttribute("aria-current")).toBe("page");
-  expect(
-    screen.getByRole("heading", { name: "Plan y publicación" }),
-  ).toBeTruthy();
+  expect(screen.getByRole("heading", { name: "Plan actual" })).toBeTruthy();
   expect(
     screen.queryByRole("heading", { name: "Documentos enviados" }),
   ).toBeNull();
   expect(
-    await screen.findAllByText("Plan actual:", { exact: false }),
+    await screen.findAllByText("Plan actual", { exact: true }),
   ).toHaveLength(1);
   fireEvent.click(screen.getByRole("button", { name: "Validación" }));
   expect(
     screen.getByRole("heading", { name: "Documentos enviados" }),
   ).toBeTruthy();
-  expect(
-    screen.queryByRole("heading", { name: "Plan y publicación" }),
-  ).toBeNull();
+  expect(screen.queryByRole("heading", { name: "Plan actual" })).toBeNull();
 });
 
 test("admin queue distinguishes first, unchanged, and changed submissions", async () => {

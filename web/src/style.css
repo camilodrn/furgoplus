@@ -2218,3 +2218,368 @@ input[aria-invalid="true"] {
   overflow-wrap: anywhere;
   scroll-margin-top: 45vh;
 }
+
+/* Slice 4: bounded administrator controls, independent of driver operations. */
+.admin-control-screen,
+.admin-driver-detail {
+  min-width: 0;
+}
+.admin-control-screen {
+  font-size: 1rem;
+}
+.admin-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.admin-section-heading h1,
+.admin-section-heading h2 {
+  margin: 0;
+}
+.admin-search {
+  margin: 24px 0;
+}
+.admin-search-row {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+}
+.admin-search-row label {
+  flex: 1;
+}
+.admin-filter-panel {
+  margin-top: 16px;
+}
+.admin-filter-panel > summary,
+.admin-disclosure > summary,
+.admin-technical > summary {
+  min-height: 48px;
+  cursor: pointer;
+  padding: 12px 4px;
+}
+.admin-filter-panel > summary {
+  width: fit-content;
+  color: var(--brand);
+  font-weight: 750;
+}
+.admin-filter-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+.admin-applied-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.admin-applied-filters > span {
+  background: var(--brand-soft);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.admin-driver-list {
+  display: grid;
+  gap: 16px;
+}
+.admin-driver-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 0;
+}
+.admin-driver-card h2 {
+  font-size: 1.25rem;
+  margin: 0 0 16px;
+}
+.admin-driver-card > div {
+  min-width: 0;
+}
+.admin-driver-card > button {
+  flex-shrink: 0;
+}
+.admin-status-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.admin-badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 1rem;
+  font-weight: 650;
+}
+.admin-control-screen .is-positive,
+.admin-plan .is-positive {
+  color: var(--positive);
+  background: var(--positive-soft);
+}
+.admin-control-screen .is-warning,
+.admin-plan .is-warning {
+  color: var(--warning);
+  background: var(--warning-soft);
+}
+.admin-control-screen .is-danger {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+.admin-driver-detail > header {
+  margin: 16px 0;
+}
+.admin-driver-detail > header h1 {
+  margin-bottom: 16px;
+}
+.admin-driver-detail > .panel {
+  margin: 0 0 16px;
+}
+.admin-service-summary {
+  border-top: 4px solid var(--brand);
+}
+.admin-visibility {
+  font-size: 1.5rem;
+  font-weight: 800;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+.admin-blockers ul {
+  margin-top: 8px;
+  padding-left: 24px;
+}
+.admin-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  border-top: 1px solid var(--border);
+  margin: 16px 0 0;
+  padding-top: 16px;
+}
+.admin-facts dt,
+.admin-event-states dt {
+  color: var(--muted);
+  font-size: 1rem;
+}
+.admin-facts dd,
+.admin-event-states dd {
+  font-weight: 650;
+  margin: 4px 0 0;
+}
+.admin-profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 24px;
+}
+.admin-focus-panel {
+  position: fixed;
+  inset: 0;
+  width: min(720px, calc(100% - 32px));
+  height: fit-content;
+  max-width: calc(100% - 32px);
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 2px solid var(--interactive-border);
+  border-radius: 12px;
+  padding: 24px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+.admin-focus-panel::backdrop {
+  background: rgb(15 23 42 / 55%);
+}
+.admin-focus-panel :is(form, fieldset, label, input, select, textarea) {
+  min-width: 0;
+  max-width: 100%;
+}
+.admin-focus-panel h3 {
+  margin-top: 0;
+}
+.admin-focus-panel .field-error {
+  font-size: 1rem;
+}
+.admin-focus-panel form {
+  display: grid;
+  gap: 16px;
+}
+.admin-focus-panel > button {
+  margin: 16px 12px 0 0;
+}
+.admin-action-consequence,
+.admin-plan-consequence {
+  background: var(--warning-soft);
+  color: var(--warning);
+  padding: 16px;
+  border-radius: 8px;
+}
+.admin-plan-name {
+  font-size: 1.5rem;
+  font-weight: 750;
+}
+.admin-plan-form > fieldset {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.admin-form-wide,
+.admin-plan-consequence {
+  grid-column: 1 / -1;
+}
+.admin-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+}
+.admin-checkbox input {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  accent-color: var(--brand);
+}
+.admin-disclosure > summary span {
+  margin-left: 12px;
+  font-size: 1rem;
+  color: var(--muted);
+}
+.admin-validation-list {
+  list-style: none;
+  padding: 0;
+}
+.admin-validation-context {
+  border-top: 1px solid var(--border);
+  padding: 12px 0;
+  min-width: 0;
+}
+.admin-validation-context h3 {
+  font-size: 1.125rem;
+  margin: 4px 0;
+}
+.admin-validation-context p {
+  margin: 4px 0;
+}
+.admin-validation-context time {
+  color: var(--muted);
+}
+.admin-validation-observation {
+  white-space: pre-wrap;
+}
+.admin-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+.admin-pagination > button {
+  min-height: 48px;
+}
+.admin-pagination > button:disabled {
+  cursor: not-allowed;
+}
+.admin-timeline {
+  list-style: none;
+  padding: 0;
+}
+.admin-timeline > li {
+  border-left: 3px solid var(--border);
+  padding: 0 0 16px 16px;
+  position: relative;
+}
+.admin-timeline > li::before {
+  content: "";
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  background: var(--brand);
+  border-radius: 50%;
+  left: -7px;
+  top: 7px;
+}
+.admin-timeline h3 {
+  font-size: 1.25rem;
+  margin: 8px 0;
+}
+.admin-timeline p {
+  margin: 8px 0;
+}
+.admin-timeline time {
+  color: var(--muted);
+  font-size: 1rem;
+}
+.admin-event-changes > summary,
+.admin-technical > summary {
+  min-height: 48px;
+  padding: 12px 0;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.admin-event-changes {
+  min-width: 0;
+}
+.admin-event-states {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+.admin-technical {
+  font-size: 1rem;
+  color: var(--muted);
+}
+.admin-control-screen :is(p, dd, h2, h3, span),
+.admin-plan :is(p, dd, h2, h3, span) {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 680px) {
+  .admin-driver-card,
+  .admin-search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .admin-facts,
+  .admin-event-states,
+  .admin-plan-form > fieldset,
+  .admin-filter-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .admin-control-screen .panel,
+  .admin-focus-panel,
+  .admin-plan {
+    padding: 16px;
+  }
+  .admin-profile-actions > button,
+  .admin-focus-panel > button,
+  .admin-focus-panel form > button {
+    width: 100%;
+  }
+  .admin-pagination {
+    gap: 8px;
+  }
+  .admin-pagination > button {
+    padding-inline: 12px;
+  }
+  .admin-pagination span {
+    text-align: center;
+  }
+  .admin-disclosure > summary span {
+    display: block;
+    margin-left: 0;
+  }
+}

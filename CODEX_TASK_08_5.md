@@ -626,3 +626,466 @@ component/test). All prior Slice 3 work and the correction remain uncommitted.
 No backend/mobile checks were rerun because only web presentation/tests and notes
 changed. No commit, push, merge, deployment, reset, revert, discard, branch switch
 or history rewrite occurred. **Slice 3 remains pending final acceptance.**
+
+## Slice 4 — administrator driver control, plan and history experience
+
+Only Slice 4 is implemented by this pass. The prior commits `7850e45`, `7b69bb0`
+and `83ea564` remain intact on `task/08-5-product-ux-privacy`. All changes below
+are uncommitted for human review. Issue #19 and the pre-edit audit in
+`docs/UX_FOUNDATION.md` govern this administrative-only scope. Task 08.5 remains
+incomplete; Slice 4 is pending human visual/workflow acceptance.
+
+### Implemented behavior
+
+1. **Queue:** Conductores leads with search and management cards. Each card names
+   the service and separately labels profile, validation, visibility and plan,
+   with text plus a visual marker and one Ver conductor action. Five supported
+   filters live in a compact native disclosure with applied-filter chips and
+   reset. Search/filter/page requests remain authoritative server queries;
+   invalid filters remain server-owned. Loading, empty, transient-read retry and
+   bounded previous/next pages are retained. Obsolete filter responses are ignored.
+2. **Detail:** Selecting a driver opens a focused workspace with return/refresh
+   actions, status badges and Estado del servicio first. Its visibility,
+   explanations and compact profile/validation/plan/intent/active-route-count/
+   coverage facts come from server publication responses. Every supplied blocker
+   has administrator-facing Spanish copy; no client publication predicate is added.
+3. **Profile:** Current state and its consequence lead the section. Only the exact
+   Task 08 transitions appear as contextual suspend/deactivate/reactivate buttons.
+   Choosing an action opens a required-reason panel, followed by a named
+   confirmation showing original state, resulting state, visibility consequence
+   and captured reason. Destructive actions use explicit wording and danger
+   styling. Version/status tokens stay internal. Successful writes refresh the
+   queue, detail, plan/visibility and paginated history.
+4. **Plan:** Current name/state/Chilean validity dates, or Sin plan asignado,
+   precede Administrar plan. The full editor opens on demand and uses only the
+   existing plan catalog, status, start/end dates/times, required reason and
+   subscription mutation service. Suspending/inactivating requires explicit
+   acknowledgment of hiding the service. Chilean timezone/DST and exact UTC
+   conversion remain unchanged. No price, benefits, ranking, entitlement or
+   automatic billing is introduced.
+5. **Visibility:** Profile and plan mutation responses update the visible state
+   immediately, followed by authoritative reads. The overall refresh reaches the
+   plan even when profile_version is unchanged. Restoring profile/plan does not
+   promise visibility when another server blocker remains. A confirmed save
+   stays successful when its following read fails; retry reloads data only.
+6. **Validation context:** A closed disclosure retains readable validation state,
+   three recent compact entries, observations on demand and progressive reveal
+   through server pagination. Ir a Validaciones uses the existing
+   top-level destination; Conductores has no document downloads or review
+   decisions. Slice 2 review behavior is retained, with the same on-demand plan
+   component and the exact service name supplied to that component.
+7. **History:** A closed disclosure opens a newest-first event timeline with
+   Chilean date/time, human event title, actor, reason and known before/after
+   descriptions. Document-read entries show no stored reason/state. Correlation,
+   action code and target reference remain under Detalles técnicos. No raw JSON
+   or arbitrary dictionary fields are rendered. Ver acciones anteriores and
+   Ver acciones más recientes use driver-scoped server offset pagination.
+8. **Feedback/conflicts:** Administrative writes reuse the Slice 3 ActionFeedback
+   provider and viewport notice. Only static operation/result copy enters notices;
+   visibility consequence follows the server response. Contextual errors retain
+   useful details in the private screen. A 409 closes the confirmation/editor,
+   reloads current state and requires an explicit new action. Profile reasons are
+   retained for a newly chosen action. Domain errors offer no generic Reintentar;
+   transient read failures offer read-only recovery. Writes are never replayed.
+9. **Privacy:** Administrative components are independent of driver operational
+   components. Only existing admin control/history/validation/subscription APIs
+   and the plan catalog are used. No passenger/student/guardian/pickup/run-roster,
+   payment, contact-body, storage-key or parent-private information is added.
+   Backend active-staff authorization, transition machine, required reason,
+   optimistic versions, row locks, atomic audit, direct-ID privacy and allowlisted
+   history remain untouched. N2 queue performance optimization remains deferred.
+10. **Responsive/accessibility:** Scoped CSS retains the sidebar, available queue
+    width, readable summary and 16px minimum administration text. Cards, facts,
+    forms stack and pagination wraps below 680px; routine controls inherit 48px targets.
+    Native filter/history disclosures, labels, semantic headings, status/alert
+    notices, focus rings and text-plus-marker badges support keyboard use.
+    Focused editors/confirmations use centered native modal dialogs. Initial focus,
+    Escape/cancel and trigger/fallback-heading focus restoration are tested;
+    cancellation is disabled while writes are pending. No animation or new UI
+    dependency is added. Actual browser layout/zoom/screen-reader acceptance is
+    not claimed by DOM tests.
+11. **Task 08 concurrency/session protections:** Profile drafts and confirmations
+    capture immutable target, driver name, expected status/version and reason.
+    History/background reads cannot rewrite them. Explicit overall refresh
+    cancels drafts/confirmation; stale writes still reach the authoritative
+    server conflict. Plan versions remain fixed during editing; overall refresh
+    cancels the editor. Identity-keyed workspace/provider, AuthApi generations,
+    central expiry, obsolete-response rejection and local read/lifetime guards
+    retain B1/B2/B3. Admin A→B and expiry remove filters, selected detail, plan
+    drafts, confirmations, expanded technical history and notices. Late reads or
+    writes cannot restore obsolete private UI. Synchronous guards block duplicate
+    profile and plan writes.
+
+### Tests changed
+
+`AdminControls.test.tsx` retains its nine existing cases with the new UI labels
+and strengthens summary, confirmation and B2/B3 assertions. Seventeen added cases
+cover readable queue/server blockers, all five transitions, required reason,
+confirmation consequence, notice privacy, focus/Escape/explicit refresh,
+plan suspend/restore with unchanged profile version, server-only restoration
+blockers, plan conflict/version review, human allowlisted history/pagination,
+late filtered reads/server-invalid filters, frozen plan draft during history
+refresh, successful-write/failed-read recovery, duplicate-write prevention and
+late previous-driver history isolation.
+
+`SessionPrivacy.test.tsx` retains its 25 existing cases, adapting admin interactions
+to the explicit panels/disclosures without removing B1/B2/B3 assertions. Seven
+added cases cover admin replacement/expiry with simultaneous plan draft,
+confirmation, expanded history and notice; late profile/plan writes; late plan
+reads; and the narrow admin endpoint/navigation boundary. Existing admin plan
+cases in `PublicationScreens.test.tsx` retain bounded dates, Chilean UTC/time
+controls and hiding confirmation while opening the editor explicitly. The
+validation test retains separate review/plan visibility and keyboard navigation.
+All fixtures and error/late-response payloads are synthetic.
+
+### Exact final validation results
+
+Commands ran from `web/`, except the Git checks at repository root.
+
+| Check | Result |
+| --- | --- |
+| `npm run format:check` | Exit 0; all matched web files use Prettier formatting |
+| `npm run contract:check` | Exit 0; generated API contract unchanged |
+| `npm run lint` | Exit 0 |
+| `npm run typecheck` | Exit 0 |
+| `npm test` | Exit 0; 196 tests passed across 12 files |
+| `npm run build -- --outDir /tmp/furgoplus-slice4-web-dist` | Exit 0; 42 modules transformed, production assets generated |
+| `git diff --check` | Exit 0 |
+
+The final focused session/privacy run passed 32 tests in one file before the
+full suite; the full suite also passed all 26 administrator control tests. The build's informational outDir warning is expected because its
+output is outside the project. No backend/API/OpenAPI or Flutter files changed;
+backend and Flutter validation were not required or run for this slice.
+
+### Files changed and Git state
+
+- `CODEX_TASK_08_5.md`, `docs/UX_FOUNDATION.md`: scope/audit/results/manual gate.
+- `web/src/AdminControls.tsx`: queue, selected driver, profile, validation context,
+  history, authoritative refresh and concurrency/error handling.
+- New `web/src/AdminExperience.tsx`: admin vocabulary, blockers, badges, summary,
+  read/error helpers and accessible focused panels.
+- New `web/src/AdminPlanControls.tsx`: current plan and on-demand versioned editor.
+- `web/src/PublicationScreens.tsx`: re-export the extracted admin plan component;
+  driver publication/routes implementation remains unchanged.
+- `web/src/App.tsx`: existing Conductores→Validaciones navigation callback.
+- `web/src/ValidationScreens.tsx`: supply the service name to existing plan access.
+- `web/src/style.css`: scoped responsive administrator presentation.
+- `web/src/AdminControls.test.tsx`, `web/src/SessionPrivacy.test.tsx`,
+  `web/src/PublicationScreens.test.tsx`, `web/src/ValidationScreens.test.tsx`:
+  interaction/privacy/concurrency regressions above.
+
+Git state: 11 modified tracked files and two new untracked files on
+`task/08-5-product-ux-privacy`; no changes staged or committed. No commit, push,
+merge, deployment, reset, revert, discard, branch switch or history rewrite was
+performed. The three prior commits remain the latest commits in the same order.
+
+### Environment blocker and pending human acceptance
+
+`npm run dev -- --host 127.0.0.1` exited 1 with
+`listen EPERM: operation not permitted 127.0.0.1:5173`. Computer-use inventory
+returned no enabled apps or browsers. No real desktop/390px visual workflow,
+zoom or screen-reader acceptance was performed. Repeat these checks in the normal
+host environment using synthetic accounts and records only:
+
+1. Open Conductores, search a synthetic service, inspect supported filters/pages,
+   open detail and identify profile/validation/plan/visibility within five seconds.
+2. Suspend with a reason and explicit confirmation; see authoritative hidden
+   state and viewport feedback; open history and understand the event.
+3. Restore the profile; verify visibility only returns if all server gates pass.
+4. Suspend the plan; verify profile remains active while visibility disappears
+   for the plan reason. Restore the plan and check all gates again.
+5. At approximately 390px inspect queue, summary, profile confirmation, plan
+   editor and history. Verify keyboard focus, Escape/cancel, visible targets,
+   wrapping and absence of horizontal core-flow scrolling.
+6. Verify no passenger/payment/contact-body information appears. Recheck account
+   replacement and expiry while private drafts/confirmations/history are open.
+
+**Slice 4 remains pending human visual/workflow acceptance.** Parent Flutter,
+driver daily Flutter, Terms/Privacy and child consent remain out of scope.
+
+### Focused refinement after manual visual review — 2026-10-06
+
+The approved Slice 4 direction is retained. This pass addresses centered queue
+navigation, excess detail scrolling and browser-native validation only.
+
+- Conductores pagination is a separate `nav` labeled Páginas de conductores,
+  centered below the result cards. Anterior / Página N de M / Siguiente uses the
+  existing server count and offset, with an explicit unchanged 25-row limit.
+  Controls retain 48px targets, disabled states and centered wrapping; no extra
+  result pages are fetched in advance.
+- Estado del servicio keeps authoritative visibility and the first server
+  blocker visible. Initially three blockers are shown in server order, alongside
+  the total requirement count. An expanded/collapsed button reveals every
+  remaining blocker without assigning client-side priority or discarding data.
+- Profile reason entry and frozen confirmation now use native modal dialogs.
+  Original driver name, current/target state, consequence, reason and expected
+  status/version remain captured exactly as before. Background reads do not
+  rewrite open confirmations. Profile failures stay readable inside the modal;
+  stale conflicts still refresh and require a new explicit action.
+- Administrar plan opens the same complete plan form in a modal, retaining plan,
+  status, Chilean dates/times, reason, hiding acknowledgment, fixed version,
+  concurrency checks and authoritative refresh. Both modal types have a 720px
+  maximum width, viewport-bounded height and internal scrolling. They do not
+  enlarge the background detail. Native modality makes that background inert;
+  body scrolling is locked for the lifetime of the dialog.
+- Escape/native cancel and explicit close restore trigger focus or a surviving
+  contextual fallback. Tab/Shift+Tab remain inside the dialog, and the nested
+  date calendar consumes its own first Escape. Pending writes cannot be canceled.
+- Forms use `noValidate` and controlled Spanish field errors. Empty profile
+  reasons show “Ingresa el motivo del cambio.” Plan reasons, dates, times and
+  invalid periods have contextual Spanish messages. Invalid submit preserves
+  every draft value, associates the error with its field through `aria-invalid`
+  and `aria-describedby`, and focuses the first invalid field. Required state is
+  communicated with `aria-required`; no browser required popup or `alert()` is
+  used. Server-side validation remains unchanged. ChileanDateField gained only
+  optional error-message/required-semantics props; existing driver defaults remain.
+- Validation observations and administrative history remain collapsed by default
+  with their existing summary state/count. Detail section/fact spacing is reduced
+  modestly; body text stays at least 16px and controls retain 48px targets.
+
+Validation from `web/`:
+
+| Check | Result |
+| --- | --- |
+| `npm run format:check` | Exit 0 |
+| `npm run contract:check` | Exit 0; contract unchanged |
+| `npm run lint` | Exit 0 |
+| `npm run typecheck` | Exit 0 |
+| `npm test` | Exit 0; 202 tests across 12 files |
+| `npm run build -- --outDir /tmp/furgoplus-slice4-refinement-web-dist` | Exit 0; temporary production assets, 42 modules |
+| `git diff --check` | Exit 0 |
+
+Tests now cover server-page navigation in both directions and its landmark,
+complete blocker disclosure, on-demand modal semantics, Spanish validation and
+retained drafts, invalid-field focus, keyboard containment, native cancel,
+Escape/close restoration and profile failure visibility. Dialog semantics are
+tested with 390px and 1280px viewport values. Existing frozen snapshot, stale
+conflict, authoritative refresh, session-expiry and account-replacement tests
+remain green. The full test log is
+`/tmp/furgoplus-slice4-refinement-tests.log`.
+
+DOM viewport tests do not measure rendered geometry. `npm run dev -- --port 5176`
+failed with `listen EPERM`; the available local Edge executable also failed to
+launch under browser automation. Real desktop/~390px layout, zoom, native modal
+focus behavior and screen-reader verification remain part of human acceptance.
+
+Files touched by this refinement: `web/src/AdminControls.tsx`,
+`web/src/AdminControls.test.tsx`, `web/src/AdminExperience.tsx`,
+`web/src/AdminPlanControls.tsx`, `web/src/ChileanDateField.tsx`,
+`web/src/style.css`, `docs/UX_FOUNDATION.md` and this task record. Earlier Slice 4
+changes in other files are preserved. The branch remains
+`task/08-5-product-ux-privacy`, with 12 modified tracked files and two untracked
+files; nothing staged or committed. No push, merge, deployment, reset, revert,
+discard, branch switch or history rewrite was performed.
+
+**Slice 4 remains pending human acceptance.**
+
+
+### Final history density and Conductores navigation refinement — 2026-10-06
+
+The overall Slice 4 visual design is approved. This final uncommitted pass only
+refines history presentation, Conductores root navigation and product guidance.
+Slice 1–3 behavior and the already approved administrative visual language remain.
+
+- Expanding Historial administrativo initially presents three compact newest-first
+  events and preserves the server's total action count in the section summary.
+  Each event leads with date/time, readable action, actor and the allowed reason.
+  Antes/Después render only after opening Ver cambios. Existing allowlisted state
+  descriptions and separately collapsed technical references remain available;
+  no private document reason/state or additional audit fields are introduced.
+- Ver acciones anteriores reveals up to three further loaded events. At the end
+  of a loaded page its remaining one or two events are revealed before requesting
+  another page. Only after exhaustion does the existing offset pagination request
+  the next 25-event server page; count and ordering remain server-owned. Loaded
+  pages stay reachable, duplicate event IDs are shown once, and no complete-history
+  fetch or prefetch occurs. Pending loading preserves prior events and disables
+  the control; no older-action control remains after the final page is exhausted.
+  A polite shown/total status announces the reveal, with focus on the first newly
+  revealed event, including when the final control disappears.
+- Mobile keeps three compact summaries initially, with changes and technical
+  details closed. Timeline spacing is reduced, controls remain 48px, long text
+  wraps and expanded state fields stack through the existing narrow rules. History
+  uses the main document scroll with no fixed-height nested scroll container.
+- The sidebar Conductores action always returns to the queue root. A navigation
+  key removes the selected detail in the navigation render and clears selection;
+  it does not remount the queue. Search text, applied filters and current queue
+  page are preserved, without another queue fetch or browser reload. Limpiar
+  filtros remains separate. Volver a conductores also preserves this context.
+  Sidebar navigation focuses main; explicit return focuses the queue heading.
+  Both scroll the workspace/document to the top.
+- Detail unmount removes profile draft/confirmation, plan editor/draft/hiding
+  acknowledgment, event technical disclosures, observations and driver-context
+  feedback. Feedback still uses the unchanged ActionFeedback component; the
+  detail owner clears its notice on unmount. Existing local lifetime/generation
+  guards reject late detail/history/plan reads and writes. Task 08 identity-keyed
+  account replacement, expiry and AuthApi generation rejection remain unchanged.
+  Modal scroll locks now restore the original body overflow after the final
+  panel closes, including overlapping-panel cleanup during navigation.
+- Product-wide UX rule: **Resumen primero -> acción -> detalle bajo demanda.**
+  Minimize unnecessary vertical travel, especially on mobile; prefer lists/state
+  first, progressive disclosure, pagination/progressive reveal, focused dialogs,
+  collapsed secondary information and genuinely necessary multi-step forms.
+  Avoid permanent long forms, giant all-detail pages, unjustified nested scroll
+  containers and scrolling back and forth to find action feedback. This guidance
+  is documented in docs/UX_FOUNDATION.md for current review and upcoming Task 08.5
+  slices, including Flutter; no unrelated screen or Flutter refactor is included.
+  For chronological/history-like data product-wide, show a small recent batch,
+  compact summaries, details on demand and progressive reveal / authoritative
+  pagination. Avoid dumping an entire history into one long page; validation
+  observations and future Flutter history views follow the same rule.
+
+Tests add exhaustive 28-event traversal at 390px and 1280px: three initial
+summaries, total count, absent before/after until disclosure, separate collapsed
+technical details, newest-first order, focus/announcements, no page fetch during
+local reveals, offset 25 only after the first page and no final misleading action.
+Refresh returns to three latest summaries. Existing cross-driver late-history
+rejection remains. App-level sidebar/back cases verify preserved search/filter/
+page, selected-detail removal, profile confirmation and plan editor cleanup,
+cleared notice/private drafts, top scrolling/root focus, no additional queue read
+and late detail/history rejection, including reopening the same driver with clean
+forms. Existing expiry/replacement/session regression assertions are retained.
+
+No backend/API/OpenAPI, profile/plan semantics, validation workflow, visibility
+predicate, audit contents, queue filtering/pagination, ActionFeedback behavior,
+privacy boundary or approved Slice 1–3 screen changes are introduced.
+
+Validation results and final Git state are recorded below after the checks.
+**Slice 4 remains pending final workflow acceptance.**
+
+#### Final refinement validation and acceptance boundary
+
+All required commands ran from `web/`, with Git checks at repository root.
+
+| Check | Result |
+| --- | --- |
+| `npm run format:check` | Exit 0; all matched files formatted |
+| `npm run contract:check` | Exit 0; generated contract unchanged |
+| `npm run lint` | Exit 0 |
+| `npm run typecheck` | Exit 0 |
+| `npm test` | Exit 0; 206 tests passed across 12 files |
+| `npm run build -- --outDir /tmp/furgoplus-slice4-final-web-dist` | Exit 0; 42 modules transformed, temporary production assets generated |
+| `git diff --check` | Exit 0 |
+
+Focused administrator/session validation also passed all 68 tests in two files.
+Full results: `/tmp/furgoplus-slice4-final-tests.log`; focused results:
+`/tmp/furgoplus-slice4-final-focused.log`. The build warning about temporary
+output outside the project is informational. No production deployment occurred.
+
+`npm run dev -- --host 127.0.0.1 --port 5176` exited 1 with
+`listen EPERM: operation not permitted 127.0.0.1:5176`. Actual desktop/~390px
+geometry, no-horizontal-overflow, native keyboard focus and screen-reader review
+remain manual acceptance checks; DOM viewport tests do not establish these.
+The overall visual design is approved; **Slice 4 remains pending final workflow
+acceptance** of this refinement.
+
+Files changed by this final pass:
+
+- `web/src/AdminControls.tsx`: compact/progressive history, root selection cleanup,
+  queue return focus/scroll and detail-owned feedback cleanup.
+- `web/src/App.tsx`: explicit sidebar Conductores root-navigation signal and top
+  scrolling/main focus.
+- `web/src/AdminExperience.tsx`: modal scroll-lock restoration on final close.
+- `web/src/style.css`: compact timeline spacing and accessible changes disclosures.
+- `web/src/AdminControls.test.tsx`: event disclosure, exhaustive loaded-page/server
+  pagination, announcement/focus and 390px/1280px regression coverage.
+- `web/src/SessionPrivacy.test.tsx`: adapted technical disclosure and sidebar/back
+  queue-context, private-detail cleanup and late-response regression coverage.
+- `docs/UX_FOUNDATION.md`: product-wide scroll principle and this refinement.
+- `CODEX_TASK_08_5.md`: implementation, verification and final acceptance record.
+
+Earlier uncommitted changes in `web/src/ChileanDateField.tsx`,
+`web/src/PublicationScreens.tsx`, `web/src/PublicationScreens.test.tsx`,
+`web/src/ValidationScreens.tsx`, `web/src/ValidationScreens.test.tsx` and
+`web/src/AdminPlanControls.tsx` are preserved and were not edited by this pass.
+
+Final Git state: branch `task/08-5-product-ux-privacy`; 12 modified tracked files
+and two untracked files (`web/src/AdminExperience.tsx`,
+`web/src/AdminPlanControls.tsx`), with no staged changes. All Slice 4 work remains
+uncommitted. No commit, push, merge, deploy, reset, revert, discard, branch switch
+or history rewrite was performed.
+
+### Final validation-history density refinement
+
+This pass changes only the remaining scroll density in “Validación y
+observaciones”, its tests and product-wide guidance. The approved Slice 4 design
+and administrative-history refinement remain intact; approved Slice 1–3 screens
+are not refactored.
+
+- The closed summary still shows the current validation state. Opening the
+  section keeps “Ir a Validaciones” and shows only three recent entries with
+  readable state and Chilean date/time. Entries retain backend revision order;
+  the current summary is independent of historical states.
+- “Ver observación” is a 48px button with announced expanded state. Retained
+  observation text renders only on explicit request and preserves exact text and
+  line breaks. “Ocultar observación” closes it; records without observations show
+  “Sin observaciones.” Conductores remains context/history only; the dedicated
+  Validaciones review workflow remains unchanged.
+- “Ver validaciones anteriores” reveals up to three further loaded entries. The
+  remaining one or two on a page are revealed before requesting the next existing
+  25-entry offset page. Previous entries stay reachable, duplicate IDs appear once,
+  and no whole-history request or prefetch is added. The control disappears when
+  no older entries remain. Pending requests preserve entries and disable the
+  control. A polite shown/total status and first-new-entry focus explain reveals.
+- Rows stack naturally at ~390px; spacing is compact, long text wraps, observation
+  line breaks remain readable and routine controls retain 48px targets. The list
+  uses the main document scroll, without fixed-height or nested scrolling.
+- Refresh resets the batch and observations. Changing driver or session/account
+  removes opened observations; existing local lifetime/generation guards and the
+  identity-keyed workspace reject late validation-history responses.
+- **Resumen primero -> acción -> detalle bajo demanda.** applies product-wide,
+  including upcoming Flutter slices. Chronological/history-like data should use
+  a small recent batch, compact summaries, details on demand and progressive
+  reveal / authoritative pagination. Do not dump the entire history into a page.
+  This is explicitly recorded here and in `docs/UX_FOUNDATION.md`.
+
+Tests traverse 54 validation records over three authoritative pages at 390px and
+1280px, checking three initial entries, readable state/date, current summary,
+newest-first order, local reveals without server requests, pending/final controls,
+announcement/focus and reachability of all loaded records. Exact retained
+observations are checked at both ends of every page; other observations remain
+closed. Refresh, cross-driver late-page rejection, session expiry/account
+replacement cleanup and the existing “Ir a Validaciones” navigation are covered.
+
+This pass edits only:
+
+- `web/src/AdminControls.tsx`
+- `web/src/AdminControls.test.tsx`
+- `web/src/SessionPrivacy.test.tsx`
+- `web/src/style.css`
+- `docs/UX_FOUNDATION.md`
+- `CODEX_TASK_08_5.md`
+
+Earlier uncommitted Slice 4 changes remain preserved. Backend/API/OpenAPI,
+validation state/authorization/retained data, server pagination authority,
+Validaciones review, administrative history, profile/plan controls, visibility
+and session/privacy protections remain unchanged.
+
+**Slice 4 remains pending final functional acceptance.** DOM viewport tests verify
+behavior, not rendered mobile geometry or screen-reader acceptance. All work
+remains uncommitted; no commit, push, merge, deployment, reset, revert, discard,
+branch switch or history rewrite is performed.
+
+#### Validation-density verification results
+
+All requested checks ran from `web/` except the repository-root Git check:
+
+| Check | Result |
+| --- | --- |
+| `npm run format:check` | Exit 0 |
+| `npm run contract:check` | Exit 0; generated contract unchanged |
+| `npm run lint` | Exit 0 |
+| `npm run typecheck` | Exit 0 |
+| `npm test` | Exit 0; 211 tests passed in 12 files |
+| `npm run build -- --outDir /tmp/furgoplus-validation-density-final-web-dist` | Exit 0; 42 modules transformed; temporary production assets only |
+| `git diff --check` | Exit 0 |
+
+Full test log: `/tmp/furgoplus-validation-density-tests.log`. The exhaustive
+multi-page test has a local 15-second timeout because full-suite contention
+exceeded the default five seconds; the production behavior is unchanged.
+The temporary output-location warning is informational. No deployment occurred.
+
+Final Git state remains `task/08-5-product-ux-privacy`, with 12 modified tracked
+files and two untracked files (`web/src/AdminExperience.tsx` and
+`web/src/AdminPlanControls.tsx`), no staged changes and no commit. This includes
+the earlier uncommitted work; the six files listed above are this pass's edits.
+**Slice 4 remains pending final functional acceptance.**

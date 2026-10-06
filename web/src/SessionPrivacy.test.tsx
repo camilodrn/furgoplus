@@ -246,10 +246,24 @@ function section(name: string) {
     screen.getByRole("navigation", { name: "Secciones del conductor" }),
   ).getByRole("button", { name });
 }
-async function openControl() {
-  fireEvent.click(await screen.findByText("Abrir control"));
+function openAdminDisclosure(title: string) {
+  const summary = screen.getByText(title).closest("summary")!;
+  fireEvent.click(summary);
+  summary.parentElement!.setAttribute("open", "");
+}
+async function openControl(readyPlan = true) {
+  fireEvent.click(await screen.findByText("Ver conductor"));
+  await screen.findByRole("region", { name: "Estado del servicio" });
+  openAdminDisclosure("Validación y observaciones");
+  openAdminDisclosure("Historial administrativo");
+  expect(screen.queryByText("Private observation 1")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Ver observación" }));
   await screen.findByText("Private observation 1");
-  await screen.findByLabelText("Motivo");
+  fireEvent.click(screen.getByRole("button", { name: "Suspender perfil" }));
+  if (readyPlan)
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Administrar plan" }),
+    );
 }
 afterEach(() => {
   cleanup();
@@ -320,7 +334,7 @@ test("same-role admin A to B discards a loaded queue, detail, plan and confirmat
   fireEvent.change(screen.getByLabelText("Motivo del cambio de perfil"), {
     target: { value: "Private reason A" },
   });
-  fireEvent.click(screen.getByText("Cambiar estado del perfil"));
+  fireEvent.click(screen.getByText("Revisar cambio de perfil"));
   expect(screen.getByRole("alertdialog")).toBeTruthy();
   const bQueue = deferred<Response>();
   mock.replace();
@@ -344,8 +358,17 @@ test("same-role admin A to B discards a loaded queue, detail, plan and confirmat
   await act(async () =>
     bQueue.resolve(ok({ results: [mock.control()], count: 1 })),
   );
-  await screen.findByText("private-2@example.test");
-  fireEvent.click(screen.getByText("Abrir control"));
+  await screen.findByText("Private driver 2");
+  fireEvent.click(screen.getByText("Ver conductor"));
+  await screen.findByRole("region", { name: "Estado del servicio" });
+  openAdminDisclosure("Validación y observaciones");
+  expect(screen.queryByText("Private observation 2")).toBeNull();
+  expect(
+    screen
+      .getByRole("button", { name: "Ver observación" })
+      .getAttribute("aria-expanded"),
+  ).toBe("false");
+  fireEvent.click(screen.getByRole("button", { name: "Ver observación" }));
   await screen.findByText("Private observation 2");
 });
 
@@ -414,16 +437,21 @@ test("admin history expiry removes loaded queue, observations, confirmation and 
       : undefined,
   );
   render(<App />);
-  await openControl();
-  expect(screen.getAllByText(/private-1@example.test/)).toHaveLength(2);
-  // The subscription form mounts before its private data has loaded.
+  await openControl(false);
+  expect(screen.getAllByText(/private-1@example.test/)).toHaveLength(1);
+  // The current plan loads independently; the authoritative detail summary already exists.
   expect(screen.getByText("Cargando plan…")).toBeTruthy();
-  expect(screen.queryByText("Visible para apoderados")).toBeNull();
+  expect(screen.getByText("Visible para apoderados")).toBeTruthy();
   await act(async () => {
     initialSubscription.resolve(ok({ publication, version: 8 }));
   });
   expect(await screen.findByText("Visible para apoderados")).toBeTruthy();
-  expect(screen.getByText(/Plan actual: Basic · Activo/)).toBeTruthy();
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Administrar plan" }),
+  );
+  expect(
+    screen.getByRole("region", { name: "Plan del conductor" }).textContent,
+  ).toContain("Basic");
   expect((screen.getByLabelText("Plan") as HTMLSelectElement).value).toBe(
     "basic",
   );
@@ -432,7 +460,7 @@ test("admin history expiry removes loaded queue, observations, confirmation and 
   fireEvent.change(screen.getByLabelText("Motivo del cambio de perfil"), {
     target: { value: "Private draft A" },
   });
-  fireEvent.click(screen.getByText("Cambiar estado del perfil"));
+  fireEvent.click(screen.getByText("Revisar cambio de perfil"));
   expect(screen.getByRole("alertdialog")).toBeTruthy();
   const oldControl = mock.control();
   const oldDetail = deferred<Response>();
@@ -444,9 +472,14 @@ test("admin history expiry removes loaded queue, observations, confirmation and 
         ? expiredHistory.promise
         : undefined,
   );
-  fireEvent.click(screen.getByText("Más acciones"));
-  // Pagination keeps the successfully loaded queue mounted while detail reloads.
-  expect(screen.getByRole("region", { name: "Cola de control" })).toBeTruthy();
+  fireEvent.click(screen.getByText("Ver acciones anteriores"));
+  // Pagination retains the hidden list and the visible confirmation while detail reloads.
+  expect(
+    screen.getByRole("region", { name: "Detalle del conductor" }),
+  ).toBeTruthy();
+  expect(
+    screen.queryByRole("region", { name: "Lista de conductores" }),
+  ).toBeNull();
   expect(
     mock.fetchMock.mock.calls.filter(([path]) =>
       path.endsWith("admin/drivers/7/"),
@@ -470,7 +503,7 @@ test("admin history expiry removes loaded queue, observations, confirmation and 
   expect(screen.queryByLabelText("Motivo")).toBeNull();
   expect(screen.queryByText("Visible para apoderados")).toBeNull();
   expect(
-    screen.queryByRole("region", { name: "Plan y publicación del conductor" }),
+    screen.queryByRole("region", { name: "Plan del conductor" }),
   ).toBeNull();
   expect(screen.queryByRole("alertdialog")).toBeNull();
   await act(async () => {
@@ -481,9 +514,11 @@ test("admin history expiry removes loaded queue, observations, confirmation and 
       "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
     ),
   ).toBeTruthy();
-  expect(screen.queryByRole("region", { name: "Cola de control" })).toBeNull();
   expect(
-    screen.queryByRole("region", { name: "Detalle de control" }),
+    screen.queryByRole("region", { name: "Lista de conductores" }),
+  ).toBeNull();
+  expect(
+    screen.queryByRole("region", { name: "Detalle del conductor" }),
   ).toBeNull();
   expect(screen.queryByText("Private observation 1")).toBeNull();
   expect(screen.queryByText("Motivo: Private history 1")).toBeNull();
@@ -1122,5 +1157,547 @@ test.each(["replacement", "expiry", "logout"] as const)(
       screen.queryByRole("group", { name: "Revisa esta acción" }),
     ).toBeNull();
     expect(screen.queryByText("Synthetic student A")).toBeNull();
+  },
+);
+
+test.each(["replacement", "expiry"] as const)(
+  "admin %s removes filters, selected detail, plan draft, confirmation, technical history and notice; late reads cannot restore them",
+  async (boundary) => {
+    const mock = fixture("admin");
+    render(<App />);
+    fireEvent.change(await screen.findByLabelText("Buscar conductor"), {
+      target: { value: "Private filter A" },
+    });
+    await openControl();
+    fireEvent.change(screen.getByLabelText("Motivo"), {
+      target: { value: "Private plan draft A" },
+    });
+    const changes = screen.getByText("Ver cambios").closest("details")!;
+    changes.open = true;
+    fireEvent(changes, new Event("toggle"));
+    fireEvent.click(screen.getByText("Detalles técnicos"));
+    const oldHistory = deferred<Response>();
+    const oldDetail = deferred<Response>();
+    const oldControl = mock.control();
+    // A failed explicit write gives us a visible static notice while retaining
+    // the local reason. No sensitive server error is copied into the portal.
+    mock.intercept((path) =>
+      path.endsWith("admin/drivers/7/status/")
+        ? Promise.resolve({
+            ok: false,
+            status: 400,
+            json: async () => ({
+              code: "validation_error",
+              message: "Private failure A",
+              fields: { reason: ["Private failure A"] },
+            }),
+          } as Response)
+        : undefined,
+    );
+    fireEvent.change(screen.getByLabelText("Motivo del cambio de perfil"), {
+      target: { value: "Private profile reason A" },
+    });
+    fireEvent.click(screen.getByText("Revisar cambio de perfil"));
+    fireEvent.click(screen.getByText("Confirmar cambio"));
+    const notice = await screen.findByRole("complementary", {
+      name: "Aviso de la acción",
+    });
+    expect(notice.textContent).toContain("No pudimos actualizar el perfil");
+    expect(notice.textContent).not.toMatch(/Private|private-|correlation/);
+    // The error returns to the reason panel; a new explicit confirmation is
+    // still necessary and remains open during the obsolete history read.
+    fireEvent.click(screen.getByText("Revisar cambio de perfil"));
+    expect(screen.getByRole("alertdialog")).toBeTruthy();
+    mock.intercept((path) =>
+      path.endsWith("admin/drivers/7/")
+        ? oldDetail.promise
+        : path.includes("admin/drivers/7/history/")
+          ? oldHistory.promise
+          : undefined,
+    );
+    fireEvent.click(screen.getByText("Ver acciones anteriores"));
+    expect(screen.getByDisplayValue("Private plan draft A")).toBeTruthy();
+    await waitFor(() =>
+      expect(
+        mock.fetchMock.mock.calls.some(([path]) =>
+          path.includes("history/?offset=25"),
+        ),
+      ).toBe(true),
+    );
+    const bQueue = deferred<Response>();
+    if (boundary === "replacement") {
+      mock.replace();
+      mock.intercept((path) =>
+        path.includes("admin/drivers/?") ? bQueue.promise : undefined,
+      );
+    } else {
+      mock.intercept((path) =>
+        path.endsWith("auth/me/") ? Promise.resolve(denied()) : undefined,
+      );
+    }
+    refreshIdentity();
+    if (boundary === "replacement") await screen.findByText("Account B");
+    else
+      await screen.findByText(
+        "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
+      );
+    expect(
+      screen.queryByRole("region", { name: "Detalle del conductor" }),
+    ).toBeNull();
+    expect(screen.queryByRole("alertdialog")).toBeNull();
+    expect(
+      screen.queryByRole("complementary", { name: "Aviso de la acción" }),
+    ).toBeNull();
+    expect(screen.queryByDisplayValue("Private filter A")).toBeNull();
+    expect(screen.queryByDisplayValue("Private profile reason A")).toBeNull();
+    expect(screen.queryByDisplayValue("Private plan draft A")).toBeNull();
+    expect(screen.queryByText("Referencia: private-correlation")).toBeNull();
+    await act(async () => {
+      oldDetail.resolve(ok(oldControl));
+      oldHistory.resolve(
+        ok({
+          count: 1,
+          results: [
+            {
+              id: 80,
+              actor: { display_name: "Late A actor" },
+              action: "profile_status_changed",
+              target_type: "driver_profile",
+              target_id: 7,
+              before: { status: "active" },
+              after: { status: "suspended" },
+              reason: "Late A history",
+              correlation_id: "Late A reference",
+              occurred_at: "2026-10-01T03:00:00Z",
+            },
+          ],
+        }),
+      );
+    });
+    expect(screen.queryByText(/Late A/)).toBeNull();
+    if (boundary === "replacement") {
+      await act(async () =>
+        bQueue.resolve(ok({ results: [mock.control()], count: 1 })),
+      );
+      expect(
+        (screen.getByLabelText("Buscar conductor") as HTMLInputElement).value,
+      ).toBe("");
+      fireEvent.click(screen.getByText("Ver conductor"));
+      await screen.findByRole("region", { name: "Estado del servicio" });
+      expect(screen.queryByLabelText("Motivo")).toBeNull();
+      expect(screen.queryByRole("alertdialog")).toBeNull();
+      const history = screen
+        .getByText("Historial administrativo")
+        .closest("details")!;
+      expect(history.open).toBe(false);
+    }
+  },
+);
+
+test.each(["profile", "plan"] as const)(
+  "late admin %s write cannot populate another admin or its notice",
+  async (action) => {
+    const mock = fixture("admin");
+    render(<App />);
+    await openControl();
+    const write = deferred<Response>();
+    const endpoint =
+      action === "profile"
+        ? "admin/drivers/7/status/"
+        : "admin/drivers/7/subscription/";
+    mock.intercept((path) =>
+      path.endsWith(endpoint) ? write.promise : undefined,
+    );
+    if (action === "profile") {
+      fireEvent.change(screen.getByLabelText("Motivo del cambio de perfil"), {
+        target: { value: "Private reason A" },
+      });
+      fireEvent.click(screen.getByText("Revisar cambio de perfil"));
+      fireEvent.click(screen.getByText("Confirmar cambio"));
+    } else {
+      fireEvent.change(screen.getByLabelText("Motivo"), {
+        target: { value: "Private plan A" },
+      });
+      fireEvent.click(screen.getByText("Guardar plan"));
+    }
+    await waitFor(() =>
+      expect(
+        mock.fetchMock.mock.calls.some(([path]) => path.endsWith(endpoint)),
+      ).toBe(true),
+    );
+    mock.replace();
+    mock.intercept(() => undefined);
+    refreshIdentity();
+    await screen.findByText("Account B");
+    await act(async () =>
+      write.resolve(
+        ok(
+          action === "profile"
+            ? { ...mock.control(), display_name: "Late A driver" }
+            : { publication, version: 88 },
+        ),
+      ),
+    );
+    expect(screen.queryByText("Late A driver")).toBeNull();
+    expect(
+      screen.queryByRole("complementary", { name: "Aviso de la acción" }),
+    ).toBeNull();
+    expect(screen.queryByRole("alertdialog")).toBeNull();
+  },
+);
+
+test.each(["replacement", "expiry"] as const)(
+  "admin %s rejects an old plan read before it can restore visibility or editor data",
+  async (boundary) => {
+    const mock = fixture("admin");
+    render(<App />);
+    await openControl();
+    const read = deferred<Response>();
+    mock.intercept((path) =>
+      path.endsWith("admin/drivers/7/subscription/") ? read.promise : undefined,
+    );
+    fireEvent.click(screen.getByText("Actualizar plan"));
+    await waitFor(() =>
+      expect(
+        mock.fetchMock.mock.calls.filter(([path]) =>
+          path.endsWith("admin/drivers/7/subscription/"),
+        ),
+      ).toHaveLength(2),
+    );
+    if (boundary === "replacement") {
+      mock.replace();
+      mock.intercept(() => undefined);
+    } else
+      mock.intercept((path) =>
+        path.endsWith("auth/me/") ? Promise.resolve(denied()) : undefined,
+      );
+    refreshIdentity();
+    if (boundary === "replacement") await screen.findByText("Account B");
+    else await screen.findByRole("button", { name: "Iniciar sesión" });
+    await act(async () =>
+      read.resolve(
+        ok({
+          publication: {
+            ...publication,
+            subscription: {
+              ...publication.subscription!,
+              plan_label: "Late A plan",
+            },
+          },
+          version: 88,
+        }),
+      ),
+    );
+    expect(screen.queryByText("Late A plan")).toBeNull();
+    expect(screen.queryByText("Visible para apoderados")).toBeNull();
+    expect(screen.queryByLabelText("Motivo")).toBeNull();
+    expect(
+      screen.queryByRole("region", { name: "Plan del conductor" }),
+    ).toBeNull();
+  },
+);
+
+test.each(["replacement", "expiry"] as const)(
+  "admin %s clears opened validation observations and rejects a late validation-history response",
+  async (boundary) => {
+    const mock = fixture("admin");
+    mock.intercept((path) =>
+      path.includes("admin/drivers/7/validations/")
+        ? Promise.resolve(
+            ok({
+              count: 26,
+              results: Array.from({ length: 25 }, (_, index) => ({
+                id: 100 - index,
+                revision: 26 - index,
+                state: "approved",
+                submitted_at: "2026-10-01T03:00:00Z",
+                reviewed_at: "2026-10-01T04:00:00Z",
+                observations: `Private retained observation ${index + 1}`,
+                display_name_snapshot: "Private driver 1",
+              })),
+            }),
+          )
+        : undefined,
+    );
+    render(<App />);
+    fireEvent.click(await screen.findByText("Ver conductor"));
+    await screen.findByRole("region", { name: "Estado del servicio" });
+    openAdminDisclosure("Validación y observaciones");
+    const context = within(
+      screen.getByText("Validación y observaciones").closest("details")!,
+    );
+    expect(context.getAllByRole("listitem")).toHaveLength(3);
+    fireEvent.click(
+      context.getAllByRole("button", { name: "Ver observación" })[0]!,
+    );
+    expect(context.getByText("Private retained observation 1")).toBeTruthy();
+    for (let i = 0; i < 8; i++)
+      fireEvent.click(
+        context.getByRole("button", { name: "Ver validaciones anteriores" }),
+      );
+    expect(context.getAllByRole("listitem")).toHaveLength(25);
+    const old = deferred<Response>();
+    mock.intercept((path) =>
+      path.includes("admin/drivers/7/validations/") ? old.promise : undefined,
+    );
+    fireEvent.click(
+      context.getByRole("button", { name: "Ver validaciones anteriores" }),
+    );
+    await waitFor(() =>
+      expect(
+        mock.fetchMock.mock.calls.some(([path]) =>
+          path.includes("validations/?offset=25"),
+        ),
+      ).toBe(true),
+    );
+    if (boundary === "replacement") {
+      mock.replace();
+      mock.intercept(() => undefined);
+    } else {
+      mock.intercept((path) =>
+        path.endsWith("auth/me/") ? Promise.resolve(denied()) : undefined,
+      );
+    }
+    refreshIdentity();
+    if (boundary === "replacement") await screen.findByText("Account B");
+    else await screen.findByRole("button", { name: "Iniciar sesión" });
+    expect(screen.queryByText("Validación y observaciones")).toBeNull();
+    expect(screen.queryByText(/Private retained observation/)).toBeNull();
+    await act(async () =>
+      old.resolve(
+        ok({
+          count: 26,
+          results: [
+            {
+              id: 1,
+              revision: 1,
+              state: "rejected",
+              submitted_at: "2026-09-01T03:00:00Z",
+              reviewed_at: null,
+              observations: "Late private validation observation",
+              display_name_snapshot: "Private driver 1",
+            },
+          ],
+        }),
+      ),
+    );
+    expect(
+      screen.queryByText(
+        /Late private validation|Private retained observation/,
+      ),
+    ).toBeNull();
+    if (boundary === "replacement") {
+      fireEvent.click(await screen.findByText("Ver conductor"));
+      await screen.findByRole("region", { name: "Estado del servicio" });
+      expect(
+        screen.getByText("Validación y observaciones").closest("details")!.open,
+      ).toBe(false);
+      openAdminDisclosure("Validación y observaciones");
+      expect(
+        within(
+          screen.getByText("Validación y observaciones").closest("details")!,
+        ).getAllByRole("listitem"),
+      ).toHaveLength(1);
+      expect(screen.queryByText("Private observation 2")).toBeNull();
+      expect(
+        screen
+          .getByRole("button", { name: "Ver observación" })
+          .getAttribute("aria-expanded"),
+      ).toBe("false");
+      fireEvent.click(screen.getByRole("button", { name: "Ver observación" }));
+      expect(screen.getByText("Private observation 2")).toBeTruthy();
+    }
+  },
+);
+
+test("admin control navigation exposes only the authorized workspace and sends validation review to Validaciones", async () => {
+  const mock = fixture("admin");
+  render(<App />);
+  await openControl();
+  const nav = screen.getByRole("navigation", {
+    name: "Administración",
+  });
+  expect(
+    within(nav)
+      .getAllByRole("button")
+      .map((button) => button.textContent?.trim()),
+  ).toEqual(["Validaciones", "Conductores"]);
+  expect(mock.fetchMock.mock.calls.map(([path]) => path).join(" ")).not.toMatch(
+    /\/driver\/|passenger|payment|contact-request|route-run/,
+  );
+  const detail = screen.getByRole("region", { name: "Detalle del conductor" });
+  expect(detail.textContent).not.toMatch(
+    /guardian_contact|pickup_instruction|student_display_name|storage_key|amount_clp/,
+  );
+  expect(screen.queryByRole("button", { name: "Descargar" })).toBeNull();
+  expect(screen.queryByRole("button", { name: "Aprobar" })).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Ir a Validaciones" }));
+  await screen.findByRole("button", { name: "Revisar" });
+  expect(
+    within(nav)
+      .getByRole("button", { name: "Validaciones" })
+      .getAttribute("aria-current"),
+  ).toBe("page");
+  expect(
+    screen.queryByRole("region", { name: "Detalle del conductor" }),
+  ).toBeNull();
+});
+
+test.each(["sidebar", "back"] as const)(
+  "Conductores %s returns to the preserved queue, clears private detail and rejects late detail/history reads",
+  async (navigation) => {
+    const mock = fixture("admin");
+    mock.intercept((path) =>
+      path.includes("admin/drivers/?")
+        ? Promise.resolve(ok({ results: [mock.control()], count: 60 }))
+        : undefined,
+    );
+    render(<App />);
+    fireEvent.change(await screen.findByLabelText("Buscar conductor"), {
+      target: { value: "Contexto sintético" },
+    });
+    openAdminDisclosure("Filtros");
+    fireEvent.change(screen.getByLabelText("Estado de validación"), {
+      target: { value: "approved" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Aplicar filtros" }));
+    await screen.findByText("Búsqueda: Contexto sintético");
+    fireEvent.click(screen.getByRole("button", { name: "Siguiente →" }));
+    await screen.findByText("Página 2 de 3");
+    const queueRequests = mock.fetchMock.mock.calls.filter(([path]) =>
+      path.includes("admin/drivers/?"),
+    );
+    expect(queueRequests.at(-1)![0]).toContain("offset=25");
+    expect(queueRequests.at(-1)![0]).toContain("validation_state=approved");
+    await openControl();
+    fireEvent.change(screen.getByLabelText("Motivo"), {
+      target: { value: "Private plan navigation draft" },
+    });
+    const changes = screen.getByText("Ver cambios").closest("details")!;
+    changes.open = true;
+    fireEvent(changes, new Event("toggle"));
+    fireEvent.click(screen.getByText("Detalles técnicos"));
+    // Produce a driver-context notice, then leave a frozen confirmation open.
+    mock.intercept((path) =>
+      path.endsWith("admin/drivers/7/status/")
+        ? Promise.resolve({
+            ok: false,
+            status: 400,
+            json: async () => ({
+              code: "validation_error",
+              fields: { reason: ["Private synthetic failure"] },
+            }),
+          } as Response)
+        : undefined,
+    );
+    fireEvent.change(screen.getByLabelText("Motivo del cambio de perfil"), {
+      target: { value: "Private profile navigation draft" },
+    });
+    fireEvent.click(screen.getByText("Revisar cambio de perfil"));
+    fireEvent.click(screen.getByText("Confirmar cambio"));
+    await screen.findByRole("complementary", { name: "Aviso de la acción" });
+    fireEvent.click(screen.getByText("Revisar cambio de perfil"));
+    expect(screen.getByRole("alertdialog")).toBeTruthy();
+    const lateDetail = deferred<Response>();
+    const lateHistory = deferred<Response>();
+    const oldDriver = mock.control();
+    mock.intercept((path) =>
+      path.endsWith("admin/drivers/7/")
+        ? lateDetail.promise
+        : path.includes("admin/drivers/7/history/")
+          ? lateHistory.promise
+          : undefined,
+    );
+    fireEvent.click(screen.getByText("Ver acciones anteriores"));
+    const main = screen.getByRole("main");
+    const scrollTo = vi.fn();
+    main.scrollTo = scrollTo;
+    fireEvent.click(
+      navigation === "sidebar"
+        ? within(
+            screen.getByRole("navigation", { name: "Administración" }),
+          ).getByRole("button", { name: "Conductores" })
+        : screen.getByRole("button", { name: "Volver a conductores" }),
+    );
+    expect(
+      screen.getByRole("region", { name: "Lista de conductores" }),
+    ).toBeTruthy();
+    expect(
+      screen.queryByRole("region", { name: "Detalle del conductor" }),
+    ).toBeNull();
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.queryByRole("alertdialog")).toBeNull();
+    expect(document.body.style.overflow).toBe("");
+    expect(
+      screen.queryByRole("complementary", { name: "Aviso de la acción" }),
+    ).toBeNull();
+    expect(
+      screen.queryByDisplayValue(/Private .* navigation draft/),
+    ).toBeNull();
+    expect(screen.queryByText("Ver cambios")).toBeNull();
+    expect(screen.queryByText("Referencia: private-correlation")).toBeNull();
+    expect(
+      (screen.getByLabelText("Buscar conductor") as HTMLInputElement).value,
+    ).toBe("Contexto sintético");
+    expect(
+      (screen.getByLabelText("Estado de validación") as HTMLSelectElement)
+        .value,
+    ).toBe("approved");
+    expect(screen.getByText("Página 2 de 3")).toBeTruthy();
+    expect(screen.getByText("Búsqueda: Contexto sintético")).toBeTruthy();
+    expect(
+      within(screen.getByRole("navigation", { name: "Administración" }))
+        .getByRole("button", { name: "Conductores" })
+        .getAttribute("aria-current"),
+    ).toBe("page");
+    await waitFor(() =>
+      expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "instant" }),
+    );
+    expect(document.activeElement).toBe(
+      navigation === "sidebar"
+        ? main
+        : screen.getByRole("heading", { name: "Conductores" }),
+    );
+    await act(async () => {
+      lateDetail.resolve(
+        ok({ ...oldDriver, display_name: "Late navigation driver" }),
+      );
+      lateHistory.resolve(
+        ok({
+          count: 1,
+          results: [{ id: 80, reason: "Late navigation history" }],
+        }),
+      );
+    });
+    expect(screen.queryByText(/Late navigation/)).toBeNull();
+    expect(
+      screen.queryByRole("region", { name: "Detalle del conductor" }),
+    ).toBeNull();
+    expect(
+      mock.fetchMock.mock.calls.filter(([path]) =>
+        path.includes("admin/drivers/?"),
+      ),
+    ).toHaveLength(queueRequests.length);
+    mock.intercept(() => undefined);
+    fireEvent.click(screen.getByRole("button", { name: "Ver conductor" }));
+    await screen.findByRole("region", { name: "Estado del servicio" });
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.queryByRole("alertdialog")).toBeNull();
+    expect(
+      screen.getByText("Historial administrativo").closest("details")!.open,
+    ).toBe(false);
+    fireEvent.click(screen.getByRole("button", { name: "Suspender perfil" }));
+    expect(
+      (
+        screen.getByLabelText(
+          "Motivo del cambio de perfil",
+        ) as HTMLTextAreaElement
+      ).value,
+    ).toBe("");
+    fireEvent.click(screen.getByRole("button", { name: "Cerrar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Administrar plan" }));
+    expect((screen.getByLabelText("Motivo") as HTMLTextAreaElement).value).toBe(
+      "",
+    );
   },
 );

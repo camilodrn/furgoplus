@@ -487,6 +487,7 @@ function AuthenticatedWorkspace({
   const [adminSection, setAdminSection] = useState<"control" | "validation">(
     "control",
   );
+  const [adminRootNavigationKey, setAdminRootNavigationKey] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const main = useRef<HTMLElement>(null);
@@ -614,7 +615,20 @@ function AuthenticatedWorkspace({
                 <button
                   className="sidebar-link"
                   aria-current={adminSection === "control" ? "page" : undefined}
-                  onClick={() => navigate(() => setAdminSection("control"))}
+                  onClick={() => {
+                    navigate(() => {
+                      setAdminSection("control");
+                      setAdminRootNavigationKey((key) => key + 1);
+                    });
+                    requestAnimationFrame(() => {
+                      main.current?.focus({ preventScroll: true });
+                      main.current?.scrollTo?.({ top: 0, behavior: "instant" });
+                      document.scrollingElement?.scrollTo?.({
+                        top: 0,
+                        behavior: "instant",
+                      });
+                    });
+                  }}
                 >
                   <NavIcon name="people" />
                   Conductores
@@ -694,7 +708,13 @@ function AuthenticatedWorkspace({
         {user.role === "admin" && (
           <>
             {adminSection === "control" ? (
-              <AdminControlScreen api={api} />
+              <AdminControlScreen
+                api={api}
+                rootNavigationKey={adminRootNavigationKey}
+                onValidations={() =>
+                  navigate(() => setAdminSection("validation"))
+                }
+              />
             ) : (
               <AdminValidationScreen api={api} />
             )}
