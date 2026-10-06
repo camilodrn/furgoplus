@@ -218,7 +218,7 @@ test("same-role driver A to B discards loaded profile, summary, publication and 
   fireEvent.change(screen.getByLabelText("Nombre visible"), {
     target: { value: "Private unsaved A" },
   });
-  fireEvent.click(section("Resumen"));
+  fireEvent.click(section("Inicio"));
   await screen.findByText(/Private route 1/);
   const oldRead = deferred<Response>();
   mock.intercept((path) =>
@@ -264,7 +264,7 @@ test("same-role driver A to B discards loaded profile, summary, publication and 
   await screen.findByDisplayValue("contact-2@example.test");
   expect(screen.queryByText(/Late A route/)).toBeNull();
   mock.intercept(() => undefined);
-  fireEvent.click(section("Resumen"));
+  fireEvent.click(section("Inicio"));
   await screen.findByText(/Private route 2/);
 });
 
@@ -308,7 +308,7 @@ test("driver private-read expiry clears loaded forms, publication and summary; l
   const mock = fixture("driver");
   render(<App />);
   await screen.findByDisplayValue("contact-1@example.test");
-  fireEvent.click(section("Resumen"));
+  fireEvent.click(section("Inicio"));
   await screen.findByText(/Private route 1/);
   expect(screen.getByText(/2 pendientes/)).toBeTruthy();
   expect(
@@ -330,7 +330,9 @@ test("driver private-read expiry clears loaded forms, publication and summary; l
     path.endsWith("driver/summary/") ? Promise.resolve(denied()) : undefined,
   );
   fireEvent.click(screen.getByText("Actualizar resumen / Reintentar"));
-  await screen.findByText("La sesión caducó.");
+  await screen.findByText(
+    "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
+  );
   expect(screen.queryByText(/Private route 1/)).toBeNull();
   expect(screen.queryByText(/Pagos:/)).toBeNull();
   expect(screen.queryByDisplayValue("contact-1@example.test")).toBeNull();
@@ -351,7 +353,11 @@ test("driver private-read expiry clears loaded forms, publication and summary; l
       }),
     );
   });
-  expect(screen.getByText("La sesión caducó.")).toBeTruthy();
+  expect(
+    screen.getByText(
+      "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
+    ),
+  ).toBeTruthy();
   expect(screen.queryByText(/Private route 1/)).toBeNull();
   expect(screen.queryByText("Late Account A")).toBeNull();
 });
@@ -411,7 +417,9 @@ test("admin history expiry removes loaded queue, observations, confirmation and 
   await act(async () => {
     expiredHistory.resolve(denied());
   });
-  await screen.findByText("La sesión caducó.");
+  await screen.findByText(
+    "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
+  );
   expect(screen.queryByText(/private-1@example.test/)).toBeNull();
   expect(screen.queryByText("Private observation 1")).toBeNull();
   expect(screen.queryByText("Motivo: Private history 1")).toBeNull();
@@ -425,7 +433,11 @@ test("admin history expiry removes loaded queue, observations, confirmation and 
   await act(async () => {
     oldDetail.resolve(ok(oldControl));
   });
-  expect(screen.getByText("La sesión caducó.")).toBeTruthy();
+  expect(
+    screen.getByText(
+      "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
+    ),
+  ).toBeTruthy();
   expect(screen.queryByRole("region", { name: "Cola de control" })).toBeNull();
   expect(
     screen.queryByRole("region", { name: "Detalle de control" }),
@@ -440,7 +452,7 @@ test("permission_denied does not expire a loaded driver's session or erase its s
   const mock = fixture("driver");
   render(<App />);
   await screen.findByDisplayValue("contact-1@example.test");
-  fireEvent.click(section("Resumen"));
+  fireEvent.click(section("Inicio"));
   await screen.findByText(/Private route 1/);
   mock.intercept((path) =>
     path.endsWith("driver/summary/")
@@ -451,5 +463,9 @@ test("permission_denied does not expire a loaded driver's session or erase its s
   await screen.findByRole("alert");
   expect(screen.getByText(/Private route 1/)).toBeTruthy();
   expect(screen.getByText("Account A")).toBeTruthy();
-  expect(screen.queryByText("La sesión caducó.")).toBeNull();
+  expect(
+    screen.queryByText(
+      "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
+    ),
+  ).toBeNull();
 });

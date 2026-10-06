@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -48,6 +49,23 @@ class FakeTransport implements AuthTransport {
 
   @override
   void close() {}
+}
+
+class PendingAuthTransport extends FakeTransport {
+  final completion = Completer<AuthHttpResponse>();
+  @override
+  Future<AuthHttpResponse> send(
+    Uri uri,
+    String method, {
+    Map<String, String> headers = const {},
+    String? body,
+  }) async {
+    if (uri.path.endsWith('/register/') || uri.path.endsWith('/login/')) {
+      calls.add(Call(uri, method, headers, body));
+      return completion.future;
+    }
+    return super.send(uri, method, headers: headers, body: body);
+  }
 }
 
 class ProbeStop implements Exception {}
@@ -396,7 +414,7 @@ void main() {
     await tester.pumpWidget(AuthApp(controller: controller));
     await tester.pumpAndSettle();
     await tester.enterText(
-      find.widgetWithText(TextField, 'Correo'),
+      find.widgetWithText(TextField, 'Correo electrónico'),
       'sample@example.test',
     );
     await tester.enterText(
@@ -406,7 +424,8 @@ void main() {
     final passwordField = tester.widget<TextField>(
       find.widgetWithText(TextField, 'Contraseña'),
     );
-    await tester.tap(find.text('Entrar'));
+    await tester.ensureVisible(find.text('Iniciar sesión'));
+    await tester.tap(find.text('Iniciar sesión'));
     expect(passwordField.controller!.text, isEmpty);
     await tester.pumpAndSettle();
     final login = transport.calls.singleWhere(
@@ -415,4 +434,152 @@ void main() {
     expect(jsonDecode(login.body!)['password'], 'Synthetic-Password-781!');
     expect(controller.state, AuthState.driver);
   });
+  testWidgets(
+    'family signup explains purpose, blocks duplicates and confirms success',
+    (tester) async {
+      final transport = PendingAuthTransport()
+        ..responses.addAll([
+          reply(200, {'csrf_token': csrf}, [csrfCookie]),
+          reply(403, {'code': 'not_authenticated', 'message': 'Signed out'}),
+          reply(200, {'csrf_token': csrf}, [csrfCookie]),
+        ]);
+      final auth = AuthController(
+        NativeSessionApi(config, MemoryStorage(), transport: transport),
+      );
+      await tester.pumpWidget(AuthApp(controller: auth));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Crear cuenta de familia'));
+      await tester.tap(find.text('Crear cuenta de familia'));
+      await tester.pumpAndSettle();
+      expect(find.text('Cómo te llamas'), findsOneWidget);
+      expect(find.textContaining('información sintética'), findsOneWidget);
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Cómo te llamas'),
+        'Familia Demo',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Correo electrónico'),
+        'family@example.test',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Contraseña'),
+        'Synthetic-Password',
+      );
+      await tester.ensureVisible(find.text('Crear cuenta'));
+      final submit = tester
+          .widget<FilledButton>(
+            find.widgetWithText(FilledButton, 'Crear cuenta'),
+          )
+          .onPressed!;
+      submit();
+      submit();
+      await tester.pump();
+      expect(
+        tester
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Creando cuenta…'),
+            )
+            .onPressed,
+        isNull,
+      );
+      expect(
+        transport.calls
+            .where((call) => call.uri.path.endsWith('/register/'))
+            .length,
+        1,
+      );
+      final registration = transport.calls.last;
+      expect(jsonDecode(registration.body!)['role'], 'parent');
+      transport.completion.complete(
+        reply(201, {...identity, 'role': 'parent'}),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Cuenta creada. Inicia sesión.'), findsOneWidget);
+      expect(find.text('Iniciar sesión'), findsOneWidget);
+      expect(find.byType(Checkbox), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'login supports large text, keyboard insets and password visibility',
+    (tester) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      tester.view.viewInsets = const FakeViewPadding(bottom: 280);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+        tester.view.resetViewInsets();
+        tester.platformDispatcher.clearTextScaleFactorTestValue();
+      });
+      final transport = FakeTransport()
+        ..responses.addAll([
+          reply(200, {'csrf_token': csrf}, [csrfCookie]),
+          reply(403, {'code': 'not_authenticated', 'message': 'Signed out'}),
+        ]);
+      await tester.pumpWidget(
+        AuthApp(
+          controller: AuthController(
+            NativeSessionApi(config, MemoryStorage(), transport: transport),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Apoderados y conductores'), findsOneWidget);
+      final field = find.widgetWithText(TextField, 'Contraseña');
+      await tester.enterText(field, 'Synthetic-Secret');
+      await tester.ensureVisible(find.byTooltip('Mostrar contraseña'));
+      await tester.tap(find.byTooltip('Mostrar contraseña'));
+      await tester.pump();
+      expect(tester.widget<TextField>(field).obscureText, isFalse);
+      expect(find.byTooltip('Ocultar contraseña'), findsOneWidget);
+      expect(
+        tester.widget<TextField>(field).controller!.text,
+        'Synthetic-Secret',
+      );
+      await tester.ensureVisible(find.text('Iniciar sesión'));
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'restore retry recovers and expiry is announced in plain language',
+    (tester) async {
+      final transport = FakeTransport();
+      final auth = AuthController(
+        NativeSessionApi(config, MemoryStorage(), transport: transport),
+      );
+      await tester.pumpWidget(AuthApp(controller: auth));
+      await tester.pumpAndSettle();
+      expect(find.text('No pudimos abrir tu cuenta'), findsOneWidget);
+      transport.responses.addAll([
+        reply(200, {'csrf_token': csrf}, [csrfCookie]),
+        reply(403, {'code': 'not_authenticated', 'message': 'Signed out'}),
+      ]);
+      await tester.tap(find.text('Reintentar'));
+      await tester.pumpAndSettle();
+      expect(find.text('Inicia sesión'), findsOneWidget);
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Correo electrónico'),
+        'private@example.test',
+      );
+      auth.expire();
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Tu sesión caducó. Inicia sesión de nuevo para continuar.'),
+        findsOneWidget,
+      );
+      expect(
+        tester
+            .widget<TextField>(
+              find.widgetWithText(TextField, 'Correo electrónico'),
+            )
+            .controller!
+            .text,
+        isEmpty,
+      );
+    },
+  );
 }

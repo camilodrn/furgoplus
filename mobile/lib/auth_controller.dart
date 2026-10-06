@@ -24,7 +24,7 @@ class AuthController extends ChangeNotifier {
   void expire() {
     sessionVersion++;
     displayName = null;
-    error = null;
+    error = 'Tu sesión caducó. Inicia sesión de nuevo para continuar.';
     state = AuthState.signedOut;
     notifyListeners();
   }
@@ -54,7 +54,7 @@ class AuthController extends ChangeNotifier {
         await api.clear();
         state = AuthState.signedOut;
       } else {
-        error = failure.message;
+        error = 'No se pudo restaurar la sesión. Inténtalo de nuevo.';
         state = AuthState.error;
       }
       notifyListeners();
@@ -75,7 +75,7 @@ class AuthController extends ChangeNotifier {
       await api.registerParent(email, password, name);
       state = AuthState.registered;
     } on AuthFailure catch (failure) {
-      error = failure.message;
+      error = _authError(failure, registering: true);
     } catch (_) {
       error = 'No se pudo crear la cuenta.';
     }
@@ -90,7 +90,7 @@ class AuthController extends ChangeNotifier {
       return;
     } on AuthFailure catch (failure) {
       await api.clear();
-      error = failure.message;
+      error = _authError(failure);
     } catch (_) {
       await api.clear();
       error = 'No se pudo iniciar sesión.';
@@ -109,4 +109,21 @@ class AuthController extends ChangeNotifier {
     state = confirmed ? AuthState.signedOut : AuthState.logoutUnconfirmed;
     notifyListeners();
   }
+}
+
+String _authError(AuthFailure failure, {bool registering = false}) {
+  if (failure.code == 'csrf_failed') {
+    return 'La verificación caducó. Repite la acción.';
+  }
+  if (failure.code == 'throttled') {
+    return 'Hay demasiados intentos. Espera un momento y vuelve a intentarlo.';
+  }
+  if (failure.code == 'validation_error') {
+    return registering
+        ? 'No pudimos crear la cuenta. Revisa tu correo, nombre y los requisitos de la contraseña e inténtalo de nuevo.'
+        : 'Correo o contraseña incorrectos.';
+  }
+  return registering
+      ? 'No se pudo crear la cuenta. Inténtalo de nuevo.'
+      : 'No se pudo iniciar sesión. Inténtalo de nuevo.';
 }

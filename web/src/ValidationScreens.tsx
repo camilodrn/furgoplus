@@ -233,10 +233,12 @@ export function DriverOnboarding({
   api,
   activeSection,
   onSectionChange,
+  showNavigation = true,
   publication,
   onRelevantChange,
 }: {
   api: AuthApi;
+  showNavigation?: boolean;
   activeSection?: DriverSection;
   onSectionChange?: (section: DriverSection) => void;
   publication?: Publication | null;
@@ -332,7 +334,7 @@ export function DriverOnboarding({
         {profile && <StatusBadge state={profile.validation_state} />}
       </div>
       <p className="demo-notice">{demoNotice}</p>
-      {activeSection && onSectionChange && (
+      {showNavigation && activeSection && onSectionChange && (
         <>
           <nav
             className="section-nav driver-section-nav"

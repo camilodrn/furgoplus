@@ -479,7 +479,9 @@ test("admin detail switches validation and plan without duplicating review conte
   expect(
     screen.queryByRole("heading", { name: "Documentos enviados" }),
   ).toBeNull();
-  expect(screen.getAllByText("Plan actual:", { exact: false })).toHaveLength(1);
+  expect(
+    await screen.findAllByText("Plan actual:", { exact: false }),
+  ).toHaveLength(1);
   fireEvent.click(screen.getByRole("button", { name: "Validación" }));
   expect(
     screen.getByRole("heading", { name: "Documentos enviados" }),

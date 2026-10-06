@@ -201,14 +201,15 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Estudiante ficticio'), findsNothing);
     await tester.enterText(
-      find.widgetWithText(TextField, 'Correo'),
+      find.widgetWithText(TextField, 'Correo electrónico'),
       'parent@example.test',
     );
     await tester.enterText(
       find.widgetWithText(TextField, 'Contraseña'),
       'password',
     );
-    await tester.tap(find.text('Entrar'));
+    await tester.ensureVisible(find.text('Iniciar sesión'));
+    await tester.tap(find.text('Iniciar sesión'));
     await tester.pumpAndSettle();
     expect(find.text('Buscar conductores'), findsOneWidget);
     expect(find.text('Estudiante ficticio'), findsNothing);

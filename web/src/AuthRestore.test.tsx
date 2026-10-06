@@ -70,10 +70,14 @@ async function overlappingRestores() {
 }
 
 function expectSignedOut() {
-  expect(screen.getByRole("heading", { name: "Iniciar sesión" })).toBeTruthy();
-  expect(screen.getByText("Registrar conductor")).toBeTruthy();
+  expect(screen.getByRole("heading", { name: "Inicia sesión" })).toBeTruthy();
+  expect(screen.getByText("Crear cuenta de conductor")).toBeTruthy();
   expect(screen.queryByText("No se pudo restaurar la sesión.")).toBeNull();
-  expect(screen.queryByText("La sesión caducó.")).toBeNull();
+  expect(
+    screen.queryByText(
+      "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
+    ),
+  ).toBeNull();
 }
 
 afterEach(() => {
@@ -93,7 +97,7 @@ test("initial not_authenticated renders login without an expiry or restore error
     ),
   );
   render(<App />);
-  await screen.findByRole("heading", { name: "Iniciar sesión" });
+  await screen.findByRole("heading", { name: "Inicia sesión" });
   expectSignedOut();
 });
 
@@ -136,13 +140,13 @@ test.each(["identity", "not_authenticated", "server_error"])(
       responses[0]!.resolve(fail(403, "not_authenticated")),
     );
     expectSignedOut();
-    fireEvent.change(screen.getByLabelText("Correo"), {
+    fireEvent.change(screen.getByLabelText("Correo electrónico"), {
       target: { value: newIdentity.email },
     });
     fireEvent.change(screen.getByLabelText("Contraseña"), {
       target: { value: "Synthetic-Password" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Entrar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Iniciar sesión" }));
     await screen.findByText("Account B");
     await act(async () =>
       responses[1]!.resolve(
@@ -157,8 +161,12 @@ test.each(["identity", "not_authenticated", "server_error"])(
     expect(screen.getByText("Account B")).toBeTruthy();
     expect(screen.getByText("Usa la aplicación móvil")).toBeTruthy();
     expect(screen.queryByText("Account A")).toBeNull();
-    expect(screen.queryByText("Iniciar sesión")).toBeNull();
-    expect(screen.queryByText("La sesión caducó.")).toBeNull();
+    expect(screen.queryByText("Inicia sesión")).toBeNull();
+    expect(
+      screen.queryByText(
+        "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
+      ),
+    ).toBeNull();
     expect(screen.queryByText("No se pudo restaurar la sesión.")).toBeNull();
   },
 );
@@ -191,7 +199,11 @@ test.each([
     render(<App />);
     await screen.findByText("No se pudo restaurar la sesión.");
     expect(screen.getByRole("button", { name: "Reintentar" })).toBeTruthy();
-    expect(screen.queryByText("Iniciar sesión")).toBeNull();
-    expect(screen.queryByText("La sesión caducó.")).toBeNull();
+    expect(screen.queryByText("Inicia sesión")).toBeNull();
+    expect(
+      screen.queryByText(
+        "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
+      ),
+    ).toBeNull();
   },
 );
