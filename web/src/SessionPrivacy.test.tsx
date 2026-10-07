@@ -785,6 +785,115 @@ const operationalCases = [
   ["Solicitudes", "", "Actualizar solicitudes", "driver/contact-requests/"],
 ] as const;
 
+test.each(["replacement", "expiry"] as const)(
+  "Solicitudes %s clears local page, active filter and private selected detail before late inbox reads",
+  async (boundary) => {
+    const mock = fixture("driver");
+    const rows = Array.from({ length: 21 }, (_, index) => ({
+      id: index + 1,
+      parent_display_name: `Paged parent A ${index + 1}`,
+      parent_email: "paged-a@example.test",
+      message: `Paged private message A ${index + 1}`,
+      status: "pending",
+      created_at: "2026-10-07T12:00:00Z",
+      updated_at: "2026-10-07T12:00:00Z",
+      resolved_at: null,
+    }));
+    mock.intercept((path) =>
+      path.endsWith("driver/contact-requests/")
+        ? Promise.resolve(ok({ results: rows }))
+        : path.endsWith("driver/contact-requests/21/")
+          ? Promise.resolve(ok(rows[20]))
+          : operationalReads(mock, path),
+    );
+    render(<App />);
+    await screen.findByRole("navigation", { name: "Secciones del conductor" });
+    fireEvent.click(section("Solicitudes"));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Por responder 21" }),
+    );
+    const pages = () =>
+      within(
+        screen.getByRole("navigation", { name: "Páginas de solicitudes" }),
+      );
+    fireEvent.click(pages().getByRole("button", { name: "Siguiente →" }));
+    fireEvent.click(pages().getByRole("button", { name: "Siguiente →" }));
+    expect(screen.getByText("Página 3 de 3")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: /Paged parent A 21/ }));
+    await screen.findByText("Paged private message A 21");
+    await waitFor(() =>
+      expect(
+        screen
+          .getByRole("button", { name: "Actualizar solicitudes" })
+          .hasAttribute("disabled"),
+      ).toBe(false),
+    );
+    const old = deferred<Response>();
+    mock.intercept((path) =>
+      path.endsWith("driver/contact-requests/")
+        ? old.promise
+        : operationalReads(mock, path),
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Actualizar solicitudes" }),
+    );
+    const replacementRows = rows.map((row) => ({
+      ...row,
+      parent_display_name: `Paged parent B ${row.id}`,
+      parent_email: "paged-b@example.test",
+      message: `Paged private message B ${row.id}`,
+    }));
+    if (boundary === "replacement") mock.replace();
+    mock.intercept((path) =>
+      boundary === "expiry" && path.endsWith("auth/me/")
+        ? Promise.resolve(denied())
+        : path.endsWith("driver/contact-requests/")
+          ? Promise.resolve(ok({ results: replacementRows }))
+          : operationalReads(mock, path),
+    );
+    refreshIdentity();
+    if (boundary === "replacement") await screen.findByText("Account B");
+    else
+      await screen.findByText(
+        "Tu sesión caducó. Inicia sesión de nuevo para continuar.",
+      );
+    expect(
+      screen.queryByRole("region", { name: "Solicitud de contacto" }),
+    ).toBeNull();
+    expect(screen.queryByText("Página 3 de 3")).toBeNull();
+    expect(screen.queryByText("paged-a@example.test")).toBeNull();
+    expect(screen.queryByText(/Paged private message A/)).toBeNull();
+    expect(screen.queryByText("Ocultar detalle ↑")).toBeNull();
+    await act(async () => old.resolve(ok({ results: rows })));
+    expect(
+      screen.queryByText(/Paged parent A|Paged private message A/),
+    ).toBeNull();
+    if (boundary === "replacement") {
+      fireEvent.click(section("Solicitudes"));
+      await screen.findByText("Paged parent B 1");
+      expect(screen.getByText("Página 1 de 3")).toBeTruthy();
+      expect(
+        screen
+          .getByRole("button", { name: "Todas 21" })
+          .getAttribute("aria-pressed"),
+      ).toBe("true");
+      expect(
+        screen
+          .getByRole("button", { name: "Por responder 21" })
+          .getAttribute("aria-pressed"),
+      ).toBe("false");
+      expect(
+        screen.queryByRole("region", { name: "Solicitud de contacto" }),
+      ).toBeNull();
+      expect(screen.queryByText("paged-b@example.test")).toBeNull();
+    } else {
+      expect(
+        screen.queryByRole("navigation", { name: "Páginas de solicitudes" }),
+      ).toBeNull();
+    }
+  },
+);
+
 test.each(operationalCases)(
   "%s account replacement clears drafts/details and rejects a late A read",
   async (destination, field, refresh, endpoint) => {

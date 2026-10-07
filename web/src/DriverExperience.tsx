@@ -488,11 +488,13 @@ export function FocusPanel({
   children,
   onClose,
   busy = false,
+  showCloseButton = true,
 }: {
   title: string;
   children: React.ReactNode;
   onClose: () => void;
   busy?: boolean;
+  showCloseButton?: boolean;
 }) {
   const id = useId();
   const heading = useRef<HTMLHeadingElement>(null);
@@ -518,14 +520,16 @@ export function FocusPanel({
         <h3 id={id} ref={heading} tabIndex={-1}>
           {title}
         </h3>
-        <button
-          type="button"
-          className="button button-outline"
-          disabled={busy}
-          onClick={onClose}
-        >
-          Cerrar
-        </button>
+        {showCloseButton && (
+          <button
+            type="button"
+            className="button button-outline"
+            disabled={busy}
+            onClick={onClose}
+          >
+            Cerrar
+          </button>
+        )}
       </div>
       {children}
     </section>
