@@ -413,3 +413,157 @@ review workflow and approved Slice 1–3 screens are preserved.
 Automated viewport tests cover disclosure/pagination behavior at 390px and 1280px;
 rendered geometry remains part of final functional acceptance. All Slice 4 work
 remains uncommitted and pending that acceptance.
+
+## Slice 5 pre-edit audit — parent Flutter only
+
+Issue #19, the task contract, ParentHome/AuthApp/theme/native session handling,
+parent/session tests, Task 04 publication/direct-ID allowlist, Task 05 contact
+snapshots/participant history and generated web/API contracts were inspected.
+Commits 7850e45, 7b69bb0, 83ea564 and d595e2d are preserved.
+
+| Surface | Current finding | Authorized direction |
+| --- | --- | --- |
+| Buscar | Commune required locally despite optional server filter; no initial results | Immediate authoritative discovery; compact commune filter on demand |
+| Cards/detail | All routes, reviews and contact form permanently expanded | First route/date capacity summary; focused detail and contact; secondary routes/trust/reviews disclosed |
+| Comparison | Stacked cards but hidden failures can retain stale detail | Two or three server-checked public summaries, removal, session-local selection, clear unavailable recovery |
+| Contact | Recipient/email absent from consent; post-send refresh conflates write failure | Exact account email and named recipient, affirmative consent, immediate confirmation, separate read failure |
+| Solicitudes | Message/contact mixed into long detail; no useful domain recovery | Compact state/date cards, participant-only detail, contact only when accepted, small progressive batches |
+| Account | Name form dominates; logout outside account | Email/context/logout first, supported name edit on demand, no nonexistent legal links |
+| Session | Keyed homes protect unmounts, but ParentHome calls setState after awaits without lifetime checks | Session/operation guards, immediate private cleanup, obsolete native responses rejected before cookie/error effects |
+
+Only existing endpoints/fields are used. Parent email is shared with the driver
+**on submission**, not on acceptance. Driver email is an immutable accepted-request
+snapshot. Hidden-service participant history remains readable but never supplies
+a new-contact shortcut. Discovery aggregates do not identify demo reviews; cards
+must not invent that flag. Detail labels each actual demo review. No public child,
+private documents, operational fields, legal drafts or persistent consent are added.
+
+Use one page scroll, focused contact/filter/name tasks and collapsed secondary
+information. Three top-level destinations: Buscar, Solicitudes, Mi cuenta.
+SafeArea, keyboard resizing, wrapping text and system text scaling are retained.
+Android approximately 390×844 and real workflow acceptance remain human review.
+
+### Slice 5 implementation and acceptance boundary
+
+Parent mobile now uses Material navigation for Buscar, Solicitudes and Mi cuenta.
+Buscar immediately requests the existing discovery list; the optional commune
+filter opens a focused page and shows its active count. No local eligibility,
+ranking, search dataset or date filter is created. Existing server lists have no
+pagination: cards use the main page scroll, and request history reveals three
+loaded entries at a time. Comparison requests the existing two/three-ID endpoint,
+uses stacked public cards and supports removal without persistence or a table.
+
+Cards and details show the public service identity, coverage, recurring schedule,
+route-specific next-service date and available/total capacity with a labeled
+meter. An active commune prioritizes the matching public route inside a returned
+service; it never filters eligibility locally. Secondary routes, description,
+validation explanation and published reviews are disclosed on demand. Validation
+copy describes FurgoPlus's submitted-information/document review without promising
+safety or certification. Detail identifies actual demo reviews even in the closed
+review summary. The discovery aggregate does not carry a demo flag, so list and
+comparison cards do not infer it. No contact/child/operational metadata is rendered.
+
+Contact is a separate focused task after a fresh direct-ID eligibility read.
+The named recipient and exact authenticated email precede an unchecked explicit
+email-sharing consent. Copy reflects submission-time disclosure to the driver,
+separates that permission from Terms/Privacy and child-data authorization, and
+collects only the existing message. A synchronous pending guard prevents repeated
+sends. Confirmation immediately opens Solicitudes with the authoritative returned
+request. A failed following read retains confirmation and offers only read retry.
+Duplicate/domain errors offer the existing request or contextual recovery; an
+uncertain write directs the user to inspect Solicitudes and is never auto-replayed.
+
+The inbox shows service, readable state and date, without message/contact bodies.
+Participant detail explains pending/accepted/rejected/cancelled states; only an
+accepted response can display the existing immutable service-email snapshot.
+Messages open on demand. Cancellation retains its server confirmation independently
+of list refresh. Historical requests offer no service/new-request/acceptance bypass.
+Known hidden/ineligible responses clear discovery/detail/comparison/contact drafts
+and offer Buscar. Mi cuenta leads with email, role/context and logout; supported
+name editing is on demand. Legal links remain reserved until Slice 7 documents
+exist, with no fake link, acceptance claim or consent persistence.
+
+All private state and feedback belong to the parent workspace. Session/version,
+operation and lifetime guards reject late reads/writes and follow-up reads. Native
+session generations reject obsolete cookie/CSRF/expiry effects before response
+processing; secure-storage operations are serialized to keep a prior identity's
+in-progress write ahead of subsequent cleanup/persistence. Cleanup cannot be
+cancelled by an immediate restore. Auth email is cleared on logout/expiry/replacement.
+The existing keyed role homes and original auth/driver tests are retained. No
+driver daily-operation screen, backend, generated contract or new API is changed.
+
+Every focused task uses one page scroll, SafeArea, keyboard resizing and system
+text scaling. Native Android back traverses task/detail/inbox levels. Material
+controls retain the shared 48px minimum/56px primary targets; state and availability
+have text and semantics as well as icons/color. Routine feedback uses the local
+ScaffoldMessenger and a retained contextual status, with immediate session cleanup.
+
+Tests cover navigation, optional server filters, read loading/empty/retry, public
+allowlist, truthful trust/capacity, real/demo review disclosure, comparison/removal,
+hidden access, exact email/recipient/affirmative consent, duplicate/pending/uncertain
+writes, confirmed-write/read-failure separation, participant states/history,
+cancellation/conflicts, logout, replacement/expiry/unsupported roles and late A
+responses during B. Layout-oriented widget cases target 390×844 and 360px with
+2× text and keyboard insets. These tests have been analyzed but could not execute
+because the runner cannot bind a socket. No rendered geometry or accessibility
+certification is claimed. **Slice 5 remains pending human visual/workflow acceptance.**
+
+### Slice 5 second visual pass — parent presentation redesign
+
+The first uncommitted implementation was rejected in manual Android visual
+review. This pass changes presentation and interaction hierarchy to **summary →
+action → detail on demand**. It does not mark Slice 5 accepted.
+
+- The existing FurgoPlus logo anchors a white header. Parent-only blue surfaces,
+  white cards, 20px radii, quiet borders and icon/text state badges reuse the
+  visual foundation without changing auth or driver styling. Existing font sizes
+  and system scaling remain; spacing and line height create the density gains.
+- Buscar loads automatically as before. Filters occupy a compact control with
+  an active-count badge; manual refresh is an icon with an accessible tooltip.
+  Actual failed reads alone offer Reintentar. Public service cards group identity,
+  validation, coverage, named route, compact recurring schedule, dated capacity
+  and actions. Public coverage summarizes the prioritized commune plus a truthful
+  count, with complete coverage in detail. Weekday ranges only represent contiguous
+  schedules; noncontiguous schedules retain individual abbreviated days.
+- Comparison uses a selected button with a check icon, visible “Agregado”, spoken
+  “Agregado a comparar” and “Quitar de comparación” tooltip. Two/three selections
+  expose a small action area above navigation. It occupies layout space rather
+  than overlaying cards; no favorites or persistence were added.
+- Service detail starts with a soft blue hero and Solicitar contacto before
+  collapsed Cobertura y horario, Acerca del servicio, validation explanation and
+  published reviews. Empty reviews are one compact row. Full route/coverage/date
+  information and demonstration review labels remain available on demand.
+- Contact presents the named service and exact parent email before the message
+  and unchecked explicit consent. Extended scope explanations live under
+  Privacidad de este contacto, including the Terms, Privacy Policy and child-data
+  exclusions. Only the existing message and email-sharing consent are collected.
+  The submit area is inside the resized body, outside its single page scroll.
+  Navigation yields space to the keyboard while editing; content remains scrollable
+  above the action. Inline validation scrolls into view. Transient notices leave
+  space for the action instead of covering it.
+- Solicitudes uses distinct icon/text badges, service identity, date and one
+  action. Detail leads with status; accepted-only contact has its own card and
+  an explanation of why the email is visible. Pending/rejected/cancelled copy is
+  concise. The participant message and resolution date are disclosed on demand.
+- Mi cuenta groups role, name and email in one summary, followed by supported
+  name editing, secondary refresh and a compact logout action. Legal documents
+  remain reserved for Slice 7; no unsupported links or settings were invented.
+
+One page scroll, SafeArea, wrapping text, at least 48px actions, a 56px contact
+submit target, system text scaling and keyboard resizing are retained. Availability
+still has one readable announcement with its visual progress descendants excluded;
+no progress role or arbitrary progress semantics value is introduced. State and
+selection use icons/text and semantics in addition to color.
+
+All authoritative reads/writes, commune filtering, route/date capacity, hidden
+service handling, comparison limits, published-review filtering, explicit consent,
+submission-time parent-email sharing, accepted-only service-email snapshots,
+duplicate/uncertain writes, participant history, cancellation/conflicts, stale
+response guards, session generations, A→B cleanup, native cookies/CSRF and
+unsupported-role behavior remain in place. The only changes in the existing
+operation methods are presentation feedback positioning and revealing inline
+contact errors. No backend/API/OpenAPI or driver operation changes were made.
+
+Verification for this pass is recorded in `CODEX_TASK_08_5.md`. Rendered fixture
+screens are useful layout evidence, not Android acceptance. **Slice 5 remains
+uncommitted and pending a SECOND human Android visual/workflow review.**

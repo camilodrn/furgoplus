@@ -24,6 +24,22 @@ class MemoryStorage implements AuthStorage {
   }
 }
 
+class DelayedStorage extends MemoryStorage {
+  final started = Completer<void>();
+  final release = Completer<void>();
+  bool first = true;
+
+  @override
+  Future<void> write(String value) async {
+    if (first) {
+      first = false;
+      started.complete();
+      await release.future;
+    }
+    await super.write(value);
+  }
+}
+
 class Call {
   Call(this.uri, this.method, this.headers, this.body);
   final Uri uri;
@@ -49,6 +65,29 @@ class FakeTransport implements AuthTransport {
 
   @override
   void close() {}
+}
+
+class DeferredTransport extends FakeTransport {
+  DeferredTransport(this.path, this.method);
+  final String path;
+  final String method;
+  final completion = Completer<AuthHttpResponse>();
+  bool defer = true;
+
+  @override
+  Future<AuthHttpResponse> send(
+    Uri uri,
+    String method, {
+    Map<String, String> headers = const {},
+    String? body,
+  }) async {
+    if (defer && uri.path == path && method == this.method) {
+      defer = false;
+      calls.add(Call(uri, method, headers, body));
+      return completion.future;
+    }
+    return super.send(uri, method, headers: headers, body: body);
+  }
 }
 
 class PendingAuthTransport extends FakeTransport {
@@ -358,6 +397,7 @@ void main() {
       ..responses.addAll([
         reply(200, {'csrf_token': csrf}, [csrfCookie]),
         reply(200, {...identity, 'role': 'parent'}),
+        reply(200, {'results': []}),
         reply(200, {'communes': []}),
       ]);
     final parentController = AuthController(
@@ -580,6 +620,199 @@ void main() {
             .text,
         isEmpty,
       );
+    },
+  );
+  for (final expired in [false, true]) {
+    test(
+      'obsolete parent response cannot rotate or erase account B cookies ($expired)',
+      () async {
+        final storage = MemoryStorage();
+        final transport =
+            DeferredTransport('/api/v1/parent/contact-requests/', 'GET')
+              ..responses.addAll([
+                reply(200, {'csrf_token': csrf}, [csrfCookie]),
+                reply(
+                  200,
+                  {...identity, 'csrf_token': 'b-csrf'},
+                  [sessionCookie.replaceFirst('opaque-session', 'account-b')],
+                ),
+                reply(200, {
+                  ...identity,
+                  'role': 'parent',
+                  'email': 'b@example.test',
+                }),
+              ]);
+        final api = NativeSessionApi(config, storage, transport: transport);
+        final controller = AuthController(api)..state = AuthState.parent;
+        final oldRead = api.get('parent/contact-requests/');
+        final rejected = expectLater(
+          oldRead,
+          throwsA(
+            isA<AuthFailure>().having((e) => e.code, 'code', 'stale_request'),
+          ),
+        );
+        await controller.login('b@example.test', 'synthetic');
+        expect(controller.email, 'b@example.test');
+        transport.completion.complete(
+          reply(
+            expired ? 403 : 200,
+            expired
+                ? {'code': 'not_authenticated', 'message': 'Old expiry'}
+                : {'results': []},
+            [
+              'sessionid=old-account-a; Path=/; Max-Age=43200; Secure; HttpOnly; SameSite=Lax',
+            ],
+          ),
+        );
+        await rejected;
+        expect(storage.value, contains('account-b'));
+        expect(controller.state, AuthState.parent);
+        transport.responses.add(reply(200, {'results': []}));
+        await api.get('parent/contact-requests/');
+        expect(
+          transport.calls.last.headers['Cookie'],
+          contains('sessionid=account-b'),
+        );
+      },
+    );
+  }
+
+  test(
+    'obsolete CSRF bootstrap cannot issue a parent write for the new identity',
+    () async {
+      final transport = DeferredTransport('/api/v1/auth/csrf/', 'GET')
+        ..responses.addAll([
+          reply(200, {'csrf_token': 'b-bootstrap'}, [csrfCookie]),
+          reply(200, {...identity, 'csrf_token': 'b-rotated'}, [sessionCookie]),
+          reply(200, {
+            ...identity,
+            'role': 'parent',
+            'email': 'b@example.test',
+          }),
+        ]);
+      final api = NativeSessionApi(
+        config,
+        MemoryStorage(),
+        transport: transport,
+      );
+      final controller = AuthController(api)..state = AuthState.parent;
+      final oldWrite = api.write('parent/contact-requests/', {
+        'driver_id': 1,
+        'message': 'Old draft',
+        'consent_share_email': true,
+      });
+      final rejected = expectLater(
+        oldWrite,
+        throwsA(
+          isA<AuthFailure>().having((e) => e.code, 'code', 'stale_request'),
+        ),
+      );
+      await controller.login('b@example.test', 'synthetic');
+      transport.completion.complete(
+        reply(200, {'csrf_token': 'old-a-token'}, [csrfCookie]),
+      );
+      await rejected;
+      expect(
+        transport.calls.where(
+          (call) => call.uri.path.endsWith('/contact-requests/'),
+        ),
+        isEmpty,
+      );
+      expect(controller.email, 'b@example.test');
+    },
+  );
+
+  test(
+    'late logout cannot clear a replacement account or replace its shell',
+    () async {
+      final storage = MemoryStorage();
+      final transport = DeferredTransport('/api/v1/auth/logout/', 'POST')
+        ..responses.add(reply(200, {'csrf_token': csrf}, [csrfCookie]));
+      final api = NativeSessionApi(config, storage, transport: transport);
+      await api.csrf();
+      final controller = AuthController(api)..state = AuthState.parent;
+      final logout = controller.logout();
+      transport.responses.addAll([
+        reply(
+          200,
+          {...identity, 'csrf_token': 'b-csrf'},
+          [sessionCookie.replaceFirst('opaque-session', 'account-b')],
+        ),
+        reply(200, {...identity, 'role': 'parent', 'email': 'b@example.test'}),
+      ]);
+      await controller.login('b@example.test', 'synthetic');
+      transport.completion.complete(
+        reply(200, {}, [
+          'sessionid=; Path=/; Max-Age=0; Secure; HttpOnly; SameSite=Lax',
+        ]),
+      );
+      await logout;
+      expect(controller.state, AuthState.parent);
+      expect(controller.email, 'b@example.test');
+      expect(storage.value, contains('account-b'));
+    },
+  );
+  test(
+    'in-progress A storage write settles before B session persistence',
+    () async {
+      final storage = DelayedStorage();
+      final transport = FakeTransport()
+        ..responses.addAll([
+          reply(200, {'csrf_token': csrf}, [csrfCookie]),
+          reply(
+            200,
+            {...identity, 'csrf_token': 'a-rotated'},
+            [sessionCookie.replaceFirst('opaque-session', 'account-a')],
+          ),
+          reply(
+            200,
+            {...identity, 'csrf_token': 'b-rotated'},
+            [sessionCookie.replaceFirst('opaque-session', 'account-b')],
+          ),
+          reply(200, {
+            ...identity,
+            'role': 'parent',
+            'email': 'b@example.test',
+          }),
+        ]);
+      final api = NativeSessionApi(config, storage, transport: transport);
+      final oldLogin = api.login('a@example.test', 'synthetic');
+      final rejected = expectLater(
+        oldLogin,
+        throwsA(
+          isA<AuthFailure>().having((e) => e.code, 'code', 'stale_request'),
+        ),
+      );
+      await storage.started.future;
+      final controller = AuthController(api);
+      final loginB = controller.login('b@example.test', 'synthetic');
+      storage.release.complete();
+      await rejected;
+      await loginB;
+      expect(controller.email, 'b@example.test');
+      expect(storage.value, contains('account-b'));
+      expect(storage.value, isNot(contains('account-a')));
+    },
+  );
+
+  test(
+    'expiry cleanup is not skipped by an immediate restore generation',
+    () async {
+      final storage = MemoryStorage()
+        ..value = jsonEncode(
+          SessionCookie(
+            'account-a',
+            'api.example.test',
+            DateTime.now().toUtc().add(const Duration(hours: 1)),
+            true,
+          ).toJson(),
+        );
+      final api = NativeSessionApi(config, storage, transport: FakeTransport());
+      final clearing = api.clear();
+      api.invalidateRequests();
+      await api.restoreCookies();
+      await clearing;
+      expect(storage.value, isNull);
     },
   );
 }

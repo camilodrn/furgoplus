@@ -1089,3 +1089,192 @@ files and two untracked files (`web/src/AdminExperience.tsx` and
 `web/src/AdminPlanControls.tsx`), no staged changes and no commit. This includes
 the earlier uncommitted work; the six files listed above are this pass's edits.
 **Slice 4 remains pending final functional acceptance.**
+
+## Slice 5 — parent Flutter experience only
+
+Commits `7850e45`, `7b69bb0`, `83ea564` and `d595e2d` are preserved on
+`task/08-5-product-ux-privacy`. Issue #19 was read through the GitHub connector
+after `gh issue view` could not connect. The pre-edit audit and detailed behavior
+map are appended to `docs/UX_FOUNDATION.md`. Only Slice 5 is implemented here;
+Task 08.5 and Slice 5 human visual/workflow acceptance remain pending.
+
+### Reviewable behavior
+
+1. Navigation: exactly Buscar / Solicitudes / Mi cuenta, using Material
+   NavigationBar; Android back returns through focused tasks and details.
+2. Discovery: immediate server search, optional supported commune filter on a
+   focused page, active filter count, loading/empty/contextual read retry.
+3. Cards/detail: identity/coverage/first relevant route first, primary contact
+   action before secondary description/routes/trust/reviews. Public fields only.
+4. Capacity/trust: available/total meter and exact route/date, changing-cupacity
+   warning and no reservation implication. “Conductor validado” with on-demand
+   process explanation and no government/safety claims.
+5. Comparison: two/three server-checked services, stacked cards and removal;
+   session-local selection, no persistence or horizontal table.
+6. Contact: fresh eligibility read, exact account email and named recipient,
+   unchecked explicit existing consent, message only, duplicate-submit guard.
+   Parent email is shared **when sent**; service email is revealed **when accepted**.
+7. Solicitudes: three recent compact state/date cards, progressively reveal older
+   loaded records; participant-only detail and disclosed message/contact snapshot.
+   All four existing lifecycle states retain readable copy and cancellation.
+8. Hidden recovery: clear known unavailable discovery/detail/comparison/draft
+   content, plain “Este servicio ya no está disponible”, return to Buscar.
+   Participant-retained history supplies no new-request/acceptance shortcut.
+9. Account: email/context/logout first; existing name edit opens on demand.
+   Legal-link structure remains reserved until actual Slice 7 documents exist.
+10. Feedback: native workspace-owned SnackBar plus retained contextual status.
+    Confirmed mutations remain confirmed if the subsequent list read fails.
+    Domain errors have contextual next actions; retry performs only transient reads.
+11. Density: one main page scroll, focused filters/contact/name forms, collapsed
+    secondary detail, three-item request/review batches and no nested timeline/table.
+12. Session/privacy: keyed homes retained; cleanup and generation/lifetime/operation
+    guards cover drafts, comparison, detail, requests/contact, filters and feedback.
+    Native generations block late cookie/CSRF/expiry effects; serialized secure
+    storage protects account replacement. No private discovery fields are added.
+13. Accessibility: SafeArea, wrapping/scalable text, keyboard resizing, semantic
+    heading/state/capacity labels, native controls and existing 48px/56px targets.
+14. Tests: existing parent scenarios adapted and expanded across all above states;
+    session assertions retained with discovery startup fixture updated. Added
+    obsolete read/CSRF/logout and asynchronous-storage identity regressions.
+
+### Exact validation results
+
+Final Flutter commands used the existing SDK/dependency/distribution copies under
+ignored `mobile/.build/slice5/`, with analytics disabled, `PUB_CACHE` and
+`GRADLE_USER_HOME` pointing inside that workspace directory. No installed SDK or
+cache was modified. Resolved dependencies and generated contracts are unchanged.
+
+| Requested command | Result |
+| --- | --- |
+| `dart format --output=none --set-exit-if-changed lib test` | Exit 0; 15 files, zero changes |
+| `flutter analyze` | Exit 0; no issues |
+| `flutter test` | Exit 1; all four test files fail during loading: cannot create server socket at 127.0.0.1:0, OS error EPERM (errno 1). Zero tests executed; no test pass is claimed |
+| `flutter build apk --debug --dart-define=API_BASE_URL=https://api.example.test` | Exit 1 before compilation; Gradle FileLockContentionHandler cannot determine a usable wildcard IP. This run produced no new APK |
+| `git diff --check` | Exit 0 |
+
+Logs: `mobile/.build/slice5/analyze.log`, `test.log` and `apk.log`.
+No web/backend checks were required: those areas and all API/OpenAPI/generated
+contracts are unchanged. Do not interpret static analysis as test/build success.
+Android visual/workflow/device acceptance was not performed in this blocked
+runtime. The prescribed synthetic login/search/compare/contact/acceptance/hidden
+history/logout journey and approximately 390×844 visual, keyboard/text-scale and
+screen-reader checks remain for human review on the host.
+
+### Files and Git state
+
+- `mobile/lib/parent_home.dart` — parent navigation, tasks, inbox/account and guards.
+- `mobile/lib/parent_service.dart` — new public allowlisted cards, route capacity,
+  readable public summaries and semantic state labels.
+- `mobile/lib/auth_controller.dart` — exact authenticated email and identity guards.
+- `mobile/lib/session_api.dart` — native obsolete-response/storage protections.
+- `mobile/test/parent_home_test.dart` — parent widget, privacy and workflow cases.
+- `mobile/test/session_test.dart` — retained auth tests and added native regressions.
+- `docs/UX_FOUNDATION.md` — pre-edit audit and parent design/acceptance boundary.
+- `CODEX_TASK_08_5.md` — implementation and exact validation record.
+
+Final Git state: seven modified tracked files and one untracked Dart file,
+no staged changes, on `task/08-5-product-ux-privacy`. Slice 5 remains uncommitted.
+No commit, push, merge, deployment, reset, revert, discard, branch switch or history
+rewrite occurred. Driver Flutter operation, legal drafts/persistence, final freeze,
+backend/API/OpenAPI and other out-of-scope product features are untouched.
+
+**Slice 5 is pending human visual/workflow acceptance.**
+
+## Slice 5 — second visual/interaction pass (uncommitted)
+
+The first implementation's manual Android visual review was rejected. The parent
+experience now follows summary → action → detail on demand. This pass preserves
+the existing functional/privacy/session implementation and its test purposes.
+
+| Area | Presentation outcome |
+| --- | --- |
+| Brand/shell | Existing FurgoPlus logo; parent-only calm blue/white card styling; same Buscar / Solicitudes / Mi cuenta navigation |
+| Buscar | Automatic reads retained; compact filters/count; secondary refresh icon with tooltip; real read failures alone offer Reintentar |
+| Service cards | Transport marker, name, validation badge, compact public coverage, named route, truthful abbreviated weekdays, date-specific available/total meter and actions |
+| Detail | Hero summary and early contact CTA; full coverage/routes, description, validation explanation and published reviews disclosed on demand; compact empty reviews |
+| Comparison | Accessible selected action replaces form checkbox; compact two/three-service comparison action above navigation; removal/limits/server validation retained |
+| Contact | Named recipient and exact email precede message/unchecked consent; privacy scope explanation opens on demand; submit area respects keyboard/body layout |
+| Solicitudes | Icon/text state badge, service, date and one action; state-first participant detail; accepted email has an explanatory contact card |
+| Mi cuenta | Role/name/email summary; supported name edit; compact refresh/logout; future legal documents remain reserved |
+| Density/accessibility | One page scroll, wrapping, existing font sizes and system scaling, 48px actions, 56px contact submit, SafeArea, no color-only state, preserved availability semantics |
+| Behavior | No backend/API/OpenAPI, discovery eligibility, privacy, session, contact, history or driver-operation changes |
+
+Presentation tests were updated for button comparison, compact weekday copy,
+empty-review rows and disclosure placement. New cases cover grouped card content,
+selected-action semantics, secondary information access, exact recipient/email
+ordering, privacy disclosure with unchecked consent, account editing, truthful
+weekday/coverage summaries and narrow doubled-text filters/inbox/account. Existing
+business/privacy/session tests retain their assertions and purposes.
+
+### Verification environment and results
+
+The installed SDK is read-only. Verification uses the existing unchanged writable
+SDK copy at `mobile/.build/slice5/flutter-sdk` with analytics suppressed and the
+existing writable pub/Gradle caches. Generated verification files are ignored under
+`mobile/.build/validation`; no dependency or SDK-source patch was introduced.
+
+| Check | Result |
+| --- | --- |
+| `dart format --output=none --set-exit-if-changed lib test` | Exit 0; 17 files, 0 changes |
+| `flutter analyze` | Exit 0; no issues |
+| `flutter test` | Exit 1 before test execution; all 5 suite loaders cannot bind the local runner socket (EPERM) |
+| Same five suites via direct `flutter_tester` | **74/74 passed** with assertions, standard test fonts and asset setup; no tests skipped |
+| Roboto 390×844 visual fixture probe | 1/1 passed; eight screens rendered and inspected; separate from the 74 regression tests |
+| `flutter build apk --debug --dart-define=API_BASE_URL=https://api.example.test` | Exit 1 before compilation: Gradle FileLockContentionHandler cannot determine a usable wildcard IP in this restricted environment; no new APK claimed |
+| Flutter debug bundle with the same API define | Exit 0; production entrypoint/kernel and assets compile |
+| `git diff --check` | Exit 0 |
+
+The direct runner imports the unchanged five suite entrypoints, groups them and
+uses the installed test_core `directRunTests` API inside the Flutter engine. It
+compiles with the installed frontend server and runs `flutter_tester` with
+`--disable-vm-service --enable-checked-mode --use-test-fonts --disable-asset-fonts`.
+Only its ignored package configuration adds already cached runner dependencies;
+project dependencies and test sources are not substituted. Breakdown:
+
+- Parent home: 36 passed.
+- Parent service/presentation/availability: 12 passed (including all six existing
+  availability semantics/meter edge cases).
+- Session/privacy: 18 passed.
+- Driver regressions: 3 passed.
+- Health/configuration: 5 passed.
+
+Roboto fixture renders show a complete compact result plus part of the next card,
+an early detail CTA, contact summary and consent with the submit area visible,
+three inbox cards, accepted contact explanation, comparison selection and account
+summary. The action area stays separate from scrolling disclosure content. These
+are headless Flutter fixture renders, not an emulator/device review or an
+accessibility certification. APK packaging and normal `flutter test` still need
+host execution because their runner/Gradle sockets are blocked here.
+
+### Files and git boundary
+
+This visual pass edits `mobile/lib/parent_home.dart`,
+`mobile/lib/parent_service.dart`, `mobile/test/parent_home_test.dart`,
+`mobile/test/parent_service_test.dart`, `docs/UX_FOUNDATION.md` and this task log,
+and adds `mobile/lib/parent_presentation.dart`.
+
+The earlier uncommitted changes in `mobile/lib/auth_controller.dart`,
+`mobile/lib/session_api.dart`, `mobile/test/driver_home_test.dart` and
+`mobile/test/session_test.dart` were retained without edits in this pass.
+
+Branch remains `task/08-5-product-ux-privacy`. Final working tree has eight modified
+tracked files and three untracked Dart files (`parent_presentation.dart`,
+`parent_service.dart`, `parent_service_test.dart`); no staged changes. No commit,
+push, merge, deploy, reset, revert, discard, branch switch or history rewrite was
+performed. **Slice 5 remains pending a SECOND human Android visual review.**
+
+Final `git status --short`:
+
+```text
+ M CODEX_TASK_08_5.md
+ M docs/UX_FOUNDATION.md
+ M mobile/lib/auth_controller.dart
+ M mobile/lib/parent_home.dart
+ M mobile/lib/session_api.dart
+ M mobile/test/driver_home_test.dart
+ M mobile/test/parent_home_test.dart
+ M mobile/test/session_test.dart
+?? mobile/lib/parent_presentation.dart
+?? mobile/lib/parent_service.dart
+?? mobile/test/parent_service_test.dart
+```

@@ -190,6 +190,9 @@ void main() {
       }
       if (uri.path.endsWith('/discovery/communes/'))
         return ok({'communes': []});
+      if (uri.path.endsWith('/discovery/drivers/')) return ok({'results': []});
+      if (uri.path.endsWith('/parent/profile/'))
+        return ok({'display_name': 'parent', 'email': 'parent@example.test'});
       throw StateError('Unexpected $method ${uri.path}');
     });
     await tester.pumpWidget(
@@ -211,7 +214,23 @@ void main() {
     await tester.ensureVisible(find.text('Iniciar sesión'));
     await tester.tap(find.text('Iniciar sesión'));
     await tester.pumpAndSettle();
-    expect(find.text('Buscar conductores'), findsOneWidget);
+    expect(
+      find.widgetWithText(NavigationDestination, 'Buscar'),
+      findsOneWidget,
+    );
+    expect(
+      tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
+      0,
+    );
+    expect(find.text('Estudiante ficticio'), findsNothing);
+    expect(find.byType(DriverHome), findsNothing);
+    await tester.tap(find.widgetWithText(NavigationDestination, 'Mi cuenta'));
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
+      2,
+    );
+    expect(find.text('parent@example.test'), findsOneWidget);
     expect(find.text('Estudiante ficticio'), findsNothing);
     expect(find.byType(DriverHome), findsNothing);
   });
