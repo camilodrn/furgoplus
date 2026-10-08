@@ -96,6 +96,53 @@ function driverApi() {
   return api;
 }
 
+test("route stages explain invalid required fields in Spanish without advancing or writing", async () => {
+  const api = driverApi();
+  render(<DriverPublicationScreen api={api as unknown as AuthApi} />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Crear primera ruta" }),
+  );
+  fireEvent.click(screen.getByLabelText("Lunes"));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Continuar: cupos y cobertura" }),
+  );
+  expect(screen.getByRole("alert").textContent).toContain(
+    "Revisa los campos obligatorios y su formato.",
+  );
+  expect(screen.getByLabelText("Nombre de la ruta")).toBeTruthy();
+  expect(api.createRoute).not.toHaveBeenCalled();
+  fireEvent.change(screen.getByLabelText("Nombre de la ruta"), {
+    target: { value: "Ruta demo" },
+  });
+  fireEvent.click(
+    screen.getByRole("button", { name: "Continuar: cupos y cobertura" }),
+  );
+  fireEvent.click(screen.getByLabelText("Comuna Demo Norte"));
+  fireEvent.change(screen.getByLabelText("Capacidad de la ruta"), {
+    target: { value: "0" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Revisar ruta" }));
+  expect(screen.getByRole("alert").textContent).toContain(
+    "Revisa los campos obligatorios y su formato.",
+  );
+  expect(
+    (screen.getByLabelText("Capacidad de la ruta") as HTMLInputElement).value,
+  ).toBe("0");
+  expect(api.createRoute).not.toHaveBeenCalled();
+  fireEvent.change(screen.getByLabelText("Capacidad de la ruta"), {
+    target: { value: "1" },
+  });
+  fireEvent.change(screen.getByLabelText("Nombre del destino"), {
+    target: { value: "Destino demo" },
+  });
+  fireEvent.change(screen.getByLabelText("Dirección del destino (privada)"), {
+    target: { value: "Dirección ficticia" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Revisar ruta" }));
+  fireEvent.click(screen.getByRole("button", { name: /^Crear ruta$/ }));
+  await waitFor(() => expect(api.createRoute).toHaveBeenCalledOnce());
+});
+
 test("driver sees blockers, requests publication, creates and deactivates a route", async () => {
   const api = driverApi();
   render(<DriverPublicationScreen api={api as unknown as AuthApi} />);

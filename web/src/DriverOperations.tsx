@@ -7,6 +7,7 @@ import type {
   PaymentInput,
 } from "./api-types";
 import { ChileanDateField } from "./ChileanDateField";
+import { validateForm } from "./formValidation";
 import {
   chileDateTimeParts,
   formatChileanDate,
@@ -86,9 +87,10 @@ export function DriverRoster({
   const { busy, fields } = task;
   const routes = task.data?.routes ?? [];
   const rows = task.data?.assignments ?? [];
-  async function save(event: React.FormEvent) {
+  async function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy) return;
+    if (!validateForm(event.currentTarget, task.setError)) return;
     setDateAttempted(true);
     const startsOn = parseChileanDate(form.starts_on);
     const endsOn = form.ends_on ? parseChileanDate(form.ends_on) : null;
@@ -364,7 +366,11 @@ export function DriverRoster({
           {task.data && !routes.length && (
             <p>Primero configura una ruta en Mi servicio → Rutas.</p>
           )}
-          <form className="route-form" onSubmit={(event) => void save(event)}>
+          <form
+            noValidate
+            className="route-form"
+            onSubmit={(event) => void save(event)}
+          >
             <fieldset className="form-body" disabled={busy || !task.data}>
               <legend>Datos de la asignación</legend>
               <label>
@@ -579,9 +585,10 @@ export function DriverPayments({ api }: { api: AuthApi }) {
   const { busy, fields } = task;
   const payments = task.data?.payments ?? [];
   const assignments = task.data?.assignments ?? [];
-  async function create(event: React.FormEvent) {
+  async function create(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy) return;
+    if (!validateForm(event.currentTarget, task.setError)) return;
     setDateAttempted(true);
     const start = parseChileanDate(form.service_period_start);
     const end = parseChileanDate(form.service_period_end);
@@ -802,7 +809,11 @@ export function DriverPayments({ api }: { api: AuthApi }) {
           {task.data && !assignments.length && (
             <p>Primero agrega un estudiante en Pasajeros.</p>
           )}
-          <form className="route-form" onSubmit={(event) => void create(event)}>
+          <form
+            noValidate
+            className="route-form"
+            onSubmit={(event) => void create(event)}
+          >
             <fieldset className="form-body" disabled={busy || !task.data}>
               <legend>Datos del registro</legend>
               <label>

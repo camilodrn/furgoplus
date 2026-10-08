@@ -3,6 +3,7 @@ import { ApiError, AuthApi } from "./api";
 import { ChileanDateField, visibleExpiry } from "./ChileanDateField";
 import { AdminPublicationScreen } from "./PublicationScreens";
 import { humanChileanDate, parseChileanDate } from "./dates";
+import { validateForm } from "./formValidation";
 import type {
   AdminValidation,
   AdminValidations,
@@ -647,10 +648,17 @@ export function DriverOnboarding({
                 </div>
               </div>
               <form
+                noValidate
                 className="profile-form"
                 key={`${profile.display_name}-${profile.service_summary}-${profile.service_contact_email}`}
                 onSubmit={(event) => {
                   event.preventDefault();
+                  if (
+                    !validateForm(event.currentTarget, (message) =>
+                      setFeedback({ area: "profile", message, error: true }),
+                    )
+                  )
+                    return;
                   const data = new FormData(event.currentTarget);
                   void perform(
                     "profile",

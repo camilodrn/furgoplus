@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { AuthApi } from "./api";
 import type { Publication, Route, RouteInput } from "./api-types";
 import { humanChileanDate } from "./dates";
+import { validateForm } from "./formValidation";
 import {
   CapacityText,
   DriverReadNotice,
@@ -140,7 +141,9 @@ export function DriverPublicationScreen({
   }
   async function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!validateForm(event.currentTarget, task.setError)) return;
     if (step < 2) {
+      task.setError("");
       setStep(step + 1);
       requestAnimationFrame(() =>
         document.getElementById("route-stage-title")?.focus(),
@@ -455,7 +458,11 @@ export function DriverPublicationScreen({
               No puedes cambiar los datos del servicio de hoy después de
               iniciarlo.
             </p>
-            <form className="route-form" onSubmit={(event) => void save(event)}>
+            <form
+              noValidate
+              className="route-form"
+              onSubmit={(event) => void save(event)}
+            >
               <fieldset className="form-body" disabled={busy || !task.data}>
                 {step === 0 && (
                   <>

@@ -340,6 +340,7 @@ test("a single inline detail follows its expanded row and toggling never changes
   render(<DriverRequests api={api as unknown as AuthApi} />);
   await screen.findByText("Página 1 de 2");
   fireEvent.click(pagination().getByRole("button", { name: "Siguiente →" }));
+  await screen.findByText("Página 2 de 2");
   const row = (id: number) =>
     inbox().getByRole("button", {
       name: new RegExp(`Familia sintética ${id}\\D`),

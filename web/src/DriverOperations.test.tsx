@@ -59,6 +59,47 @@ const payment: Payment = {
 
 afterEach(cleanup);
 
+test.each(["roster", "payments"])(
+  "%s required selections produce Spanish feedback and preserve the draft without writing",
+  async (area) => {
+    const api = {
+      routes: vi.fn(async () => ({ routes: [route] })),
+      assignments: vi.fn(async () => ({ assignments: [assignment] })),
+      payments: vi.fn(async () => ({ payments: [] })),
+      createAssignment: vi.fn(),
+      createPayment: vi.fn(),
+    };
+    render(
+      area === "roster" ? (
+        <DriverRoster api={api as unknown as AuthApi} />
+      ) : (
+        <DriverPayments api={api as unknown as AuthApi} />
+      ),
+    );
+    const open = await screen.findByRole("button", {
+      name: area === "roster" ? "Agregar pasajero" : /Registrar pago$/,
+    });
+    await waitFor(() => expect(open.hasAttribute("disabled")).toBe(false));
+    fireEvent.click(open);
+    const label = area === "roster" ? "Nombre del estudiante" : "Monto CLP";
+    const value = area === "roster" ? "Estudiante ficticio" : "30000";
+    fireEvent.change(screen.getByLabelText(label), { target: { value } });
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: area === "roster" ? "Crear asignación" : "Registrar pendiente",
+      }),
+    );
+    expect(screen.getByRole("alert").textContent).toContain(
+      "Revisa los campos obligatorios y su formato.",
+    );
+    expect((screen.getByLabelText(label) as HTMLInputElement).value).toBe(
+      value,
+    );
+    expect(api.createAssignment).not.toHaveBeenCalled();
+    expect(api.createPayment).not.toHaveBeenCalled();
+  },
+);
+
 test("roster creates, edits and ends an owned fictional assignment", async () => {
   let rows: Assignment[] = [];
   const api = {

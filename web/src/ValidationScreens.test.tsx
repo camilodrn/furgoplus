@@ -1271,6 +1271,28 @@ test("name change explains and refreshes revalidation while keeping prior reques
   ).toBeNull();
 });
 
+test("profile constraints use Spanish feedback, preserve the draft and permit explicit correction", async () => {
+  const { api } = driverApi();
+  const update = vi.spyOn(api, "updateDriverProfile");
+  render(<DriverOnboarding api={api} />);
+  const email = await screen.findByLabelText("Correo de contacto del servicio");
+  fireEvent.change(email, { target: { value: "correo-invalido" } });
+  fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }));
+  expect(
+    within(email.closest("form")!).getByRole("alert").textContent,
+  ).toContain("Revisa los campos obligatorios y su formato.");
+  await waitFor(() => expect(window.document.activeElement).toBe(email));
+  expect((email as HTMLInputElement).value).toBe("correo-invalido");
+  expect(update).not.toHaveBeenCalled();
+  fireEvent.change(email, { target: { value: "demo@example.test" } });
+  fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }));
+  await screen.findByText("Datos del servicio guardados.");
+  expect(update).toHaveBeenCalledOnce();
+  expect(update).toHaveBeenCalledWith(
+    expect.objectContaining({ service_contact_email: "demo@example.test" }),
+  );
+});
+
 test("description/contact save preserves the server approved state and associates field errors", async () => {
   const { api } = driverApi({ state: "approved", documents: [document] });
   const update = vi

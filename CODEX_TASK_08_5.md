@@ -1,5 +1,9 @@
 # Task 08.5 — Slice 1 implementation contract
 
+**Current final-slice record:** [Slice 8 — MVP demo/academic freeze](docs/MVP_DEMO_FREEZE.md).
+The sections below preserve the history and validation limits of each individual
+slice; their historical Git states are not the current working-tree status.
+
 Issue #19; approved product-owner direction. Branch: `task/08-5-product-ux-privacy`.
 Only shared foundations, authenticated web shell, vocabulary and web/Flutter
 authentication are authorized. Source of truth: [UX foundation](docs/UX_FOUNDATION.md).
