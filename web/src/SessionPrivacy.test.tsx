@@ -1810,3 +1810,64 @@ test.each(["sidebar", "back"] as const)(
     );
   },
 );
+
+test.each(["driver", "admin"] as const)(
+  "%s legal access is static and a same-role replacement clears the open document and old account state",
+  async (role) => {
+    const mock = fixture(role);
+    render(<App />);
+    await screen.findByText("Account A");
+    if (role === "driver")
+      await screen.findByDisplayValue("contact-1@example.test");
+    else await screen.findByText("Ver conductor");
+    const sidebar = screen.getByRole("complementary");
+    const legalLinks = within(sidebar).getByRole("navigation", {
+      name: "Documentos legales",
+    });
+    expect(within(legalLinks).getAllByRole("button")).toHaveLength(2);
+    for (const name of ["Privacidad", "Términos"]) {
+      const link = within(legalLinks).getByRole("button", { name });
+      expect(link.className).toBe("legal-link");
+      expect(link.tabIndex).toBe(0);
+      link.focus();
+      expect(document.activeElement).toBe(link);
+    }
+    expect(
+      within(sidebar).getByRole("button", { name: "Cerrar sesión" }).className,
+    ).toBe("button-outline");
+    const calls = mock.fetchMock.mock.calls.length;
+    fireEvent.click(screen.getByRole("button", { name: "Privacidad" }));
+    const dialog = screen.getByRole("dialog", { name: "Privacidad" });
+    expect(dialog.textContent).not.toContain("a@example.test");
+    expect(dialog.textContent).not.toContain("contact-1@example.test");
+    expect(dialog.textContent).not.toContain("Private summary 1");
+    expect(within(dialog).queryByRole("checkbox")).toBeNull();
+    expect(mock.fetchMock.mock.calls.length).toBe(calls);
+    mock.replace();
+    refreshIdentity();
+    await screen.findByText("Account B");
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.queryByText("Account A")).toBeNull();
+    expect(screen.queryByDisplayValue("contact-1@example.test")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Términos" }));
+    expect(
+      screen.getByRole("dialog", { name: "Términos" }).textContent,
+    ).toContain("v0.1 — 07-10-2026");
+  },
+);
+
+test("expiry while reading a legal draft removes private workspace and closes the document", async () => {
+  const mock = fixture("driver");
+  render(<App />);
+  await screen.findByDisplayValue("contact-1@example.test");
+  fireEvent.click(screen.getByRole("button", { name: "Privacidad" }));
+  mock.intercept((path) =>
+    path.endsWith("auth/me/") ? Promise.resolve(denied()) : undefined,
+  );
+  refreshIdentity();
+  await screen.findByRole("heading", { name: "Inicia sesión" });
+  expect(screen.queryByRole("dialog")).toBeNull();
+  expect(screen.queryByDisplayValue("contact-1@example.test")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Privacidad" }));
+  expect(screen.getByRole("dialog").textContent).not.toContain("Account A");
+});

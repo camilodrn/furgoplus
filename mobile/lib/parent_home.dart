@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'auth_controller.dart';
+import 'legal_access.dart';
 import 'parent_service.dart';
 import 'parent_presentation.dart';
 import 'session_api.dart';
@@ -1034,7 +1035,7 @@ class _ParentHomeState extends State<ParentHome> {
         icon: Icons.privacy_tip_outlined,
         children: [
           Text(
-            'Este permiso es solo para compartir este correo con el servicio al enviar la solicitud. No es aceptación de Términos ni de la Política de Privacidad. No es autorización sobre datos de niños.',
+            'Este permiso es solo para compartir este correo con el servicio al enviar la solicitud. No es aceptación de Términos ni de la Política de Privacidad. No es autorización sobre datos de niños ni datos sensibles, ni permiso para marketing.',
           ),
           SizedBox(height: 8),
           Text(
@@ -1343,7 +1344,7 @@ class _ParentHomeState extends State<ParentHome> {
           label: const Text('Cerrar sesión'),
         ),
       ),
-      // Reserved for Slice 7 legal links once actual documents exist.
+      const LegalLinks(),
     ];
   }
 

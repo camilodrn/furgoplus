@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ApiError, AuthApi } from "./api";
 import type { Identity, Publication } from "./api-types";
 import "./style.css";
+import { LegalAccess } from "./LegalAccess";
 import { ActionFeedbackProvider } from "./ActionFeedback";
 import { AdminValidationScreen, DriverOnboarding } from "./ValidationScreens";
 import { DriverPublicationScreen } from "./PublicationScreens";
@@ -459,9 +460,12 @@ function Brand() {
   );
 }
 
-// Reserved for original Terms/Privacy drafts in a later slice. No dead links.
 function LegalFooter() {
-  return <footer className="auth-legal" />;
+  return (
+    <footer className="auth-legal">
+      <LegalAccess />
+    </footer>
+  );
 }
 
 function AuthenticatedWorkspace({
@@ -640,6 +644,7 @@ function AuthenticatedWorkspace({
         <div className="sidebar-account">
           <span className="auth-support">Tu cuenta</span>
           <strong>{user.display_name || user.email}</strong>
+          <LegalAccess />
           <button className="button-outline" onClick={onSignOut}>
             Cerrar sesión
           </button>

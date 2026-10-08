@@ -1660,11 +1660,17 @@ void main() {
           find.textContaining('No es autorización sobre datos de niños'),
           findsOneWidget,
         );
+        expect(
+          find.textContaining('ni permiso para marketing'),
+          findsOneWidget,
+        );
+        expect(find.textContaining('ni datos sensibles'), findsOneWidget);
         await reveal(tester, const Key('send-contact-request'));
         expect(
           find.byKey(const Key('send-contact-request')).hitTestable(),
           findsOneWidget,
         );
+        await reveal(tester, const Key('contact-consent'));
         expect(
           tester
               .widget<CheckboxListTile>(

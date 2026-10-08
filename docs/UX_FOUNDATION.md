@@ -124,9 +124,12 @@ Mobile supports parent and driver login; registration creates a parent/family
 account. No role switch. Handle loading, registration success, session expiry,
 restore retry and uncertain server logout in plain Spanish.
 
-Reserve a legal footer component area, but render no fake links, document claims,
-consent checkbox or company details before actual original drafts exist. Terms,
-privacy and authorization are later-slice work.
+Slice 7 now supplies original versioned draft Terms and Privacy through a focused
+legal view: web auth footer/account sidebar; Flutter auth, parent Mi cuenta and
+driver footer. Both are labeled “Borrador — requiere revisión legal antes de
+producción”. No acceptance gating or checkbox is added: there is no auditable
+legal-acceptance infrastructure. No company/operator/contact facts are fabricated.
+See [legal drafts](legal/README.md) and [data-handling audit](PRIVACY_BY_DESIGN.md).
 
 ## Privacy and protected functional boundaries
 
@@ -567,3 +570,43 @@ contact errors. No backend/API/OpenAPI or driver operation changes were made.
 Verification for this pass is recorded in `CODEX_TASK_08_5.md`. Rendered fixture
 screens are useful layout evidence, not Android acceptance. **Slice 5 remains
 uncommitted and pending a SECOND human Android visual/workflow review.**
+
+
+## Slice 7 — legal/privacy foundation
+
+Original shared Spanish drafts v0.1 — 07-10-2026 describe actual prototype
+processing. They require Chilean legal review before production, real users, real
+children/guardian/home-address data and commercial operation, and do not certify
+compliance. As of 07 October 2026, Law 19.628 remains applicable; Law 21.719 takes
+effect 01 December 2026. Forward-looking safeguards and its explicit child and
+adolescent rules are described as future requirements, not current-law compliance.
+
+Production operator/controller and official privacy channel remain undefined.
+Real minor data stays blocked by prototype policy pending legal/operator,
+authorization/guardian-authority evidence, purpose/visibility, retention/deletion,
+incident/contact and production-security decisions. Existing free-text fields can
+still accept real or excessive data; no automatic synthetic-data detector or
+verified guardian-to-passenger relationship is claimed. Synthetic data remains
+the default. The data inventory records these gaps and existing deletion limits.
+
+Contact consent only shares the parent's own email with the selected driver at
+submission. It does not accept legal documents, authorize child/sensitive data or
+marketing. Driver service email remains an accepted-request snapshot. Existing
+consent timestamps do not contain a version of the wording. Future legal acceptance
+or authorization needs auditable account/actor, server timestamp, exact document
+version/content, scope and authority, with change/revocation rules after legal review.
+No UI acceptance is faked here.
+
+Route destination addresses and free-text pickup instructions already exist and
+are private. Exact structured child-home addresses/coordinates, autocomplete and
+geocoding remain future work; future location information must stay private,
+necessary and restricted to authorized operational actors, outside discovery.
+The map launcher delegates a destination via a Google Maps HTTPS URL to an external
+application selected by the device; no internal navigation/GPS engine is present.
+
+Legal views contain static public text and no account-bound API reads. Web modal
+state lives inside the identity-keyed workspace. Flutter uses a local legal scope
+keyed by auth state/sessionVersion, hiding the operational child while reading
+and removing it with the document on identity changes; it pushes no independent
+route that could survive logout/expiry/replacement. Operational flows and public
+allowlists are preserved. No Slice 8 work is included.

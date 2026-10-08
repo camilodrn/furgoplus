@@ -2635,3 +2635,62 @@ input[aria-invalid="true"] {
     margin-left: 0;
   }
 }
+
+.legal-access nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  color: var(--muted);
+}
+.legal-link-group {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
+}
+.legal-link {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--brand);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.legal-link:hover {
+  color: var(--brand-hover);
+}
+.auth-legal .legal-access nav {
+  justify-content: center;
+}
+.legal-document {
+  width: min(760px, calc(100% - 24px));
+  max-height: calc(100dvh - 24px);
+  box-sizing: border-box;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+.legal-document::backdrop {
+  background: rgb(14 32 53 / 45%);
+}
+.legal-document-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.legal-draft {
+  padding: 16px;
+  border-left: 4px solid #835313;
+  background: #fff5df;
+  font-weight: 700;
+}

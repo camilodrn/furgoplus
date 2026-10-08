@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'auth_controller.dart';
 import 'driver_home.dart';
 import 'furgo_theme.dart';
+import 'legal_access.dart';
 import 'parent_home.dart';
 
 class AuthApp extends StatefulWidget {
@@ -324,7 +325,7 @@ class _AuthAppState extends State<AuthApp> {
               register ? 'Volver a iniciar sesión' : 'Crear cuenta de familia',
             ),
           ),
-          // Original legal drafts and their links belong to a later slice.
+          const LegalLinks(),
         ],
       ),
     );
@@ -336,45 +337,50 @@ class _AuthAppState extends State<AuthApp> {
     builder: (context, child) => MaterialApp(
       title: 'FurgoPlus',
       theme: furgoTheme(),
-      home: widget.controller.state == AuthState.parent
-          ? ParentHome(
-              key: ValueKey(widget.controller.sessionVersion),
-              auth: widget.controller,
-            )
-          : widget.controller.state == AuthState.driver
-          ? DriverHome(
-              key: ValueKey(widget.controller.sessionVersion),
-              auth: widget.controller,
-            )
-          : Scaffold(
-              body: SafeArea(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 480),
-                      child: Builder(
-                        builder: (context) => Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Image.asset(
-                                'assets/furgoplus-logo.png',
-                                width: 204,
-                                semanticLabel: 'FurgoPlus Transporte Escolar',
+      home: LegalScope(
+        key: ValueKey(
+          '${widget.controller.state}:${widget.controller.sessionVersion}',
+        ),
+        child: widget.controller.state == AuthState.parent
+            ? ParentHome(
+                key: ValueKey(widget.controller.sessionVersion),
+                auth: widget.controller,
+              )
+            : widget.controller.state == AuthState.driver
+            ? DriverHome(
+                key: ValueKey(widget.controller.sessionVersion),
+                auth: widget.controller,
+              )
+            : Scaffold(
+                body: SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 480),
+                        child: Builder(
+                          builder: (context) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Image.asset(
+                                  'assets/furgoplus-logo.png',
+                                  width: 204,
+                                  semanticLabel: 'FurgoPlus Transporte Escolar',
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 24),
-                            authContent(context),
-                          ],
+                              const SizedBox(height: 24),
+                              authContent(context),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
+      ),
     ),
   );
 }

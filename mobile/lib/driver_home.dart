@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'auth_controller.dart';
+import 'legal_access.dart';
 import 'session_api.dart';
 
 abstract interface class DestinationLauncher {
@@ -797,6 +798,8 @@ class _DriverHomeState extends State<DriverHome> {
                   liveRegion: true,
                   child: const Text('Consultando tus servicios…'),
                 ),
+              const SizedBox(height: 16),
+              const LegalLinks(),
             ],
           ),
         ),

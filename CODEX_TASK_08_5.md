@@ -1445,3 +1445,195 @@ On Samsung, using synthetic driver accounts and the approved test API:
 All Slice 6 changes remain uncommitted on `task/08-5-product-ux-privacy`; no
 commit, push, merge, deploy, reset, revert, branch switch or history rewrite was
 performed. Human acceptance and host APK packaging remain pending.
+
+## Slice 7 — legal and privacy foundation (07 October 2026)
+
+Implemented on `task/08-5-product-ux-privacy`, audited from `b850354`. All work
+remains uncommitted for human review. No Slice 8 work, backend/OpenAPI/business
+workflow, mandatory legal acceptance, commit, push, merge, deployment or branch
+change is included.
+
+### Audit and legal decisions
+
+- [Data inventory/privacy by design](docs/PRIVACY_BY_DESIGN.md) distinguishes
+  implemented fields, synthetic/demo usage and future plans, with source files,
+  purpose and role visibility. It covers accounts/password hash/roles, public and
+  private driver fields, private documents/versioned reviews, routes/destination
+  address/runs, consented contact requests, passengers/guardian phone/pickup,
+  manual payment ledger, plans, published demo reviews, audit and session/throttle.
+- Owner-only operational APIs and public allowlists remain unchanged. No public
+  children, child discovery, cross-driver access or general admin child roster.
+  No default child RUT, birth date, medical or school-record fields are introduced.
+  Existing free text/files can still contain real/excessive information; there is
+  no synthetic-data enforcement or verified guardian authority. Retention through
+  PROTECT/history and lack of full deletion are explicitly recorded as gaps.
+- **Current law: Law 19.628 at 07-10-2026. Law 21.719 enters into force on
+  01-12-2026.** Its stronger transparency/minimization/rights and explicit
+  child/adolescent framework guide future design; no present compliance claim.
+  Primary BCN sources are linked in [legal draft index](docs/legal/README.md).
+- Both original Spanish documents are **DRAFTS requiring Chilean legal review
+  before production launch, real users, real minor/guardian/home-address data
+  and commercial operation**. No operator/RUT/address/representative/contact,
+  certification, transport permit, insurance or contractual jurisdiction is invented.
+- Real minor data remains blocked by prototype policy until operator/controller,
+  Chilean legal review, lawful authorization, guardian authority, purpose/access,
+  retention/deletion, incidents/contact and production security are settled.
+  Production legal operator/controller and official privacy contact remain undefined.
+- Contact permission still covers **only sharing the parent's own email with the
+  selected driver at submission**. Service contact email still appears only under
+  accepted-request semantics. Not Terms/Privacy acceptance, child/sensitive-data
+  authorization or marketing. Backend contact evidence has a timestamp and email
+  snapshot but no wording version. No legal acceptance entity/API exists.
+- Both documents use **v0.1 — 07-10-2026**. Future acceptance/authorization requires
+  auditable account/actor, timestamp, exact immutable document version/content,
+  scope and guardian authority where relevant. No checkbox/gating is fabricated.
+- Existing private destination address and free-text pickup are distinguished from
+  **future exact child-home address/coordinates**, autocomplete and geocoding.
+  Those features are not implemented. Future location data must remain private
+  and limited to necessary authorized operation. Maps launch externally via the
+  current Google Maps URL; the device determines its handler, with no internal
+  navigation/GPS. Destination alone is passed, not rosters/account credentials.
+- Retention periods, rights/request channel, provider/region/international transfer
+  facts, security review, incident process, backups/recovery and breach assessment/
+  notification obligations remain production decisions, not claimed current programs.
+
+### Files and product surfaces
+
+Canonical drafts: `web/src/legal/privacy.md`, `web/src/legal/terms.md`.
+`docs/legal/README.md` links originals and explains versioning and legal sources;
+`docs/PRIVACY_BY_DESIGN.md` records data handling and blockers. Flutter shares the
+same text via `mobile/assets/legal/privacy.md` and `terms.md` symlinks, declared in
+`mobile/pubspec.yaml`; it does not maintain a separate wording copy.
+
+Web: auth footer (login/registration/restore states) and authenticated Tu cuenta
+sidebar for existing roles, via `web/src/LegalAccess.tsx` integrated in `App.tsx`.
+A focused native dialog shows draft/version, headings and paragraphs; close/Escape
+and focus restoration are supported. No API calls or acceptance controls.
+`style.css` provides bounded scrolling/wrapping for this focused view.
+
+Flutter: auth login/registration, parent Mi cuenta, driver bottom legal area, via
+`mobile/lib/legal_access.dart` and auth/parent/driver integrations. Focused scrollable
+legal page with persistent close and Android back; public assets only. A local
+LegalScope keyed to auth state/sessionVersion replaces no navigator route, hides
+the private sibling and closes on replacement/expiry/logout. It preserves the
+mounted operational workspace when returning within the same session. Contact
+privacy disclosure explicitly adds sensitive-data and marketing exclusions without
+changing the request payload or existing email-only consent.
+
+Tests: `web/src/LegalAccess.test.tsx`, additions to `SessionPrivacy.test.tsx`,
+`mobile/test/legal_access_test.dart` and scoped consent assertions in
+`parent_home_test.dart`. Cover auth/account access, draft/version, no acceptance
+checkbox/API reads, close/focus/back, replacement/expiry cleanup and narrow/scaled
+reading. Existing discovery privacy, driver/parent operations and session suites
+remain the regression gate; no brittle per-paragraph tests.
+
+`docs/UX_FOUNDATION.md` now references these drafts and preserves current/future-law,
+real-data restrictions, evidence requirements and future location boundaries.
+
+### Validation — Slice 7
+
+Results are recorded below after completion. No legal approval, device acceptance
+or compliance certification follows from automated checks.
+
+| Check | Final result |
+| --- | --- |
+| `cd web && npm run format:check` | Exit 0, including final draft text |
+| `npm run contract:check` | Exit 0; contract unchanged |
+| `npm run lint` | Exit 0 |
+| `npm run typecheck` | Exit 0 |
+| `npm test` | Exit 0; **232/232**, 13 files, including **41 SessionPrivacy tests** and 2 legal-access tests |
+| `npm run build -- --outDir /tmp/furgoplus-slice7-final-web-dist` | Exit 0; 45 modules; final canonical drafts compiled |
+| `cd mobile && dart format --output=none --set-exit-if-changed lib test` | Exit 0; 19 files, no changes |
+| `flutter analyze` and final `flutter analyze --no-pub` | Exit 0; no issues |
+| `flutter test` | Exit 1 before execution: all six suite loaders cannot bind `127.0.0.1:0`, `Operation not permitted`, errno 1 |
+| Existing direct `flutter_tester` harness, all six actual suite entrypoints | Exit 0; **111/111 passed**, no skipped tests: parent home 40, parent service 12, session/privacy 18, driver 32, health 5, legal 4 |
+| `flutter build apk --debug --dart-define=API_BASE_URL=https://api.example.test` | Exit 1 before compilation: Gradle cannot create FileLockContentionHandler, `Could not determine a usable wildcard IP for this machine.` No new APK produced |
+| Final `flutter build bundle --debug --no-pub --dart-define=API_BASE_URL=https://api.example.test --asset-dir=.build/validation/slice7-final-app-assets` | Exit 0; app and assets compile; both bundled documents byte-match canonical drafts |
+| Canonical Flutter asset symlink checks | Both links resolve to the exact web Markdown originals; byte matches confirmed |
+| `git diff --check` | Exit 0 |
+
+The installed Flutter SDK/user analytics locations are read-only. Checks reuse the
+unchanged writable SDK at `mobile/.build/slice5/flutter-sdk`, suppress analytics
+with `DASH__SUPPRESS_ANALYTICS=true` and `FLUTTER_SUPPRESS_ANALYTICS=true`, and use
+the existing writable `mobile/.build/validation/gradle` cache. No SDK, dependency
+or Gradle source patch. Normal test socket and Gradle failures are **environment
+limitations**, not passes. The existing ignored direct harness compiles the same
+six test files with the frontend server and runs checked `flutter_tester` without
+a VM-service socket, using the actual bundled legal assets. Asset completion is
+awaited outside widget fake clocks; the contact test re-reveals the lazy consent
+control before asserting its unchanged unchecked state. No tests are omitted.
+
+Web logs: `/tmp/furgoplus-slice7-web-full.log`,
+`/tmp/furgoplus-slice7-web-targeted.log`. Mobile logs/output under ignored
+`mobile/.build/validation/`: `slice7-flutter-test.log`, `slice7-apk.log`,
+`slice7-final-analyze.log`, `slice7-final-bundle.log`, `direct-tests.log`,
+`direct-compile.log`, `slice7-final-app-assets/`. Backend implementation and
+contracts were inspected but no backend files changed or backend tests rerun.
+Rendered browser/Android/TalkBack review is not claimed. Repeat normal
+`flutter test` and debug APK in a host environment permitting local sockets;
+human legal and visual/workflow review remain required.
+
+### Exact changed-file manifest and final Git state
+
+| Status | Paths |
+| --- | --- |
+| New original legal drafts | `web/src/legal/privacy.md`, `web/src/legal/terms.md` |
+| New privacy/legal documentation | `docs/PRIVACY_BY_DESIGN.md`, `docs/legal/README.md` |
+| Updated task/UX documentation | `CODEX_TASK_08_5.md`, `docs/UX_FOUNDATION.md` |
+| New web viewer/tests | `web/src/LegalAccess.tsx`, `web/src/LegalAccess.test.tsx` |
+| Updated web integration/style/session tests | `web/src/App.tsx`, `web/src/style.css`, `web/src/SessionPrivacy.test.tsx` |
+| New Flutter viewer/tests | `mobile/lib/legal_access.dart`, `mobile/test/legal_access_test.dart` |
+| New Flutter shared-asset symlinks | `mobile/assets/legal/privacy.md`, `mobile/assets/legal/terms.md` |
+| Updated Flutter integration/assets/contact test | `mobile/lib/auth_app.dart`, `mobile/lib/parent_home.dart`, `mobile/lib/driver_home.dart`, `mobile/pubspec.yaml`, `mobile/test/parent_home_test.dart` |
+
+Final state: **10 modified tracked files, 10 new untracked files**, all uncommitted
+on `task/08-5-product-ux-privacy`; HEAD remains **b850354**. No commits, pushes,
+merges, deployments, resets, reverts, discards, branch switches or history rewrites.
+Slice 8 has not been started. Slice 7 implementation is ready for human review;
+this does not constitute approval for production or real-data intake.
+
+### Slice 7 visual refinement after human review
+
+Legal access now reads `Privacidad · Términos` in a compact blue underlined row.
+Web uses the same secondary treatment in the sidebar and authentication footer;
+logout remains an outlined action. Flutter overrides the global action-button
+padding and typography locally for login, registration, Parent Mi cuenta and
+Driver, retaining independent semantic buttons and at least 48px tap targets.
+Rows wrap without clipping; the decorative separator stays with the second link
+and is excluded from accessibility labels.
+
+The mobile document uses 18px body text at 1.5 line height, 22px section headings,
+20px side padding and a compact 16px draft banner. System text scaling remains
+enabled. Keyboard closure restores the invoking link's focus, and hidden account
+controls cannot receive focus while the document is open. Legal wording, version,
+warnings, consent and session protections are unchanged.
+
+Validation for this refinement:
+
+- Web format, contract, lint and typecheck passed. All **232 tests** passed,
+  including **41 SessionPrivacy tests**, using `npm test -- --maxWorkers=2
+  --minWorkers=1`. The first unrestricted run timed out in an existing assignment
+  workflow test; the complete rerun passed without changing its timeout or code.
+- Temporary Web build passed at `/tmp/furgoplus-slice7-refinement-web-dist`.
+- Flutter format and final `flutter analyze --no-pub` passed. The existing direct
+  harness ran all six actual suite entrypoints: **113/113 passed**, no skips,
+  including 18 session/privacy tests and 6 legal tests. Legal tests cover separate
+  accessible actions, document identity, keyboard activation/focus return and
+  both documents at 320px/390px with 2x text, including their scrollable ends.
+- Normal `flutter test` remains blocked before execution by sandbox socket EPERM
+  at `127.0.0.1:0`. The attempted debug APK remains blocked by Gradle's
+  `Could not determine a usable wildcard IP for this machine.` No new APK.
+- Final debug Flutter bundle passed at
+  `mobile/.build/validation/refinement-app-assets`; bundled legal assets byte-match
+  the canonical Markdown. Local rendered Flutter captures were inspected for
+  login, Mi cuenta, Driver, document typography and 320px/2x text. This is not
+  physical-device or TalkBack acceptance; rendered Web browser review is not
+  claimed.
+- `git diff --check` passed. The existing Slice 7 work remains uncommitted on
+  `task/08-5-product-ux-privacy`, HEAD `b850354`. Slice 8 remains unstarted.
+
+Refinement code/test files: `web/src/LegalAccess.tsx`,
+`web/src/LegalAccess.test.tsx`, `web/src/style.css`,
+`web/src/SessionPrivacy.test.tsx`, `mobile/lib/legal_access.dart`,
+`mobile/test/legal_access_test.dart`. This task log records the new validation;
+the other existing Slice 7 changes are preserved.
