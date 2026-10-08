@@ -133,12 +133,40 @@ class NativeSessionApi {
   SessionCookie? _session;
   String? _csrfCookie;
   String? _csrfToken;
+  int _generation = 0;
+  Future<void> _storageWork = Future<void>.value();
+
+  // An obsolete response must not rotate cookies, clear a new session or replay
+  // a write after CSRF bootstrap. This does not change the wire contract.
+  void invalidateRequests() => _generation++;
+
+  void _checkGeneration(int generation) {
+    if (generation != _generation) {
+      throw AuthFailure(0, 'stale_request', 'Obsolete session response');
+    }
+  }
+
+  Future<void> _store(int? generation, Future<void> Function() action) {
+    // Secure storage is asynchronous. Serialize operations so an in-progress A
+    // write cannot finish after B's clear/write and become the restored session.
+    final next = _storageWork.then<void>((_) async {
+      if (generation != null && generation != _generation) return;
+      await action();
+    });
+    _storageWork = next.catchError((Object _) {});
+    return next;
+  }
 
   Uri get _origin => config.baseUri;
 
   Future<void> restoreCookies() async {
-    _session = SessionCookie.fromJson(await storage.read(), _origin);
-    if (_session == null) await storage.clear();
+    final generation = _generation;
+    await _storageWork;
+    _checkGeneration(generation);
+    final stored = await storage.read();
+    _checkGeneration(generation);
+    _session = SessionCookie.fromJson(stored, _origin);
+    if (_session == null) await _store(generation, storage.clear);
   }
 
   Future<Map<String, dynamic>> _request(
@@ -146,6 +174,7 @@ class NativeSessionApi {
     String method, {
     Map<String, Object?>? data,
   }) async {
+    final generation = _generation;
     final uri = config.endpoint('api/v1/$path');
     if (uri.scheme != _origin.scheme ||
         uri.host != _origin.host ||
@@ -170,6 +199,7 @@ class NativeSessionApi {
       headers: headers,
       body: data == null ? null : jsonEncode(data),
     );
+    _checkGeneration(generation);
     if (response.status >= 300 && response.status < 400) {
       throw const HttpException('API redirect rejected');
     }
@@ -199,10 +229,13 @@ class NativeSessionApi {
         _session = deleted
             ? null
             : SessionCookie(cookie.value, uri.host, expiry, cookie.secure);
-        if (_session == null)
-          await storage.clear();
-        else
-          await storage.write(jsonEncode(_session!.toJson()));
+        if (_session == null) {
+          await _store(generation, storage.clear);
+        } else {
+          final encoded = jsonEncode(_session!.toJson());
+          await _store(generation, () => storage.write(encoded));
+        }
+        _checkGeneration(generation);
       } else if (cookie.name == 'csrftoken') {
         _csrfCookie = deleted ? null : cookie.value;
       }
@@ -216,6 +249,7 @@ class NativeSessionApi {
     if (response.status >= 400) {
       final code = body['code'] is String ? body['code'] as String : 'error';
       if (code == 'csrf_failed' && path != 'auth/csrf/') await csrf();
+      _checkGeneration(generation);
       if (code == 'not_authenticated') await clear();
       throw AuthFailure(
         response.status,
@@ -229,7 +263,9 @@ class NativeSessionApi {
   }
 
   Future<void> csrf() async {
+    final generation = _generation;
     final body = await _request('auth/csrf/', 'GET');
+    _checkGeneration(generation);
     final token = body['csrf_token'];
     if (token is! String || token.isEmpty)
       throw const FormatException('Invalid CSRF response');
@@ -241,7 +277,9 @@ class NativeSessionApi {
     String password,
     String displayName,
   ) async {
+    final generation = _generation;
     if (_csrfToken == null) await csrf();
+    _checkGeneration(generation);
     await _request(
       'auth/register/',
       'POST',
@@ -255,12 +293,15 @@ class NativeSessionApi {
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
+    final generation = _generation;
     if (_csrfToken == null) await csrf();
+    _checkGeneration(generation);
     final body = await _request(
       'auth/login/',
       'POST',
       data: {'email': email, 'password': password},
     );
+    _checkGeneration(generation);
     final token = body.remove('csrf_token');
     if (token is! String || token.isEmpty)
       throw const FormatException('Invalid login response');
@@ -277,26 +318,34 @@ class NativeSessionApi {
     Map<String, Object?> data, {
     String method = 'POST',
   }) async {
+    final generation = _generation;
     if (_csrfToken == null) await csrf();
+    _checkGeneration(generation);
     return _request(path, method, data: data);
   }
 
   Future<void> clear() async {
+    invalidateRequests();
     _session = null;
     _csrfCookie = null;
     _csrfToken = null;
-    await storage.clear();
+    // Cleanup already authorized for the current identity stays ahead of every
+    // later storage read/write, even if a new restore starts immediately.
+    await _store(null, storage.clear);
   }
 
   Future<bool> logout() async {
+    invalidateRequests();
+    final generation = _generation;
     try {
       if (_csrfToken == null) await csrf();
+      _checkGeneration(generation);
       await _request('auth/logout/', 'POST', data: {});
       return true;
     } catch (_) {
       return false;
     } finally {
-      await clear();
+      if (generation == _generation) await clear();
     }
   }
 
