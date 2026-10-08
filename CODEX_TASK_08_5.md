@@ -1278,3 +1278,170 @@ Final `git status --short`:
 ?? mobile/lib/parent_service.dart
 ?? mobile/test/parent_service_test.dart
 ```
+
+## Slice 6 — driver Flutter daily experience (uncommitted)
+
+Implementation and sandbox validation are ready for review. **Slice 6 remains
+pending host APK validation and physical Samsung Android visual/workflow
+acceptance.** No Slice 7/8 work, backend/API/OpenAPI changes, parent redesign,
+web redesign or legal/privacy-document changes are included.
+
+### Daily surface and visual decisions
+
+**Hoy** is the only primary driver surface. The screen follows **Resumen primero
+-> acción -> detalle bajo demanda**:
+
+1. Compact FurgoPlus header with logout, Hoy, the authoritative Chile service date
+   and safe read refresh. No additional tabs or device-derived service date.
+2. Blue daily hero: authoritative state, route name, schedule and one 56px minimum
+   primary action. Icons and text identify state together. Default focus prefers
+   an in-progress route, then the first planned route in the API's schedule order,
+   then a completed route. Other daily routes remain selectable in a collapsed
+   summary, with separate roster disclosure state.
+3. Compact destination surface: destination name and address, secondary external
+   maps action and the existing destination-sharing explanation. Empty addresses
+   have no map action. The launcher still sends only the encoded destination;
+   no internal map or GPS was added. Launch failure stays next to the map action
+   and preserves the service/roster and any outstanding mutation warning.
+4. One passenger surface: roster count, authoritative used/available/total capacity,
+   slim visual meter, names and pickup instructions. Individual rows disclose the
+   existing guardian name/contact on demand. No new passenger fields, attendance
+   semantics or personal information are introduced.
+5. Previous unfinished runs have an immediately visible count and collapsed
+   recovery actions, including on a day without scheduled routes. No scheduling
+   or route-creation workflow is invented.
+
+Restrained FurgoPlus blue, white grouped surfaces, readable system typography and
+simple separators replace repeated default cards/list tiles. At 390×844 the
+normal daily view shows the main action, destination, passenger count/capacity
+and passenger rows. There is one page scroll and no fixed-height nested list.
+
+| Authoritative daily state | Hero | Primary action |
+| --- | --- | --- |
+| No run / `planned` | Planificada | Iniciar servicio |
+| `in_progress` | En curso | Finalizar servicio, with focused confirmation |
+| `completed` | Completada | None; explicit service-finished message |
+| Successful read with no routes | Sin servicio para hoy | None; safe refresh remains available |
+| Unrecognized run state | Estado por confirmar | No mutation; refresh remains available |
+| Initial load | Loading announcement | None until the read settles |
+| Read failure | Human-readable recovery notice | Safe read refresh |
+| Mutation failure / uncertain outcome | Last confirmed state and explanation | Mutations disabled until successful safe read |
+| `not_authenticated` | Central session-expiry handling | Driver private state is cleared immediately |
+
+Start/end use the same POST endpoints and empty payloads, followed by the existing
+GET projection. Mutations are single flight and never automatically replayed.
+The POST response is authoritative: a confirmed transition remains visible even
+if its follow-up read fails. An uncertain failure does not falsely transition;
+a successful read must resolve state before another explicit mutation. Ending a
+current or previous service requires confirmation; cancelling sends no write.
+Mutation recovery returns the notice to view. Read recovery never repeats a POST.
+
+### Privacy and accessibility
+
+- Driver state is bound to the controller's session version and driver role, in
+  addition to AuthApp's existing identity-keyed widget. Changing controller or
+  account, expiry and logout clear today, roster, selected route, errors, scroll
+  position and contact disclosure. An open confirmation is removed on session
+  change, including its private route label.
+- Every async read/write continuation checks both operation and identity before
+  changing state, expiring the session or issuing its subsequent GET. Late map
+  results also check identity. NativeSessionApi's central request-generation,
+  cookie persistence and stale-request protections remain unchanged.
+- The driver-today roster/contact privacy boundary and Task 07 capacity/run
+  semantics are preserved. Parent production code and central authentication/API
+  code are unchanged. The session test updates only its driver-screen title
+  assertion from the former title to Hoy.
+- State and recovery are announced in text/live regions. Section headings,
+  built-in disclosure semantics and a labeled refresh control support screen
+  readers. Capacity has one human-readable announcement with no textual progress
+  value; the visual numeric progress indicator is excluded from semantics.
+- Primary buttons are at least 56px; maps/refresh have at least 48px targets.
+  Text is allowed to wrap. Toolbar height follows text scaling so logout stays
+  readable. The end-confirmation body can scroll at narrow/large-text sizes while
+  its actions remain available. Tests exercise 390×844 at 1×/2× and 320×844 at 2×.
+  This is WCAG 2.2 AA-oriented work, not a certification.
+
+### Validation and environment
+
+Checks use the unchanged writable Flutter SDK at
+`mobile/.build/slice5/flutter-sdk`, existing cached dependencies/Gradle
+installation, and `DASH__SUPPRESS_ANALYTICS=true` plus
+`FLUTTER_SUPPRESS_ANALYTICS=true`. The installed SDK and user analytics directory
+are read-only. All generated runner/render/build outputs are ignored under
+`mobile/.build/validation`; no dependency, SDK-source or Gradle patch was made.
+
+| Check | Result |
+| --- | --- |
+| `dart format --output=none --set-exit-if-changed lib test` | Exit 0; 17 files, 0 changes |
+| `flutter analyze` | Exit 0; no issues |
+| `flutter test` | Exit 1 before tests execute: all five suite loaders fail to bind `127.0.0.1:0`, `Operation not permitted`, errno 1 |
+| All five suites via existing direct `flutter_tester` harness | **102/102 passed**, no skipped tests |
+| Separate 390×844 Roboto/Material-icons visual fixture probe | 1/1 passed; eight views rendered and inspected |
+| `flutter build apk --debug --dart-define=API_BASE_URL=https://api.example.test` | Exit 1 before compilation: Gradle FileLockContentionHandler cannot determine a usable wildcard IP for this machine |
+| `flutter build bundle --debug --dart-define=API_BASE_URL=https://api.example.test` | Exit 0; production entrypoint and assets compile |
+| `cd web && npm test -- src/SessionPrivacy.test.tsx` | Exit 0; **38/38 passed** |
+| `git diff --check` | Exit 0 |
+
+Direct suite breakdown: parent home 40, parent service/presentation 12,
+session/privacy 18, driver 27, health/configuration 5. The existing direct harness
+imports the unchanged suite entrypoints and runs test_core's `directRunTests`
+inside the Flutter engine with checked mode, standard test fonts and no VM-service
+socket. Driver coverage includes all authoritative hero states, read loading/error
+versus empty, valid actions, successful/failed start/end, cancellation, duplicate
+submission blocking, no blind replay, confirmed POST with failed GET, maps and
+missing destinations, capacity semantics, multiple routes, pending old runs,
+auth expiry on read/write, logout to parent, pending responses after logout,
+same-role account and controller replacement with late reads/writes/expiry/maps/confirmation,
+and narrow/large-text reachability. Existing parent/session assertions remain.
+
+Eight ignored preview images are under `mobile/.build/validation/driver-*.png`:
+planned, in_progress, completed, empty, error, confirmation, contact and scaled.
+These use synthetic fixtures and explicitly loaded local Roboto/Material fonts
+for headless review; they do not replace Android rendering or TalkBack review.
+Logs are in the same directory (`slice6-analyze.log`, `slice6-flutter-test.log`,
+`slice6-apk.log`, `slice6-bundle.log`, `direct-tests.log`, `driver-visual.log`);
+web privacy output is `/tmp/furgoplus-slice6-sessionprivacy.log`.
+
+Host validation still required:
+
+```sh
+cd mobile
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze
+flutter test
+flutter build apk --debug --dart-define=API_BASE_URL=https://api.example.test
+cd ..
+git diff --check
+```
+
+### Files and physical Android review
+
+Exactly four tracked files change for Slice 6:
+
+- `mobile/lib/driver_home.dart`: daily presentation and local driver lifecycle guards.
+- `mobile/test/driver_home_test.dart`: preserved Task 07 regressions and daily/privacy/accessibility coverage.
+- `mobile/test/session_test.dart`: driver title assertion only.
+- `CODEX_TASK_08_5.md`: this Slice 6 implementation/validation/review record.
+
+On Samsung, using synthetic driver accounts and the approved test API:
+
+1. Open a planned day; inspect state, schedule, main action, destination and roster
+   at normal font size. Expand a passenger contact; verify only contract fields.
+2. Open external maps, return, and test missing/unavailable map handling. Confirm
+   the roster and service state survive both outcomes.
+3. Start once. With a controlled network failure, confirm no false transition or
+   automatic write retry; restore connectivity and update state before acting.
+4. In progress, cancel end confirmation, then confirm it. Verify completed UI and
+   absence of invalid start/end actions. Check other daily routes and prior-run
+   recovery without mixing rosters.
+5. Inspect a genuinely empty day and a failed read; they must look distinct, and
+   refresh must recover without scheduling or mutation side effects.
+6. Enable large Android text and TalkBack. Reach refresh, maps, passenger contacts,
+   logout and confirmation actions; listen for state and a single capacity label.
+7. Expire/logout during a pending read/write or open confirmation; sign in as a
+   second driver, then as a parent. Verify no old route, contact, roster, dialog
+   or late-response message appears for the replacement account.
+
+All Slice 6 changes remain uncommitted on `task/08-5-product-ux-privacy`; no
+commit, push, merge, deploy, reset, revert, branch switch or history rewrite was
+performed. Human acceptance and host APK packaging remain pending.

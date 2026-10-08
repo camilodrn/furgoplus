@@ -428,8 +428,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('FurgoPlus · Conductor'), findsOneWidget);
-    expect(find.text('Hoy en Chile: 28-09-2026'), findsOneWidget);
+    expect(find.text('Hoy'), findsOneWidget);
+    expect(find.text('Lunes, 28 de septiembre'), findsOneWidget);
     expect(find.text('No hay rutas programadas para hoy.'), findsOneWidget);
   });
 
