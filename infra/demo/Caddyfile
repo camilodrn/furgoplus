@@ -1,0 +1,63 @@
+{
+	auto_https off
+	admin off
+	persist_config off
+	servers {
+		timeouts {
+			read_header 10s
+			read_body 60s
+			write 90s
+			idle 60s
+		}
+	}
+}
+
+# HTTP is only the local tunnel origin, never the public browser origin.
+http://demo.furgoplus.cl:8080 {
+	encode gzip
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy same-origin
+		-Server
+	}
+	@api path /api /api/*
+	handle @api {
+		header Cache-Control no-store
+		request_body {
+			max_size 11MiB
+		}
+		reverse_proxy backend:8000 {
+			# Never accept the caller's X-Forwarded-* chain or private IP header.
+			header_up X-FurgoPlus-Client-IP {http.request.header.CF-Connecting-IP}
+			header_up X-Forwarded-Proto https
+			header_up -X-Forwarded-For
+			header_up -X-Forwarded-Host
+			header_up -X-Real-IP
+			header_up -X-Forwarded-Ssl
+			header_up -X-Forwarded-Protocol
+			header_up -Forwarded
+			header_up -CF-Connecting-IP
+			transport http {
+				dial_timeout 3s
+				response_header_timeout 65s
+			}
+		}
+	}
+	@private path /admin /admin/* /media /media/* /private /private/* /static /static/*
+	handle @private {
+		respond 404
+	}
+	handle /assets/* {
+		root * /srv
+		header Cache-Control "public, max-age=31536000, immutable"
+		file_server
+	}
+	handle {
+		root * /srv
+		header Cache-Control no-cache
+		try_files {path} /index.html
+		file_server
+	}
+}
