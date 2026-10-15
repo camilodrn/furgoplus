@@ -16,13 +16,24 @@ All failures use `{ "code", "message", "fields" }`. In particular, `not_authenti
 
 In HTTPS environments, session and CSRF cookies are host-only, path `/`, `Secure`, `HttpOnly`, `SameSite=Lax`. The session expires at an absolute instant 12 hours after login. `SESSION_ENGINE` is Django's database backend. Django's session authentication hash invalidates a session after a password change. Local debug HTTP is the existing Task 01 exception; do not use it for acceptance evidence. The same HTTPS origin must serve React and proxy `/api/` to Django. Flutter sends an `Origin` header with unsafe requests, validates TLS normally, rejects redirects, and sends stored cookies only to the configured API origin.
 
-Login is limited to **10 attempts per source IP per 15 minutes** and registration to **5 attempts per source IP per hour**. Counters live in PostgreSQL (`AuthThrottle`) and updates serialize on each source/action row, so they apply across workers on the single database host. There is no proxy-aware IP override: configure and validate trusted proxy forwarding before exposing a deployment, or the reverse proxy's address will become the shared limit. Expired counters can be deleted operationally after their windows. The database session cleanup command is `python manage.py clearsessions` on a schedule; expiry does not rely on this cleanup.
+Login is limited to **10 attempts per source IP per 15 minutes** and registration to **5 attempts per source IP per hour**. Counters live in PostgreSQL (`AuthThrottle`) and updates serialize on each source/action row, so they apply across workers on the single database host. The base configuration uses the socket IP. The homelab demo adds the exact-peer, validated visitor-IP boundary in `config.demo_proxy`; see [HOMELAB_DEMO](HOMELAB_DEMO.md). Never enable arbitrary forwarded IPs. Login has no independent account bucket: distributed credential guessing remains a risk. Expired counters can be deleted operationally after their windows. The database session cleanup command is `python manage.py clearsessions` on a schedule; expiry does not rely on this cleanup.
+
+Contact creation additionally requires an active parent session, CSRF, explicit email-sharing consent and an eligible target. Task 11 adds **10 attempts/account/hour and 20 attempts/source IP/hour**, independently, in the same PostgreSQL table. Invalid payloads, hidden targets and duplicate requests consume budget; authentication/role/CSRF failures do not. Fixed windows start with the first attempt; either exhausted bucket returns the usual non-cacheable `429/throttled` envelope. See [the security review](DEMO_SECURITY_REVIEW.md) for test evidence and remaining exposure gates.
 
 ## Administrator provisioning
 
 From a restricted backend shell with the production environment already configured, run `python manage.py createsuperuser`. Enter the administrator email and a unique password at its interactive prompts. The custom user manager creates an active account with `role=admin`, `is_staff=True`, and `is_superuser=True`. Do not put the password in an environment file, script, repository or command argument. There is no admin signup API. Verify in the Django admin or restricted shell that those flags are set, then use the React login form. Remove/restrict operator shell access separately from the public application.
 
 ## Host and device acceptance gate
+
+**Homelab demo override:** product decision is a public hostname without visitor
+IP restrictions and with controlled accounts. In `config.settings_demo`, public
+registration is closed. For demo, replace registration in steps 1/2 below with
+private TTY provisioning from [DEMO_MODE](DEMO_MODE.md), verify both public roles
+return 403/registration_disabled with valid CSRF, and verify visible React/Flutter
+forms explain/clear without POST/storage or success. Then execute the same login/
+logout/session/roles/secure-storage gate. The original registration gate remains
+required for normal environments (including future app.furgoplus.cl).
 
 Use a staging HTTPS origin with a certificate trusted by the browser and Android system trust store. Keep `DJANGO_DEBUG=false`, matching `API_PUBLIC_ORIGIN` and `WEB_PUBLIC_ORIGIN`, explicit allowed hosts and the normal secure-cookie settings. If TLS terminates at a reverse proxy, set `DJANGO_TRUST_PROXY_SSL_HEADER=true` only after that proxy strips inbound `X-Forwarded-Proto` and sets its own value; Django must see HTTPS for correct CSRF Origin checks. Do not bypass certificate or Origin validation. Apply PostgreSQL migrations and create a synthetic administrator with the procedure above. Run:
 
@@ -52,3 +63,5 @@ For this Compose development stack behind an HTTPS reverse proxy, the backend he
 The native HTTPS/secure-storage result must come from a real Android emulator or device. Unit tests with fake transport/storage establish deterministic behavior but are not native evidence. If a substantive platform or protocol failure prevents this sequence, stop and explicitly supersede ADR 0002 before changing the authentication mechanism.
 
 Real host progress through 23 September 2026: PostgreSQL migrations, backend and web suites, HTTPS health/CSRF and browser driver signup/login passed. Android 15 confirmed the main-manifest INTERNET permission after rebuild and successfully reached `csrf/` and `me/`. Native register/login then returned HTTP 400 with `validation_error`; the transport's missing `Content-Length` was corrected. Repeat the entire Android sequence above with a rebuilt APK before marking the native gate passed.
+
+Task 11 final review, 14 October: the operator confirms r4 deployed and tested on Debian over `https://demo.furgoplus.cl`, with React and Android APK working on synthetic data; the automatic scenario is prepared and backed up. Tunnel is active. These are operator results, not tests repeated by the agent. No detailed result was supplied for every acceptance step above: retain unconfirmed expiry/password/disabled-account invalidation, native secure-storage recovery, cross-role/object denial, negative CSRF and real visitor-IP throttling as evidence gaps. Record dated results without cookie/token/password values; operational success is not production approval. See [the final review](TASK11_FINAL_REVIEW.md).
