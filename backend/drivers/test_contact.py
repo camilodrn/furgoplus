@@ -76,9 +76,13 @@ class Fixture:
                 if expiry
                 else None,
             )
+        # TransactionTestCase flushes rows seeded by migrations between methods.
+        plan, _ = Plan.objects.get_or_create(
+            code="basic", defaults={"display_label": "Basic"}
+        )
         self.subscription = DriverSubscription.objects.create(
             driver=self.driver,
-            plan=Plan.objects.get(code="basic"),
+            plan=plan,
             status="active",
             starts_at=now - timedelta(days=1),
             ends_at=now + timedelta(days=1),
