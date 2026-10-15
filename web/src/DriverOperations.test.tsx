@@ -591,11 +591,11 @@ test("visual home follows server blockers and navigates to the exact next task",
       onNavigate={onNavigate}
     />,
   );
-  await screen.findByText("Tu servicio aún no está visible");
+  await screen.findByText("Publicación pendiente");
   expect(
     screen.getByRole("heading", { name: "Hola, Servicio — Demo" }),
   ).toBeTruthy();
-  expect(screen.getByText(/Pediste que tu servicio sea visible/)).toBeTruthy();
+  expect(screen.getByText(/Resuelve los requisitos pendientes/)).toBeTruthy();
   expect(screen.queryByText("INTERNAL CODE")).toBeNull();
   expect(screen.queryByText(/completa.*validación/i)).toBeNull();
   fireEvent.click(screen.getByRole("button", { name: "Configurar una ruta" }));
@@ -742,22 +742,16 @@ test("home shows four actionable activation steps, four operational cards and da
       onNavigate={onNavigate}
     />,
   );
-  await screen.findByText("Tu servicio aún no está visible");
-  expect(
-    screen.getByText("Te faltan 3 pasos para aparecer en FurgoPlus."),
-  ).toBeTruthy();
+  await screen.findByText("Servicio no publicado");
+  expect(screen.getByText("1 de 4 requisitos completados")).toBeTruthy();
   expect(
     screen.getByRole("region", { name: "Progreso de activación" }),
   ).toBeTruthy();
   const path = screen.getByRole("list", {
     name: "Pasos para aparecer en FurgoPlus",
   });
-  expect(path.querySelectorAll("li")).toHaveLength(4);
+  expect(path.querySelectorAll(":scope > li")).toHaveLength(4);
   expect(path.querySelectorAll(".step-complete")).toHaveLength(1);
-  fireEvent.click(screen.getByRole("button", { name: "Ver qué me falta" }));
-  expect(document.activeElement?.getAttribute("aria-label")).toBe(
-    "Progreso de activación",
-  );
   expect(
     screen.queryByRole("button", {
       name: /Revisar mi plan|cambiar.*plan|asignar.*plan/i,
@@ -773,6 +767,7 @@ test("home shows four actionable activation steps, four operational cards and da
     }),
   ).toHaveLength(4);
   const meter = screen.getByRole("meter", {
+    hidden: true,
     name: "Cupos utilizados para el 28/09/2026",
   });
   expect(meter.getAttribute("value")).toBe("1");

@@ -1,10 +1,16 @@
 # Task 08.5 — Slice 8: MVP demo/academic freeze
 
-Audit date: **07-10-2026 (America/Santiago)**. Baseline:
-`task/08-5-product-ux-privacy`, `c07d6c4`. Candidate for **human final acceptance**;
-not production approval. Host backend and integration smoke validation are complete.
-Normal Flutter tests/APK, online npm audit and browser/device acceptance remain
-open gates below.
+Audit date: **07-10-2026 (America/Santiago)**. Task 08.5 is complete: Slice 8
+was committed as `a708364`, human acceptance completed, issue **#19 completed**,
+and Task 08.5 merged through **PR #20**. The main candidate baseline is merge
+commit **`816dda0`**. No Task 08.5 working-tree changes remain.
+
+This is an **MVP demo/academic freeze** record, not production approval. Final HOST
+evidence includes the backend/smoke matrix, normal Flutter tests, a debug APK and
+`npm audit --omit=dev` with **0 vulnerabilities**. Historical sandbox evidence below
+is retained with its original limits. Task 09/10 changes are a new, uncommitted
+release-rehearsal candidate awaiting human review; see [the rehearsal record](RELEASE_REHEARSAL.md),
+[demo runbook](DEMO_RUNBOOK.md) and [isolated restore procedure](BACKUP_RESTORE.md).
 
 ## Findings and exact stabilization scope
 
@@ -41,7 +47,7 @@ code, legal wording or mobile source was changed.
 | Post-Slice-5 fix | `df61914`: driver request rows, inline detail and local ten-row pages |
 | Slice 6 | `b850354`: driver Hoy, server daily states/roster/capacity, external maps, start/end |
 | Slice 7 | `c07d6c4`: original shared draft legal documents, legal access and privacy inventory |
-| Slice 8 | Uncommitted stabilization and this acceptance record; human sign-off pending |
+| Slice 8 | `a708364`: stabilization and acceptance record; human acceptance complete; merged in PR #20 (`816dda0`) |
 
 Driver web: **Inicio · Mi servicio · Pasajeros · Solicitudes · Pagos**.
 Mi servicio retains Datos del servicio, Documentos, Revisión, Publicación and Rutas.
@@ -131,7 +137,10 @@ fonts. This was a rendering-harness setting, not a product/SDK change. Routine
 targets and primary 56px mobile actions were reviewed in source and tests. No
 browser layout, physical Android, TalkBack or WCAG certification is claimed.
 
-## Final validation and stability evidence
+## Historical Slice 8 sandbox validation and stability evidence
+
+These are the original sandbox outcomes, not the final HOST gate status. Later
+HOST passes are recorded separately below; sandbox limitations are not product failures.
 
 | Check | Result |
 | --- | --- |
@@ -218,8 +227,8 @@ Final host result codes: **build: 0; up: 0; versions: 0; backend: 0; smoke: 0;
 diff: 0**. This host evidence supersedes the earlier sandbox execution blockers.
 
 The scoped security patch is **validated for the MVP demo/academic freeze**.
-This **does not make FurgoPlus production-ready**; human final acceptance and
-the remaining production blockers still apply.
+This **does not make FurgoPlus production-ready**. Task 08.5 human acceptance is
+complete; the remaining production blockers still apply.
 
 Other findings remain outside this two-package patch:
 
@@ -234,7 +243,8 @@ Other findings remain outside this two-package patch:
 These are targeted primary-source findings, not a complete package advisory scan.
 Only the two requested security pins changed; host runtime verification and the
 backend/smoke checks passed. Remaining security remediation is required before a
-production/external-service decision. Online npm audit must also be rerun on host.
+production/external-service decision. The later HOST npm production-dependency
+audit passed with 0 vulnerabilities; this is not a full backend/mobile advisory scan.
 
 **Outdated packages, separately:** Flutter reports 15 constrained updates (including
 url_launcher/platform implementations and test/tooling packages); newer versions
@@ -279,7 +289,12 @@ production server/proxy; malware/quarantine and real driver-document/legal-verif
 policy; backup/restore rehearsal; payment/commercial rules if activated; and private
 address/geolocation/provider design if introduced. None is represented as resolved.
 
-## Human final acceptance — short checklist (pending)
+## Task 08.5 human final acceptance — completed
+
+Human acceptance is complete per the post-merge handoff. The checklist below is
+retained as the accepted scope; it is not a fresh pending Task 08.5 gate. No new
+per-device, browser or accessibility certification evidence is inferred. Task 09/10
+still needs the dated delivery-hardware rehearsal in RELEASE_REHEARSAL.md.
 
 Use only prepared synthetic accounts/documents/destinations and the approved test API.
 
@@ -299,7 +314,7 @@ Use only prepared synthetic accounts/documents/destinations and the approved tes
    large-text/TalkBack pass; reach primary actions/legal close without critical
    horizontal scrolling, clipping, hidden focus or unreadable selection.
 
-## Completed host validation
+## Completed Task 08.5 HOST validation
 
 The human completed the following from the repository with its existing
 synthetic validation environment; results are recorded above:
@@ -328,9 +343,12 @@ bash infra/smoke.sh
 git diff --check
 ```
 
-## Remaining host validation
+## Final Task 08.5 HOST evidence supplement — completed
 
-The unrelated npm audit and normal Flutter test/APK gates remain open:
+The human also completed **normal `flutter test`**, a **debug APK build on HOST**,
+and **`npm audit --omit=dev`: 0 vulnerabilities**. These supersede the sandbox
+execution blockers above; no HOST test count, APK checksum or exact build timestamp
+was supplied, so none is invented. The commands are retained for reproducibility:
 
 ```sh
 cd web
@@ -344,15 +362,45 @@ cd ..
 git diff --check
 ```
 
-## Changed files and Git boundary
+## Historical Task 08.5 changes and current Git boundary
 
-`backend/requirements.txt` (two security pins only); `CODEX_TASK_08_5.md`;
-this record; `web/src/formValidation.ts`;
-`web/src/ValidationScreens.tsx` and its test; `web/src/PublicationScreens.tsx` and
-its test; `web/src/DriverOperations.tsx` and its test;
-`web/src/DriverRequests.test.tsx` (state-based render wait only).
+Task 08.5 changed `backend/requirements.txt` (two security pins), `CODEX_TASK_08_5.md`,
+this record, `web/src/formValidation.ts`, the driver validation/publication/operations
+forms and their tests, and `web/src/DriverRequests.test.tsx` (state-based render wait).
+The original pre-commit sandbox status was 9 modified tracked files and 2 untracked
+files on `task/08-5-product-ux-privacy` at `c07d6c4`; that is **historical evidence**,
+not current state. Stabilization was committed, accepted and merged through PR #20.
 
-Final Git status: **9 modified tracked files, 2 untracked files**, all
-**uncommitted** on `task/08-5-product-ux-privacy`, HEAD **c07d6c4**.
-No commit, push, merge, deploy, reset, revert, discard, branch switch or history
-rewrite. Task 08.5 awaits **human final acceptance** of this MVP demo/academic freeze.
+Task 09/10 began on `task/09-10-release-rehearsal-freeze` at `816dda0` with a clean
+working tree. Its operational/documentation changes stay uncommitted for human
+review. No new frozen SHA or tag exists. Record the final post-Task-09/10 commit
+only after the human commits and accepts the candidate, using RELEASE_REHEARSAL.md.
+
+## Task 11 exposure review — separate acceptance boundary
+
+As of 14 October, Task 09/10 documentation is integrated without commit into
+`task/11-homelab-deployment`. The operator confirms healthy Debian 13 deployment,
+physical reboot and real Fedora backup/restore (18/18 recovery tests, 16/16 Django
+infrastructure tests). At closure the operator confirms **r4 deployed and tested
+over HTTPS/Tunnel**, React/backend/PostgreSQL/APK working on synthetic data, automatic
+scenario prepared and backed up. This supersedes the earlier inactive-Tunnel state.
+See [the final review](TASK11_FINAL_REVIEW.md) for evidence gaps; operational success
+does not establish every security acceptance case or production readiness.
+
+Task 11 adds independent PostgreSQL-backed contact-create budgets (10/account/hour,
+20/source IP/hour) without schema or auth redesign. Local HTTP/CSRF/ownership tests
+are supplemental evidence; PostgreSQL process races, the exact candidate deployed
+later, browser auth and native Flutter secure-storage/roles through the final HTTPS
+proxy chain remain gates. See [DEMO_SECURITY_REVIEW](DEMO_SECURITY_REVIEW.md) for
+results, fictional-only provisioning, residual abuse risks and the operator's
+public-access decision. Existing HOST Flutter test/APK build evidence is retained;
+it does not establish native HTTPS behavior at `demo.furgoplus.cl`.
+
+Subsequent product decision for Task 11: public visitors without IP restrictions,
+controlled account creation. [DEMO_MODE](DEMO_MODE.md) closes public signup in demo
+settings and keeps existing React/Flutter forms illustrative without registration
+transport/storage. Accounts are privately provisioned with validated credentials;
+normal environments retain signup. No discovery or private operational surface is
+made anonymous. This configuration/protection is not a new MVP screen or a public
+HTTPS/device acceptance pass. r4 is already deployed according to the operator;
+future updates remain separate authorized operations preserving existing data.

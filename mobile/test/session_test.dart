@@ -174,6 +174,98 @@ void main() {
     'display_name': 'Sample',
   };
 
+  test('demo registration is blocked locally before CSRF or storage', () async {
+    for (final demo in [
+      ApiConfig('https://demo.furgoplus.cl'),
+      ApiConfig('https://api.example.test', demoMode: true),
+    ]) {
+      final storage = MemoryStorage();
+      final transport = FakeTransport();
+      final api = NativeSessionApi(demo, storage, transport: transport);
+      await expectLater(
+        api.registerParent(
+          'family@example.test',
+          'Illustrative-Only-123!',
+          'Familia Demo',
+        ),
+        throwsA(
+          isA<AuthFailure>().having(
+            (failure) => failure.code,
+            'code',
+            'registration_disabled',
+          ),
+        ),
+      );
+      expect(transport.calls, isEmpty);
+      expect(storage.value, isNull);
+      final controller = AuthController(api)..state = AuthState.signedOut;
+      await controller.registerParent(
+        'family@example.test',
+        'Illustrative-Only-123!',
+        'Familia Demo',
+      );
+      expect(controller.state, AuthState.signedOut);
+      expect(controller.error, demoRegistrationNotice);
+      expect(transport.calls, isEmpty);
+    }
+    expect(ApiConfig('https://app.furgoplus.cl').demoMode, isFalse);
+  });
+
+  testWidgets(
+    'demo family form explains and clears without registering or storing',
+    (tester) async {
+      final transport = FakeTransport()
+        ..responses.addAll([
+          reply(200, {'csrf_token': csrf}, [csrfCookie]),
+          reply(403, {'code': 'not_authenticated', 'message': 'Signed out'}),
+        ]);
+      final storage = MemoryStorage();
+      final controller = AuthController(
+        NativeSessionApi(
+          ApiConfig('https://demo.furgoplus.cl'),
+          storage,
+          transport: transport,
+        ),
+      );
+      await tester.pumpWidget(AuthApp(controller: controller));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Crear cuenta de familia'));
+      await tester.tap(find.text('Crear cuenta de familia'));
+      await tester.pumpAndSettle();
+      expect(find.text('Registro ilustrativo de familia'), findsOneWidget);
+      for (final entry in {
+        'Cómo te llamas': 'Familia Demo',
+        'Correo electrónico': 'family@example.test',
+        'Contraseña': 'Illustrative-Only-123!',
+      }.entries) {
+        await tester.enterText(
+          find.widgetWithText(TextField, entry.key),
+          entry.value,
+        );
+      }
+      final before = transport.calls.length;
+      await tester.ensureVisible(find.text('Crear cuenta'));
+      await tester.tap(find.text('Crear cuenta'));
+      await tester.pumpAndSettle();
+      expect(find.text(demoRegistrationNotice), findsOneWidget);
+      expect(find.text('Cuenta creada. Inicia sesión.'), findsNothing);
+      expect(controller.state, AuthState.signedOut);
+      expect(transport.calls.length, before);
+      expect(storage.value, isNull);
+      for (final field in tester.widgetList<TextField>(
+        find.byType(TextField),
+      )) {
+        expect(field.controller!.text, isEmpty);
+        expect(field.autofillHints, isNull);
+      }
+      await tester.ensureVisible(find.text('Crear cuenta'));
+      await tester.tap(find.text('Crear cuenta'));
+      await tester.pumpAndSettle();
+      expect(transport.calls.length, before);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   test('native POST sends complete UTF-8 JSON with a content length', () async {
     final client = ProbeClient();
     final body = jsonEncode({

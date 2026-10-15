@@ -277,6 +277,9 @@ class NativeSessionApi {
     String password,
     String displayName,
   ) async {
+    if (config.demoMode) {
+      throw AuthFailure(403, 'registration_disabled', demoRegistrationNotice);
+    }
     final generation = _generation;
     if (_csrfToken == null) await csrf();
     _checkGeneration(generation);

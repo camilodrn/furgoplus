@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ApiError, AuthApi } from "./api";
+import { demoRegistrationNotice, isDemoMode } from "./demo";
 import type { Identity, Publication } from "./api-types";
 import "./style.css";
 import { LegalAccess } from "./LegalAccess";
@@ -20,6 +21,8 @@ type State =
   | { kind: "authenticated"; user: Identity };
 
 export default function App() {
+  const demoMode = isDemoMode();
+  const authForm = useRef<HTMLFormElement>(null);
   const [state, setState] = useState<State>({ kind: "loading" });
   const [restoreAttempt, setRestoreAttempt] = useState(0);
   const [mode, setMode] = useState<"login" | "register">("login");
@@ -120,6 +123,14 @@ export default function App() {
     if (submitting.current) return;
     setMessageKind("error");
     const form = event.currentTarget;
+    if (mode === "register" && demoMode) {
+      form.reset();
+      setShowPassword(false);
+      setFieldErrors({});
+      setMessageKind("warning");
+      setMessage(demoRegistrationNotice);
+      return;
+    }
     const value = (name: string) =>
       (form.elements.namedItem(name) as HTMLInputElement).value;
     setMessage("");
@@ -164,6 +175,13 @@ export default function App() {
       }
     } catch (error) {
       if (error instanceof ApiError && error.code === "stale_request") return;
+      if (error instanceof ApiError && error.code === "registration_disabled") {
+        form.reset();
+        setShowPassword(false);
+        setMessageKind("warning");
+        setMessage(demoRegistrationNotice);
+        return;
+      }
       if (error instanceof ApiError && error.code === "csrf_failed")
         setMessage("La verificación caducó. Repite la acción.");
       else if (
@@ -277,20 +295,26 @@ export default function App() {
             <h1>
               {mode === "login"
                 ? "Inicia sesión"
-                : "Crea tu cuenta de conductor"}
+                : demoMode
+                  ? "Registro ilustrativo de conductor"
+                  : "Crea tu cuenta de conductor"}
             </h1>
             <p className="auth-intro">
               {mode === "login"
                 ? "Coordina tu transporte escolar con FurgoPlus."
-                : "Primero crea tu cuenta. Después podrás completar tus datos y enviar tus documentos para aprobación."}
+                : demoMode
+                  ? "Puedes explorar el formulario. El registro público está cerrado en esta demostración."
+                  : "Primero crea tu cuenta. Después podrás completar tus datos y enviar tus documentos para aprobación."}
             </p>
             {mode === "register" && (
               <p className="auth-notice auth-demo-notice notice-warning">
-                Entorno de demostración: usa únicamente información sintética de
-                prueba.
+                {demoMode
+                  ? "No ingreses datos reales. Las cuentas ficticias las prepara el equipo."
+                  : "Entorno de demostración: usa únicamente información sintética de prueba."}
               </p>
             )}
             <form
+              ref={authForm}
               noValidate
               aria-label={
                 mode === "login" ? "Inicio de sesión" : "Registro de conductor"
@@ -306,7 +330,7 @@ export default function App() {
                     name="display_name"
                     required
                     maxLength={100}
-                    autoComplete="name"
+                    autoComplete={demoMode ? "off" : "name"}
                     disabled={pending}
                     aria-invalid={!!fieldErrors.display_name}
                     aria-describedby={
@@ -327,7 +351,9 @@ export default function App() {
                   name="email"
                   type="email"
                   required
-                  autoComplete="email"
+                  autoComplete={
+                    demoMode && mode === "register" ? "off" : "email"
+                  }
                   autoCapitalize="none"
                   spellCheck={false}
                   disabled={pending}
@@ -351,7 +377,11 @@ export default function App() {
                     type={showPassword ? "text" : "password"}
                     required
                     autoComplete={
-                      mode === "login" ? "current-password" : "new-password"
+                      demoMode && mode === "register"
+                        ? "off"
+                        : mode === "login"
+                          ? "current-password"
+                          : "new-password"
                     }
                     disabled={pending}
                     aria-invalid={!!fieldErrors.password}
@@ -424,6 +454,7 @@ export default function App() {
                 className="button-outline"
                 disabled={pending}
                 onClick={() => {
+                  if (demoMode) authForm.current?.reset();
                   setMode(mode === "login" ? "register" : "login");
                   setShowPassword(false);
                   setMessage("");

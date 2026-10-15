@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AuthApi } from "./api";
 import type {
   Assignment,
@@ -19,14 +19,12 @@ import {
   DriverReadNotice,
   DriverActionError,
   FieldError,
-  VisibilityStatus,
-  ActivationPath,
-  activationSteps,
   FocusPanel,
   ProductIcon,
   useDriverResource,
   type DriverDestination,
 } from "./DriverExperience";
+import { HomeRequirements, homeStatus } from "./DriverHomeStatus";
 
 function todayChile(): string {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -916,7 +914,6 @@ export function DriverSummaryScreen({
   onNavigate?: (destination: DriverDestination) => void;
 }) {
   const task = useDriverResource(api, () => api.summary());
-  const path = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const focus = () => {
       void task.refresh();
@@ -927,9 +924,7 @@ export function DriverSummaryScreen({
   const greetingName = name.replace(/\s*—\s*$/, "").trim();
   const summary = task.data;
   const publication = summary?.publication;
-  const pending = publication
-    ? activationSteps(publication).filter((step) => !step.complete).length
-    : 0;
+  const status = publication ? homeStatus(publication) : null;
   return (
     <section
       className="driver-home driver-operations"
@@ -947,7 +942,17 @@ export function DriverSummaryScreen({
         )}
       </div>
       <DriverReadNotice {...task} />
-      {summary && publication && (
+      {!summary && !task.readError && (
+        <div className="home-loading" aria-hidden="true">
+          <div className="panel home-loading-status" />
+          <div className="snapshot-grid">
+            {[0, 1, 2, 3].map((key) => (
+              <div key={key} className="snapshot-card" />
+            ))}
+          </div>
+        </div>
+      )}
+      {summary && publication && status && (
         <>
           <section
             className={`panel visibility-hero ${publication.eligible ? "hero-visible" : "hero-waiting"}`}
@@ -959,46 +964,31 @@ export function DriverSummaryScreen({
               />
             </span>
             <div>
-              <p className="eyebrow">¿Está visible mi servicio?</p>
-              <VisibilityStatus publication={publication} />
-              {!publication.eligible && (
-                <>
-                  <p>
-                    {pending
-                      ? `Te ${pending === 1 ? "falta 1 paso" : `faltan ${pending} pasos`} para aparecer en FurgoPlus.`
-                      : "Actualiza el estado de tu servicio para revisar qué falta."}
-                  </p>
-                  <button
-                    className="button button-primary"
-                    onClick={() => {
-                      path.current?.focus();
-                      path.current?.scrollIntoView?.({ block: "nearest" });
-                    }}
-                  >
-                    Ver qué me falta
-                  </button>
-                </>
-              )}
-              {publication.eligible && onNavigate && (
+              <h3
+                className={`publication-state ${publication.eligible ? "publication-visible" : ""}`}
+              >
+                {status.title}
+              </h3>
+              <p>{status.explanation}</p>
+              <p>
+                {status.steps.filter((step) => step.complete).length} de{" "}
+                {status.steps.length} requisitos completados
+              </p>
+              <progress
+                aria-label="Requisitos completados"
+                max={status.steps.length}
+                value={status.steps.filter((step) => step.complete).length}
+              />
+              {onNavigate && (
                 <button
                   className="button button-primary"
-                  onClick={() => onNavigate("requests")}
+                  onClick={() => onNavigate(status.destination)}
                 >
-                  Revisar solicitudes
+                  {status.action}
                 </button>
               )}
             </div>
           </section>
-          <div
-            ref={path}
-            tabIndex={-1}
-            className="panel activation-section"
-            role="region"
-            aria-label="Progreso de activación"
-          >
-            <h2>Tu camino para aparecer en FurgoPlus</h2>
-            <ActivationPath publication={publication} onNavigate={onNavigate} />
-          </div>
           <h2>Tu actividad</h2>
           <div className="snapshot-grid">
             <SnapshotCard
@@ -1009,12 +999,12 @@ export function DriverSummaryScreen({
                   .length
               }
               label="activas"
-              action={
-                summary.routes.length
-                  ? "Gestionar rutas"
-                  : "Crear mi primera ruta"
+              action="Gestionar rutas"
+              onClick={
+                onNavigate && status.destination !== "routes"
+                  ? () => onNavigate("routes")
+                  : undefined
               }
-              onClick={onNavigate ? () => onNavigate("routes") : undefined}
             />
             <SnapshotCard
               icon="people"
@@ -1034,19 +1024,19 @@ export function DriverSummaryScreen({
               onClick={onNavigate ? () => onNavigate("payments") : undefined}
             />
           </div>
+          <section
+            className="panel activation-section"
+            aria-label="Progreso de activación"
+          >
+            <h2>Requisitos para aparecer en FurgoPlus</h2>
+            <HomeRequirements
+              publication={publication}
+              onNavigate={onNavigate}
+            />
+          </section>
           {summary.routes.length > 0 && (
-            <section className="route-snapshot" aria-label="Cupos por ruta">
-              <div className="publication-heading">
-                <h2>Cupos por ruta</h2>
-                {onNavigate && (
-                  <button
-                    className="button button-link"
-                    onClick={() => onNavigate("routes")}
-                  >
-                    Ver mis rutas
-                  </button>
-                )}
-              </div>
+            <details className="route-snapshot" aria-label="Cupos por ruta">
+              <summary>Ver cupos por ruta ({summary.routes.length})</summary>
               <div className="operational-list">
                 {summary.routes.map((route) => (
                   <article key={route.id} className="operational-card">
@@ -1062,7 +1052,7 @@ export function DriverSummaryScreen({
                   </article>
                 ))}
               </div>
-            </section>
+            </details>
           )}
         </>
       )}
@@ -1097,6 +1087,11 @@ function SnapshotCard({
       {count !== undefined && (
         <p className="snapshot-count">
           <strong>{count}</strong> {label}
+        </p>
+      )}
+      {count === 0 && (
+        <p className="helper-text">
+          Sin {title.toLowerCase()} {label}.
         </p>
       )}
       {onClick && (

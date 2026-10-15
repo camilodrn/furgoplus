@@ -11,3 +11,35 @@ mobile/.dart_tool
 mobile/build
 mobile/android/.gradle
 *.iml
+**/secrets
+**/backups
+**/*.dump
+**/*.tar
+**/*.tar.gz
+infra/demo/cloudflared*.yaml
+**/cloudflared*.yml
+
+# Never send private env variants, databases, snapshots or Android signing/build
+# artifacts to the daemon. Examples are documentation, not build inputs.
+.env*
+**/.env*
+**/*.sqlite
+**/*.sqlite3
+**/*.db
+**/*.sql
+**/*.sql.gz
+**/*.tgz
+**/*.apk
+**/*.aab
+**/*.jks
+**/*.keystore
+**/key.properties
+**/local.properties
+**/.pub-cache
+**/.pub
+**/.flutter-plugins*
+**/.gradle
+**/.ruff_cache
+**/.pytest_cache
+**/.vite
+**/*.tsbuildinfo

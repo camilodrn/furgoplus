@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import 'api_config.dart';
 import 'auth_controller.dart';
 import 'driver_home.dart';
 import 'furgo_theme.dart';
@@ -19,6 +21,7 @@ class _AuthAppState extends State<AuthApp> {
   bool pending = false;
   bool showPassword = false;
   bool showSessionFeedback = true;
+  bool illustrativeFeedback = false;
   int sessionVersion = 0;
   final email = TextEditingController();
   final password = TextEditingController();
@@ -43,6 +46,7 @@ class _AuthAppState extends State<AuthApp> {
     showPassword = false;
     fieldErrors.clear();
     showSessionFeedback = true;
+    illustrativeFeedback = false;
   }
 
   @override
@@ -56,6 +60,20 @@ class _AuthAppState extends State<AuthApp> {
 
   Future<void> submit() async {
     if (pending) return;
+    if (register && widget.controller.api.config.demoMode) {
+      TextInput.finishAutofillContext(shouldSave: false);
+      FocusManager.instance.primaryFocus?.unfocus();
+      setState(() {
+        email.clear();
+        password.clear();
+        name.clear();
+        fieldErrors.clear();
+        showPassword = false;
+        showSessionFeedback = false;
+        illustrativeFeedback = true;
+      });
+      return;
+    }
     setState(() {
       fieldErrors.clear();
       if (email.text.trim().isEmpty || !email.text.contains('@')) {
@@ -128,6 +146,7 @@ class _AuthAppState extends State<AuthApp> {
 
   Widget authContent(BuildContext context) {
     final controller = widget.controller;
+    final illustrative = register && controller.api.config.demoMode;
     final headingStyle = Theme.of(context).textTheme.headlineMedium;
     final supportStyle = Theme.of(context).textTheme.bodySmall;
     if (controller.state == AuthState.restoring) {
@@ -190,6 +209,9 @@ class _AuthAppState extends State<AuthApp> {
       );
     }
     return AutofillGroup(
+      onDisposeAction: illustrative
+          ? AutofillContextAction.cancel
+          : AutofillContextAction.commit,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -202,20 +224,28 @@ class _AuthAppState extends State<AuthApp> {
           Semantics(
             header: true,
             child: Text(
-              register ? 'Crea tu cuenta de familia' : 'Inicia sesión',
+              register
+                  ? (illustrative
+                        ? 'Registro ilustrativo de familia'
+                        : 'Crea tu cuenta de familia')
+                  : 'Inicia sesión',
               style: headingStyle,
             ),
           ),
           const SizedBox(height: 16),
           Text(
             register
-                ? 'Esta cuenta es para apoderados y familias. Después podrás buscar transporte escolar.'
+                ? (illustrative
+                      ? 'Puedes explorar el formulario. El registro público está cerrado en esta demostración.'
+                      : 'Esta cuenta es para apoderados y familias. Después podrás buscar transporte escolar.')
                 : 'Coordina tu transporte escolar con FurgoPlus.',
           ),
           const SizedBox(height: 16),
           Text(
             register
-                ? 'Entorno de demostración: usa únicamente información sintética de prueba.'
+                ? (illustrative
+                      ? 'No ingreses datos reales. Las cuentas ficticias las prepara el equipo.'
+                      : 'Entorno de demostración: usa únicamente información sintética de prueba.')
                 : 'Apoderados y conductores pueden iniciar sesión aquí. Los conductores crean su cuenta en la web.',
             style: supportStyle,
           ),
@@ -226,7 +256,7 @@ class _AuthAppState extends State<AuthApp> {
               enabled: !pending,
               maxLength: 100,
               textCapitalization: TextCapitalization.words,
-              autofillHints: const [AutofillHints.name],
+              autofillHints: illustrative ? null : const [AutofillHints.name],
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 labelText: 'Cómo te llamas',
@@ -239,7 +269,7 @@ class _AuthAppState extends State<AuthApp> {
             controller: email,
             enabled: !pending,
             keyboardType: TextInputType.emailAddress,
-            autofillHints: const [AutofillHints.email],
+            autofillHints: illustrative ? null : const [AutofillHints.email],
             autocorrect: false,
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
@@ -254,9 +284,13 @@ class _AuthAppState extends State<AuthApp> {
             obscureText: !showPassword,
             autocorrect: false,
             enableSuggestions: false,
-            autofillHints: [
-              register ? AutofillHints.newPassword : AutofillHints.password,
-            ],
+            autofillHints: illustrative
+                ? null
+                : [
+                    register
+                        ? AutofillHints.newPassword
+                        : AutofillHints.password,
+                  ],
             textInputAction: TextInputAction.done,
             onSubmitted: (_) => submit(),
             decoration: InputDecoration(
@@ -288,6 +322,8 @@ class _AuthAppState extends State<AuthApp> {
           ],
           if (controller.error != null && showSessionFeedback)
             notice(controller.error!, error: true),
+          if (illustrativeFeedback && illustrative)
+            notice(demoRegistrationNotice),
           FilledButton(
             onPressed: pending ? null : submit,
             child: Text(
@@ -315,7 +351,13 @@ class _AuthAppState extends State<AuthApp> {
             onPressed: pending
                 ? null
                 : () => setState(() {
+                    if (controller.api.config.demoMode) {
+                      TextInput.finishAutofillContext(shouldSave: false);
+                      name.clear();
+                      email.clear();
+                    }
                     register = !register;
+                    illustrativeFeedback = false;
                     showSessionFeedback = false;
                     showPassword = false;
                     password.clear();

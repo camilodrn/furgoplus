@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+import 'api_config.dart';
 import 'session_api.dart';
 
 enum AuthState {
@@ -147,6 +148,7 @@ class AuthController extends ChangeNotifier {
 }
 
 String _authError(AuthFailure failure, {bool registering = false}) {
+  if (failure.code == 'registration_disabled') return demoRegistrationNotice;
   if (failure.code == 'csrf_failed') {
     return 'La verificación caducó. Repite la acción.';
   }

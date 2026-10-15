@@ -1,6 +1,6 @@
 # Product scope
 
-Status: implementation baseline, 23 September 2026. Delivery: 14 October; technical freeze: 13 October. This describes intended behavior, not completed features. The locked requirements come from [Task 00](../CODEX_TASK_00.md).
+Status: scope baseline from 23 September 2026, reconciled 7 October after accepted Task 08.5 / PR #20 (`816dda0`). Delivery: 14 October; technical freeze target: 13 October. The core journeys below are implemented; acceptance evidence and remaining rehearsal gates are in [MVP freeze](MVP_DEMO_FREEZE.md) and [Task 09/10](RELEASE_REHEARSAL.md). The locked requirements come from [Task 00](../CODEX_TASK_00.md).
 
 ## October MVP
 
@@ -61,7 +61,7 @@ Stretch work may not consume the integration/freeze buffer. There is no commitme
 
 ## Deferred / future
 
-Live GPS and continuous/background location streaming; animated map movement; route optimization; internal real-time chat; advanced push notifications; absence workflows; payment gateway/Webpay; automated billing; production app-store publication; microservices/message brokers; offline synchronization; multi-role accounts. [ADR 0003](decisions/0003-live-location-boundary.md) describes the future location boundary. No prerequisite infrastructure for these features is part of October.
+Address autocomplete; geocoding; exact child-home coordinates; production consent/legal infrastructure; any feature unnecessary for the frozen academic demonstration; live GPS and continuous/background location streaming; animated map movement; route optimization; internal real-time chat; advanced push notifications; absence workflows; payment gateway/Webpay; automated billing; production app-store publication; microservices/message brokers; offline synchronization; multi-role accounts. [ADR 0003](decisions/0003-live-location-boundary.md) describes the future location boundary. No prerequisite infrastructure for these features is part of October.
 
 ## Explicit assumptions and unresolved questions
 

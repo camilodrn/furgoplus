@@ -1,6 +1,7 @@
 import hashlib
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.db import IntegrityError, transaction
@@ -98,6 +99,19 @@ class RegisterView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        if settings.DEMO_MODE:
+            # Reject before reading the payload, consuming a counter or any writes.
+            return no_store(
+                Response(
+                    {
+                        "code": "registration_disabled",
+                        "message": "El registro es ilustrativo en esta demostración. "
+                        "Las cuentas ficticias las prepara el equipo.",
+                        "fields": {},
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            )
         throttle(request, "register", 5, timedelta(hours=1))
         data = request.data
         allowed = {"email", "password", "role", "display_name"}

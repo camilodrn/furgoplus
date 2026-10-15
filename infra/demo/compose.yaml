@@ -1,0 +1,131 @@
+name: furgoplus-demo
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "5m"
+    max-file: "3"
+
+services:
+  db:
+    image: postgres:17.6-alpine3.22
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: furgoplus_demo
+      POSTGRES_USER: furgoplus_demo
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    secrets: [db_password]
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks: [database]
+    command: [postgres, -c, shared_buffers=128MB, -c, max_connections=30]
+    shm_size: 128m
+    mem_limit: 768m
+    cpus: 1.0
+    pids_limit: 128
+    logging: *logging
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  backend:
+    image: furgoplus-demo-backend:${FURGOPLUS_RELEASE:?Set a unique FURGOPLUS_RELEASE}
+    build:
+      context: ../..
+      dockerfile: infra/demo/backend.Dockerfile
+    restart: unless-stopped
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings_demo
+      DJANGO_SECRET_KEY_FILE: /run/secrets/django_secret_key
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DB_NAME: furgoplus_demo
+      DB_USER: furgoplus_demo
+      DB_HOST: db
+      DB_PORT: "5432"
+      PGCONNECT_TIMEOUT: "3"
+      DEMO_SYNTHETIC_ONLY: ${DEMO_SYNTHETIC_ONLY:?Acknowledge synthetic-only demo}
+      DEMO_CADDY_IP: ${DEMO_CADDY_IP:-172.30.81.2}
+    secrets: [db_password, django_secret_key]
+    volumes:
+      - private_uploads:/var/lib/furgoplus/private
+    networks:
+      database:
+      proxy:
+        ipv4_address: ${DEMO_BACKEND_IP:-172.30.81.3}
+    read_only: true
+    tmpfs:
+      - /tmp:size=67108864,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 1024m
+    cpus: 1.5
+    pids_limit: 128
+    stop_grace_period: 40s
+    logging: *logging
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, python, healthcheck.py]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  caddy:
+    image: furgoplus-demo-web:${FURGOPLUS_RELEASE:?Set a unique FURGOPLUS_RELEASE}
+    build:
+      context: ../..
+      dockerfile: infra/demo/web.Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${DEMO_HTTP_PORT:-18080}:8080"
+    networks:
+      ingress: {}
+      proxy:
+        ipv4_address: ${DEMO_CADDY_IP:-172.30.81.2}
+    read_only: true
+    tmpfs:
+      - /tmp:size=16777216,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 128m
+    cpus: 0.5
+    pids_limit: 64
+    logging: *logging
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, '--header=Host: demo.furgoplus.cl', '--header=CF-Connecting-IP: 127.0.0.1', 'http://127.0.0.1:8080/api/v1/health/']
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+networks:
+  ingress:
+    # Only Caddy: ordinary bridge needed for the loopback port publication.
+    # Backend and PostgreSQL must never join this network.
+    driver: bridge
+  database:
+    internal: true
+  proxy:
+    internal: true
+    ipam:
+      config:
+        - subnet: ${DEMO_PROXY_SUBNET:-172.30.81.0/29}
+
+volumes:
+  pg_data:
+  private_uploads:
+
+secrets:
+  django_secret_key:
+    file: ${DJANGO_SECRET_KEY_PATH:?Set the external Django secret-file path}
+  db_password:
+    file: ${DB_PASSWORD_PATH:?Set the external database password-file path}

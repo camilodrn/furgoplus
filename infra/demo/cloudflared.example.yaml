@@ -1,0 +1,10 @@
+# Future host-managed connector. Replace the UUID/path manually, outside Git.
+tunnel: REPLACE_WITH_TUNNEL_UUID
+credentials-file: /etc/cloudflared/furgoplus-demo.json
+ingress:
+  - hostname: demo.furgoplus.cl
+    service: http://127.0.0.1:18080
+    originRequest:
+      httpHostHeader: demo.furgoplus.cl
+      connectTimeout: 5s
+  - service: http_status:404

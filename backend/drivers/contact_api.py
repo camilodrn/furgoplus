@@ -11,6 +11,7 @@ from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
 
 from accounts.models import DriverProfile, ParentProfile
+from drivers.contact_throttle import contact_create_rate
 from drivers.models import Commune, ContactRequest, Review
 from drivers.publication import CHILE, discovery_json, publication_state, utc_instant
 from drivers.publication_api import DriverView, ParentView
@@ -167,6 +168,7 @@ class ParentRequestsView(ParentView):
         return Response({"results": [parent_json(row) for row in rows]})
 
     def post(self, request):
+        contact_create_rate(request.user.pk, request.META.get("REMOTE_ADDR", "unknown"))
         form = ContactInput(data=request.data)
         form.is_valid(raise_exception=True)
         if (
