@@ -1,3 +1,4 @@
+import { demoRegistrationNotice, isDemoMode } from "./demo";
 import type {
   AdminValidation,
   AdminDrivers,
@@ -196,6 +197,10 @@ export class AuthApi {
   }
 
   register(input: RegisterRequest): Promise<Identity> {
+    if (isDemoMode())
+      return Promise.reject(
+        new ApiError(403, "registration_disabled", demoRegistrationNotice, {}),
+      );
     return this.unsafe<Identity>("auth/register/", input);
   }
 
