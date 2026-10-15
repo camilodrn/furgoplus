@@ -14,3 +14,16 @@ flutter run --dart-define=API_BASE_URL=https://app.example.test
 ```
 
 Parent signup, discovery and contact requests are on mobile. Drivers register on React and can log in on mobile to inspect the server-derived Chilean service date, today's private roster and capacity, start or complete a run, recover an unfinished earlier run, and open the destination in an external maps application. The map action shares only the destination with that provider and requests no device location permission. Admin accounts receive an unsupported mobile shell with logout. All role navigation comes from server identity; logout disposes private role-specific screen state.
+
+On the homelab demo, registration is illustrative and makes no registration
+request; the team provisions fictional accounts privately. Normal environments
+retain signup. Use [DEMO_MODE](../docs/DEMO_MODE.md) for build flags and acceptance.
+The operator confirms the Android APK works against r4 HTTPS; detailed native
+security evidence remains separate in [final review](../docs/TASK11_FINAL_REVIEW.md).
+
+For the local Samsung academic demo, use the [demo runbook](../docs/DEMO_RUNBOOK.md):
+`adb -s <serial> reverse tcp:8000 tcp:8000` plus a debug build configured with
+`API_BASE_URL=http://127.0.0.1:8000` and `ALLOW_HTTP_API=true`. A restored isolated
+target uses its own port (normally 18001) on both sides of reverse and in the build.
+Reverse must be re-established after USB reconnect/reboot. This local HTTP path is
+not the HTTPS/secure-storage acceptance gate; never bypass certificate validation.

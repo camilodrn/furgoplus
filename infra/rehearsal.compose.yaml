@@ -1,0 +1,56 @@
+# Standalone synthetic rehearsal only. Never combine with compose.yaml.
+# Always use the unique -p names and absolute env-file path in BACKUP_RESTORE.md.
+services:
+  db:
+    image: postgres:17.6-alpine3.22
+    env_file: ${REHEARSAL_ENV_FILE:?Use the temporary rehearsal env file}
+    environment:
+      POSTGRES_DB: ${DB_NAME:?Set rehearsal DB_NAME}
+      POSTGRES_USER: ${DB_USER:?Set rehearsal DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set rehearsal DB_PASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    env_file: ${REHEARSAL_ENV_FILE:?Use the temporary rehearsal env file}
+    environment:
+      DB_HOST: db
+      PRIVATE_UPLOAD_ROOT: /var/lib/furgoplus/private
+      API_PUBLIC_ORIGIN: http://127.0.0.1:${REHEARSAL_API_PORT:?Set isolated API port}
+      WEB_PUBLIC_ORIGIN: http://127.0.0.1:${REHEARSAL_WEB_PORT:?Set isolated web port}
+    volumes:
+      - private_uploads:/var/lib/furgoplus/private
+    ports:
+      - "127.0.0.1:${REHEARSAL_API_PORT:?Set isolated API port}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import http.client, json; c = http.client.HTTPConnection('127.0.0.1', 8000, timeout=3); c.request('GET', '/api/v1/health/'); r = c.getresponse(); assert r.status == 200 and json.load(r) == {'status': 'ok'}"]
+      interval: 5s
+      timeout: 4s
+      retries: 20
+
+  web:
+    build:
+      context: ..
+      dockerfile: web/Dockerfile
+    environment:
+      VITE_API_PROXY_TARGET: http://backend:8000
+    ports:
+      - "127.0.0.1:${REHEARSAL_WEB_PORT:?Set isolated web port}:5173"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  pg_data:
+  private_uploads:
