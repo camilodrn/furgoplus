@@ -1,0 +1,648 @@
+{
+  "mode": "offline_no_model",
+  "status": "ok",
+  "knowledge_version": "2026-10-29.1",
+  "knowledge_sha256": "d9a3ee15e0f068242943cc3d734a290bef42bb712db945e13bba1b43e95527b5",
+  "corpus_sha256": "06d04edf5749782617e81753d6881b5516bc462f6af6830032c7354b1b07cfb5",
+  "oracle_sha256": "fca3a35f18aecdef0ce87902f4d0be2b258e78bc3f3bff3de3d2b66fbd325c64",
+  "python": "3.14.8",
+  "system": "Linux",
+  "machine": "x86_64",
+  "repeats": 200,
+  "cases": 56,
+  "accuracy_percent": 100.0,
+  "public_exact_answer_accuracy_percent": 100.0,
+  "unknown_abstention_accuracy_percent": 100.0,
+  "public_direct_cases": 28,
+  "ambiguous_cases": 3,
+  "model_independent_route_percent": 94.64,
+  "observed_no_model_attempt_percent": 100.0,
+  "public_direct_percent_of_all_cases": 50.0,
+  "metrics": {
+    "queries_total": 11200,
+    "public_direct": 5600,
+    "ambiguous": 600,
+    "model_attempts": 0,
+    "model_confirmed": 0,
+    "model_timeouts": 0,
+    "fallbacks": 600,
+    "abstentions": 4000,
+    "authorized_answers": 1000,
+    "data_unavailable": 0
+  },
+  "latency": {
+    "turn": {
+      "median_ms": 0.0411,
+      "p95_ms": 0.0889,
+      "max_ms": 1.7178
+    },
+    "public_retrieval": {
+      "median_ms": 0.0146,
+      "p95_ms": 0.0201,
+      "max_ms": 0.0894
+    },
+    "by_category": {
+      "faq": {
+        "median_ms": 0.0334,
+        "p95_ms": 0.0454,
+        "max_ms": 1.1756
+      },
+      "paraphrase": {
+        "median_ms": 0.0333,
+        "p95_ms": 0.0478,
+        "max_ms": 0.197
+      },
+      "ambiguous": {
+        "median_ms": 0.0929,
+        "p95_ms": 0.1188,
+        "max_ms": 1.7178
+      },
+      "authorized": {
+        "median_ms": 0.0508,
+        "p95_ms": 0.0637,
+        "max_ms": 0.6593
+      },
+      "safety": {
+        "median_ms": 0.0162,
+        "p95_ms": 0.0258,
+        "max_ms": 0.116
+      },
+      "unknown": {
+        "median_ms": 0.0704,
+        "p95_ms": 0.0857,
+        "max_ms": 0.2365
+      }
+    }
+  },
+  "reference": {
+    "direct_inference_ms_reported_by_operator": 8120,
+    "previous_faq_ms_reported_by_operator": [
+      0.6,
+      2.5
+    ],
+    "comparable_run": false
+  },
+  "note": "Corpus fijo sintético, sin Ollama. Ambiguas se abstienen con modelo deshabilitado. Porcentajes por casos, no tráfico real; latencias repetidas con índice ya cargado, sin arranque CLI. Referencias históricas de otro host, no una aceleración medida ni latencia del clasificador real.",
+  "results": [
+    {
+      "case": "plans_original",
+      "category": "faq",
+      "correct": true,
+      "source": "faq",
+      "route": "plans",
+      "median_ms": 0.0382,
+      "p95_ms": 0.0434,
+      "max_ms": 1.1756
+    },
+    {
+      "case": "parent_original",
+      "category": "faq",
+      "correct": true,
+      "source": "faq",
+      "route": "parent_request",
+      "median_ms": 0.0404,
+      "p95_ms": 0.0647,
+      "max_ms": 0.0887
+    },
+    {
+      "case": "commercial_original",
+      "category": "faq",
+      "correct": true,
+      "source": "faq",
+      "route": "commercial",
+      "median_ms": 0.0428,
+      "p95_ms": 0.0484,
+      "max_ms": 0.0678
+    },
+    {
+      "case": "plans_paraphrase",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "plans",
+      "median_ms": 0.0369,
+      "p95_ms": 0.0724,
+      "max_ms": 0.1948
+    },
+    {
+      "case": "plans_reports",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "plans",
+      "median_ms": 0.0374,
+      "p95_ms": 0.0416,
+      "max_ms": 0.0646
+    },
+    {
+      "case": "plans_own_wording",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "plans",
+      "median_ms": 0.0331,
+      "p95_ms": 0.0359,
+      "max_ms": 0.0504
+    },
+    {
+      "case": "parent_paraphrase",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "parent_request",
+      "median_ms": 0.0346,
+      "p95_ms": 0.0413,
+      "max_ms": 0.1124
+    },
+    {
+      "case": "parent_contact",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "parent_request",
+      "median_ms": 0.0353,
+      "p95_ms": 0.039,
+      "max_ms": 0.0666
+    },
+    {
+      "case": "parent_transport",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "parent_request",
+      "median_ms": 0.0322,
+      "p95_ms": 0.0353,
+      "max_ms": 0.047
+    },
+    {
+      "case": "commercial_subscribe",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "commercial",
+      "median_ms": 0.0292,
+      "p95_ms": 0.0307,
+      "max_ms": 0.0383
+    },
+    {
+      "case": "commercial_buy",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "commercial",
+      "median_ms": 0.0266,
+      "p95_ms": 0.0284,
+      "max_ms": 0.0382
+    },
+    {
+      "case": "commercial_payment",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "commercial",
+      "median_ms": 0.0299,
+      "p95_ms": 0.0314,
+      "max_ms": 0.0427
+    },
+    {
+      "case": "commercial_price",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "commercial",
+      "median_ms": 0.0306,
+      "p95_ms": 0.0562,
+      "max_ms": 0.1709
+    },
+    {
+      "case": "commercial_platform",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "commercial",
+      "median_ms": 0.0345,
+      "p95_ms": 0.0386,
+      "max_ms": 0.0597
+    },
+    {
+      "case": "general",
+      "category": "faq",
+      "correct": true,
+      "source": "faq",
+      "route": "availability",
+      "median_ms": 0.0255,
+      "p95_ms": 0.0275,
+      "max_ms": 0.0508
+    },
+    {
+      "case": "driver",
+      "category": "faq",
+      "correct": true,
+      "source": "faq",
+      "route": "driver",
+      "median_ms": 0.0291,
+      "p95_ms": 0.0304,
+      "max_ms": 0.04
+    },
+    {
+      "case": "help",
+      "category": "faq",
+      "correct": true,
+      "source": "faq",
+      "route": "help",
+      "median_ms": 0.0267,
+      "p95_ms": 0.0285,
+      "max_ms": 0.0349
+    },
+    {
+      "case": "demo",
+      "category": "faq",
+      "correct": true,
+      "source": "faq",
+      "route": "demo_limits",
+      "median_ms": 0.0282,
+      "p95_ms": 0.0298,
+      "max_ms": 0.039
+    },
+    {
+      "case": "publication",
+      "category": "faq",
+      "correct": true,
+      "source": "faq",
+      "route": "publication",
+      "median_ms": 0.0368,
+      "p95_ms": 0.078,
+      "max_ms": 0.2453
+    },
+    {
+      "case": "validation",
+      "category": "faq",
+      "correct": true,
+      "source": "faq",
+      "route": "validation",
+      "median_ms": 0.0343,
+      "p95_ms": 0.0383,
+      "max_ms": 0.0511
+    },
+    {
+      "case": "routes",
+      "category": "faq",
+      "correct": true,
+      "source": "faq",
+      "route": "routes",
+      "median_ms": 0.0352,
+      "p95_ms": 0.0391,
+      "max_ms": 0.0517
+    },
+    {
+      "case": "payments",
+      "category": "faq",
+      "correct": true,
+      "source": "faq",
+      "route": "payments",
+      "median_ms": 0.0317,
+      "p95_ms": 0.0341,
+      "max_ms": 0.0432
+    },
+    {
+      "case": "booking",
+      "category": "faq",
+      "correct": true,
+      "source": "faq",
+      "route": "booking",
+      "median_ms": 0.0318,
+      "p95_ms": 0.0351,
+      "max_ms": 0.0585
+    },
+    {
+      "case": "chile_parent",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "parent_request",
+      "median_ms": 0.0392,
+      "p95_ms": 0.0716,
+      "max_ms": 0.1946
+    },
+    {
+      "case": "chile_booking",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "booking",
+      "median_ms": 0.0306,
+      "p95_ms": 0.0386,
+      "max_ms": 0.07
+    },
+    {
+      "case": "chile_payment",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "payments",
+      "median_ms": 0.0289,
+      "p95_ms": 0.0361,
+      "max_ms": 0.1822
+    },
+    {
+      "case": "rule_parent",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "parent_request",
+      "median_ms": 0.0426,
+      "p95_ms": 0.0714,
+      "max_ms": 0.197
+    },
+    {
+      "case": "rule_plans",
+      "category": "paraphrase",
+      "correct": true,
+      "source": "faq",
+      "route": "plans",
+      "median_ms": 0.0282,
+      "p95_ms": 0.0321,
+      "max_ms": 0.0443
+    },
+    {
+      "case": "parent_model_intent",
+      "category": "ambiguous",
+      "correct": true,
+      "source": "deterministic",
+      "route": "public_ambiguous",
+      "median_ms": 0.1121,
+      "p95_ms": 0.1207,
+      "max_ms": 1.7178
+    },
+    {
+      "case": "public_model_intent",
+      "category": "ambiguous",
+      "correct": true,
+      "source": "deterministic",
+      "route": "public_ambiguous",
+      "median_ms": 0.081,
+      "p95_ms": 0.0889,
+      "max_ms": 0.1547
+    },
+    {
+      "case": "ambiguous_family",
+      "category": "ambiguous",
+      "correct": true,
+      "source": "deterministic",
+      "route": "public_ambiguous",
+      "median_ms": 0.0923,
+      "p95_ms": 0.1513,
+      "max_ms": 0.3092
+    },
+    {
+      "case": "account_control",
+      "category": "authorized",
+      "correct": true,
+      "source": "authorized_data",
+      "route": "plan",
+      "median_ms": 0.0335,
+      "p95_ms": 0.0426,
+      "max_ms": 0.6593
+    },
+    {
+      "case": "expiry_control",
+      "category": "authorized",
+      "correct": true,
+      "source": "authorized_data",
+      "route": "expiry",
+      "median_ms": 0.0478,
+      "p95_ms": 0.0554,
+      "max_ms": 0.4007
+    },
+    {
+      "case": "privacy_control",
+      "category": "safety",
+      "correct": true,
+      "source": "deterministic",
+      "route": "private",
+      "median_ms": 0.0133,
+      "p95_ms": 0.0211,
+      "max_ms": 0.038
+    },
+    {
+      "case": "payment_control",
+      "category": "safety",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unsupported_payment",
+      "median_ms": 0.0159,
+      "p95_ms": 0.0299,
+      "max_ms": 0.116
+    },
+    {
+      "case": "private_mixed",
+      "category": "authorized",
+      "correct": true,
+      "source": "authorized_data",
+      "route": "plan",
+      "median_ms": 0.0499,
+      "p95_ms": 0.0581,
+      "max_ms": 0.1424
+    },
+    {
+      "case": "expiry_mixed",
+      "category": "authorized",
+      "correct": true,
+      "source": "authorized_data",
+      "route": "expiry",
+      "median_ms": 0.0609,
+      "p95_ms": 0.064,
+      "max_ms": 0.1059
+    },
+    {
+      "case": "seats_mixed",
+      "category": "authorized",
+      "correct": true,
+      "source": "authorized_data",
+      "route": "capacity",
+      "median_ms": 0.0595,
+      "p95_ms": 0.0659,
+      "max_ms": 0.6134
+    },
+    {
+      "case": "personal_payment",
+      "category": "safety",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unsupported_payment",
+      "median_ms": 0.018,
+      "p95_ms": 0.0196,
+      "max_ms": 0.0283
+    },
+    {
+      "case": "unknown_1",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0461,
+      "p95_ms": 0.051,
+      "max_ms": 0.0849
+    },
+    {
+      "case": "unknown_2",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0605,
+      "p95_ms": 0.0628,
+      "max_ms": 0.0795
+    },
+    {
+      "case": "unknown_3",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0636,
+      "p95_ms": 0.1079,
+      "max_ms": 0.231
+    },
+    {
+      "case": "unknown_4",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0677,
+      "p95_ms": 0.0837,
+      "max_ms": 0.2041
+    },
+    {
+      "case": "unknown_5",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0733,
+      "p95_ms": 0.1239,
+      "max_ms": 0.1712
+    },
+    {
+      "case": "unknown_6",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0679,
+      "p95_ms": 0.0736,
+      "max_ms": 0.0856
+    },
+    {
+      "case": "unknown_7",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0761,
+      "p95_ms": 0.0808,
+      "max_ms": 0.0905
+    },
+    {
+      "case": "unknown_8",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.062,
+      "p95_ms": 0.0713,
+      "max_ms": 0.0921
+    },
+    {
+      "case": "unknown_9",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0831,
+      "p95_ms": 0.0871,
+      "max_ms": 0.1202
+    },
+    {
+      "case": "unknown_10",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0705,
+      "p95_ms": 0.0754,
+      "max_ms": 0.0859
+    },
+    {
+      "case": "unknown_11",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0597,
+      "p95_ms": 0.1097,
+      "max_ms": 0.1925
+    },
+    {
+      "case": "unknown_12",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.08,
+      "p95_ms": 0.0922,
+      "max_ms": 0.1121
+    },
+    {
+      "case": "unknown_13",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0717,
+      "p95_ms": 0.0804,
+      "max_ms": 0.0917
+    },
+    {
+      "case": "unknown_14",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0807,
+      "p95_ms": 0.0876,
+      "max_ms": 0.1118
+    },
+    {
+      "case": "unknown_15",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.067,
+      "p95_ms": 0.0724,
+      "max_ms": 0.0857
+    },
+    {
+      "case": "unknown_16",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0709,
+      "p95_ms": 0.0836,
+      "max_ms": 0.0906
+    },
+    {
+      "case": "unknown_17",
+      "category": "unknown",
+      "correct": true,
+      "source": "deterministic",
+      "route": "unknown",
+      "median_ms": 0.0643,
+      "p95_ms": 0.1187,
+      "max_ms": 0.2365
+    }
+  ]
+}
