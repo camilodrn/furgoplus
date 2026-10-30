@@ -1,0 +1,39 @@
+{
+  "name": "furgoplus-landing",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 4313 --strictPort",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && vite build && node scripts/prerender.mjs",
+    "preview": "vite preview --host 127.0.0.1 --port 4313 --strictPort",
+    "verify": "node scripts/verify-content.mjs",
+    "audit:fedora": "node scripts/audit-fedora.mjs",
+    "test:browser": "node scripts/verify-browser.mjs",
+    "test:footer:browser": "node scripts/verify-footer-browser.mjs",
+    "test:dialog:browser": "node scripts/verify-dialog-focus.mjs",
+    "test:demo-links": "node scripts/verify-demo-links.mjs",
+    "test:demo-links:browser": "node scripts/verify-demo-links.mjs --browser",
+    "test:interactions": "node scripts/verify-interactions.mjs",
+    "test:pricing": "node scripts/verify-pricing.mjs",
+    "test:pricing:browser": "node scripts/verify-pricing-browser.mjs",
+    "test:states:browser": "node scripts/verify-browser-states.mjs",
+    "test:audit": "node --test scripts/browser-cases.test.mjs"
+  },
+  "dependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "typescript": "6.0.2",
+    "vite": "7.3.6",
+    "playwright-core": "1.64.0",
+    "jsdom": "27.0.0"
+  }
+}
