@@ -1,0 +1,320 @@
+{
+  "schema_version": 1,
+  "version": "2026-10-29.1",
+  "entries": [
+    {
+      "id": "plans",
+      "area": "planes",
+      "question": "¿Qué diferencia hay entre Básico y Pro?",
+      "sentences": [
+        "En el MVP académico, Básico (Basic) no incluye informes mensuales; Pro incluye informes mensuales; Elite incluye los mensuales y añade informes avanzados y exportación XLSX, sin contratación ni pago comercial habilitados dentro de FurgoPlus actualmente.",
+        "Estas capacidades académicas están implementadas en T12; su acceso depende de los permisos y de la vigencia del plan.",
+        "Los precios del catálogo son propuestas futuras y no acreditan disponibilidad comercial."
+      ],
+      "source": "T12 catálogo 2026-10-19.3: capabilities.py, reports_api.py; local_assistant/SOURCES.md",
+      "reviewed_on": "2026-10-29",
+      "status": "implemented_demo",
+      "commercial_available": false,
+      "scope": "Solo demostración académica; no acredita disponibilidad comercial ni el estado de una cuenta.",
+      "aliases": [
+        "¿Qué tiene Pro que no tenga Básico?",
+        "¿Básico tiene informes mensuales y Elite exporta XLSX?",
+        "¿Qué informes incluye mi plan Pro?",
+        "¿Qué incluye Pro?",
+        "¿Qué plan me conviene?",
+        "BÁSICO versus PRO",
+        "¿Qué diferencias hay entre Pro y Elite?",
+        "¿Qué funciones tiene mi plan?",
+        "¿Qué comprende Pro?",
+        "¿Los planes son iguales?",
+        "Explica diferencias entre Básico y Pro",
+        "Diferencias entre Básico, Pro y Elite",
+        "¿En qué se diferencia el Básico del Pro?",
+        "¿Qué trae el plan básico?",
+        "¿Qué onda los planes?"
+      ],
+      "patterns": [
+        "(?:que |cuales son las |explica |explicame )?(?:diferencias?|diferencia hay|comparacion|comparar|compara)(?: hay)? (?:entre |de )?(?:los planes |el plan )?(?:basico|basic|pro|elite)(?: y | versus | vs | con | del )(?:el |plan )?(?:basico|basic|pro|elite)",
+        "(?:que |cuales )?(?:incluye|incluyen|trae|traen|ofrece|ofrecen|beneficios tiene|funciones tiene|informes incluye) (?:el |los |mi )?(?:plan |planes )?(?:basico|basic|pro|elite)"
+      ]
+    },
+    {
+      "id": "commercial",
+      "area": "planes",
+      "question": "¿Puedo contratar el plan Elite y pagarlo directamente en FurgoPlus?",
+      "sentences": [
+        "Actualmente no existe contratación ni pago comercial habilitado dentro de FurgoPlus; los precios de los planes son propuestas futuras, no una oferta comercial disponible.",
+        "La asignación manual de planes de la demo académica no constituye una compra.",
+        "El registro manual de pagos de transporte no procesa dinero ni sirve para pagar un plan."
+      ],
+      "source": "T12 PLAN_CAPABILITIES_SPEC.md: Matriz comercial; web/src/legal/privacy.md:9; local_assistant/SOURCES.md",
+      "reviewed_on": "2026-10-29",
+      "status": "commercial_unavailable",
+      "commercial_available": false,
+      "scope": "Solo demostración académica; no acredita disponibilidad comercial ni el estado de una cuenta.",
+      "aliases": [
+        "¿Puedo contratar Elite?",
+        "¿Cómo pago Pro?",
+        "Quiero suscribirme al plan Elite",
+        "¿Dónde contrato mi plan?",
+        "¿Se puede pagar el plan con tarjeta?",
+        "¿Cobran la suscripción automáticamente?",
+        "Precio del plan Basic",
+        "¿FurgoPlus cobra comercialmente?",
+        "¿Cómo me suscribo a Elite?",
+        "Quiero comprar Pro en la app",
+        "¿Dónde puedo pagar mi plan?",
+        "¿Cuánto cuesta Pro?",
+        "¿FurgoPlus permite contratar y pagar aquí?",
+        "Explica cómo contratar Elite",
+        "¿Se puede contratar comercialmente?",
+        "¿Puedo comprar el plan Pro con lucas?"
+      ],
+      "patterns": [
+        "(?:cuanto (?:cuesta|vale)|precio de|precio del|valor de|valor del) (?:el )?(?:plan )?(?:basico|basic|pro|elite)",
+        "(?:puedo |como puedo |como |donde puedo |donde |quiero |se puede )?(?:contratar|comprar|pagar) (?:el |mi )?(?:plan )?(?:basico|basic|pro|elite)(?: (?:en la app|con tarjeta|con lucas|en furgoplus))?"
+      ]
+    },
+    {
+      "id": "parent_request",
+      "area": "apoderado",
+      "question": "¿Cómo puede un apoderado solicitar transporte?",
+      "sentences": [
+        "En la demo académica, entra a Buscar en la app móvil, elige una comuna y un servicio, y envía una solicitud de contacto con permiso para compartir tu correo; esto no reserva un asiento.",
+        "Revisa Solicitudes: si el conductor acepta, verás el correo del servicio para coordinar el transporte fuera de FurgoPlus.",
+        "Usa solo cuentas y datos ficticios; el registro público está cerrado en la demo y no hay contratación comercial habilitada."
+      ],
+      "source": "docs/PRODUCT_SCOPE.md:Parent journey; web/src/legal/terms.md:1,4; docs/DEMO_MODE.md",
+      "reviewed_on": "2026-10-29",
+      "status": "implemented_demo",
+      "commercial_available": false,
+      "scope": "Solo demostración académica; no acredita disponibilidad comercial ni el estado de una cuenta.",
+      "aliases": [
+        "¿Dónde pido un furgón para mi hijo?",
+        "Soy apoderada, ¿cómo contacto a un conductor?",
+        "¿Cómo puedo contratar transporte?",
+        "Explica cómo solicitar transporte",
+        "¿Cómo solicito transporte?",
+        "¿Cómo pido furgón?",
+        "¿Cómo busco un furgón para mi cabro?",
+        "Soy apoderado, ¿por dónde parto para pedir transporte?",
+        "¿Cómo encuentro transporte escolar?",
+        "¿Cómo contactar al chofer?"
+      ],
+      "patterns": [
+        "(?:como|donde) (?:puedo |puede un apoderado |puede una apoderada )?(?:solicitar|solicito|pedir|pido|buscar|busco|conseguir|encontrar|contratar) (?:un |el )?(?:transporte|transporte escolar|furgon)(?: para mi (?:hijo|hija|cabro|cabro chico))?"
+      ]
+    },
+    {
+      "id": "availability",
+      "area": "funcionamiento_general",
+      "question": "¿Qué ofrece FurgoPlus y está disponible comercialmente?",
+      "sentences": [
+        "FurgoPlus es una demo académica de búsqueda de transporte escolar, solicitudes de contacto y gestión del conductor; la operación comercial requiere revisiones pendientes.",
+        "El asistente local es experimental y funciona con datos sintéticos; no confirma servicios reales ni contrata transporte.",
+        "Puedes revisar el flujo de demostración; no hay seguimiento GPS en vivo ni cobros automáticos."
+      ],
+      "source": "docs/PRODUCT_SCOPE.md; web/src/legal/terms.md:1,5,7,10; local_assistant/README.md",
+      "reviewed_on": "2026-10-29",
+      "status": "implemented_demo",
+      "commercial_available": false,
+      "scope": "Solo demostración académica; no acredita disponibilidad comercial ni el estado de una cuenta.",
+      "aliases": [
+        "¿Qué es FurgoPlus?",
+        "¿Qué ofrece FurgoPlus?",
+        "¿FurgoPlus es una demo?",
+        "¿FurgoPlus es comercial?",
+        "¿Cómo funciona FurgoPlus?",
+        "¿Para qué sirve FurgoPlus?"
+      ],
+      "patterns": []
+    },
+    {
+      "id": "publication",
+      "area": "publicacion",
+      "question": "¿Qué necesito para publicar mi servicio?",
+      "sentences": [
+        "Para publicar necesitas cumplir los requisitos de revisión, plan vigente y configuración del servicio.",
+        "Pedir la publicación por sí solo no hace visible tu servicio.",
+        "Revisa los requisitos pendientes en Mi servicio, en Publicación."
+      ],
+      "source": "backend/drivers/publication.py:publication_state; web/src/ValidationScreens.tsx",
+      "reviewed_on": "2026-10-29",
+      "status": "implemented_demo",
+      "commercial_available": false,
+      "scope": "Solo demostración académica; no acredita disponibilidad comercial ni el estado de una cuenta.",
+      "aliases": [
+        "Explica cómo publicar",
+        "¿Cómo publico mi servicio?",
+        "¿Cómo puedo publicar?",
+        "¿Cuáles son los requisitos para publicar?",
+        "¿Qué me piden para publicar el furgón?",
+        "Ayuda para publicar",
+        "¿Cómo publicar?"
+      ],
+      "patterns": []
+    },
+    {
+      "id": "booking",
+      "area": "solicitudes_contacto",
+      "question": "¿Aceptar una solicitud reserva un cupo?",
+      "sentences": [
+        "Aceptar una solicitud no reserva ni asigna un cupo automáticamente.",
+        "La coordinación del servicio se hace entre las partes.",
+        "Los cupos dependen de las asignaciones registradas para la fecha consultada."
+      ],
+      "source": "web/src/legal/terms.md:4; backend/drivers/capacity.py:capacity_snapshot",
+      "reviewed_on": "2026-10-29",
+      "status": "implemented_demo",
+      "commercial_available": false,
+      "scope": "Solo demostración académica; no acredita disponibilidad comercial ni el estado de una cuenta.",
+      "aliases": [
+        "¿Aceptar una solicitud reserva un cupo?",
+        "¿Si acepto la solicitud queda reservado el asiento?",
+        "¿La solicitud de contacto asegura un asiento?",
+        "¿Aceptar al apoderado asigna cupo?",
+        "¿La solicitud reserva cupo altiro?",
+        "¿Aceptar una solicitud reserva cupo?"
+      ],
+      "patterns": []
+    },
+    {
+      "id": "routes",
+      "area": "rutas",
+      "question": "¿Cómo funcionan las rutas de ida y regreso?",
+      "sentences": [
+        "Cada ruta corresponde a un viaje de un solo sentido.",
+        "El regreso se configura como una ruta separada.",
+        "Los cupos se calculan para una fecha de servicio."
+      ],
+      "source": "web/src/legal/terms.md:5; backend/drivers/capacity.py:capacity_snapshot",
+      "reviewed_on": "2026-10-29",
+      "status": "implemented_demo",
+      "commercial_available": false,
+      "scope": "Solo demostración académica; no acredita disponibilidad comercial ni el estado de una cuenta.",
+      "aliases": [
+        "¿Cómo funcionan las rutas de ida y vuelta?",
+        "¿La ida y la vuelta son rutas separadas?",
+        "¿Tengo que crear otra ruta para la vuelta?",
+        "¿Qué es una ruta?",
+        "¿Cómo se configura el regreso?"
+      ],
+      "patterns": []
+    },
+    {
+      "id": "payments",
+      "area": "pagos_manuales",
+      "question": "¿FurgoPlus cobra automáticamente los pagos?",
+      "sentences": [
+        "FurgoPlus permite registrar pagos manualmente; no mueve dinero ni cobra automáticamente.",
+        "Marcar un pago como pagado actualiza solo el registro.",
+        "No hay una pasarela de pagos en este prototipo."
+      ],
+      "source": "web/src/legal/terms.md:7; docs/PRIVACY_BY_DESIGN.md:A",
+      "reviewed_on": "2026-10-29",
+      "status": "implemented_demo",
+      "commercial_available": false,
+      "scope": "Solo demostración académica; no acredita disponibilidad comercial ni el estado de una cuenta.",
+      "aliases": [
+        "¿Los pagos son automáticos?",
+        "¿Cómo funcionan los pagos manuales?",
+        "¿Qué pasa al marcar un pago como pagado?",
+        "¿Registrar un pago mueve plata?",
+        "¿Hay pasarela de pagos?",
+        "¿El pago se cobra altiro?",
+        "¿La app cobra sola?"
+      ],
+      "patterns": []
+    },
+    {
+      "id": "validation",
+      "area": "publicacion",
+      "question": "¿Qué significa la etiqueta de validación?",
+      "sentences": [
+        "La etiqueta de validación indica una revisión interna de información y documentos de demostración.",
+        "No acredita permisos, seguros ni habilitación para transportar estudiantes."
+      ],
+      "source": "web/src/legal/terms.md:3; backend/drivers/services.py:CHECKLIST",
+      "reviewed_on": "2026-10-29",
+      "status": "implemented_demo",
+      "commercial_available": false,
+      "scope": "Solo demostración académica; no acredita disponibilidad comercial ni el estado de una cuenta.",
+      "aliases": [
+        "¿Qué significa validado?",
+        "¿La etiqueta de validación garantiza seguridad?",
+        "¿La validación acredita permisos de transporte?"
+      ],
+      "patterns": []
+    },
+    {
+      "id": "driver",
+      "area": "conductor",
+      "question": "¿Cómo usa FurgoPlus un conductor?",
+      "sentences": [
+        "El conductor administra su servicio, rutas, solicitudes de contacto y registros manuales de pagos en la web; usa la app móvil para la operación diaria de demostración.",
+        "La aceptación de una solicitud no asigna pasajeros ni reserva cupos.",
+        "Usa únicamente datos ficticios."
+      ],
+      "source": "docs/PRODUCT_SCOPE.md:Driver journey; web/src/legal/terms.md:2,4,5,7",
+      "reviewed_on": "2026-10-29",
+      "status": "implemented_demo",
+      "commercial_available": false,
+      "scope": "Solo demostración académica; no acredita disponibilidad comercial ni el estado de una cuenta.",
+      "aliases": [
+        "¿Cómo funciona FurgoPlus para el conductor?",
+        "¿Qué puede hacer un conductor?",
+        "¿Qué puede hacer el chofer?",
+        "¿Dónde administra el conductor su servicio?"
+      ],
+      "patterns": []
+    },
+    {
+      "id": "help",
+      "area": "ayuda",
+      "question": "¿Qué ayuda ofrece el asistente?",
+      "sentences": [
+        "Puedo explicar planes académicos, solicitudes de contacto, publicación, rutas y pagos manuales; las consultas de cuenta requieren una fuente autorizada.",
+        "Este asistente es experimental, de solo lectura y usa datos sintéticos.",
+        "Repite el tema en cada pregunta: no conserva historial."
+      ],
+      "source": "local_assistant/README.md:Arquitectura y límites; local_assistant/data.py:AuthorizedQueries",
+      "reviewed_on": "2026-10-29",
+      "status": "experimental",
+      "commercial_available": false,
+      "scope": "Solo demostración académica; no acredita disponibilidad comercial ni el estado de una cuenta.",
+      "aliases": [
+        "Ayuda",
+        "¿Qué puedo preguntarte?",
+        "¿Cómo uso este asistente?",
+        "¿Me orientas con el asistente?"
+      ],
+      "patterns": []
+    },
+    {
+      "id": "demo_limits",
+      "area": "limitaciones_demo",
+      "question": "¿Cuáles son los límites de la demo académica?",
+      "sentences": [
+        "La demo usa cuentas y datos ficticios, tiene el registro público cerrado y no habilita contratación comercial, seguimiento GPS en vivo ni chat interno.",
+        "Las cuentas de demostración las prepara el equipo.",
+        "El asistente local experimental no confirma cupos ni servicios reales."
+      ],
+      "source": "docs/DEMO_MODE.md:Comportamiento y configuración; docs/PRODUCT_SCOPE.md:Deferred / future; web/src/legal/terms.md:1,5",
+      "reviewed_on": "2026-10-29",
+      "status": "implemented_demo",
+      "commercial_available": false,
+      "scope": "Solo demostración académica; no acredita disponibilidad comercial ni el estado de una cuenta.",
+      "aliases": [
+        "¿Puedo usar datos reales en la demo?",
+        "¿Se puede registrar una cuenta en la demo?",
+        "¿La demo permite registro público?",
+        "¿Hay seguimiento GPS en vivo?",
+        "¿Hay GPS?",
+        "¿FurgoPlus tiene chat interno?",
+        "¿Cuáles son las limitaciones de la demo?",
+        "¿Puedo seguir el furgón en tiempo real?"
+      ],
+      "patterns": []
+    }
+  ]
+}
