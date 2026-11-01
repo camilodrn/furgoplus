@@ -2,7 +2,7 @@
 
 Borrador — requiere revisión legal antes de producción
 
-Aviso de Privacidad v0.1 — 07-10-2026. Este borrador requiere revisión jurídica chilena antes del lanzamiento en producción, el uso con personas reales, datos reales de niños, niñas o adolescentes, datos reales de apoderados o domicilios y cualquier operación comercial. No constituye aprobación legal ni certificación.
+Aviso de Privacidad v0.2 — 31-10-2026. Este borrador requiere revisión jurídica chilena antes del lanzamiento en producción, el uso con personas reales, datos reales de niños, niñas o adolescentes, datos reales de apoderados o domicilios y cualquier operación comercial. No constituye aprobación legal ni certificación.
 
 ## 1. Qué es FurgoPlus y quién responde
 
@@ -71,3 +71,13 @@ Las personas tienen derechos de información y acceso, corrección y, según cor
 El prototipo incorpora controles de rol y propiedad, protección de sesión y respuestas privadas sin caché. No ofrece seguridad absoluta. Quedan pendientes revisión de accesos de producción, pruebas de seguridad, respaldo y recuperación, proceso de incidentes, canal de contacto y evaluación y notificación de brechas según revisión legal. No se afirma que exista una organización madura para responder incidentes.
 
 Esta versión es un borrador fechado, disponible para lectura sin aceptación obligatoria. Una futura versión aprobada deberá conservar su contenido exacto y, si corresponde registrar aceptación, asociarlo de forma auditable a cuenta, fecha y versión. Leer este aviso o compartir el correo en una solicitud no registra aceptación legal.
+
+## 13. Cookies y almacenamiento necesario
+
+La versión auditada utiliza únicamente almacenamiento técnico necesario, sin analítica de visitas, publicidad ni SDK opcionales de seguimiento. En web, sessionid mantiene la sesión hasta 12 horas desde el inicio y csrftoken protege las solicitudes, con una duración configurada de hasta 52 semanas renovable al solicitar protección CSRF. Las cookies son HttpOnly, SameSite=Lax y limitadas al host con Path=/; Secure está activado en la configuración HTTPS de producción y desactivado en el entorno académico HTTP local. El despliegue productivo real requiere verificación propia.
+
+El marcador furgoplus-signed-out, en sessionStorage de la pestaña, evita restaurar un cierre de sesión no confirmado. Se elimina al confirmarlo o al terminar esa sesión de almacenamiento, según la restauración del navegador. No guarda contraseñas ni tokens. No se encontraron usos de localStorage, IndexedDB o service workers en la aplicación. La web ofrece Cookies y almacenamiento para consultar finalidades, duración y controles; no solicita un consentimiento ficticio para tecnologías opcionales inexistentes. Borrar estas tecnologías en el navegador puede cerrar la sesión, sin eliminar la cuenta ni los registros del servidor.
+
+En Android nativo, furgoplus.session.v1 conserva la sesión en almacenamiento seguro, vinculada al host y al vencimiento que informa el servidor. La protección CSRF permanece en memoria. No se añade un banner web ni preferencias de seguimiento inexistentes. Cerrar sesión elimina la sesión local; el cierre remoto requiere confirmación del servidor. Los datos operativos permanecen en memoria mientras la sesión y las vistas los necesitan.
+
+Abrir en mapas utiliza Google Maps solo por acción explícita, compartiendo el destino y sin solicitar ubicación del dispositivo. La función está deshabilitada con datos de ensayo. La política del proveedor se consulta en https://policies.google.com/privacy?hl=es. Si se incorporaran tecnologías opcionales, deberán revisarse y habilitar controles efectivos antes de activarlas. Una preferencia de cookies no autoriza tratamiento de datos de apoderados o menores.

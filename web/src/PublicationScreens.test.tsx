@@ -6,6 +6,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import {
   AdminPublicationScreen,
@@ -214,7 +215,7 @@ test("driver sees blockers, requests publication, creates and deactivates a rout
   );
   await waitFor(() => expect(api.publication).toHaveBeenCalledTimes(6));
   expect(screen.getByLabelText("Plan actual").textContent).toContain(
-    "Sin plan activo",
+    "Sin plan asignado",
   );
 });
 
@@ -238,17 +239,17 @@ test("eligible driver sees success and plan summary", async () => {
   expect(await screen.findByText("Visible para apoderados")).toBeTruthy();
   const plan = screen.getByLabelText("Plan actual");
   expect(plan.querySelector(".plan-name")?.textContent).toBe("Basic");
-  expect(plan.textContent).toContain("Activo");
+  expect(plan.textContent).toContain("Vigente");
   expect(plan.textContent).toContain("Vigente hasta");
-  expect(screen.getByText("Información aprobada")).toBeTruthy();
-  expect(screen.getByText("Ruta activa y completa")).toBeTruthy();
+  expect(screen.getByText("Datos y documentos")).toBeTruthy();
+  expect(screen.getByText("Ruta activa")).toBeTruthy();
   expect(
     screen.getByRole("button", { name: "Actualizar estado" }).className,
   ).toContain("button-link");
   expect(api.routes).toHaveBeenCalledOnce();
   expect(screen.queryByRole("button", { name: "Reintentar" })).toBeNull();
   const refresh = screen.getByRole("button", { name: "Actualizar rutas" });
-  expect(refresh.className).toContain("button-link driver-refresh");
+  expect(refresh.className).toContain("button-quiet driver-refresh");
   fireEvent.click(refresh);
   await waitFor(() => expect(api.routes).toHaveBeenCalledTimes(2));
   await waitFor(() =>
@@ -282,6 +283,7 @@ test("switching publication and routes keeps an unfinished route", async () => {
     target: { value: "Ruta por guardar" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Ver publicación" }));
+  expect(screen.queryByRole("dialog", { name: "Crear ruta" })).toBeNull();
   expect(
     screen.getByRole("heading", { name: "Visibilidad de tu servicio" }),
   ).toBeTruthy();
@@ -340,6 +342,9 @@ test("admin sees blockers and saves an audited bounded plan action with Chilean 
     target: { value: "Asignación demo" },
   });
   fireEvent.click(screen.getByText("Guardar plan"));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar cambio de plan" }),
+  );
   await waitFor(() =>
     expect(changeSubscription).toHaveBeenCalledWith(
       7,
@@ -360,7 +365,7 @@ test("admin sees blockers and saves an audited bounded plan action with Chilean 
   );
   expect(screen.getAllByPlaceholderText("DD/MM/AAAA")).toHaveLength(2);
   fireEvent.change(screen.getByLabelText("Plan"), { target: { value: "pro" } });
-  fireEvent.change(screen.getByLabelText("Estado del plan"), {
+  fireEvent.change(screen.getByLabelText("Estado administrativo del plan"), {
     target: { value: "suspended" },
   });
   fireEvent.change(screen.getByLabelText("Motivo"), {
@@ -375,6 +380,9 @@ test("admin sees blockers and saves an audited bounded plan action with Chilean 
     ),
   );
   fireEvent.click(screen.getByText("Guardar plan"));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar cambio de plan" }),
+  );
   await waitFor(() =>
     expect(changeSubscription).toHaveBeenLastCalledWith(
       7,
@@ -390,13 +398,16 @@ test("admin sees blockers and saves an audited bounded plan action with Chilean 
   fireEvent.click(
     await screen.findByRole("button", { name: "Administrar plan" }),
   );
-  fireEvent.change(screen.getByLabelText("Estado del plan"), {
+  fireEvent.change(screen.getByLabelText("Estado administrativo del plan"), {
     target: { value: "active" },
   });
   fireEvent.change(screen.getByLabelText("Motivo"), {
     target: { value: "Reactivación demo" },
   });
   fireEvent.click(screen.getByText("Guardar plan"));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar cambio de plan" }),
+  );
   await waitFor(() =>
     expect(changeSubscription).toHaveBeenLastCalledWith(
       7,
@@ -525,6 +536,9 @@ test("calendar-selected subscription dates and native times submit exact Chilean
     (screen.getByLabelText("Fecha de término") as HTMLInputElement).value,
   ).toBe("04/10/2026");
   fireEvent.click(screen.getByRole("button", { name: "Guardar plan" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar cambio de plan" }),
+  );
   await waitFor(() =>
     expect(changeSubscription).toHaveBeenCalledWith(
       7,
@@ -552,7 +566,7 @@ test("route server validation remains inline and frozen-day conflicts explain th
   );
   await screen.findByText("Ida demo");
   expect(screen.getByText("Lun")).toBeTruthy();
-  expect(screen.getByText("07:00 → 08:00")).toBeTruthy();
+  expect(screen.getByText("07:00")).toBeTruthy();
   expect(screen.getByText(/Cobertura: Comuna Demo Norte/)).toBeTruthy();
   expect(screen.getByText("0 de 3 cupos utilizados")).toBeTruthy();
   fireEvent.click(screen.getByRole("button", { name: "Editar" }));
@@ -702,4 +716,37 @@ test("route creation discloses one stage at a time, reviews exact data, and Esca
   expect(
     (screen.getByLabelText("Nombre de la ruta") as HTMLInputElement).value,
   ).toBe("");
+});
+
+test("routes use bounded local pages and keep all existing route operations available", async () => {
+  const api = driverApi();
+  api.routes.mockResolvedValue({
+    routes: Array.from({ length: 23 }, (_, index) => ({
+      ...route,
+      id: index + 1,
+      label: `Ruta ${index + 1}`,
+    })),
+  });
+  render(
+    <DriverPublicationScreen
+      api={api as unknown as AuthApi}
+      activeSection="routes"
+    />,
+  );
+  const nav = within(
+    await screen.findByRole("navigation", { name: "Páginas de rutas" }),
+  );
+  expect(screen.getAllByRole("article")).toHaveLength(10);
+  fireEvent.click(nav.getByRole("button", { name: "Siguiente" }));
+  expect(screen.getByRole("heading", { name: "Ruta 11" })).toBeTruthy();
+  expect(screen.queryByRole("heading", { name: "Ruta 1" })).toBeNull();
+  expect(document.activeElement?.id).toBe("route-list-results");
+  fireEvent.click(nav.getByRole("button", { name: "Siguiente" }));
+  expect(screen.getAllByRole("article")).toHaveLength(3);
+  fireEvent.click(screen.getAllByRole("button", { name: "Editar" })[2]!);
+  expect(
+    (screen.getByLabelText("Nombre de la ruta") as HTMLInputElement).value,
+  ).toBe("Ruta 23");
+  expect(api.updateRoute).not.toHaveBeenCalled();
+  expect(api.routes).toHaveBeenCalledTimes(1);
 });

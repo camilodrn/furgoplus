@@ -1,0 +1,28 @@
+{
+  "apk": "/home/duran/Proyectos/furgoplus-planes/mobile/build/app/outputs/flutter-apk/app-debug.apk",
+  "apkSha256": "42e2871877fc5de1dc10af011e3403a386dfe85755cdc09a1e47a735a4868049",
+  "sourceHashes": {
+    "mobile/lib/api_config.dart": "9187b705c7739c7ef8d9ca6b84648e1c94b6e9a1b04bdea572113134f12525be",
+    "mobile/lib/auth_app.dart": "c8b3c6a561baf4cab5f2aa0d6523a112b8192d50f5e108678b88c26b02fe396f",
+    "mobile/lib/auth_controller.dart": "6ed95dce9f519c622fef4712374569201ffed2dfa0cb87a66f76c2c6a8286116",
+    "mobile/lib/driver_home.dart": "7089995b129d643b5dfc5d28613b0fd2f7afc09675e4e8af568eeedbdd2b14dd",
+    "mobile/lib/furgo_theme.dart": "5c794eb4ccd3663e9b6f19bc093fdbdfad25443e0a585674c10a6e060f4d0a8c",
+    "mobile/lib/health_api.dart": "c1f44b47d75d0ea486bd401ee3f4cdb46a00edf6efeca96e312588413d3738d2",
+    "mobile/lib/health_controller.dart": "818c46cb1fae9b9d3c873d75b09d06f45288bf525d66a45e58cfa0174d775e37",
+    "mobile/lib/legal_access.dart": "a7a408812d453a8e70f0a91ac120bd75538c33a3d2f9ddc6348181d258958148",
+    "mobile/lib/main.dart": "222ffa8a279aa29c196c915e647c988e6c2f455e1baa01731955fbb38c037251",
+    "mobile/lib/parent_home.dart": "6e9f04815421e43d08c7a80bfa266c8861d124171e75de9a6ec83248b7d93b6f",
+    "mobile/lib/parent_presentation.dart": "8d971d309998dd9950ed37ff0d98be96de3d59eaec00db687f302170bff45070",
+    "mobile/lib/parent_service.dart": "42f63d398c93104332cca638d6442bd4aad52078deaa779cb9cd439badf7290a",
+    "mobile/lib/session_api.dart": "b0b26eedb8deaa59bd1b8737dc401df22f17b46336ee0555f3d5f929c73a9441",
+    "mobile/lib/plan_help_service.dart": "c70da86a9973b0c5d4db50e526ca50dd0d400a0a7bb944e588922d7ce1380cf2",
+    "mobile/lib/plan_help_screen.dart": "fcfb61b24d14e18d0147e80c576bff2adc45df8087f846510e141fb7eb01f20a",
+    "mobile/lib/furgo_widgets.dart": "e8e0df111025766f1120ac4b12847614ab8d88135a236c6bc76e6572abf3351f"
+  },
+  "defines": {
+    "API_BASE_URL": "http://127.0.0.1:18082",
+    "ALLOW_HTTP_API": "true",
+    "FURGOPLUS_SYNTHETIC_DATA": "true"
+  },
+  "buildLog": "/tmp/t12-c7-apk-current-build.log"
+}

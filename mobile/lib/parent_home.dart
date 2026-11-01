@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'auth_controller.dart';
 import 'legal_access.dart';
+import 'furgo_widgets.dart';
+import 'furgo_theme.dart';
+import 'plan_help_screen.dart';
 import 'parent_service.dart';
 import 'parent_presentation.dart';
 import 'session_api.dart';
@@ -22,6 +25,9 @@ class ParentHome extends StatefulWidget {
 }
 
 class _ParentHomeState extends State<ParentHome> {
+  bool helpOpen = false;
+  bool helpVisited = false;
+  bool accountOpen = false;
   int tab = 0;
   late int sessionVersion;
   int operation = 0;
@@ -36,7 +42,7 @@ class _ParentHomeState extends State<ParentHome> {
   bool uncertainSend = false;
   bool duplicate = false;
   int? duplicateDriver;
-  int shownRequests = 3;
+  int shownRequests = 10;
   int shownReviews = 3;
   String? commune;
   String? filterDraft;
@@ -50,14 +56,29 @@ class _ParentHomeState extends State<ParentHome> {
   final selected = <int>[];
   Map<String, dynamic>? detail;
   List<Map<String, dynamic>>? comparison;
+  List<Map<String, dynamic>>? comparisonOrigin;
+  final destinationOffsets = <int, double>{};
   Map<String, dynamic>? requestDetail;
   Map<String, dynamic>? profile;
   final message = TextEditingController();
   final name = TextEditingController();
   final scroll = ScrollController();
+  final accountScroll = ScrollController();
   final messenger = GlobalKey<ScaffoldMessengerState>();
   final contactErrorAnchor = GlobalKey();
   final actionArea = GlobalKey();
+  DialogRoute<bool>? cancellation;
+  NavigatorState? cancellationNavigator;
+
+  void _closeCancellation() {
+    final route = cancellation;
+    final navigator = cancellationNavigator;
+    cancellation = null;
+    cancellationNavigator = null;
+    if (route != null && route.isActive && navigator != null) {
+      navigator.removeRoute(route);
+    }
+  }
 
   NativeSessionApi get api => widget.auth.api;
   bool get active =>
@@ -96,8 +117,10 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   void _clearPrivate() {
+    _closeCancellation();
     operation++;
     tab = 0;
+    helpOpen = helpVisited = accountOpen = false;
     loading = sending = searched = requestsLoaded = false;
     filtersOpen = contactOpen = nameOpen = consent = false;
     uncertainSend = duplicate = false;
@@ -109,8 +132,10 @@ class _ParentHomeState extends State<ParentHome> {
     requests = [];
     selected.clear();
     detail = requestDetail = profile = null;
-    comparison = null;
-    shownRequests = shownReviews = 3;
+    comparison = comparisonOrigin = null;
+    destinationOffsets.clear();
+    shownRequests = 10;
+    shownReviews = 3;
     message.clear();
     name.clear();
     messenger.currentState
@@ -120,17 +145,20 @@ class _ParentHomeState extends State<ParentHome> {
 
   @override
   void dispose() {
+    _closeCancellation();
     widget.auth.removeListener(_sessionChanged);
     operation++;
     message.dispose();
     name.dispose();
     scroll.dispose();
+    accountScroll.dispose();
     super.dispose();
   }
 
   void _top() {
     FocusManager.instance.primaryFocus?.unfocus();
-    if (scroll.hasClients) scroll.jumpTo(0);
+    final controller = accountOpen ? accountScroll : scroll;
+    if (controller.hasClients) controller.jumpTo(0);
   }
 
   void _notice(String text) {
@@ -146,7 +174,10 @@ class _ParentHomeState extends State<ParentHome> {
             16,
             8,
             16,
-            12 + (actionArea.currentContext?.size?.height ?? 0),
+            12 +
+                (accountOpen || helpOpen
+                    ? 0
+                    : (actionArea.currentContext?.size?.height ?? 0)),
           ),
         ),
       );
@@ -179,7 +210,7 @@ class _ParentHomeState extends State<ParentHome> {
 
   void _unavailable() {
     detail = null;
-    comparison = null;
+    comparison = comparisonOrigin = null;
     drivers = [];
     selected.clear();
     searched = false;
@@ -254,7 +285,7 @@ class _ParentHomeState extends State<ParentHome> {
     final ticket = _begin();
     setState(() {
       detail = null;
-      comparison = null;
+      comparison = comparisonOrigin = null;
       drivers = [];
       selected.clear();
       searched = false;
@@ -281,6 +312,7 @@ class _ParentHomeState extends State<ParentHome> {
   Future<void> _openDriver(int id) async {
     final ticket = _begin();
     setState(() {
+      if (comparison != null) comparisonOrigin = List.of(comparison!);
       detail = null;
       comparison = null;
       contactOpen = consent = false;
@@ -391,7 +423,7 @@ class _ParentHomeState extends State<ParentHome> {
         contactOpen = consent = false;
         detail = null;
         message.clear();
-        shownRequests = 3;
+        shownRequests = 10;
         _notice('Solicitud enviada');
       });
       _top();
@@ -498,6 +530,47 @@ class _ParentHomeState extends State<ParentHome> {
     if (matches.isNotEmpty) await _openRequest(matches.first['id'] as int);
   }
 
+  Future<void> _confirmCancel() async {
+    if (!active || loading || cancellation != null || requestDetail == null)
+      return;
+    final ticket = operation;
+    final id = requestDetail!['id'];
+    final navigator = Navigator.of(context);
+    final route = DialogRoute<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        scrollable: true,
+        title: const Text('¿Cancelar solicitud de contacto?'),
+        content: Text(
+          '${requestDetail?['driver_display_name']} dejará de tener esta solicitud pendiente. No cancela un traslado ni una reserva.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Mantener solicitud'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Confirmar cancelación'),
+          ),
+        ],
+      ),
+    );
+    cancellation = route;
+    cancellationNavigator = navigator;
+    final accepted = await navigator.push(route);
+    if (cancellation == route) {
+      cancellation = null;
+      cancellationNavigator = null;
+    }
+    if (accepted == true &&
+        current(ticket) &&
+        requestDetail?['id'] == id &&
+        requestDetail?['status'] == 'pending') {
+      await _cancel();
+    }
+  }
+
   Future<void> _cancel() async {
     if (loading || requestDetail == null) return;
     final id = requestDetail!['id'] as int;
@@ -596,25 +669,57 @@ class _ParentHomeState extends State<ParentHome> {
     }
   }
 
+  void _openAccount() {
+    if (!active || sending) return;
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (accountOpen) {
+      _androidBack();
+      return;
+    }
+    setState(() {
+      accountOpen = true;
+      nameOpen = false;
+      formError = null;
+      if (profile != null) name.text = profile!['display_name'] as String;
+    });
+    if (profile == null) _loadProfile();
+  }
+
   void _navigate(int value) {
+    if (sending) return;
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (!accountOpen && !helpOpen && scroll.hasClients) {
+      destinationOffsets[tab] = scroll.offset;
+    }
+    if (value == 3) {
+      setState(() {
+        helpOpen = helpVisited = true;
+        accountOpen = nameOpen = false;
+      });
+      return;
+    }
     operation++;
     setState(() {
       tab = value;
+      helpOpen = accountOpen = false;
       loading = false;
-      filtersOpen = contactOpen = nameOpen = consent = false;
-      detail = requestDetail = null;
-      comparison = null;
-      error = feedback = formError = null;
+      error = feedback = null;
       retry = null;
-      message.clear();
-      uncertainSend = duplicate = false;
     });
     messenger.currentState?.clearSnackBars();
-    _top();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && scroll.hasClients) {
+        scroll.jumpTo(
+          (destinationOffsets[tab] ?? 0).clamp(
+            0.0,
+            scroll.position.maxScrollExtent,
+          ),
+        );
+      }
+    });
   }
 
   bool get _subpage =>
-      filtersOpen ||
       contactOpen ||
       nameOpen ||
       detail != null ||
@@ -622,7 +727,22 @@ class _ParentHomeState extends State<ParentHome> {
       requestDetail != null;
 
   void _androidBack() {
-    if (loading) return;
+    if (loading || sending) return;
+    if (accountOpen) {
+      if (nameOpen) {
+        setState(() {
+          nameOpen = false;
+          formError = null;
+          name.text = profile!['display_name'] as String;
+        });
+        _top();
+        return;
+      }
+      setState(() => accountOpen = false);
+      if (!helpOpen && tab == 1 && !requestsLoaded) _loadRequests();
+      if (!helpOpen && tab == 0 && !searched && detail == null) _bootstrap();
+      return;
+    }
     final wasSubpage = _subpage;
     setState(() {
       if (contactOpen) {
@@ -635,25 +755,37 @@ class _ParentHomeState extends State<ParentHome> {
         nameOpen = false;
         formError = null;
         name.text = profile!['display_name'] as String;
+      } else if (detail != null) {
+        detail = null;
+        comparison = comparisonOrigin;
+        comparisonOrigin = null;
       } else {
-        detail = requestDetail = null;
+        requestDetail = null;
         comparison = null;
       }
     });
     if (!wasSubpage && tab != 0) {
       _navigate(0);
-      _search();
+      if (!searched) _search();
     }
     _top();
   }
 
-  TextTheme get _type => parentTheme(Theme.of(context)).textTheme;
+  TextTheme get _type => Theme.of(context).textTheme;
 
   Widget _heading(String text) => Padding(
     padding: const EdgeInsets.only(bottom: 12),
     child: Semantics(
       header: true,
-      child: Text(text, style: _type.headlineMedium),
+      child: Text(
+        text,
+        style:
+            MediaQuery.sizeOf(context).width /
+                    MediaQuery.textScalerOf(context).scale(1) <
+                220
+            ? _type.headlineSmall
+            : _type.headlineMedium,
+      ),
     ),
   );
 
@@ -676,73 +808,31 @@ class _ParentHomeState extends State<ParentHome> {
     liveRegion: true,
     child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Text(
-        text,
-        key: key,
-        style: TextStyle(color: Theme.of(context).colorScheme.error),
-      ),
+      child: FurgoMessage(text, key: key, error: true),
     ),
   );
 
   List<Widget> _searchPage() {
-    if (filtersOpen)
-      return [
-        _back('Volver a Buscar', () => filtersOpen = false),
-        _heading('Filtrar servicios'),
-        DropdownButtonFormField<String>(
-          key: const Key('commune-filter'),
-          initialValue: filterDraft,
-          isExpanded: true,
-          decoration: const InputDecoration(labelText: 'Comuna'),
-          items: [
-            const DropdownMenuItem(value: '', child: Text('Todas las comunas')),
-            ...communes.map(
-              (row) => DropdownMenuItem(
-                value: row['code'] as String,
-                child: Text(row['display_name'] as String),
-              ),
-            ),
-          ],
-          onChanged: loading
-              ? null
-              : (value) => setState(() => filterDraft = value),
-        ),
-        const SizedBox(height: 16),
-        FilledButton(
-          onPressed: loading
-              ? null
-              : () {
-                  commune = filterDraft == '' ? null : filterDraft;
-                  _search();
-                },
-          child: const Text('Buscar servicios'),
-        ),
-      ];
     if (comparison != null)
       return [
         _back(
-          'Volver a Buscar',
+          'Volver',
           () => comparison = null,
           key: const Key('comparison-back'),
         ),
         _heading('Comparar servicios'),
-        const Text(
-          'Los cupos pueden cambiar. Compara la ruta y la fecha que necesitas.',
-        ),
-        const SizedBox(height: 16),
-        ...comparison!.map(
-          (driver) => ParentServiceCard(
-            driver: driver,
-            commune: commune,
-            onOpen: loading ? null : () => _openDriver(driver['id'] as int),
-            onRemove: loading
-                ? null
-                : () => setState(() {
-                    selected.remove(driver['id']);
-                    comparison!.removeWhere((row) => row['id'] == driver['id']);
-                    if (comparison!.length < 2) comparison = null;
-                  }),
-          ),
+
+        ParentServiceComparison(
+          drivers: comparison!,
+          commune: commune,
+          onOpen: loading ? null : (id) => _openDriver(id),
+          onRemove: loading
+              ? null
+              : (id) => setState(() {
+                  selected.remove(id);
+                  comparison!.removeWhere((row) => row['id'] == id);
+                  if (comparison!.length < 2) comparison = null;
+                }),
         ),
       ];
     if (detail != null && contactOpen) return _contactPage();
@@ -753,7 +843,10 @@ class _ParentHomeState extends State<ParentHome> {
         .firstOrNull;
     return [
       _heading('Encuentra transporte'),
-      const Text('Busca un servicio que cubra tu comuna.'),
+      if (widget.auth.usesSyntheticData) ...[
+        const SizedBox(height: 12),
+        const FurgoSyntheticNotice(key: Key('synthetic-data-notice')),
+      ],
       const SizedBox(height: 8),
       Wrap(
         alignment: WrapAlignment.spaceBetween,
@@ -765,18 +858,18 @@ class _ParentHomeState extends State<ParentHome> {
                 ? null
                 : () {
                     setState(() {
-                      filtersOpen = true;
-                      filterDraft = commune ?? '';
+                      filtersOpen = !filtersOpen;
+                      if (filtersOpen) filterDraft = commune ?? '';
                     });
                     _top();
                     if (communes.isEmpty) _loadCommunes();
                   },
-            icon: const Icon(Icons.tune),
+            icon: Icon(filtersOpen ? Icons.expand_less : Icons.tune),
             label: Wrap(
               spacing: 8,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                const Text('Filtros'),
+                const Text('Comuna'),
                 if (commune != null) ...[
                   Semantics(
                     label: '1 filtro activo',
@@ -798,6 +891,69 @@ class _ParentHomeState extends State<ParentHome> {
           ),
         ],
       ),
+      if (filtersOpen)
+        ParentPanel(
+          key: const Key('commune-context-filter'),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text('Comuna de búsqueda', style: _type.titleMedium),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                key: const Key('commune-filter'),
+                initialValue: filterDraft,
+                isExpanded: true,
+                decoration: const InputDecoration(labelText: 'Comuna'),
+                items: [
+                  const DropdownMenuItem(
+                    value: '',
+                    child: Text('Todas las comunas'),
+                  ),
+                  ...communes.map(
+                    (row) => DropdownMenuItem(
+                      value: row['code'] as String,
+                      child: Text(row['display_name'] as String),
+                    ),
+                  ),
+                ],
+                onChanged: loading
+                    ? null
+                    : (value) => setState(() => filterDraft = value),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'La selección se aplica al buscar. Los resultados actuales se conservan.',
+                style: _type.bodySmall,
+              ),
+              Wrap(
+                spacing: 8,
+                children: [
+                  FilledButton(
+                    onPressed: loading
+                        ? null
+                        : () {
+                            commune = filterDraft == '' ? null : filterDraft;
+                            _search();
+                          },
+                    child: const Text('Buscar servicios'),
+                  ),
+                  TextButton(
+                    onPressed: loading
+                        ? null
+                        : () => setState(() => filterDraft = ''),
+                    child: const Text('Limpiar selección'),
+                  ),
+                  TextButton(
+                    onPressed: loading
+                        ? null
+                        : () => setState(() => filtersOpen = false),
+                    child: const Text('Cerrar filtro'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       if (communeName != null)
         ParentMetadata(Icons.location_on_outlined, communeName as String),
       if (selected.isNotEmpty)
@@ -811,7 +967,13 @@ class _ParentHomeState extends State<ParentHome> {
             ),
           ),
         ),
-      const SizedBox(height: 4),
+      const SizedBox(height: 12),
+      if (searched && drivers.isNotEmpty)
+        Text(
+          '${drivers.length} ${drivers.length == 1 ? 'servicio encontrado' : 'servicios encontrados'}',
+          style: _type.titleMedium,
+        ),
+      const SizedBox(height: 12),
       if (searched && drivers.isEmpty && !loading)
         ParentPanel(
           soft: true,
@@ -820,6 +982,22 @@ class _ParentHomeState extends State<ParentHome> {
             commune == null
                 ? 'No hay servicios disponibles por ahora.'
                 : 'No hay servicios disponibles en esta comuna. Prueba otra comuna.',
+          ),
+        ),
+      if (searched && drivers.isEmpty && commune != null && !loading)
+        FilledButton(
+          onPressed: () {
+            commune = null;
+            _search();
+          },
+          child: const Text('Buscar en todas las comunas'),
+        ),
+      if (drivers.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Text(
+            'Validación: revisión interna; no es una certificación de seguridad.',
+            style: _type.bodySmall,
           ),
         ),
       ...drivers.map(
@@ -844,11 +1022,21 @@ class _ParentHomeState extends State<ParentHome> {
     final routes = displayRoutes(driver, commune);
     final reviews = publicRows(driver['reviews']);
     return [
-      _back('Volver a Buscar', () {
-        detail = null;
-        message.clear();
-        consent = false;
-      }),
+      _back(
+        comparisonOrigin == null ? 'Volver a Buscar' : 'Volver a comparar',
+        () {
+          detail = null;
+          comparison = comparisonOrigin;
+          comparisonOrigin = null;
+          message.clear();
+          consent = false;
+        },
+      ),
+      if (widget.auth.usesSyntheticData)
+        const Padding(
+          padding: EdgeInsets.only(bottom: 12),
+          child: FurgoSyntheticNotice(key: Key('synthetic-data-notice')),
+        ),
       ParentPanel(
         key: const Key('service-hero'),
         soft: true,
@@ -976,7 +1164,7 @@ class _ParentHomeState extends State<ParentHome> {
         key: const Key('contact-recipient'),
         style: _type.titleMedium,
       ),
-      const SizedBox(height: 12),
+      const SizedBox(height: 8),
       ParentPanel(
         key: const Key('contact-summary'),
         soft: true,
@@ -990,7 +1178,7 @@ class _ParentHomeState extends State<ParentHome> {
             ),
             const SizedBox(height: 6),
             Text(
-              'Este correo se compartirá con ${detail!['display_name']} para facilitar el contacto.',
+              'Solo se comparte al enviar esta solicitud. No reserva transporte.',
               style: _type.bodySmall,
             ),
           ],
@@ -1003,10 +1191,13 @@ class _ParentHomeState extends State<ParentHome> {
         minLines: 1,
         maxLines: 3,
         maxLength: 500,
-        decoration: const InputDecoration(
-          labelText: 'Mensaje',
-          helperText: 'No incluyas datos de niños ni tu dirección.',
-          helperMaxLines: 3,
+        decoration: const InputDecoration(labelText: 'Mensaje'),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(top: 8, bottom: 12),
+        child: Text(
+          'No incluyas datos de niños ni tu dirección.',
+          style: _type.bodySmall,
         ),
       ),
       CheckboxListTile(
@@ -1066,13 +1257,18 @@ class _ParentHomeState extends State<ParentHome> {
           style: FilledButton.styleFrom(
             minimumSize: const Size(48, 56),
             disabledBackgroundColor: const Color(0xFFE0E4EA),
-            disabledForegroundColor: const Color(0xFF526176),
+            disabledForegroundColor: FurgoColors.muted,
           ),
           onPressed: loading || !consent ? null : _send,
           child: Text(sending ? 'Enviando solicitud…' : 'Enviar solicitud'),
         );
 
   List<Widget> _requestsPage() {
+    final pending = requests.where((r) => r['status'] == 'pending').length;
+    final orderedRequests = [
+      ...requests.where((r) => r['status'] == 'pending'),
+      ...requests.where((r) => r['status'] != 'pending'),
+    ];
     if (requestDetail != null) {
       final row = requestDetail!;
       final status = row['status'] as String;
@@ -1084,6 +1280,17 @@ class _ParentHomeState extends State<ParentHome> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _requestState(status),
+              const SizedBox(height: 8),
+              Text(switch (status) {
+                'pending' =>
+                  'El servicio aún no responde. Puedes consultar el estado aquí.',
+                'accepted' =>
+                  'Ya puedes contactar al servicio con el correo compartido.',
+                'declined' =>
+                  'El servicio no aceptó el contacto. Puedes buscar otra opción.',
+                'cancelled' => 'Esta solicitud ya no espera una respuesta.',
+                _ => 'Actualiza la solicitud para comprobar su estado.',
+              }),
               const SizedBox(height: 12),
               Text(
                 row['driver_display_name'] as String,
@@ -1094,18 +1301,6 @@ class _ParentHomeState extends State<ParentHome> {
                 Icons.calendar_today_outlined,
                 'Enviada el ${parentDate(row['created_at'] as String)}',
               ),
-              const SizedBox(height: 12),
-              Text(switch (status) {
-                'pending' =>
-                  'El servicio aún no ha aceptado. Su correo estará disponible si acepta tu solicitud.',
-                'accepted' =>
-                  'El servicio aceptó tu solicitud. Ya puedes coordinar el contacto.',
-                'declined' =>
-                  'El servicio rechazó esta solicitud. Puedes buscar otras opciones.',
-                'cancelled' =>
-                  'Cancelaste esta solicitud. Ya no espera una respuesta.',
-                _ => 'Actualiza la solicitud para confirmar su estado.',
-              }),
             ],
           ),
         ),
@@ -1152,7 +1347,7 @@ class _ParentHomeState extends State<ParentHome> {
         ),
         if (status == 'pending') ...[
           OutlinedButton(
-            onPressed: loading ? null : _cancel,
+            onPressed: loading ? null : _confirmCancel,
             child: const Text('Cancelar solicitud'),
           ),
           const SizedBox(height: 8),
@@ -1171,6 +1366,10 @@ class _ParentHomeState extends State<ParentHome> {
     }
     return [
       _heading('Tus solicitudes'),
+      if (requestsLoaded && requests.isNotEmpty)
+        Text(
+          '$pending ${pending == 1 ? 'pendiente' : 'pendientes'} de respuesta · ${requests.length} en total',
+        ),
       Align(
         alignment: Alignment.centerRight,
         child: TextButton.icon(
@@ -1195,47 +1394,59 @@ class _ParentHomeState extends State<ParentHome> {
           child: const Text('Ir a Buscar'),
         ),
       ],
-      ...requests
-          .take(shownRequests)
-          .map(
-            (row) => ParentPanel(
-              key: ValueKey('request-card-${row['id']}'),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _requestState(row['status'] as String),
-                  const SizedBox(height: 8),
-                  Text(
-                    row['driver_display_name'] as String,
-                    style: _type.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+      if (requests.isNotEmpty)
+        ParentPanel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text('Solicitudes de contacto', style: _type.titleMedium),
+              for (final row in orderedRequests.take(shownRequests)) ...[
+                const Divider(),
+                if (row == orderedRequests.first && pending > 0)
+                  Text('Pendientes', style: _type.titleSmall),
+                if (pending < orderedRequests.length &&
+                    row == orderedRequests[pending])
+                  Text('Historial', style: _type.titleSmall),
+                Padding(
+                  key: ValueKey('request-card-${row['id']}'),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _requestState(row['status'] as String),
+                      const SizedBox(height: 8),
+                      Text(
+                        row['driver_display_name'] as String,
+                        style: _type.titleMedium,
+                      ),
+                      Text(
+                        'Enviada el ${parentDate(row['created_at'] as String)}',
+                        style: _type.bodySmall,
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton.icon(
+                          onPressed: loading
+                              ? null
+                              : () => _openRequest(row['id'] as int),
+                          icon: const Icon(Icons.arrow_forward),
+                          label: const Text('Ver solicitud'),
+                        ),
+                      ),
+                    ],
                   ),
-                  ParentMetadata(
-                    Icons.calendar_today_outlined,
-                    'Enviada el ${parentDate(row['created_at'] as String)}',
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton.icon(
-                      onPressed: loading
-                          ? null
-                          : () => _openRequest(row['id'] as int),
-                      icon: const Icon(Icons.arrow_forward),
-                      label: const Text('Ver solicitud'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
+              ],
+            ],
           ),
+        ),
       if (requests.length > shownRequests) ...[
         Semantics(
           liveRegion: true,
           child: Text('$shownRequests de ${requests.length} solicitudes'),
         ),
         OutlinedButton(
-          onPressed: () => setState(() => shownRequests += 3),
+          onPressed: () => setState(() => shownRequests += 10),
           child: const Text('Ver solicitudes anteriores'),
         ),
       ],
@@ -1251,11 +1462,6 @@ class _ParentHomeState extends State<ParentHome> {
   List<Widget> _accountPage() {
     if (nameOpen)
       return [
-        _back('Volver a Mi cuenta', () {
-          nameOpen = false;
-          formError = null;
-          name.text = profile!['display_name'] as String;
-        }),
         _heading('Editar nombre'),
         TextField(
           controller: name,
@@ -1271,44 +1477,13 @@ class _ParentHomeState extends State<ParentHome> {
       ];
     final email = widget.auth.email ?? profile?['email'];
     return [
-      _heading('Tu cuenta'),
-      ParentPanel(
-        soft: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                const ParentIcon(Icons.person_outline),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const ParentStateLabel(
-                        'Apoderado/a',
-                        icon: Icons.school_outlined,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        profile?['display_name'] as String? ??
-                            widget.auth.displayName ??
-                            '',
-                        style: _type.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const ParentMetadata(Icons.alternate_email, 'Correo de cuenta'),
-            if (email != null) SelectableText(email as String),
-          ],
-        ),
+      _heading('Mi cuenta'),
+      FurgoAccountSummary(
+        role: 'Apoderado/a',
+        name: profile?['display_name'] as String? ?? widget.auth.displayName,
+        email: email as String?,
       ),
+      const SizedBox(height: 16),
       if (profile != null)
         Card(
           child: ListTile(
@@ -1321,6 +1496,7 @@ class _ParentHomeState extends State<ParentHome> {
                 : () {
                     setState(() {
                       nameOpen = true;
+                      name.text = profile!['display_name'] as String;
                       formError = null;
                     });
                     _top();
@@ -1352,10 +1528,7 @@ class _ParentHomeState extends State<ParentHome> {
   Widget build(BuildContext context) {
     if (!active)
       return const Scaffold(body: SafeArea(child: SizedBox.shrink()));
-    return Theme(
-      data: parentTheme(Theme.of(context)),
-      child: Builder(builder: _buildWorkspace),
-    );
+    return _buildWorkspace(context);
   }
 
   Widget _buildWorkspace(BuildContext context) {
@@ -1365,118 +1538,240 @@ class _ParentHomeState extends State<ParentHome> {
       _ => _accountPage(),
     };
     return PopScope(
-      canPop: !_subpage && tab == 0 && !sending,
+      canPop:
+          (!accountOpen && helpOpen) ||
+          LegalScope.documentOpenOf(context) ||
+          (!accountOpen && !_subpage && !filtersOpen && tab == 0 && !sending),
       onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) _androidBack();
+        if (!didPop &&
+            (accountOpen || !helpOpen) &&
+            !LegalScope.documentOpenOf(context))
+          _androidBack();
       },
       child: ScaffoldMessenger(
         key: messenger,
         child: Scaffold(
           appBar: AppBar(
-            toolbarHeight: 60,
-            title: Image.asset(
-              'assets/furgoplus-logo.png',
-              width: 188,
-              height: 40,
-              fit: BoxFit.contain,
-              semanticLabel: 'FurgoPlus · Transporte Escolar',
-            ),
+            toolbarHeight: 32 + MediaQuery.textScalerOf(context).scale(24),
+            leading: accountOpen
+                ? IconButton(
+                    tooltip: 'Volver',
+                    onPressed: _androidBack,
+                    icon: const Icon(Icons.arrow_back),
+                  )
+                : null,
+            title: accountOpen
+                ? Text('Cuenta', style: Theme.of(context).textTheme.titleMedium)
+                : Image.asset(
+                    'assets/furgoplus-logo.png',
+                    width: 136,
+                    height: 36,
+                    fit: BoxFit.contain,
+                    semanticLabel: 'FurgoPlus Transporte Escolar',
+                  ),
             backgroundColor: Colors.white,
             surfaceTintColor: Colors.transparent,
             centerTitle: false,
+            actions: [
+              if (!accountOpen) ...[
+                if (MediaQuery.textScalerOf(context).scale(16) > 24)
+                  IconButton(
+                    key: const Key('open-parent-account'),
+                    tooltip: 'Cuenta',
+                    onPressed: sending ? null : _openAccount,
+                    icon: const Icon(Icons.account_circle_outlined),
+                  )
+                else
+                  TextButton.icon(
+                    key: const Key('open-parent-account'),
+                    onPressed: sending ? null : _openAccount,
+                    icon: const Icon(Icons.account_circle_outlined),
+                    label: const Text('Cuenta'),
+                  ),
+              ],
+            ],
           ),
-          body: SafeArea(
-            child: Column(
-              children: [
-                if (loading)
-                  const LinearProgressIndicator(
-                    semanticsLabel: 'Cargando información',
-                  ),
-                Expanded(
-                  child: ListView(
-                    key: ValueKey(
-                      'parent-page-$tab-$filtersOpen-$contactOpen-$nameOpen-${detail?['id']}-${requestDetail?['id']}-${comparison != null}',
-                    ),
-                    controller: scroll,
-                    padding: EdgeInsets.fromLTRB(
-                      16,
-                      tab == 0 && !_subpage ? 8 : 16,
-                      16,
-                      tab == 0 && !_subpage ? 24 : 16,
-                    ),
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    children: [
-                      if (feedback != null)
-                        Semantics(
-                          liveRegion: true,
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: Text(feedback!),
-                          ),
+          body: Stack(
+            children: [
+              Offstage(
+                offstage: accountOpen,
+                child: Offstage(
+                  offstage: helpOpen,
+                  child: TickerMode(
+                    enabled: !helpOpen && !accountOpen,
+                    child: FocusScope(
+                      canRequestFocus: !helpOpen && !accountOpen,
+                      descendantsAreFocusable: !helpOpen && !accountOpen,
+                      child: SafeArea(
+                        child: Column(
+                          children: [
+                            if (loading)
+                              const LinearProgressIndicator(
+                                semanticsLabel: 'Cargando información',
+                              ),
+                            Expanded(
+                              child: Center(
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 720,
+                                  ),
+                                  child: ListView(
+                                    key: ValueKey(
+                                      'parent-page-$tab-$filtersOpen-$contactOpen-$nameOpen-${detail?['id']}-${requestDetail?['id']}-${comparison != null}',
+                                    ),
+                                    controller: scroll,
+                                    padding: EdgeInsets.fromLTRB(
+                                      16,
+                                      tab == 0 && !_subpage ? 8 : 16,
+                                      16,
+                                      tab == 0 && !_subpage ? 24 : 16,
+                                    ),
+                                    keyboardDismissBehavior:
+                                        ScrollViewKeyboardDismissBehavior
+                                            .onDrag,
+                                    children: [
+                                      if (feedback != null)
+                                        Semantics(
+                                          liveRegion: true,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 12,
+                                            ),
+                                            child: Text(feedback!),
+                                          ),
+                                        ),
+                                      if (error != null) ...[
+                                        _errorNotice(
+                                          error!,
+                                          key: const Key('parent-error'),
+                                        ),
+                                        if (retry != null)
+                                          TextButton(
+                                            onPressed: loading ? null : retry,
+                                            child: const Text('Reintentar'),
+                                          ),
+                                        if (error ==
+                                            'Este servicio ya no está disponible.')
+                                          TextButton(
+                                            onPressed: loading ? null : _search,
+                                            child: const Text(
+                                              'Volver a Buscar',
+                                            ),
+                                          ),
+                                      ],
+                                      ...children,
+                                      const SizedBox(height: 16),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            if (tab == 0 && !_subpage && selected.length >= 2)
+                              SafeArea(
+                                key: actionArea,
+                                top: false,
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    8,
+                                    16,
+                                    8,
+                                  ),
+                                  child: FilledButton.icon(
+                                    key: const Key('compare-selected'),
+                                    onPressed: loading ? null : _compare,
+                                    icon: const Icon(Icons.compare_arrows),
+                                    label: Text(
+                                      'Comparar servicios · ${selected.length}',
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
-                      if (error != null) ...[
-                        _errorNotice(error!, key: const Key('parent-error')),
-                        if (retry != null)
-                          TextButton(
-                            onPressed: loading ? null : retry,
-                            child: const Text('Reintentar'),
-                          ),
-                        if (error == 'Este servicio ya no está disponible.')
-                          TextButton(
-                            onPressed: loading ? null : _search,
-                            child: const Text('Volver a Buscar'),
-                          ),
-                      ],
-                      ...children,
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                ),
-                if (tab == 0 && !_subpage && selected.length >= 2)
-                  SafeArea(
-                    key: actionArea,
-                    top: false,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                      child: FilledButton.icon(
-                        key: const Key('compare-selected'),
-                        onPressed: loading ? null : _compare,
-                        icon: const Icon(Icons.compare_arrows),
-                        label: Text('Comparar servicios · ${selected.length}'),
                       ),
                     ),
                   ),
+                ),
+              ),
+              if (helpVisited)
+                Offstage(
+                  offstage: !helpOpen || accountOpen,
+                  child: TickerMode(
+                    enabled: helpOpen && !accountOpen,
+                    child: FocusScope(
+                      canRequestFocus: helpOpen && !accountOpen,
+                      descendantsAreFocusable: helpOpen && !accountOpen,
+                      child: PlanHelpScreen(
+                        key: ValueKey('parent-help-$sessionVersion'),
+                        auth: widget.auth,
+                        embedded: true,
+                        handleBack: helpOpen && !accountOpen,
+                        activePage: helpOpen && !accountOpen,
+                        close: () => setState(() => helpOpen = false),
+                      ),
+                    ),
+                  ),
+                ),
+              if (accountOpen)
+                SafeArea(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 720),
+                      child: ListView(
+                        controller: accountScroll,
+                        padding: const EdgeInsets.all(20),
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        children: [
+                          if (loading)
+                            const LinearProgressIndicator(
+                              semanticsLabel: 'Cargando cuenta',
+                            ),
+                          if (error != null) _errorNotice(error!),
+                          if (feedback != null)
+                            FurgoMessage(feedback!, success: true),
+                          ..._accountPage(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          bottomNavigationBar: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.viewInsetsOf(context).bottom,
+            ),
+            child: NavigationBar(
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+              height: 56 + MediaQuery.textScalerOf(context).scale(20),
+              selectedIndex: helpOpen ? 2 : tab,
+              onDestinationSelected: sending
+                  ? null
+                  : (value) {
+                      _navigate(value == 2 ? 3 : value);
+                      if (value == 0 && !searched) _search();
+                      if (value == 1 && !requestsLoaded) _loadRequests();
+                    },
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.search),
+                  label: 'Buscar',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.mail_outline),
+                  label: 'Solicitudes',
+                ),
+                NavigationDestination(
+                  key: Key('parent-nav-help'),
+                  icon: Icon(Icons.help_outline),
+                  selectedIcon: Icon(Icons.help),
+                  label: 'Ayuda',
+                ),
               ],
             ),
           ),
-          bottomNavigationBar: MediaQuery.viewInsetsOf(context).bottom > 0
-              ? null
-              : NavigationBar(
-                  selectedIndex: tab,
-                  onDestinationSelected: sending
-                      ? null
-                      : (value) {
-                          _navigate(value);
-                          if (value == 0) _search();
-                          if (value == 1) _loadRequests();
-                          if (value == 2) _loadProfile();
-                        },
-                  destinations: const [
-                    NavigationDestination(
-                      icon: Icon(Icons.search),
-                      label: 'Buscar',
-                    ),
-                    NavigationDestination(
-                      icon: Icon(Icons.mail_outline),
-                      label: 'Solicitudes',
-                    ),
-                    NavigationDestination(
-                      icon: Icon(Icons.person_outline),
-                      label: 'Mi cuenta',
-                    ),
-                  ],
-                ),
         ),
       ),
     );

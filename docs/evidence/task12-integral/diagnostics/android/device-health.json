@@ -1,0 +1,8 @@
+{
+  "at": "2026-10-31T15:27:37.296229+00:00",
+  "reverse18082Present": true,
+  "healthHttpStatus": null,
+  "exitCode": 0,
+  "diagnostic": "",
+  "mode": "GET health only from Android loopback; no login, build, install or mapping changes"
+}

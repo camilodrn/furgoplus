@@ -25,28 +25,45 @@ class AuthController extends ChangeNotifier {
   String? error;
   int sessionVersion = 0;
 
+  // .test is reserved for testing; do not infer synthetic data from route labels.
+  bool get usesSyntheticData =>
+      api.config.demoMode ||
+      const bool.fromEnvironment('FURGOPLUS_SYNTHETIC_DATA') ||
+      (email?.trim().toLowerCase().endsWith('.test') ?? false);
+
   void expire() {
     sessionVersion++;
     displayName = null;
     email = null;
-    unawaited(api.clear());
+    unawaited(api.clear().catchError((Object _) {}));
     error = 'Tu sesión caducó. Inicia sesión de nuevo para continuar.';
     state = AuthState.signedOut;
     notifyListeners();
   }
 
   void _home(Map<String, dynamic> identity) {
-    api.invalidateRequests();
-    sessionVersion++;
-    email = identity['email'] as String?;
-    displayName = identity['display_name'] is String
+    // Validate before advancing the identity boundary. If parsing throws after
+    // sessionVersion++, restore/login would discard their own error as stale
+    // and strand the screen in AuthState.restoring.
+    final nextEmail = identity['email'];
+    final role = identity['role'];
+    if (nextEmail is! String || nextEmail.isEmpty || role is! String) {
+      throw const FormatException('Invalid session identity');
+    }
+    final nextName = identity['display_name'] is String
         ? identity['display_name'] as String
-        : identity['email'] as String?;
-    state = switch (identity['role']) {
+        : nextEmail;
+    final nextState = switch (role) {
       'parent' => AuthState.parent,
       'driver' => AuthState.driver,
       _ => AuthState.unsupported,
     };
+    api.invalidateRequests();
+    sessionVersion++;
+    email = nextEmail;
+    displayName = nextName;
+    error = null;
+    state = nextState;
     notifyListeners();
   }
 
@@ -55,6 +72,7 @@ class AuthController extends ChangeNotifier {
     api.invalidateRequests();
     displayName = email = null;
     state = AuthState.restoring;
+    error = null;
     notifyListeners();
     try {
       await api.restoreCookies();
@@ -67,17 +85,16 @@ class AuthController extends ChangeNotifier {
     } on AuthFailure catch (failure) {
       if (version != sessionVersion) return;
       if (failure.code == 'not_authenticated') {
-        await api.clear();
-        if (version != sessionVersion) return;
         state = AuthState.signedOut;
       } else {
-        error = 'No se pudo restaurar la sesión. Inténtalo de nuevo.';
+        error = loadFailureMessage(failure, 'tu sesión');
         state = AuthState.error;
       }
       notifyListeners();
-    } catch (_) {
+    } catch (cause) {
       if (version != sessionVersion) return;
-      error = 'No se pudo restaurar la sesión.';
+      api.invalidateRequests();
+      error = loadFailureMessage(cause, 'tu sesión');
       state = AuthState.error;
       notifyListeners();
     }
@@ -99,7 +116,8 @@ class AuthController extends ChangeNotifier {
       error = _authError(failure, registering: true);
     } catch (_) {
       if (version != sessionVersion) return;
-      error = 'No se pudo crear la cuenta.';
+      error =
+          'No se pudo confirmar el registro. Intenta iniciar sesión antes de repetirlo.';
     }
     notifyListeners();
   }
@@ -120,14 +138,20 @@ class AuthController extends ChangeNotifier {
       return;
     } on AuthFailure catch (failure) {
       if (version != sessionVersion) return;
-      await api.clear();
+      try {
+        await api.clear();
+      } catch (_) {
+        /* Bounded cleanup must not strand login. */
+      }
       if (version != sessionVersion) return;
       error = _authError(failure);
-    } catch (_) {
+    } catch (cause) {
       if (version != sessionVersion) return;
-      await api.clear();
-      if (version != sessionVersion) return;
-      error = 'No se pudo iniciar sesión.';
+      api.invalidateRequests();
+      error = loadFailureMessage(cause, 'tu sesión');
+      state = AuthState.error;
+      notifyListeners();
+      return;
     }
     state = AuthState.signedOut;
     notifyListeners();
@@ -140,7 +164,12 @@ class AuthController extends ChangeNotifier {
     error = null;
     state = AuthState.restoring;
     notifyListeners();
-    final confirmed = await api.logout();
+    var confirmed = false;
+    try {
+      confirmed = await api.logout();
+    } catch (_) {
+      /* Local cleanup may fail. */
+    }
     if (version != sessionVersion) return;
     state = confirmed ? AuthState.signedOut : AuthState.logoutUnconfirmed;
     notifyListeners();

@@ -1,0 +1,47 @@
+{
+  "at": "2026-10-31T15:14:15.652Z",
+  "session": {
+    "status": 200,
+    "role": "admin"
+  },
+  "loginAttempts": 1,
+  "loginAuthenticated": true,
+  "blocked": [],
+  "authRequests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 200
+    }
+  ]
+}

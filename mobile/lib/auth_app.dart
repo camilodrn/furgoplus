@@ -5,6 +5,7 @@ import 'api_config.dart';
 import 'auth_controller.dart';
 import 'driver_home.dart';
 import 'furgo_theme.dart';
+import 'furgo_widgets.dart';
 import 'legal_access.dart';
 import 'parent_home.dart';
 
@@ -115,33 +116,9 @@ class _AuthAppState extends State<AuthApp> {
   }
 
   Widget notice(String text, {bool success = false, bool error = false}) =>
-      Semantics(
-        liveRegion: true,
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          margin: const EdgeInsets.only(bottom: 24),
-          decoration: BoxDecoration(
-            color: success
-                ? const Color(0xFFE9F6ED)
-                : error
-                ? const Color(0xFFFFF0F1)
-                : const Color(0xFFFFF5DF),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 16,
-              height: 1.5,
-              color: success
-                  ? const Color(0xFF16643F)
-                  : error
-                  ? const Color(0xFFA32735)
-                  : const Color(0xFF835313),
-            ),
-          ),
-        ),
+      Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: FurgoMessage(text, success: success, error: error),
       );
 
   Widget authContent(BuildContext context) {
@@ -177,7 +154,7 @@ class _AuthAppState extends State<AuthApp> {
           ),
           const SizedBox(height: 24),
           notice(
-            'No se pudo restaurar la sesión. Comprueba tu conexión y vuelve a intentarlo.',
+            controller.error ?? 'No se pudo restaurar la sesión. Reintenta.',
             error: true,
           ),
           FilledButton(
@@ -232,24 +209,26 @@ class _AuthAppState extends State<AuthApp> {
               style: headingStyle,
             ),
           ),
-          const SizedBox(height: 16),
-          Text(
-            register
-                ? (illustrative
-                      ? 'Puedes explorar el formulario. El registro público está cerrado en esta demostración.'
-                      : 'Esta cuenta es para apoderados y familias. Después podrás buscar transporte escolar.')
-                : 'Coordina tu transporte escolar con FurgoPlus.',
-          ),
-          const SizedBox(height: 16),
-          Text(
-            register
-                ? (illustrative
-                      ? 'No ingreses datos reales. Las cuentas ficticias las prepara el equipo.'
-                      : 'Entorno de demostración: usa únicamente información sintética de prueba.')
-                : 'Apoderados y conductores pueden iniciar sesión aquí. Los conductores crean su cuenta en la web.',
-            style: supportStyle,
-          ),
-          SizedBox(height: register ? 32 : 24),
+          if (register) ...[
+            const SizedBox(height: 8),
+            Text(
+              illustrative
+                  ? 'Explora el registro con datos ficticios. Las cuentas de esta demostración las prepara el equipo.'
+                  : 'Para apoderados y familias que buscan transporte escolar.',
+              style: supportStyle,
+            ),
+            if (!illustrative) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Usa solo datos de prueba en esta demostración.',
+                style: supportStyle,
+              ),
+            ],
+          ] else ...[
+            const SizedBox(height: 8),
+            Text('Te damos la bienvenida.', style: supportStyle),
+          ],
+          const SizedBox(height: 24),
           if (register) ...[
             TextField(
               controller: name,
@@ -344,7 +323,7 @@ class _AuthAppState extends State<AuthApp> {
           const Divider(),
           const SizedBox(height: 16),
           if (!register) ...[
-            const Text('¿Aún no tienes cuenta?'),
+            const Text('¿Buscas transporte para tu familia?'),
             const SizedBox(height: 16),
           ],
           OutlinedButton(
@@ -378,6 +357,7 @@ class _AuthAppState extends State<AuthApp> {
     listenable: widget.controller,
     builder: (context, child) => MaterialApp(
       title: 'FurgoPlus',
+      debugShowCheckedModeBanner: false,
       theme: furgoTheme(),
       home: LegalScope(
         key: ValueKey(
@@ -408,11 +388,13 @@ class _AuthAppState extends State<AuthApp> {
                                 alignment: Alignment.centerLeft,
                                 child: Image.asset(
                                   'assets/furgoplus-logo.png',
-                                  width: 204,
+                                  width: 176,
+                                  height: 52,
+                                  fit: BoxFit.contain,
                                   semanticLabel: 'FurgoPlus Transporte Escolar',
                                 ),
                               ),
-                              const SizedBox(height: 24),
+                              const SizedBox(height: 32),
                               authContent(context),
                             ],
                           ),

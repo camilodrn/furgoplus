@@ -1,4 +1,296 @@
 // Generated from backend/openapi.json. Do not edit by hand.
+export type HelpCenter = {
+  version: string;
+  service_notice: string;
+  privacy_notice: string;
+  articles: {
+    id: string;
+    role: "driver" | "parent" | "all";
+    category: string;
+    title: string;
+    body: string;
+  }[];
+  assistant_modes: ("faq" | "contextual")[];
+};
+export type SupportTickets = {
+  results: {
+    id: number;
+    subject: string;
+    severity: 1 | 2 | 3 | 4;
+    state: "open" | "in_progress" | "waiting_user" | "resolved" | "closed";
+    priority: "standard" | "preferred" | "priority";
+    priority_at_creation: "standard" | "preferred" | "priority";
+    version: number;
+    created_at: string;
+    updated_at: string;
+  }[];
+  count: number;
+};
+export type SupportTicket = {
+  id: number;
+  subject: string;
+  severity: 1 | 2 | 3 | 4;
+  state: "open" | "in_progress" | "waiting_user" | "resolved" | "closed";
+  priority: "standard" | "preferred" | "priority";
+  priority_at_creation: "standard" | "preferred" | "priority";
+  version: number;
+  created_at: string;
+  updated_at: string;
+  allowed_transitions: (
+    | "open"
+    | "in_progress"
+    | "waiting_user"
+    | "resolved"
+    | "closed"
+  )[];
+  events: {
+    id: number;
+    author_id: number;
+    author_role: "driver" | "parent" | "admin";
+    body: string;
+    from_state: string;
+    to_state: "open" | "in_progress" | "waiting_user" | "resolved" | "closed";
+    reason: string;
+    occurred_at: string;
+  }[];
+};
+export type SupportTicketInput = {
+  subject: string;
+  body: string;
+  severity: 1 | 2 | 3 | 4;
+  privacy_confirmed: true;
+};
+export type SupportReplyInput = { body: string; expected_version: number };
+export type AdminSupportInput = {
+  body: string;
+  expected_version: number;
+  state: "open" | "in_progress" | "waiting_user" | "resolved" | "closed";
+  reason: string;
+};
+export type AssistantInput = { question: string; mode: "faq" | "contextual" };
+export type AssistantAnswer = {
+  answer: string;
+  article_id: string | null;
+  context: { label: string; value: string }[];
+  can_offer_ticket: true;
+  kind: "rules_and_content";
+  content_version: string;
+};
+export type MonthlyReport = {
+  period: {
+    month: string;
+    start: string;
+    end_exclusive: string;
+    timezone: "America/Santiago";
+  };
+  generated_at: string;
+  summary: {
+    payments: {
+      pending: { count: number; amount_clp: number };
+      paid: { count: number; amount_clp: number };
+      void: { count: number; amount_clp: number };
+    };
+    payment_count: number;
+    non_void_amount_clp: number;
+    runs: { planned: number; in_progress: number; completed: number };
+    run_count: number;
+    recorded_capacity_total: number;
+    contacts: {
+      pending: number;
+      accepted: number;
+      declined: number;
+      cancelled: number;
+    };
+    contact_count: number;
+  };
+  current_capacity: {
+    as_of: string;
+    routes: {
+      route_id: number;
+      status: string;
+      seat_capacity: number;
+      next_service_date: string;
+      used_seats: number;
+      available_seats: number;
+    }[];
+  };
+  notes: string[];
+};
+export type AdvancedReport = {
+  period: {
+    month: string;
+    start: string;
+    end_exclusive: string;
+    timezone: "America/Santiago";
+  };
+  generated_at: string;
+  summary: {
+    payments: {
+      pending: { count: number; amount_clp: number };
+      paid: { count: number; amount_clp: number };
+      void: { count: number; amount_clp: number };
+    };
+    payment_count: number;
+    non_void_amount_clp: number;
+    runs: { planned: number; in_progress: number; completed: number };
+    run_count: number;
+    recorded_capacity_total: number;
+    contacts: {
+      pending: number;
+      accepted: number;
+      declined: number;
+      cancelled: number;
+    };
+    contact_count: number;
+  };
+  current_capacity: {
+    as_of: string;
+    routes: {
+      route_id: number;
+      status: string;
+      seat_capacity: number;
+      next_service_date: string;
+      used_seats: number;
+      available_seats: number;
+    }[];
+  };
+  notes: string[];
+  previous: {
+    period: {
+      month: string;
+      start: string;
+      end_exclusive: string;
+      timezone: "America/Santiago";
+    };
+    summary: {
+      payments: {
+        pending: { count: number; amount_clp: number };
+        paid: { count: number; amount_clp: number };
+        void: { count: number; amount_clp: number };
+      };
+      payment_count: number;
+      non_void_amount_clp: number;
+      runs: { planned: number; in_progress: number; completed: number };
+      run_count: number;
+      recorded_capacity_total: number;
+      contacts: {
+        pending: number;
+        accepted: number;
+        declined: number;
+        cancelled: number;
+      };
+      contact_count: number;
+    };
+  };
+  details: {
+    payments: {
+      id: number;
+      service_period_start: string;
+      service_period_end: string;
+      due_on: string;
+      status: string;
+      amount_clp: number;
+    }[];
+    runs: {
+      id: number;
+      route_id: number;
+      service_date: string;
+      state: string;
+      seat_capacity_snapshot: number;
+      start_time_snapshot: string;
+      end_time_snapshot: string;
+    }[];
+    contacts: {
+      id: number;
+      created_at: string;
+      status: string;
+      resolved_at: string | null;
+    }[];
+  };
+};
+export type DriverCapabilities = {
+  catalog_version: string;
+  evaluated_at: string;
+  plan: {
+    code: "basic" | "pro" | "elite";
+    label: string;
+    monthly_price_clp: number;
+    currency: "CLP";
+    billing_period: "month";
+    commercial_proposal: true;
+    automatic_billing: false;
+    support_priority: "standard" | "preferred" | "priority";
+  } | null;
+  subscription: {
+    status: string;
+    starts_at: string | null;
+    ends_at: string | null;
+    effective: boolean;
+  } | null;
+  blockers: string[];
+  capabilities: {
+    "operations.core": {
+      included_in_plan: boolean;
+      implemented: boolean;
+      enabled: boolean;
+      blockers: string[];
+    };
+    "dashboard.basic": {
+      included_in_plan: boolean;
+      implemented: boolean;
+      enabled: boolean;
+      blockers: string[];
+    };
+    "reports.monthly.read": {
+      included_in_plan: boolean;
+      implemented: boolean;
+      enabled: boolean;
+      blockers: string[];
+    };
+    "reports.detail.read": {
+      included_in_plan: boolean;
+      implemented: boolean;
+      enabled: boolean;
+      blockers: string[];
+    };
+    "reports.xlsx.export": {
+      included_in_plan: boolean;
+      implemented: boolean;
+      enabled: boolean;
+      blockers: string[];
+    };
+    "analytics.period_comparison": {
+      included_in_plan: boolean;
+      implemented: boolean;
+      enabled: boolean;
+      blockers: string[];
+    };
+    "help.center": {
+      included_in_plan: boolean;
+      implemented: boolean;
+      enabled: boolean;
+      blockers: string[];
+    };
+    "support.requests": {
+      included_in_plan: boolean;
+      implemented: boolean;
+      enabled: boolean;
+      blockers: string[];
+    };
+    "assistant.faq": {
+      included_in_plan: boolean;
+      implemented: boolean;
+      enabled: boolean;
+      blockers: string[];
+    };
+    "assistant.contextual": {
+      included_in_plan: boolean;
+      implemented: boolean;
+      enabled: boolean;
+      blockers: string[];
+    };
+  };
+};
 export type Health = { status: "ok" };
 export type Csrf = { csrf_token: string };
 export type Identity = {

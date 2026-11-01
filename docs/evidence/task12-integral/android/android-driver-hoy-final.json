@@ -1,0 +1,19 @@
+{
+  "name": "android-driver-hoy-final",
+  "role": "conductor",
+  "screen": "D01",
+  "at": "2026-10-31T15:14:03.859645+00:00",
+  "platform": "Samsung A54 physical Android 16 / Flutter current main.dart",
+  "model": "SM-A546E",
+  "resolution": {
+    "width": 1080,
+    "height": 2340
+  },
+  "densityDpi": 450,
+  "fontScale": "1.1",
+  "package": "com.example.furgoplus.task12",
+  "apkSha256": "22f795cef084bac1653b1e711397378247f27db4f2468409327d55897241c0a8",
+  "API_BASE_URL": "http://127.0.0.1:18082",
+  "inspectedByAgent": false,
+  "humanReviewed": false
+}

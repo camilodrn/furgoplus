@@ -6,6 +6,11 @@ import 'package:flutter/services.dart';
 class LegalScope extends StatefulWidget {
   const LegalScope({super.key, required this.child});
   final Widget child;
+  static bool documentOpenOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<_LegalActions>()
+          ?.documentOpen ??
+      false;
 
   @override
   State<LegalScope> createState() => _LegalScopeState();
@@ -38,6 +43,7 @@ class _LegalScopeState extends State<LegalScope> {
 
   @override
   Widget build(BuildContext context) => _LegalActions(
+    documentOpen: selected != null,
     open: (name) {
       returnFocus = FocusManager.instance.primaryFocus;
       FocusManager.instance.primaryFocus?.unfocus();
@@ -72,11 +78,17 @@ class _LegalScopeState extends State<LegalScope> {
 }
 
 class _LegalActions extends InheritedWidget {
-  const _LegalActions({required this.open, required super.child});
+  const _LegalActions({
+    required this.open,
+    required this.documentOpen,
+    required super.child,
+  });
+  final bool documentOpen;
   final void Function(String) open;
 
   @override
-  bool updateShouldNotify(_LegalActions oldWidget) => false;
+  bool updateShouldNotify(_LegalActions oldWidget) =>
+      documentOpen != oldWidget.documentOpen;
 }
 
 class LegalLinks extends StatelessWidget {
@@ -92,7 +104,7 @@ class LegalLinks extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         side: BorderSide.none,
         textStyle: const TextStyle(
-          fontSize: 17,
+          fontSize: 14,
           height: 1.4,
           fontWeight: FontWeight.w500,
           decoration: TextDecoration.underline,

@@ -1,0 +1,526 @@
+/* Responsive corrections only. The existing palette and composition stay in prototype.css. */
+:root {
+  --review-height: 56px;
+  --usable-height: 100dvh;
+  --visual-top: 0px;
+}
+body {
+  overflow-wrap: anywhere;
+}
+img {
+  max-width: 100%;
+}
+:where(
+  .page-heading,
+  .panel-head,
+  .task-row,
+  .document-row,
+  .split,
+  .result-heading,
+  .pager,
+  .plan-summary,
+  .compare-dock,
+  .result-bottom
+) {
+  flex-wrap: wrap;
+}
+:where(
+    .page-heading,
+    .panel-head,
+    .task-row,
+    .document-row,
+    .split,
+    .notice,
+    .topbar,
+    .appbar,
+    .form-grid,
+    .cols,
+    .request-layout
+  )
+  > * {
+  min-width: 0;
+}
+.btn {
+  max-width: 100%;
+  white-space: normal;
+  min-width: 44px;
+}
+.btn.compact,
+.text-button,
+.back-link,
+.nav a.subnav,
+.disclosure summary,
+.passenger-row summary,
+.pager button,
+.page-size select {
+  min-height: 44px;
+}
+.pager button,
+.icon-button {
+  min-width: 44px;
+  flex-shrink: 0;
+}
+.text-button,
+.back-link,
+.tabs a,
+.tabs button {
+  min-width: 44px;
+}
+/* Inline anchors ignore min-height. Give the existing text action a real box. */
+.text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+}
+/* Preserve the existing scrollable filter strip without shrinking its labels. */
+.screen-solicitudes .tabs button {
+  flex-shrink: 0;
+}
+.review-bar {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.review-bar > *,
+.review-tabs,
+.review-tools,
+.review-tabs a {
+  flex-shrink: 0;
+}
+.review-tools {
+  margin-left: auto;
+}
+.review-tools button,
+.review-tools select,
+.review-tabs a {
+  min-height: 44px;
+  min-width: 44px;
+}
+.review-bar::-webkit-scrollbar {
+  display: block;
+  height: 5px;
+}
+.review-tools label {
+  font-size: 0.75rem;
+}
+.review-tools select {
+  max-width: none;
+}
+.review-tools .reset {
+  display: inline-block;
+}
+.shell {
+  min-height: calc(100dvh - var(--review-height));
+}
+.sidebar {
+  top: var(--review-height);
+  height: calc(100dvh - var(--review-height));
+  max-width: 100%;
+}
+.menu-close {
+  display: none;
+}
+.topbar {
+  height: auto;
+  min-height: 70px;
+  padding-block: 8px;
+  gap: 12px;
+}
+.topbar > div {
+  flex-wrap: wrap;
+}
+.main {
+  padding-inline: clamp(16px, 2.8vw, 40px);
+}
+.page-heading > :first-child {
+  flex: 1 1 16rem;
+}
+.heading-actions {
+  flex: 0 1 auto;
+}
+.notice {
+  flex-wrap: wrap;
+}
+.notice > div:not(.actions) {
+  flex: 1 1 12rem;
+}
+.notice .actions {
+  flex-shrink: 1;
+}
+.metric strong {
+  overflow-wrap: normal;
+}
+.metrics {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+}
+.route-list .route-line {
+  grid-template-columns: 4.625rem minmax(0, 1fr) minmax(6rem, 0.4fr) auto;
+}
+.meter {
+  flex-shrink: 0;
+  min-width: 0;
+  width: 100%;
+}
+.meter span {
+  min-width: 0;
+}
+.filters label,
+.filters label.search {
+  min-width: min(100%, 11.25rem);
+}
+.filters input,
+.filters select,
+.field,
+.field input,
+.field select,
+.field textarea,
+.mobile-search {
+  min-width: 0;
+  max-width: 100%;
+}
+.form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.check {
+  overflow-wrap: anywhere;
+}
+.check input {
+  min-height: 20px;
+}
+/* Keep the 20px checkbox mark inside an actual 44px input target. */
+dialog .privacy-check {
+  align-items: center;
+}
+dialog .privacy-check input {
+  appearance: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+}
+dialog .privacy-check input::before,
+dialog .privacy-check input::after {
+  content: "";
+  grid-area: 1 / 1;
+}
+dialog .privacy-check input::before {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--control);
+  border-radius: 3px;
+}
+dialog .privacy-check input:checked::before {
+  background: var(--brand);
+  border-color: var(--brand);
+}
+dialog .privacy-check input:checked::after {
+  width: 6px;
+  height: 11px;
+  border: solid Canvas;
+  border-width: 0 2px 2px 0;
+  transform: translateY(-2px) rotate(45deg);
+}
+@media (forced-colors: active) {
+  dialog .privacy-check input:checked::before {
+    background: Highlight;
+    border-color: Highlight;
+    forced-color-adjust: none;
+  }
+  dialog .privacy-check input:checked::after {
+    border-color: HighlightText;
+    forced-color-adjust: none;
+  }
+}
+.table-wrap {
+  container: records / inline-size;
+}
+.table-wrap table {
+  min-width: 0;
+}
+.table-wrap th {
+  white-space: normal;
+}
+.table-wrap td.amount {
+  white-space: normal;
+}
+@container records (max-width: 42rem) {
+  table,
+  tbody,
+  tr,
+  td {
+    display: block;
+    width: 100%;
+  }
+  thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  tbody tr {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  tbody tr:last-child {
+    border-bottom: 0;
+  }
+  .table-wrap td {
+    border: 0;
+    padding: 6px 0;
+  }
+  td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  td[data-label=""]::before {
+    display: none;
+  }
+}
+.mobile-stage {
+  grid-template-columns: minmax(0, 412px) minmax(0, 310px);
+  min-height: calc(100dvh - var(--review-height));
+}
+.device {
+  width: 100%;
+  height: min(866px, calc(var(--usable-height) - var(--review-height) - 60px));
+  min-height: 0;
+  max-height: none;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+}
+.device:has(.bottom-nav) {
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+}
+.device:not(:has(.bottom-nav)) {
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+.device > :not(.mobile-content) {
+  flex-shrink: 0;
+}
+.android-status {
+  height: auto;
+  min-height: 30px;
+  padding-bottom: 4px;
+}
+.mobile-content {
+  min-width: 0;
+  scroll-padding-block: 20px;
+}
+.bottom-nav {
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+}
+.bottom-nav a {
+  min-width: 0;
+  text-align: center;
+}
+.bottom-nav .nav-icon {
+  max-width: 100%;
+  flex-shrink: 0;
+}
+.mobile-content .pager button {
+  min-width: 44px;
+}
+.mobile-content .form-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+.mobile-content .search-result-form {
+  flex-wrap: wrap;
+}
+.search-result-form .field {
+  flex: 1 1 10rem;
+}
+.service-result .result-bottom {
+  flex-wrap: wrap;
+}
+.compare-dock {
+  position: static;
+}
+.comparison-grid {
+  grid-template-columns: repeat(2, minmax(10rem, 1fr));
+}
+.comparison-grid[data-count="3"] {
+  grid-template-columns: repeat(3, minmax(11.25rem, 1fr)) !important;
+}
+.comparison-scroll {
+  scroll-padding: 4px;
+  padding: 4px 4px 8px;
+}
+.capacity-options {
+  scroll-padding: 4px;
+  padding: 4px;
+}
+dialog {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  max-height: calc(var(--usable-height) - 32px);
+}
+dialog .dialog-head {
+  align-items: flex-start;
+}
+dialog .dialog-body {
+  padding: clamp(16px, 3vw, 24px);
+}
+dialog .form-footer {
+  padding: 16px;
+}
+.auth-layout {
+  min-height: calc(100dvh - var(--review-height));
+}
+@media (max-width: 64rem) {
+  .capacity-layout,
+  .cols,
+  .cols.equal,
+  .request-layout,
+  .admin-dossier {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .capacity-options {
+    display: flex;
+    max-height: none;
+    overflow: auto;
+  }
+  .capacity-item {
+    flex: 0 0 min(16rem, 88%);
+  }
+  .route-list .route-line {
+    grid-template-columns: 4.625rem minmax(0, 1fr) minmax(5rem, 0.4fr);
+  }
+  .route-list .route-line > .btn {
+    grid-column: 2 / -1;
+    justify-self: start;
+  }
+}
+@media (max-width: 60rem), (max-height: 40rem) and (orientation: landscape) {
+  .mobile-stage {
+    display: block;
+    padding: 0;
+  }
+  .mobile-guide {
+    display: none;
+  }
+  .device {
+    width: 100%;
+    height: calc(var(--usable-height) - var(--review-height));
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+@media (max-width: 48rem) {
+  .shell {
+    display: block;
+  }
+  .topbar .menu-toggle,
+  .menu-close {
+    display: inline-grid;
+  }
+  .menu-close {
+    align-self: flex-end;
+  }
+  .sidebar {
+    display: none;
+    position: fixed;
+    left: 0;
+    width: min(20rem, 100%);
+    top: var(--review-height);
+    height: calc(var(--usable-height) - var(--review-height));
+    z-index: 45;
+    box-shadow: 12px 0 40px #172d4822;
+  }
+  .sidebar.open {
+    display: flex;
+  }
+  body.menu-open {
+    overflow: hidden;
+  }
+  .topbar .date-label {
+    display: none;
+  }
+  .topbar {
+    min-height: 58px;
+    padding-inline: 16px;
+  }
+  .form-grid,
+  .section-links {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .route-list .route-line {
+    grid-template-columns: 4.625rem minmax(0, 1fr);
+  }
+  .route-line > :nth-child(3) {
+    grid-column: 2;
+  }
+  .route-time small {
+    white-space: normal;
+  }
+  .task-row .task-body {
+    flex: 1 1 10rem;
+  }
+  .task-row > .btn {
+    flex-shrink: 1;
+  }
+  .document-row > div {
+    flex: 1 1 10rem;
+  }
+  .plan-summary {
+    flex-wrap: wrap;
+  }
+  .review-bar {
+    gap: 8px;
+    padding: 5px 8px;
+  }
+  dialog {
+    position: fixed;
+    inset-block-start: calc(var(--visual-top) + 8px);
+    inset-block-end: auto;
+    margin: 0 auto;
+    max-height: calc(var(--usable-height) - 16px);
+  }
+}
+/* Very short viewports need document flow so fixed chrome cannot consume the content. */
+@media (max-height: 32rem) {
+  .review-bar {
+    position: static;
+  }
+  .device {
+    height: auto;
+    min-height: calc(var(--usable-height) - var(--review-height));
+    overflow: visible;
+  }
+  .mobile-content {
+    overflow: visible;
+  }
+  .bottom-nav {
+    position: static;
+  }
+}
+
+.short-viewport .review-bar {
+  position: static;
+}
+.short-viewport .device {
+  height: auto;
+  min-height: calc(var(--usable-height) - var(--review-height));
+  overflow: visible;
+}
+.short-viewport .mobile-content {
+  overflow: visible;
+}
+.short-viewport .bottom-nav {
+  position: static;
+}
+
+.short-viewport dialog {
+  position: fixed;
+  inset-block-start: calc(var(--visual-top) + 8px);
+  inset-block-end: auto;
+  margin: 0 auto;
+  max-height: calc(var(--usable-height) - 16px);
+}

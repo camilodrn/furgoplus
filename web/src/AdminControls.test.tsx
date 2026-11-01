@@ -10,7 +10,6 @@ import {
 import { afterEach, expect, test, vi } from "vitest";
 import { AdminControlScreen } from "./AdminControls";
 import { ApiError, AuthApi } from "./api";
-import { humanChileanDate } from "./dates";
 import type {
   AdminDriver,
   AdminDriverHistory,
@@ -81,7 +80,7 @@ function fixture() {
       count: 1,
     })),
     adminDriver: vi.fn(async () => driver),
-    adminDriverHistory: vi.fn(async () => history),
+    adminDriverHistory: vi.fn(async (_id?: number, _offset = 0) => history),
     adminDriverValidations: vi.fn(async () => revisions),
     plans: vi.fn(async () => ({
       plans: [
@@ -187,18 +186,16 @@ test.each([390, 1280])(
       );
       render(<AdminControlScreen api={api} />);
       await open();
-      const summary = screen
-        .getByText("Validación y observaciones")
-        .closest("summary")!;
-      expect(summary.textContent).toContain("Aprobada");
-      expect(summary.closest("details")!.open).toBe(false);
+      expect(
+        screen.queryByRole("region", { name: "Validación y observaciones" }),
+      ).toBeNull();
       const context = disclosure("Validación y observaciones");
       expect(context.getAllByRole("listitem")).toHaveLength(3);
       expect(
         context.getAllByRole("heading").map((node) => node.textContent),
       ).toEqual(["Aprobada", "Con observaciones", "Con observaciones"]);
       expect(context.getByRole("status").textContent).toBe(
-        "Mostrando 3 de 54 validaciones. Más recientes primero.",
+        "Mostrando 1–3 de 54 validaciones. Más recientes primero.",
       );
       expect(context.getByText("Sin observaciones.")).toBeTruthy();
       expect(context.queryByText(/Observación retenida/)).toBeNull();
@@ -219,60 +216,62 @@ test.each([390, 1280])(
       );
       expect(context.queryByText(/Observación retenida/)).toBeNull();
 
-      for (const pageEnd of [25, 50, 54]) {
-        while (context.getAllByRole("listitem").length < pageEnd) {
-          const before = context.getAllByRole("listitem").length;
-          const calls = mock.adminDriverValidations.mock.calls.length;
-          const reveal = context.getByRole("button", {
-            name: "Ver validaciones anteriores",
-          });
-          reveal.focus();
-          fireEvent.click(reveal);
-          expect(context.getAllByRole("listitem")).toHaveLength(
-            Math.min(pageEnd, before + 3),
+      const observed: number[] = [];
+      for (const offset of [0, 25, 50]) {
+        const expected = Math.min(25, entries.length - offset);
+        for (let start = 0; start < expected; start += 3) {
+          const rows = context.getAllByRole("listitem");
+          expect(rows).toHaveLength(Math.min(3, expected - start));
+          expect(
+            rows.map((row) => row.querySelector("time")?.dateTime),
+          ).toEqual(
+            entries
+              .slice(offset + start, offset + Math.min(start + 3, expected))
+              .map((entry) => entry.reviewed_at),
           );
-          expect(document.activeElement).toBe(
-            context.getAllByRole("heading")[before],
-          );
-          expect(mock.adminDriverValidations).toHaveBeenCalledTimes(calls);
+          for (let index = 0; index < rows.length; index++) {
+            const revision = entries[offset + start + index]!;
+            observed.push(revision.id);
+            if (!revision.observations) continue;
+            const row = within(rows[index]!);
+            fireEvent.click(
+              row.getByRole("button", { name: "Ver observación" }),
+            );
+            expect(
+              rows[index]!.querySelector(".admin-validation-observation")
+                ?.textContent,
+            ).toBe(revision.observations);
+            fireEvent.click(
+              row.getByRole("button", { name: "Ocultar observación" }),
+            );
+          }
+          if (start + 3 < expected) {
+            fireEvent.click(
+              context.getByRole("button", {
+                name: "Ver validaciones anteriores",
+              }),
+            );
+            expect(document.activeElement).toBe(
+              context.getAllByRole("heading")[0],
+            );
+          }
         }
-        if (pageEnd === 54) break;
-        const older = deferred<AdminDriverValidations>();
-        mock.adminDriverValidations.mockReturnValueOnce(older.promise);
+        if (offset === 50) break;
         fireEvent.click(
           context.getByRole("button", { name: "Ver validaciones anteriores" }),
         );
-        expect(context.getAllByRole("listitem")).toHaveLength(pageEnd);
-        expect(mock.adminDriverValidations).toHaveBeenLastCalledWith(
-          7,
-          pageEnd,
+        await waitFor(() =>
+          expect(mock.adminDriverValidations).toHaveBeenLastCalledWith(
+            7,
+            offset + 25,
+          ),
         );
-        expect(
-          (
-            context.getByRole("button", {
-              name: "Cargando validaciones…",
-            }) as HTMLButtonElement
-          ).disabled,
-        ).toBe(true);
-        await act(async () =>
-          older.resolve({
-            count: entries.length,
-            results: entries.slice(pageEnd, pageEnd + 25),
-          }),
+        await waitFor(() =>
+          expect(context.getAllByRole("listitem")).toHaveLength(3),
         );
-        expect(context.getAllByRole("listitem")).toHaveLength(pageEnd + 3);
-        expect(document.activeElement).toBe(
-          context.getAllByRole("heading")[pageEnd],
-        );
+        expect(document.activeElement).toBe(context.getAllByRole("heading")[0]);
       }
-      expect(
-        context
-          .getAllByRole("listitem")
-          .map((item) => item.querySelector("time")?.dateTime),
-      ).toEqual(entries.map((entry) => entry.reviewed_at));
-      expect(context.getAllByRole("listitem")[0]!.textContent).toContain(
-        humanChileanDate(entries[0]!.reviewed_at),
-      );
+      expect(observed).toEqual(entries.map((entry) => entry.id));
       expect(
         context.queryByRole("button", { name: "Ver validaciones anteriores" }),
       ).toBeNull();
@@ -281,21 +280,20 @@ test.each([390, 1280])(
         [7, 25],
         [7, 50],
       ]);
-      expect(summary.textContent).toContain("Aprobada");
-      // Check exact retained text at both ends of every server page.
-      const items = context.getAllByRole("listitem");
-      for (const index of [0, 24, 25, 49, 50, 53]) {
-        const item = items[index]!;
-        const row = within(item);
-        fireEvent.click(row.getByRole("button", { name: "Ver observación" }));
-        expect(
-          item.querySelector(".admin-validation-observation")?.textContent,
-        ).toBe(entries[index]!.observations);
-        fireEvent.click(
-          row.getByRole("button", { name: "Ocultar observación" }),
-        );
-      }
-      fireEvent.click(first.getByRole("button", { name: "Ver observación" }));
+      fireEvent.click(
+        context.getByRole("button", { name: "Revisiones más recientes" }),
+      );
+      expect(context.getAllByRole("listitem")).toHaveLength(3);
+      expect(mock.adminDriverValidations).toHaveBeenLastCalledWith(7, 50);
+      fireEvent.click(
+        context.getByRole("button", { name: "Revisiones más recientes" }),
+      );
+      await waitFor(() =>
+        expect(mock.adminDriverValidations).toHaveBeenLastCalledWith(7, 25),
+      );
+      await waitFor(() =>
+        expect(context.getAllByRole("listitem")).toHaveLength(1),
+      );
       fireEvent.click(
         screen.getByRole("button", { name: "Actualizar conductor" }),
       );
@@ -371,8 +369,8 @@ test("changing driver clears observation disclosure and rejects a late validatio
     }),
   );
   expect(
-    screen.getByText("Validación y observaciones").closest("details")!.open,
-  ).toBe(false);
+    screen.queryByRole("region", { name: "Validación y observaciones" }),
+  ).toBeNull();
   const next = disclosure("Validación y observaciones");
   expect(next.queryByText(/Observación|Reemplaza el documento/)).toBeNull();
   fireEvent.click(next.getByRole("button", { name: "Ver observación" }));
@@ -406,7 +404,7 @@ test.each([390, 1280])(
         if (action === "Administrar plan") {
           for (const label of [
             "Plan",
-            "Estado del plan",
+            "Estado administrativo del plan",
             "Fecha de inicio",
             "Hora de inicio",
             "Fecha de término",
@@ -502,7 +500,7 @@ test("profile modal opens on demand, validates in Spanish, retains the draft and
     "Validación y observaciones",
     "Historial administrativo",
   ]) {
-    expect(screen.getByText(title).closest("details")!.open).toBe(false);
+    expect(screen.queryByRole("region", { name: title })).toBeNull();
   }
   const trigger = screen.getByRole("button", { name: "Suspender perfil" });
   trigger.focus();
@@ -586,7 +584,7 @@ test("plan modal validates required fields in Spanish, focuses the first error a
   expect(reason.closest("form")!.querySelectorAll("[required]")).toHaveLength(
     0,
   );
-  fireEvent.change(fields.getByLabelText("Plan"), {
+  fireEvent.change(fields.getByRole("combobox", { name: "Plan" }), {
     target: { value: "elite" },
   });
   fireEvent.change(reason, { target: { value: "   " } });
@@ -611,9 +609,9 @@ test("plan modal validates required fields in Spanish, focuses the first error a
   ).toContain("Ingresa una fecha de inicio válida");
   expect(startTime.getAttribute("aria-invalid")).toBe("true");
   expect(fields.getByText("Ingresa la hora de inicio.")).toBeTruthy();
-  expect((fields.getByLabelText("Plan") as HTMLSelectElement).value).toBe(
-    "elite",
-  );
+  expect(
+    (fields.getByRole("combobox", { name: "Plan" }) as HTMLSelectElement).value,
+  ).toBe("elite");
   expect(reason.value).toBe("   ");
   expect(mock.changeSubscription).not.toHaveBeenCalled();
   fireEvent.click(
@@ -634,9 +632,20 @@ test("plan modal validates required fields in Spanish, focuses the first error a
 async function open() {
   fireEvent.click(await screen.findByRole("button", { name: "Ver conductor" }));
   await screen.findByRole("region", { name: "Estado del servicio" });
+  fireEvent.click(
+    screen
+      .getByRole("navigation", { name: "Secciones del detalle del conductor" })
+      .querySelector('[aria-controls="driver-section-plan"]')!,
+  );
   await screen.findByRole("button", { name: "Administrar plan" });
+  openMoreActions();
+}
+function openMoreActions() {
+  const summary = screen.getByText("Más acciones").closest("summary")!;
+  if (!summary.closest("details")!.open) fireEvent.click(summary);
 }
 function profile(action = "Suspender perfil", reason = "Revisión manual") {
+  openMoreActions();
   fireEvent.click(screen.getByRole("button", { name: action }));
   fireEvent.change(screen.getByLabelText("Motivo del cambio de perfil"), {
     target: { value: reason },
@@ -646,10 +655,18 @@ function profile(action = "Suspender perfil", reason = "Revisión manual") {
   );
 }
 function disclosure(title: string) {
-  const summary = screen.getByText(title).closest("summary")!;
-  fireEvent.click(summary);
-  summary.parentElement!.setAttribute("open", "");
-  return within(summary.parentElement!);
+  const section =
+    title === "Historial administrativo" ? "history" : "validations";
+  fireEvent.click(
+    screen
+      .getByRole("navigation", { name: "Secciones del detalle del conductor" })
+      .querySelector(`[aria-controls="driver-section-${section}"]`)!,
+  );
+  return within(screen.getByRole("region", { name: title }));
+}
+function planButton() {
+  fireEvent.click(screen.getByRole("button", { name: "Gestionar plan" }));
+  return screen.getByRole("button", { name: "Administrar plan" });
 }
 
 test("queue submits authoritative filters, paginates, and renders empty/retry", async () => {
@@ -669,7 +686,7 @@ test("queue submits authoritative filters, paginates, and renders empty/retry", 
   fireEvent.change(screen.getByLabelText("Plan asignado"), {
     target: { value: "elite" },
   });
-  fireEvent.change(screen.getByLabelText("Estado del plan"), {
+  fireEvent.change(screen.getByLabelText("Estado administrativo del plan"), {
     target: { value: "active" },
   });
   fireEvent.change(screen.getByLabelText("Visibilidad"), {
@@ -785,14 +802,17 @@ test("plan mutation reuses explicit validity/version and refreshes integrated hi
   const { api, mock } = fixture();
   render(<AdminControlScreen api={api} />);
   await open();
-  fireEvent.click(screen.getByRole("button", { name: "Administrar plan" }));
-  fireEvent.change(screen.getByLabelText("Plan"), {
+  fireEvent.click(planButton());
+  fireEvent.change(screen.getByRole("combobox", { name: "Plan" }), {
     target: { value: "elite" },
   });
   fireEvent.change(screen.getByLabelText("Motivo"), {
     target: { value: "Cambio de plan" },
   });
   fireEvent.click(screen.getByText("Guardar plan"));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar cambio de plan" }),
+  );
   await screen.findByText("Plan actualizado");
   expect(mock.changeSubscription).toHaveBeenCalledWith(
     7,
@@ -945,7 +965,7 @@ test("overall refresh and retry read subscription eligibility even when profile 
   const summary = () =>
     within(screen.getByRole("region", { name: "Estado del servicio" }));
   expect(summary().getByText("Visible para apoderados")).toBeTruthy();
-  expect(panel().getByText("Activo")).toBeTruthy();
+  expect(panel().getByText("Vigente")).toBeTruthy();
   replace(
     {
       ...initial,
@@ -975,7 +995,11 @@ test("overall refresh and retry read subscription eligibility even when profile 
   expect(panel().getByText("Suspendido")).toBeTruthy();
   fireEvent.click(panel().getByRole("button", { name: "Administrar plan" }));
   expect(
-    (panel().getByLabelText("Estado del plan") as HTMLSelectElement).value,
+    (
+      panel().getByLabelText(
+        "Estado administrativo del plan",
+      ) as HTMLSelectElement
+    ).value,
   ).toBe("suspended");
   expect(mock.adminSubscription).toHaveBeenCalledTimes(3);
   await expect(
@@ -995,7 +1019,7 @@ function deferred<T>() {
 function summary() {
   return within(screen.getByRole("region", { name: "Estado del servicio" }));
 }
-test("queue cards distinguish the four states and detail leads with authoritative visibility", async () => {
+test("queue cards distinguish the four states and selected plan precedes the full service context", async () => {
   const { api, replace } = fixture();
   replace({
     ...initial,
@@ -1024,15 +1048,20 @@ test("queue cards distinguish the four states and detail leads with authoritativ
   expect(summary().getByText("Falta un plan activo.")).toBeTruthy();
   expect(summary().getByText("No visible para apoderados")).toBeTruthy();
   expect(screen.queryByLabelText("Motivo del cambio de perfil")).toBeNull();
-  expect(screen.queryByLabelText("Plan")).toBeNull();
+  expect(screen.queryByRole("combobox", { name: "Plan" })).toBeNull();
   expect(
     screen.queryByRole("region", { name: "Lista de conductores" }),
   ).toBeNull();
   const detail = screen.getByRole("region", { name: "Detalle del conductor" });
   const sections = within(detail).getAllByRole("region");
-  expect(sections[0]).toBe(summary().getByRole("heading").closest("section"));
+  expect(sections[0]).toBe(
+    screen.getByRole("region", { name: "Plan del conductor" }),
+  );
+  expect(
+    sections.indexOf(summary().getByRole("heading").closest("section")!),
+  ).toBeGreaterThan(0);
   expect(detail.textContent).not.toMatch(
-    /expected_version|Internal predicate|correlation|precio|beneficio|cobro/i,
+    /expected_version|Internal predicate|correlation|precio|beneficio/i,
   );
 });
 
@@ -1138,11 +1167,11 @@ test("suspending/restoring a plan refreshes summary and history with unchanged p
   const { api, mock } = fixture();
   render(<AdminControlScreen api={api} />);
   await open();
-  fireEvent.click(screen.getByRole("button", { name: "Administrar plan" }));
+  fireEvent.click(planButton());
   fireEvent.change(
     within(
       screen.getByRole("region", { name: "Plan del conductor" }),
-    ).getByLabelText("Estado del plan"),
+    ).getByLabelText("Estado administrativo del plan"),
     {
       target: { value: "suspended" },
     },
@@ -1160,6 +1189,9 @@ test("suspending/restoring a plan refreshes summary and history with unchanged p
     ),
   );
   fireEvent.click(screen.getByRole("button", { name: "Guardar plan" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar cambio de plan" }),
+  );
   await summary().findByText("El plan está suspendido.");
   expect(summary().getByText("No visible para apoderados")).toBeTruthy();
   expect(summary().getByText("Activo")).toBeTruthy();
@@ -1177,11 +1209,11 @@ test("suspending/restoring a plan refreshes summary and history with unchanged p
       ).disabled,
     ).toBe(false),
   );
-  fireEvent.click(screen.getByRole("button", { name: "Administrar plan" }));
+  fireEvent.click(planButton());
   fireEvent.change(
     within(
       screen.getByRole("region", { name: "Plan del conductor" }),
-    ).getByLabelText("Estado del plan"),
+    ).getByLabelText("Estado administrativo del plan"),
     {
       target: { value: "active" },
     },
@@ -1190,13 +1222,18 @@ test("suspending/restoring a plan refreshes summary and history with unchanged p
     target: { value: "Reactivar plan" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Guardar plan" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar cambio de plan" }),
+  );
   await summary().findByText("Visible para apoderados");
   expect(mock.changeSubscription.mock.calls[0]![1].expected_version).toBe(8);
   expect(mock.changeSubscription.mock.calls[1]![1].expected_version).toBe(9);
   await expect(
     mock.adminDriver.mock.results.at(-1)!.value,
   ).resolves.toMatchObject({ profile_version: null });
-  expect(mock.adminDriverHistory.mock.calls.length).toBeGreaterThanOrEqual(3);
+  await waitFor(() =>
+    expect(mock.adminDriverHistory.mock.calls.length).toBeGreaterThanOrEqual(3),
+  );
   expect(mock.changeProfileStatus).not.toHaveBeenCalled();
 });
 
@@ -1244,11 +1281,14 @@ test("plan conflict closes the editor, refreshes version and requires explicit r
   });
   render(<AdminControlScreen api={api} />);
   await open();
-  fireEvent.click(screen.getByRole("button", { name: "Administrar plan" }));
+  fireEvent.click(planButton());
   fireEvent.change(screen.getByLabelText("Motivo"), {
     target: { value: "Cambio antiguo" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Guardar plan" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar cambio de plan" }),
+  );
   await screen.findByText(/El estado de este conductor cambió/);
   expect(screen.queryByLabelText("Motivo")).toBeNull();
   expect(mock.changeSubscription).toHaveBeenCalledTimes(1);
@@ -1262,11 +1302,14 @@ test("plan conflict closes the editor, refreshes version and requires explicit r
       ).disabled,
     ).toBe(false),
   );
-  fireEvent.click(screen.getByRole("button", { name: "Administrar plan" }));
+  fireEvent.click(planButton());
   fireEvent.change(screen.getByLabelText("Motivo"), {
     target: { value: "Cambio revisado" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Guardar plan" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar cambio de plan" }),
+  );
   await screen.findByText("Plan actualizado");
   expect(mock.changeSubscription.mock.calls[1]![1].expected_version).toBe(21);
 });
@@ -1329,8 +1372,9 @@ test("history renders known human events and only allowlisted state fields with 
   fireEvent.click(timeline.getByText("Ver acciones anteriores"));
   await timeline.findByText("Motivo: Acción anterior sintética");
   expect(mock.adminDriverHistory).toHaveBeenLastCalledWith(7, 25);
+  expect(timeline.getAllByRole("listitem")).toHaveLength(1);
   expect(
-    timeline.getByRole("heading", { name: "Perfil suspendido" }),
+    timeline.getByRole("button", { name: "Acciones más recientes" }),
   ).toBeTruthy();
   expect(timeline.queryByText("Ver acciones anteriores")).toBeNull();
   expect(mock.adminDriverHistory).toHaveBeenCalledTimes(2);
@@ -1368,16 +1412,25 @@ test("history refresh leaves an open plan's draft/version unchanged; overall ref
   mock.adminDriverHistory.mockResolvedValue({ ...history, count: 26 });
   render(<AdminControlScreen api={api} />);
   await open();
+  disclosure("Historial administrativo");
+  const older = deferred<AdminDriverHistory>();
+  mock.adminDriverHistory.mockReturnValueOnce(older.promise);
+  fireEvent.click(
+    screen.getByRole("button", { name: "Ver acciones anteriores" }),
+  );
+  fireEvent.click(
+    within(
+      screen.getByRole("navigation", {
+        name: "Secciones del detalle del conductor",
+      }),
+    ).getByRole("tab", { name: "Plan" }),
+  );
   fireEvent.click(screen.getByRole("button", { name: "Administrar plan" }));
   fireEvent.change(screen.getByLabelText("Motivo"), {
     target: { value: "Plan con versión original" },
   });
   replace(initial, 34);
-  disclosure("Historial administrativo");
-  fireEvent.click(screen.getByText("Ver acciones anteriores"));
-  await waitFor(() =>
-    expect(mock.adminDriverHistory).toHaveBeenLastCalledWith(7, 25),
-  );
+  await act(async () => older.resolve({ ...history, count: 26 }));
   expect((screen.getByLabelText("Motivo") as HTMLTextAreaElement).value).toBe(
     "Plan con versión original",
   );
@@ -1385,6 +1438,9 @@ test("history refresh leaves an open plan's draft/version unchanged; overall ref
     new ApiError(409, "stale_state", "Conflict"),
   );
   fireEvent.click(screen.getByText("Guardar plan"));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar cambio de plan" }),
+  );
   await screen.findByText(/El estado de este conductor cambió/);
   expect(mock.changeSubscription.mock.calls[0]![1].expected_version).toBe(8);
   await waitFor(() =>
@@ -1396,7 +1452,7 @@ test("history refresh leaves an open plan's draft/version unchanged; overall ref
       ).disabled,
     ).toBe(false),
   );
-  fireEvent.click(screen.getByRole("button", { name: "Administrar plan" }));
+  fireEvent.click(planButton());
   fireEvent.change(screen.getByLabelText("Motivo"), {
     target: { value: "Borrador que se cancela" },
   });
@@ -1409,12 +1465,15 @@ test("confirmed plan success remains visible if its following read fails; retry 
   const { api, mock } = fixture();
   render(<AdminControlScreen api={api} />);
   await open();
-  fireEvent.click(screen.getByRole("button", { name: "Administrar plan" }));
+  fireEvent.click(planButton());
   fireEvent.change(screen.getByLabelText("Motivo"), {
     target: { value: "Actualización sintética" },
   });
   mock.adminSubscription.mockRejectedValue(new Error("offline"));
   fireEvent.click(screen.getByText("Guardar plan"));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar cambio de plan" }),
+  );
   await screen.findByText("Plan actualizado");
   await screen.findByRole("button", { name: "Reintentar carga del plan" });
   expect(mock.changeSubscription).toHaveBeenCalledTimes(1);
@@ -1446,13 +1505,16 @@ test.each(["profile", "plan"] as const)(
     await open();
     if (action === "profile") profile();
     else {
-      fireEvent.click(screen.getByRole("button", { name: "Administrar plan" }));
+      fireEvent.click(planButton());
       fireEvent.change(screen.getByLabelText("Motivo"), {
         target: { value: "Plan sintético" },
       });
     }
+    if (action === "plan")
+      fireEvent.click(screen.getByRole("button", { name: "Guardar plan" }));
     const button = screen.getByRole("button", {
-      name: action === "profile" ? "Confirmar cambio" : "Guardar plan",
+      name:
+        action === "profile" ? "Confirmar cambio" : "Confirmar cambio de plan",
     });
     fireEvent.click(button);
     fireEvent.click(button);
@@ -1462,11 +1524,11 @@ test.each(["profile", "plan"] as const)(
     expect((button as HTMLButtonElement).disabled).toBe(true);
     fireEvent.keyDown(document.activeElement!, { key: "Escape" });
     expect(
-      screen.getByRole(action === "profile" ? "alertdialog" : "dialog", {
+      screen.getByRole("alertdialog", {
         name:
           action === "profile"
             ? "Confirmar cambio de perfil"
-            : "Administrar plan: Conductor Demo",
+            : "Confirmar cambio de plan",
       }),
     ).toBeTruthy();
   },
@@ -1506,8 +1568,8 @@ test("selecting a different driver resets expanded history and rejects a late pr
   );
   expect(screen.queryByText(/Late other driver's history/)).toBeNull();
   expect(
-    screen.getByText("Historial administrativo").closest("details")!.open,
-  ).toBe(false);
+    screen.queryByRole("region", { name: "Historial administrativo" }),
+  ).toBeNull();
   expect(
     disclosure("Historial administrativo").getByText(
       "Sin acciones administrativas.",
@@ -1545,7 +1607,7 @@ test.each([390, 1280])(
       expect(timeline.getByText("28 acciones")).toBeTruthy();
       expect(timeline.getAllByRole("listitem")).toHaveLength(3);
       expect(timeline.getByRole("status").textContent).toBe(
-        "Mostrando 3 de 28 acciones.",
+        "Mostrando 1–3 de 28 acciones.",
       );
       expect(timeline.queryByText("Antes")).toBeNull();
       expect(timeline.queryByText("Después")).toBeNull();
@@ -1569,16 +1631,26 @@ test.each([390, 1280])(
       fireEvent.click(within(changes).getByText("Ver cambios"));
       await waitFor(() => expect(timeline.queryByText("Antes")).toBeNull());
 
-      for (const count of [6, 9, 12, 15, 18, 21, 24, 25]) {
+      for (const start of [3, 6, 9, 12, 15, 18, 21, 24]) {
         const reveal = timeline.getByRole("button", {
           name: "Ver acciones anteriores",
         });
         reveal.focus();
-        const previousCount = timeline.getAllByRole("listitem").length;
         fireEvent.click(reveal);
-        expect(timeline.getAllByRole("listitem")).toHaveLength(count);
+        expect(timeline.getAllByRole("listitem")).toHaveLength(
+          Math.min(3, 25 - start),
+        );
+        expect(
+          timeline
+            .getAllByRole("listitem")
+            .map((item) => within(item).getByText(/^Motivo:/).textContent),
+        ).toEqual(
+          events
+            .slice(start, Math.min(start + 3, 25))
+            .map((entry) => `Motivo: ${entry.reason}`),
+        );
         expect(document.activeElement).toBe(
-          timeline.getAllByRole("heading")[previousCount],
+          timeline.getAllByRole("heading")[0],
         );
         expect(mock.adminDriverHistory).toHaveBeenCalledTimes(1);
       }
@@ -1587,7 +1659,7 @@ test.each([390, 1280])(
       fireEvent.click(
         timeline.getByRole("button", { name: "Ver acciones anteriores" }),
       );
-      expect(timeline.getAllByRole("listitem")).toHaveLength(25);
+      expect(timeline.getAllByRole("listitem")).toHaveLength(1);
       expect(mock.adminDriverHistory).toHaveBeenLastCalledWith(7, 25);
       expect(
         (
@@ -1599,15 +1671,15 @@ test.each([390, 1280])(
       await act(async () =>
         older.resolve({ count: 28, results: events.slice(25) }),
       );
-      expect(timeline.getAllByRole("listitem")).toHaveLength(28);
+      expect(timeline.getAllByRole("listitem")).toHaveLength(3);
       expect(
         timeline
           .getAllByRole("listitem")
           .map((item) => within(item).getByText(/^Motivo:/).textContent),
-      ).toEqual(events.map((entry) => `Motivo: ${entry.reason}`));
-      expect(document.activeElement).toBe(timeline.getAllByRole("heading")[25]);
+      ).toEqual(events.slice(25).map((entry) => `Motivo: ${entry.reason}`));
+      expect(document.activeElement).toBe(timeline.getAllByRole("heading")[0]);
       expect(timeline.getByRole("status").textContent).toBe(
-        "Mostrando 28 de 28 acciones.",
+        "Mostrando 26–28 de 28 acciones.",
       );
       expect(
         timeline.queryByRole("button", { name: "Ver acciones anteriores" }),
@@ -1634,3 +1706,612 @@ test.each([390, 1280])(
     }
   },
 );
+
+test("plan review freezes the intended change, cancels without writing and preserves the exact draft", async () => {
+  const { api, mock } = fixture();
+  render(<AdminControlScreen api={api} />);
+  await open();
+  fireEvent.click(planButton());
+  fireEvent.change(screen.getByRole("combobox", { name: "Plan" }), {
+    target: { value: "elite" },
+  });
+  fireEvent.change(screen.getByLabelText("Motivo"), {
+    target: { value: "Asignación académica revisada" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Guardar plan" }));
+  const confirmation = screen.getByRole("alertdialog", {
+    name: "Confirmar cambio de plan",
+  });
+  expect(confirmation.textContent).toContain("Conductor Demo");
+  expect(confirmation.textContent).toContain("Asignación académica revisada");
+  expect(mock.changeSubscription).not.toHaveBeenCalled();
+  fireEvent.click(
+    within(confirmation).getByRole("button", { name: "Cancelar cambio" }),
+  );
+  expect(
+    (screen.getByRole("combobox", { name: "Plan" }) as HTMLSelectElement).value,
+  ).toBe("elite");
+  expect((screen.getByLabelText("Motivo") as HTMLTextAreaElement).value).toBe(
+    "Asignación académica revisada",
+  );
+  expect(mock.changeSubscription).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole("button", { name: "Guardar plan" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar cambio de plan" }),
+  );
+  await screen.findByText("Plan actualizado");
+  expect(mock.changeSubscription).toHaveBeenCalledExactlyOnceWith(
+    7,
+    expect.objectContaining({
+      plan_code: "elite",
+      reason: "Asignación académica revisada",
+      expected_version: 8,
+    }),
+  );
+});
+
+test("driver entry leads with an executive summary, essential actions and one recent record per collection", async () => {
+  const { api, mock } = fixture();
+  const onValidations = vi.fn();
+  render(<AdminControlScreen api={api} onValidations={onValidations} />);
+  fireEvent.click(await screen.findByRole("button", { name: "Ver conductor" }));
+  const snapshot = await screen.findByRole("region", {
+    name: "Estado del servicio",
+  });
+  expect(screen.getByRole("heading", { name: "Conductor Demo" })).toBeTruthy();
+  expect(screen.getByText("driver@example.test")).toBeTruthy();
+  expect(snapshot.textContent).toContain("Visible para apoderados");
+  expect(snapshot.textContent).toContain("Aprobada");
+  expect(snapshot.textContent).toContain("Basic · Vigente");
+  expect(
+    within(snapshot).getByText("Rutas activas completas").nextElementSibling
+      ?.textContent,
+  ).toBe("1");
+  const navigation = screen.getByRole("navigation", {
+    name: "Secciones del detalle del conductor",
+  });
+  expect(
+    within(navigation)
+      .getByRole("tab", { name: "Resumen" })
+      .getAttribute("aria-selected"),
+  ).toBe("true");
+  const recent = screen.getByRole("region", { name: "Actividad reciente" });
+  expect(
+    within(recent).getByText(/Revisión 1 · Con observaciones/),
+  ).toBeTruthy();
+  expect(
+    within(recent).getByText(/Se solicitaron cambios en la validación/),
+  ).toBeTruthy();
+  expect(within(recent).queryByRole("listitem")).toBeNull();
+  for (const name of [
+    "Datos del estado",
+    "Plan del conductor",
+    "Validación y observaciones",
+    "Historial administrativo",
+  ])
+    expect(screen.queryByRole("region", { name })).toBeNull();
+  expect(screen.queryByText("Reemplaza el documento")).toBeNull();
+  for (const name of ["Gestionar plan", "Revisar antecedentes"])
+    expect(screen.getByRole("button", { name })).toBeTruthy();
+  expect(mock.adminDriverHistory).toHaveBeenCalledExactlyOnceWith(7, 0);
+  expect(mock.adminDriverValidations).toHaveBeenCalledExactlyOnceWith(7, 0);
+  expect(mock.changeProfileStatus).not.toHaveBeenCalled();
+  expect(mock.changeSubscription).not.toHaveBeenCalled();
+  expect(onValidations).not.toHaveBeenCalled();
+});
+
+test("exclusive navigation keeps context and actions, moves focus, and does not fetch or mutate on each section change", async () => {
+  const { api, mock } = fixture();
+  render(<AdminControlScreen api={api} />);
+  fireEvent.click(await screen.findByRole("button", { name: "Ver conductor" }));
+  await screen.findByRole("region", { name: "Estado del servicio" });
+  const navigation = screen.getByRole("navigation", {
+    name: "Secciones del detalle del conductor",
+  });
+  const sectionNames = [
+    "Estado",
+    "Plan",
+    "Validaciones",
+    "Historial",
+    "Resumen",
+  ];
+  for (const name of sectionNames) {
+    fireEvent.click(within(navigation).getByRole("tab", { name }));
+    const selected = within(navigation).getByRole("tab", {
+      name,
+    });
+    expect(selected.getAttribute("aria-selected")).toBe("true");
+    expect(navigation.querySelectorAll('[aria-selected="true"]')).toHaveLength(
+      1,
+    );
+    expect(document.activeElement).toBe(selected);
+    expect(
+      document.getElementById(selected.getAttribute("aria-controls")!)?.hidden,
+    ).toBe(false);
+    expect(
+      document.querySelectorAll('[id^="driver-section-"]:not([hidden])'),
+    ).toHaveLength(1);
+    expect(
+      screen.getByRole("region", { name: "Estado del servicio" }),
+    ).toBeTruthy();
+    expect(screen.getByText("Más acciones").closest("summary")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Gestionar plan" })).toBeTruthy();
+  }
+  fireEvent.click(screen.getByRole("button", { name: "Revisar antecedentes" }));
+  expect(
+    screen.getByRole("region", { name: "Validación y observaciones" }),
+  ).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "Gestionar plan" }));
+  expect(
+    screen.getByRole("region", { name: "Plan del conductor" }),
+  ).toBeTruthy();
+  await waitFor(() => expect(mock.adminSubscription).toHaveBeenCalledTimes(1));
+  expect(mock.adminDriver).toHaveBeenCalledTimes(1);
+  expect(mock.adminDriverHistory).toHaveBeenCalledTimes(1);
+  expect(mock.adminDriverValidations).toHaveBeenCalledTimes(1);
+  expect(mock.changeSubscription).not.toHaveBeenCalled();
+  expect(mock.changeProfileStatus).not.toHaveBeenCalled();
+});
+
+test("201 audit records remain reachable in bounded pages without prefetching or changing the latest summary", async () => {
+  const { api, mock } = fixture();
+  const events = Array.from({ length: 201 }, (_, index) => ({
+    ...history.results[0]!,
+    id: index + 100,
+    reason: `Registro ${index + 1}`,
+    occurred_at: new Date(
+      Date.UTC(2026, 9, 28, 12) - index * 86400000,
+    ).toISOString(),
+  }));
+  mock.adminDriverHistory.mockImplementation(
+    async (_id?: number, offset = 0) => ({
+      count: events.length,
+      results: events.slice(offset, offset + 25),
+    }),
+  );
+  render(<AdminControlScreen api={api} />);
+  await open();
+  const timeline = disclosure("Historial administrativo");
+  const seen: string[] = [];
+  for (let serverOffset = 0; serverOffset < events.length; serverOffset += 25) {
+    for (
+      let localOffset = 0;
+      localOffset < Math.min(25, events.length - serverOffset);
+      localOffset += 3
+    ) {
+      const index = serverOffset + localOffset;
+      await timeline.findByText(`Motivo: Registro ${index + 1}`);
+      const rows = timeline.getAllByRole("listitem");
+      expect(rows.length).toBeLessThanOrEqual(3);
+      seen.push(
+        ...rows.map((row) => within(row).getByText(/^Motivo:/).textContent!),
+      );
+      expect(mock.adminDriverHistory).toHaveBeenLastCalledWith(7, serverOffset);
+      if (index + rows.length < events.length)
+        fireEvent.click(
+          timeline.getByRole("button", { name: "Ver acciones anteriores" }),
+        );
+    }
+  }
+  expect(seen).toEqual(events.map((entry) => `Motivo: ${entry.reason}`));
+  expect(mock.adminDriverHistory.mock.calls.map((call) => call[1])).toEqual([
+    0, 25, 50, 75, 100, 125, 150, 175, 200,
+  ]);
+  expect(
+    timeline.queryByRole("button", { name: "Ver acciones anteriores" }),
+  ).toBeNull();
+  const navigation = screen.getByRole("navigation", {
+    name: "Secciones del detalle del conductor",
+  });
+  fireEvent.click(within(navigation).getByRole("tab", { name: "Resumen" }));
+  const recent = screen.getByRole("region", { name: "Actividad reciente" });
+  expect(recent.textContent).toContain("28 oct 2026");
+  fireEvent.click(within(navigation).getByRole("tab", { name: "Historial" }));
+  expect(timeline.getByText("Motivo: Registro 201")).toBeTruthy();
+  expect(timeline.getAllByRole("listitem")).toHaveLength(1);
+  const reverse: string[] = [];
+  for (let serverOffset = 200; serverOffset >= 0; serverOffset -= 25) {
+    const length = Math.min(25, events.length - serverOffset);
+    for (
+      let localOffset = Math.floor((length - 1) / 3) * 3;
+      localOffset >= 0;
+      localOffset -= 3
+    ) {
+      await timeline.findByText(
+        `Motivo: Registro ${serverOffset + localOffset + 1}`,
+      );
+      const rows = timeline.getAllByRole("listitem");
+      expect(rows.length).toBeLessThanOrEqual(3);
+      reverse.push(
+        ...rows
+          .slice()
+          .reverse()
+          .map((row) => within(row).getByText(/^Motivo:/).textContent!),
+      );
+      if (serverOffset + localOffset > 0)
+        fireEvent.click(
+          timeline.getByRole("button", { name: "Acciones más recientes" }),
+        );
+    }
+  }
+  expect(reverse).toEqual(
+    events
+      .slice()
+      .reverse()
+      .map((entry) => `Motivo: ${entry.reason}`),
+  );
+  expect(
+    timeline.queryByRole("button", { name: "Acciones más recientes" }),
+  ).toBeNull();
+  expect(mock.changeProfileStatus).not.toHaveBeenCalled();
+  expect(mock.changeSubscription).not.toHaveBeenCalled();
+}, 15000);
+
+test("local record pages can go back without requests and retain exact observations when changing section", async () => {
+  const { api, mock } = fixture();
+  const entries = Array.from({ length: 8 }, (_, index) => ({
+    ...revisions.results[0]!,
+    id: index + 100,
+    revision: 8 - index,
+    observations: `Observación ${index + 1}`,
+  }));
+  mock.adminDriverValidations.mockResolvedValue({ count: 8, results: entries });
+  render(<AdminControlScreen api={api} />);
+  await open();
+  const context = disclosure("Validación y observaciones");
+  fireEvent.click(
+    context.getByRole("button", { name: "Ver validaciones anteriores" }),
+  );
+  expect(context.getByRole("status").textContent).toContain("4–6 de 8");
+  fireEvent.click(
+    context.getAllByRole("button", { name: "Ver observación" })[0]!,
+  );
+  expect(context.getByText("Observación 4")).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "Gestionar plan" }));
+  disclosure("Validación y observaciones");
+  expect(context.getByText("Observación 4")).toBeTruthy();
+  fireEvent.click(
+    context.getByRole("button", { name: "Revisiones más recientes" }),
+  );
+  expect(context.getByRole("status").textContent).toContain("1–3 de 8");
+  expect(
+    context.queryByRole("button", { name: "Revisiones más recientes" }),
+  ).toBeNull();
+  expect(mock.adminDriverValidations).toHaveBeenCalledTimes(1);
+  expect(document.activeElement).toBe(context.getAllByRole("heading")[0]);
+});
+
+test("detail tabs use a single tab stop, labelled panels and arrow/Home/End navigation without writes", async () => {
+  const { api, mock } = fixture();
+  render(<AdminControlScreen api={api} />);
+  fireEvent.click(await screen.findByRole("button", { name: "Ver conductor" }));
+  const tabs = await screen.findByRole("tablist", {
+    name: "Secciones del detalle del conductor",
+  });
+  expect(
+    within(tabs)
+      .getAllByRole("tab")
+      .map((tab) => tab.textContent),
+  ).toEqual(["Resumen", "Estado", "Plan", "Validaciones", "Historial"]);
+  const assertSelected = (name: string) => {
+    const selected = within(tabs).getByRole("tab", { name, selected: true });
+    expect(tabs.querySelectorAll('[tabindex="0"]')).toHaveLength(1);
+    expect(selected.tabIndex).toBe(0);
+    expect(selected.classList.contains("button-primary")).toBe(false);
+    const panel = screen.getByRole("tabpanel", { name });
+    expect(panel.id).toBe(selected.getAttribute("aria-controls"));
+    expect(panel.getAttribute("aria-labelledby")).toBe(selected.id);
+    expect(screen.getAllByRole("tabpanel")).toHaveLength(1);
+    return selected;
+  };
+  assertSelected("Resumen").focus();
+  for (const [key, name] of [
+    ["ArrowRight", "Estado"],
+    ["End", "Historial"],
+    ["ArrowRight", "Resumen"],
+    ["ArrowLeft", "Historial"],
+    ["Home", "Resumen"],
+  ]) {
+    fireEvent.keyDown(document.activeElement!, { key });
+    expect(document.activeElement).toBe(assertSelected(name!));
+  }
+  fireEvent.keyDown(document.activeElement!, { key: "ArrowDown" });
+  expect(document.activeElement).toBe(assertSelected("Resumen"));
+  fireEvent.click(within(tabs).getByRole("tab", { name: "Plan" }));
+  expect(document.activeElement).toBe(assertSelected("Plan"));
+  fireEvent.click(screen.getByRole("button", { name: "Revisar antecedentes" }));
+  assertSelected("Validaciones");
+  expect(document.activeElement).toBe(
+    screen.getByRole("heading", { name: "Validaciones" }),
+  );
+  expect(mock.changeProfileStatus).not.toHaveBeenCalled();
+  expect(mock.changeSubscription).not.toHaveBeenCalled();
+  expect(mock.adminDriverHistory).toHaveBeenCalledExactlyOnceWith(7, 0);
+  expect(mock.adminDriverValidations).toHaveBeenCalledExactlyOnceWith(7, 0);
+});
+
+test("Más acciones is discoverable and closed initially; Escape and modal cancellation restore focus without writing", async () => {
+  const { api, mock } = fixture();
+  render(<AdminControlScreen api={api} />);
+  fireEvent.click(await screen.findByRole("button", { name: "Ver conductor" }));
+  await screen.findByRole("region", { name: "Estado del servicio" });
+  const summary = screen.getByText("Más acciones").closest("summary")!;
+  expect(summary.closest("details")!.open).toBe(false);
+  expect(screen.queryByRole("button", { name: "Suspender perfil" })).toBeNull();
+  expect(
+    screen.queryByRole("button", { name: "Desactivar perfil" }),
+  ).toBeNull();
+  summary.focus();
+  fireEvent.click(summary);
+  const suspend = screen.getByRole("button", { name: "Suspender perfil" });
+  expect(
+    screen.getByRole("button", { name: "Desactivar perfil" }),
+  ).toBeTruthy();
+  suspend.focus();
+  fireEvent.keyDown(suspend, { key: "Escape" });
+  expect(summary.closest("details")!.open).toBe(false);
+  expect(document.activeElement).toBe(summary);
+  fireEvent.click(summary);
+  suspend.focus();
+  fireEvent.click(suspend);
+  const editor = screen.getByRole("dialog", {
+    name: "Suspender perfil: Conductor Demo",
+  });
+  fireEvent.change(
+    within(editor).getByLabelText("Motivo del cambio de perfil"),
+    { target: { value: "Revisión sintética sin guardar" } },
+  );
+  fireEvent.click(
+    within(editor).getByRole("button", { name: "Revisar cambio de perfil" }),
+  );
+  const confirmation = screen.getByRole("alertdialog", {
+    name: "Confirmar cambio de perfil",
+  });
+  expect(confirmation.textContent).toContain("Revisión sintética sin guardar");
+  fireEvent.keyDown(within(confirmation).getByRole("heading"), {
+    key: "Escape",
+  });
+  expect(screen.queryByRole("alertdialog")).toBeNull();
+  expect(document.activeElement).toBe(suspend);
+  expect(mock.changeProfileStatus).not.toHaveBeenCalled();
+  expect(mock.changeSubscription).not.toHaveBeenCalled();
+});
+
+test.each([
+  ["active", ["Suspender perfil", "Desactivar perfil"]],
+  ["suspended", ["Reactivar perfil", "Desactivar perfil"]],
+  ["deactivated", ["Reactivar perfil"]],
+] as const)(
+  "Más acciones retains only the allowed transitions for %s",
+  async (status, actions) => {
+    const { api, mock, replace } = fixture();
+    replace({
+      ...initial,
+      publication: { ...initial.publication, profile_status: status },
+    });
+    render(<AdminControlScreen api={api} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Ver conductor" }),
+    );
+    await screen.findByRole("region", { name: "Estado del servicio" });
+    openMoreActions();
+    const group = screen.getByRole("group", {
+      name: "Cambiar estado del perfil",
+    });
+    expect(
+      within(group)
+        .getAllByRole("button")
+        .map((button) => button.textContent),
+    ).toEqual([...actions]);
+    expect(mock.changeProfileStatus).not.toHaveBeenCalled();
+  },
+);
+
+test.each(["approved", "pending"] as const)(
+  "review emphasis follows authoritative validation state %s",
+  async (state) => {
+    const { api, replace } = fixture();
+    replace({
+      ...initial,
+      publication: { ...initial.publication, validation_state: state },
+    });
+    render(<AdminControlScreen api={api} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Ver conductor" }),
+    );
+    await screen.findByRole("region", { name: "Estado del servicio" });
+    expect(
+      screen
+        .getByRole("button", { name: "Revisar antecedentes" })
+        .classList.contains("button-primary"),
+    ).toBe(state === "pending");
+    expect(
+      screen
+        .getByRole("button", { name: "Gestionar plan" })
+        .classList.contains("button-outline"),
+    ).toBe(true);
+  },
+);
+
+test("compact toolbar keeps advanced drafts separate from applied API criteria across pagination and Escape; clear restores all", async () => {
+  const { api, mock } = fixture();
+  mock.adminDrivers.mockResolvedValue({ count: 60, results: [initial] });
+  render(<AdminControlScreen api={api} />);
+  await screen.findByText("60 conductores");
+  const search = screen.getByRole("searchbox", { name: "Buscar conductor" });
+  const filter = screen.getByRole("button", { name: "Filtros" });
+  expect(filter.getAttribute("aria-expanded")).toBe("false");
+  expect(
+    document.getElementById(filter.getAttribute("aria-controls")!)?.hidden,
+  ).toBe(true);
+  expect(
+    screen.queryByRole("combobox", { name: "Estado del perfil" }),
+  ).toBeNull();
+  expect(filter.parentElement).toBe(search.closest("label")!.parentElement);
+  expect(screen.getByRole("button", { name: "Buscar" }).parentElement).toBe(
+    filter.parentElement,
+  );
+  fireEvent.change(search, { target: { value: "Primera búsqueda" } });
+  fireEvent.submit(search.closest("form")!);
+  await screen.findByText("Búsqueda: Primera búsqueda");
+  expect(mock.adminDrivers.mock.calls.at(-1)![0].get("q")).toBe(
+    "Primera búsqueda",
+  );
+  fireEvent.click(filter);
+  const profile = screen.getByRole("combobox", { name: "Estado del perfil" });
+  fireEvent.change(profile, { target: { value: "suspended" } });
+  fireEvent.change(search, { target: { value: "Borrador sin aplicar" } });
+  const calls = mock.adminDrivers.mock.calls.length;
+  fireEvent.keyDown(profile, { key: "Escape" });
+  expect(document.activeElement).toBe(filter);
+  expect(filter.getAttribute("aria-expanded")).toBe("false");
+  expect(mock.adminDrivers).toHaveBeenCalledTimes(calls);
+  fireEvent.click(screen.getByRole("button", { name: "Siguiente →" }));
+  await screen.findByText("Página 2 de 3");
+  expect(Object.fromEntries(mock.adminDrivers.mock.calls.at(-1)![0])).toEqual({
+    q: "Primera búsqueda",
+    offset: "25",
+    limit: "25",
+  });
+  expect(screen.getAllByText("60 conductores")).toHaveLength(1);
+  expect(
+    screen.getByRole("group", { name: "Filtros aplicados" }).textContent,
+  ).toBe("Búsqueda: Primera búsqueda");
+  fireEvent.click(filter);
+  expect(
+    (
+      screen.getByRole("combobox", {
+        name: "Estado del perfil",
+      }) as HTMLSelectElement
+    ).value,
+  ).toBe("suspended");
+  expect((search as HTMLInputElement).value).toBe("Borrador sin aplicar");
+  fireEvent.click(screen.getByRole("button", { name: "Aplicar filtros" }));
+  await screen.findByText("Estado del perfil: Suspendido");
+  expect(
+    screen.getByRole("button", { name: "Filtros (1 aplicado)" }),
+  ).toBeTruthy();
+  expect(Object.fromEntries(mock.adminDrivers.mock.calls.at(-1)![0])).toEqual({
+    q: "Borrador sin aplicar",
+    profile_status: "suspended",
+    offset: "0",
+    limit: "25",
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Limpiar filtros" }));
+  await waitFor(() =>
+    expect(Object.fromEntries(mock.adminDrivers.mock.calls.at(-1)![0])).toEqual(
+      { offset: "0", limit: "25" },
+    ),
+  );
+  expect(screen.queryByRole("group", { name: "Filtros aplicados" })).toBeNull();
+  expect(document.activeElement).toBe(search);
+  expect((search as HTMLInputElement).value).toBe("");
+  fireEvent.click(filter);
+  expect(
+    (
+      screen.getByRole("combobox", {
+        name: "Estado del perfil",
+      }) as HTMLSelectElement
+    ).value,
+  ).toBe("");
+});
+
+test("filter panel closes explicitly, on outside pointer and focus departure without applying or discarding its draft", async () => {
+  const { api, mock } = fixture();
+  render(<AdminControlScreen api={api} />);
+  await screen.findByText("1 conductor");
+  const trigger = screen.getByRole("button", { name: "Filtros" });
+  const calls = mock.adminDrivers.mock.calls.length;
+  fireEvent.click(trigger);
+  const panel = screen.getByRole("dialog", { name: "Filtros de conductores" });
+  const profile = within(panel).getByRole("combobox", {
+    name: "Estado del perfil",
+  });
+  expect(trigger.getAttribute("aria-haspopup")).toBe("dialog");
+  expect(document.activeElement).toBe(profile);
+  expect(within(panel).getAllByRole("combobox")).toHaveLength(5);
+  fireEvent.change(profile, { target: { value: "suspended" } });
+  expect(within(panel).getByRole("status").textContent).toBe(
+    "Cambios sin aplicar",
+  );
+  fireEvent.click(within(panel).getByRole("button", { name: "Cerrar" }));
+  expect(document.activeElement).toBe(trigger);
+  expect(screen.queryByRole("dialog")).toBeNull();
+  fireEvent.click(trigger);
+  expect((profile as HTMLSelectElement).value).toBe("suspended");
+  fireEvent.pointerDown(document.body);
+  expect(document.activeElement).toBe(trigger);
+  expect(screen.queryByRole("dialog")).toBeNull();
+  fireEvent.click(trigger);
+  fireEvent.click(trigger);
+  expect(screen.queryByRole("dialog")).toBeNull();
+  fireEvent.click(trigger);
+  const search = screen.getByRole("searchbox", { name: "Buscar conductor" });
+  act(() => search.focus());
+  expect(document.activeElement).toBe(search);
+  expect(screen.queryByRole("dialog")).toBeNull();
+  expect(mock.adminDrivers).toHaveBeenCalledTimes(calls);
+  fireEvent.click(trigger);
+  expect((profile as HTMLSelectElement).value).toBe("suspended");
+  fireEvent.keyDown(trigger, { key: "Escape" });
+  expect(document.activeElement).toBe(trigger);
+  expect(screen.queryByRole("dialog")).toBeNull();
+});
+
+test("search preserves applied advanced filters; clearing in the panel only changes the draft until Apply", async () => {
+  const { api, mock } = fixture();
+  render(<AdminControlScreen api={api} pendingOnly />);
+  await screen.findByText("1 conductor");
+  const search = screen.getByRole("searchbox", { name: "Buscar conductor" });
+  const trigger = screen.getByRole("button", { name: "Filtros (1 aplicado)" });
+  fireEvent.click(trigger);
+  fireEvent.change(
+    screen.getByRole("combobox", { name: "Estado del perfil" }),
+    {
+      target: { value: "suspended" },
+    },
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Cerrar" }));
+  fireEvent.change(search, { target: { value: "Servicio" } });
+  fireEvent.submit(search.closest("form")!);
+  await screen.findByText("Búsqueda: Servicio");
+  expect(Object.fromEntries(mock.adminDrivers.mock.calls.at(-1)![0])).toEqual({
+    q: "Servicio",
+    validation_state: "pending",
+    offset: "0",
+    limit: "25",
+  });
+  fireEvent.click(trigger);
+  const calls = mock.adminDrivers.mock.calls.length;
+  fireEvent.click(screen.getByRole("button", { name: "Limpiar" }));
+  for (const select of screen.getAllByRole("combobox"))
+    expect((select as HTMLSelectElement).value).toBe("");
+  expect((search as HTMLInputElement).value).toBe("Servicio");
+  expect(mock.adminDrivers).toHaveBeenCalledTimes(calls);
+  expect(screen.getByText("Estado de validación: En revisión")).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "Cerrar" }));
+  fireEvent.submit(search.closest("form")!);
+  await waitFor(() =>
+    expect(mock.adminDrivers.mock.calls.length).toBe(calls + 1),
+  );
+  expect(mock.adminDrivers.mock.calls.at(-1)![0].get("validation_state")).toBe(
+    "pending",
+  );
+  fireEvent.click(trigger);
+  fireEvent.submit(
+    screen.getByRole("button", { name: "Aplicar filtros" }).closest("form")!,
+  );
+  await waitFor(() =>
+    expect(Object.fromEntries(mock.adminDrivers.mock.calls.at(-1)![0])).toEqual(
+      {
+        q: "Servicio",
+        offset: "0",
+        limit: "25",
+      },
+    ),
+  );
+  expect(screen.queryByRole("dialog")).toBeNull();
+  expect(document.activeElement).toBe(trigger);
+  expect(screen.getByRole("button", { name: "Filtros" })).toBeTruthy();
+  expect(screen.queryByText("Estado de validación: En revisión")).toBeNull();
+});

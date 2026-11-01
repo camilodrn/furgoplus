@@ -1,0 +1,13 @@
+{
+  "width": 1440,
+  "scrollWidth": 1440,
+  "focus": "TodosActivoSuspendidoDesactivado",
+  "headings": [
+    "Conductores",
+    "Filtros de conductores",
+    "Conductor ficticio Básico T12",
+    "Conductor ficticio Pro T12",
+    "Conductor ficticio Elite T12"
+  ],
+  "overflow": []
+}

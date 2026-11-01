@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "summary": {
+    "errors": 0,
+    "warnings": 0,
+    "suggestions": 2
+  },
+  "filesReviewed": 5,
+  "findings": [
+    {
+      "ruleId": "design-hardcoded-color",
+      "severity": "info",
+      "category": "design-system",
+      "file": "web/src/operational.css",
+      "line": 279,
+      "column": 27,
+      "message": "Hardcoded color may drift from project design tokens.",
+      "confidence": 0.9,
+      "autofix": false,
+      "fixable": false
+    },
+    {
+      "ruleId": "design-hardcoded-color",
+      "severity": "info",
+      "category": "design-system",
+      "file": "web/src/operational.css",
+      "line": 281,
+      "column": 21,
+      "message": "Hardcoded color may drift from project design tokens.",
+      "confidence": 0.9,
+      "autofix": false,
+      "fixable": false
+    }
+  ],
+  "fixed": []
+}

@@ -1,0 +1,192 @@
+{
+  "name": "100-web-conductor-inicio-verificado-1440",
+  "role": "conductor",
+  "screen": "W07 Inicio con sesión verificada tras corrección",
+  "at": "2026-10-31T13:12:12.711Z",
+  "platform": "Fedora Chromium real React + academic API",
+  "browser": "156.0.8078.4",
+  "origin": "http://127.0.0.1:15174",
+  "geometry": {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "scrollWidth": 1440,
+    "scrollHeight": 1107,
+    "scrollY": 0,
+    "devicePixelRatio": 1,
+    "activeElement": {
+      "tag": "BODY",
+      "role": null
+    },
+    "headings": [
+      "Inicio",
+      "Hola, Conductor ficticio Elite T12",
+      "Tu servicio está visible",
+      "Pendientes",
+      "Solicitudes",
+      "Pagos",
+      "Tu operación",
+      "Rutas",
+      "Pasajeros",
+      "Datos y documentos",
+      "Revisión del equipo",
+      "Plan vigente",
+      "Ruta y publicación",
+      "Rutas y cupos",
+      "Ruta ficticia T12 elite"
+    ]
+  },
+  "blocked": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/profile/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validation/checklist/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/documents/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validation/checklist/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/profile/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/documents/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 200
+    }
+  ],
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "W07",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/100-web-conductor-inicio-verificado-1440.png",
+      "sha256": "0d1680e1b60e17c82ec5f48cd937613a3b402758b5f42627923cc859c97be435",
+      "pixels": [
+        1440,
+        1000
+      ]
+    },
+    {
+      "file": "capturas-reales/100-web-conductor-inicio-verificado-1440-full.png",
+      "sha256": "49ff964e2bdd4aaf3802d2f28d73570330b7ab602be9955ed325f768e6b6505c",
+      "pixels": [
+        1425,
+        1107
+      ]
+    }
+  ]
+}

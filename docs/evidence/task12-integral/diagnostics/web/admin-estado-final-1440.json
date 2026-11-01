@@ -1,0 +1,11 @@
+{
+  "width": 1440,
+  "scrollWidth": 1440,
+  "focus": "Estado",
+  "headings": [
+    "Conductor ficticio Básico T12",
+    "Estado del servicio",
+    "Estado"
+  ],
+  "overflow": []
+}

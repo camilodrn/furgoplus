@@ -205,3 +205,40 @@ test("expiration during CSRF bootstrap prevents a pending write from being sent"
     "/api/v1/auth/me/",
   ]);
 });
+
+test.each(["routes", "assignments", "payments"] as const)(
+  "%s bounds a stalled body read, aborts and ignores a late auth error before manual retry",
+  async (method) => {
+    vi.useFakeTimers();
+    try {
+      let rejectBody!: (cause: Error) => void;
+      const body = new Promise((_, reject) => {
+        rejectBody = reject;
+      });
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce({ ok: true, status: 200, json: () => body })
+        .mockResolvedValueOnce(ok({ [method]: [] }));
+      vi.stubGlobal("fetch", fetchMock);
+      const expired = vi.fn();
+      const api = new AuthApi(expired);
+      const pending = api[method]();
+      const failure = expect(pending).rejects.toMatchObject({
+        code: "request_timeout",
+      });
+      await vi.advanceTimersByTimeAsync(15_001);
+      await failure;
+      expect(fetchMock.mock.calls[0]![1].signal.aborted).toBe(true);
+      const { ApiError } = await import("./api");
+      rejectBody(new ApiError(403, "not_authenticated", "Late private error"));
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(expired).not.toHaveBeenCalled();
+      await expect(api[method]()).resolves.toEqual({ [method]: [] });
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  },
+);

@@ -1,0 +1,193 @@
+{
+  "name": "furgoplus-task12-academic",
+  "networks": {
+    "database": {
+      "name": "furgoplus-task12-academic_database",
+      "ipam": {},
+      "internal": true
+    },
+    "frontend": {
+      "name": "furgoplus-task12-academic_frontend",
+      "ipam": {}
+    }
+  },
+  "secrets": {
+    "academic_identity": {
+      "name": "furgoplus-task12-academic_academic_identity",
+      "file": "/home/duran/.local/share/furgoplus/task12-academic/academic_identity"
+    },
+    "db_password": {
+      "name": "furgoplus-task12-academic_db_password",
+      "file": "/home/duran/.local/share/furgoplus/task12-academic/db_password"
+    },
+    "django_secret_key": {
+      "name": "furgoplus-task12-academic_django_secret_key",
+      "file": "/home/duran/.local/share/furgoplus/task12-academic/django_secret_key"
+    }
+  },
+  "services": {
+    "backend": {
+      "build": {
+        "context": "/home/duran/Proyectos/furgoplus-planes",
+        "dockerfile": "backend/Dockerfile"
+      },
+      "command": null,
+      "depends_on": {
+        "db": {
+          "condition": "service_healthy",
+          "required": true
+        }
+      },
+      "entrypoint": null,
+      "environment": {
+        "ACADEMIC_PROJECT": "furgoplus-task12-academic",
+        "API_PUBLIC_ORIGIN": "http://127.0.0.1:18082",
+        "DB_HOST": "db",
+        "DB_NAME": "furgoplus_task12_academic",
+        "DB_PORT": "5432",
+        "DB_USER": "furgoplus_task12_academic",
+        "DJANGO_ALLOWED_HOSTS": "127.0.0.1,localhost,backend",
+        "DJANGO_DEBUG": "true",
+        "DJANGO_SETTINGS_MODULE": "config.settings_academic",
+        "DJANGO_TRUST_PROXY_SSL_HEADER": "false",
+        "FURGOPLUS_DEMO_MODE": "true",
+        "FURGOPLUS_ENVIRONMENT": "academic",
+        "PRIVATE_UPLOAD_ROOT": "/var/lib/furgoplus/private",
+        "WEB_PUBLIC_ORIGIN": "http://127.0.0.1:15173"
+      },
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import http.client; c=http.client.HTTPConnection('127.0.0.1',8000,timeout=3); c.request('GET','/api/v1/health/'); assert c.getresponse().status == 200"
+        ],
+        "timeout": "4s",
+        "interval": "5s",
+        "retries": 20
+      },
+      "networks": {
+        "database": null,
+        "frontend": null
+      },
+      "ports": [
+        {
+          "mode": "ingress",
+          "host_ip": "127.0.0.1",
+          "target": 8000,
+          "published": "18082",
+          "protocol": "tcp"
+        }
+      ],
+      "secrets": [
+        {
+          "source": "db_password",
+          "target": "/run/secrets/db_password"
+        },
+        {
+          "source": "django_secret_key",
+          "target": "/run/secrets/django_secret_key"
+        },
+        {
+          "source": "academic_identity",
+          "target": "/run/secrets/academic_identity"
+        }
+      ],
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "private_uploads",
+          "target": "/var/lib/furgoplus/private",
+          "volume": {}
+        }
+      ]
+    },
+    "db": {
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "POSTGRES_DB": "furgoplus_task12_academic",
+        "POSTGRES_INITDB_ARGS": "--auth-host=scram-sha-256",
+        "POSTGRES_PASSWORD_FILE": "/run/secrets/db_password",
+        "POSTGRES_USER": "furgoplus_task12_academic"
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""
+        ],
+        "timeout": "3s",
+        "interval": "3s",
+        "retries": 20
+      },
+      "image": "postgres:17.6-alpine3.22",
+      "networks": {
+        "database": null
+      },
+      "secrets": [
+        {
+          "source": "db_password",
+          "target": "/run/secrets/db_password"
+        },
+        {
+          "source": "academic_identity",
+          "target": "/run/secrets/academic_identity"
+        }
+      ],
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "pg_data",
+          "target": "/var/lib/postgresql/data",
+          "volume": {}
+        },
+        {
+          "type": "bind",
+          "source": "/home/duran/Proyectos/furgoplus-planes/infra/academic/10-academic-identity.sh",
+          "target": "/docker-entrypoint-initdb.d/10-academic-identity.sh",
+          "read_only": true,
+          "bind": {
+            "selinux": "Z"
+          }
+        }
+      ]
+    },
+    "web": {
+      "build": {
+        "context": "/home/duran/Proyectos/furgoplus-planes",
+        "dockerfile": "web/Dockerfile"
+      },
+      "command": null,
+      "depends_on": {
+        "backend": {
+          "condition": "service_healthy",
+          "required": true
+        }
+      },
+      "entrypoint": null,
+      "environment": {
+        "VITE_API_PROXY_TARGET": "http://backend:8000"
+      },
+      "networks": {
+        "frontend": null
+      },
+      "ports": [
+        {
+          "mode": "ingress",
+          "host_ip": "127.0.0.1",
+          "target": 5173,
+          "published": "15173",
+          "protocol": "tcp"
+        }
+      ]
+    }
+  },
+  "volumes": {
+    "pg_data": {
+      "name": "furgoplus-task12-academic_pg_data"
+    },
+    "private_uploads": {
+      "name": "furgoplus-task12-academic_private_uploads"
+    }
+  }
+}

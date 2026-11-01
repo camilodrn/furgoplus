@@ -1,0 +1,2933 @@
+{
+  "at": "2026-10-31T22:08:13.703570+00:00",
+  "codeId": "791096ca8e9d345a",
+  "package": "com.example.furgoplus.task12",
+  "nominalVersion": "0.1.0+1",
+  "beforeApk": "b957d8a625b8a538cae8c83f801063d62693e5356d41ea70c1c0eb11205956da",
+  "initialUpdatedApk": "42e2871877fc5de1dc10af011e3403a386dfe85755cdc09a1e47a735a4868049",
+  "finalInstalledApk": "ecf88f06d3846d97196518051cb86169d6fdaa69231d59e3d34d877ae01b6ed1",
+  "defines": {
+    "API_BASE_URL": "http://127.0.0.1:18082",
+    "ALLOW_HTTP_API": "true",
+    "FURGOPLUS_SYNTHETIC_DATA": "true"
+  },
+  "sameSignature": true,
+  "uninstalled": false,
+  "dataPreserved": true,
+  "businessWrites": 0,
+  "authLoginLogoutTested": true,
+  "records": [
+    {
+      "at": "2026-10-31T21:36:52.642512+00:00",
+      "package": "com.example.furgoplus.task12",
+      "apkSha256": "b957d8a625b8a538cae8c83f801063d62693e5356d41ea70c1c0eb11205956da",
+      "model": "Samsung SM-A546E",
+      "screen": "C7 APK anterior · pasajero expandido",
+      "fontScale": "1.1",
+      "realDevice": true,
+      "humanApproval": false,
+      "ui": [
+        {
+          "text": "",
+          "label": "Volver a Hoy",
+          "clickable": "true",
+          "bounds": "[11,107][146,242]"
+        },
+        {
+          "text": "",
+          "label": "Pasajeros",
+          "clickable": "false",
+          "bounds": "[203,140][446,210]"
+        },
+        {
+          "text": "",
+          "label": "Cuenta",
+          "clickable": "true",
+          "bounds": "[945,107][1080,242]"
+        },
+        {
+          "text": "",
+          "label": "Pasajeros del recorrido",
+          "clickable": "false",
+          "bounds": "[45,277][1035,362]"
+        },
+        {
+          "text": "",
+          "label": "Ruta ficticia T12 elite · 07:00",
+          "clickable": "false",
+          "bounds": "[45,362][1035,424]"
+        },
+        {
+          "text": "",
+          "label": "Capacidad: 3 ocupados · 1 disponible · 4 total",
+          "clickable": "false",
+          "bounds": "[45,469][1035,570]"
+        },
+        {
+          "text": "[input]",
+          "label": "",
+          "clickable": "true",
+          "bounds": "[45,688][1035,854]"
+        },
+        {
+          "text": "",
+          "label": "Expanded",
+          "clickable": "false",
+          "bounds": "[45,888][1035,1087]"
+        },
+        {
+          "text": "",
+          "label": "Pasajero ficticio elite 1\nParada ficticia T12 sin domicilio real, Expanded",
+          "clickable": "true",
+          "bounds": "[45,888][1035,1087]"
+        },
+        {
+          "text": "",
+          "label": "Contacto del apoderado",
+          "clickable": "false",
+          "bounds": "[45,1087][528,1152]"
+        },
+        {
+          "text": "",
+          "label": "Apoderado ficticio T12",
+          "clickable": "false",
+          "bounds": "[45,1152][554,1222]"
+        },
+        {
+          "text": "",
+          "label": "000000000",
+          "clickable": "false",
+          "bounds": "[45,1222][299,1293]"
+        },
+        {
+          "text": "",
+          "label": "Collapsed",
+          "clickable": "false",
+          "bounds": "[45,1329][1035,1529]"
+        },
+        {
+          "text": "",
+          "label": "Pasajero ficticio elite 2\nParada ficticia T12 sin domicilio real, Collapsed",
+          "clickable": "true",
+          "bounds": "[45,1329][1035,1529]"
+        },
+        {
+          "text": "",
+          "label": "Collapsed",
+          "clickable": "false",
+          "bounds": "[45,1532][1035,1731]"
+        },
+        {
+          "text": "",
+          "label": "Pasajero ficticio elite 3\nParada ficticia T12 sin domicilio real, Collapsed",
+          "clickable": "true",
+          "bounds": "[45,1532][1035,1731]"
+        },
+        {
+          "text": "",
+          "label": "3 pasajeros",
+          "clickable": "false",
+          "bounds": "[45,1765][1035,1835]"
+        },
+        {
+          "text": "",
+          "label": "Hoy\nTab 1 of 3",
+          "clickable": "true",
+          "bounds": "[0,2081][360,2298]"
+        },
+        {
+          "text": "",
+          "label": "Mi plan\nTab 2 of 3",
+          "clickable": "true",
+          "bounds": "[360,2081][720,2298]"
+        },
+        {
+          "text": "",
+          "label": "Ayuda\nTab 3 of 3",
+          "clickable": "true",
+          "bounds": "[720,2081][1080,2298]"
+        }
+      ],
+      "file": "android/before-passengers-expanded.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "26cf06743fcf88a7788be873ef47049ab93f92fee1c3235bac840a2c5dba4fdd"
+    },
+    {
+      "at": "2026-10-31T21:53:31.780755+00:00",
+      "package": "com.example.furgoplus.task12",
+      "apkSha256": "ecf88f06d3846d97196518051cb86169d6fdaa69231d59e3d34d877ae01b6ed1",
+      "model": "Samsung SM-A546E",
+      "screen": "C7 APK final · contexto, ocupación, búsqueda y pasajeros",
+      "fontScale": "1.1",
+      "realDevice": true,
+      "humanApproval": false,
+      "ui": [
+        {
+          "text": "",
+          "label": "Volver a Hoy",
+          "clickable": "true",
+          "bounds": "[11,107][146,242]"
+        },
+        {
+          "text": "",
+          "label": "Pasajeros",
+          "clickable": "false",
+          "bounds": "[203,140][446,210]"
+        },
+        {
+          "text": "",
+          "label": "Cuenta",
+          "clickable": "true",
+          "bounds": "[945,107][1080,242]"
+        },
+        {
+          "text": "",
+          "label": "Ruta ficticia T12 elite",
+          "clickable": "false",
+          "bounds": "[203,334][979,418]"
+        },
+        {
+          "text": "",
+          "label": "07:00–08:00",
+          "clickable": "false",
+          "bounds": "[101,452][416,522]"
+        },
+        {
+          "text": "",
+          "label": "31-10-2026",
+          "clickable": "false",
+          "bounds": "[461,452][715,522]"
+        },
+        {
+          "text": "",
+          "label": "Capacidad: 3 ocupados · 1 disponible · 4 total",
+          "clickable": "false",
+          "bounds": "[90,668][990,769]"
+        },
+        {
+          "text": "[input]",
+          "label": "",
+          "clickable": "true",
+          "bounds": "[45,933][1035,1099]"
+        },
+        {
+          "text": "",
+          "label": "Collapsed",
+          "clickable": "false",
+          "bounds": "[79,1132][1001,1411]"
+        },
+        {
+          "text": "",
+          "label": "Pasajero ficticio elite 1\nParada ficticia T12 sin domicilio real, Collapsed",
+          "clickable": "true",
+          "bounds": "[79,1132][1001,1411]"
+        },
+        {
+          "text": "",
+          "label": "Collapsed",
+          "clickable": "false",
+          "bounds": "[79,1414][1001,1692]"
+        },
+        {
+          "text": "",
+          "label": "Pasajero ficticio elite 2\nParada ficticia T12 sin domicilio real, Collapsed",
+          "clickable": "true",
+          "bounds": "[79,1414][1001,1692]"
+        },
+        {
+          "text": "",
+          "label": "Collapsed",
+          "clickable": "false",
+          "bounds": "[79,1695][1001,1973]"
+        },
+        {
+          "text": "",
+          "label": "Pasajero ficticio elite 3\nParada ficticia T12 sin domicilio real, Collapsed",
+          "clickable": "true",
+          "bounds": "[79,1695][1001,1973]"
+        },
+        {
+          "text": "",
+          "label": "Hoy\nTab 1 of 3",
+          "clickable": "true",
+          "bounds": "[0,2081][360,2298]"
+        },
+        {
+          "text": "",
+          "label": "Mi plan\nTab 2 of 3",
+          "clickable": "true",
+          "bounds": "[360,2081][720,2298]"
+        },
+        {
+          "text": "",
+          "label": "Ayuda\nTab 3 of 3",
+          "clickable": "true",
+          "bounds": "[720,2081][1080,2298]"
+        }
+      ],
+      "file": "android/final-passengers.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "9bdb9957263e459b5eff6752162913c2b774e77ef2041537453ac6be2b6bec51"
+    },
+    {
+      "at": "2026-10-31T21:54:00.446682+00:00",
+      "package": "com.example.furgoplus.task12",
+      "apkSha256": "ecf88f06d3846d97196518051cb86169d6fdaa69231d59e3d34d877ae01b6ed1",
+      "model": "Samsung SM-A546E",
+      "screen": "C7 APK final · contacto autorizado agrupado",
+      "fontScale": "1.1",
+      "realDevice": true,
+      "humanApproval": false,
+      "ui": [
+        {
+          "text": "",
+          "label": "Volver a Hoy",
+          "clickable": "true",
+          "bounds": "[11,107][146,242]"
+        },
+        {
+          "text": "",
+          "label": "Pasajeros",
+          "clickable": "false",
+          "bounds": "[203,140][446,210]"
+        },
+        {
+          "text": "",
+          "label": "Cuenta",
+          "clickable": "true",
+          "bounds": "[945,107][1080,242]"
+        },
+        {
+          "text": "",
+          "label": "Ruta ficticia T12 elite",
+          "clickable": "false",
+          "bounds": "[203,334][979,418]"
+        },
+        {
+          "text": "",
+          "label": "07:00–08:00",
+          "clickable": "false",
+          "bounds": "[101,452][416,522]"
+        },
+        {
+          "text": "",
+          "label": "31-10-2026",
+          "clickable": "false",
+          "bounds": "[461,452][715,522]"
+        },
+        {
+          "text": "",
+          "label": "Capacidad: 3 ocupados · 1 disponible · 4 total",
+          "clickable": "false",
+          "bounds": "[90,668][990,769]"
+        },
+        {
+          "text": "[input]",
+          "label": "",
+          "clickable": "true",
+          "bounds": "[45,933][1035,1099]"
+        },
+        {
+          "text": "",
+          "label": "Expanded",
+          "clickable": "false",
+          "bounds": "[79,1132][1001,1411]"
+        },
+        {
+          "text": "",
+          "label": "Pasajero ficticio elite 1\nParada ficticia T12 sin domicilio real, Expanded",
+          "clickable": "true",
+          "bounds": "[79,1132][1001,1411]"
+        },
+        {
+          "text": "",
+          "label": "Contacto del apoderado",
+          "clickable": "false",
+          "bounds": "[214,1444][706,1506]"
+        },
+        {
+          "text": "",
+          "label": "Apoderado ficticio T12",
+          "clickable": "false",
+          "bounds": "[214,1518][719,1585]"
+        },
+        {
+          "text": "",
+          "label": "000000000",
+          "clickable": "false",
+          "bounds": "[214,1596][467,1667]"
+        },
+        {
+          "text": "",
+          "label": "Collapsed",
+          "clickable": "false",
+          "bounds": "[79,1737][1001,2015]"
+        },
+        {
+          "text": "",
+          "label": "Pasajero ficticio elite 2\nParada ficticia T12 sin domicilio real, Collapsed",
+          "clickable": "true",
+          "bounds": "[79,1737][1001,2015]"
+        },
+        {
+          "text": "",
+          "label": "Collapsed",
+          "clickable": "false",
+          "bounds": "[79,2018][1001,2081]"
+        },
+        {
+          "text": "",
+          "label": "Pasajero ficticio elite 3\nParada ficticia T12 sin domicilio real, Collapsed",
+          "clickable": "true",
+          "bounds": "[79,2018][1001,2081]"
+        },
+        {
+          "text": "",
+          "label": "Hoy\nTab 1 of 3",
+          "clickable": "true",
+          "bounds": "[0,2081][360,2298]"
+        },
+        {
+          "text": "",
+          "label": "Mi plan\nTab 2 of 3",
+          "clickable": "true",
+          "bounds": "[360,2081][720,2298]"
+        },
+        {
+          "text": "",
+          "label": "Ayuda\nTab 3 of 3",
+          "clickable": "true",
+          "bounds": "[720,2081][1080,2298]"
+        }
+      ],
+      "file": "android/final-passenger-expanded.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "a1bfb451cdcc6eb317cd6d95cf757d8dd8265154a42549be47d850868aaf0b2c"
+    },
+    {
+      "at": "2026-10-31T21:54:59.936432+00:00",
+      "package": "com.example.furgoplus.task12",
+      "apkSha256": "ecf88f06d3846d97196518051cb86169d6fdaa69231d59e3d34d877ae01b6ed1",
+      "model": "Samsung SM-A546E",
+      "screen": "C7 APK final · búsqueda elite 2 muestra solo pasajero 2",
+      "fontScale": "1.1",
+      "realDevice": true,
+      "humanApproval": false,
+      "ui": [
+        {
+          "text": "",
+          "label": "Volver a Hoy",
+          "clickable": "true",
+          "bounds": "[11,107][146,242]"
+        },
+        {
+          "text": "",
+          "label": "Pasajeros",
+          "clickable": "false",
+          "bounds": "[203,140][446,210]"
+        },
+        {
+          "text": "",
+          "label": "Cuenta",
+          "clickable": "true",
+          "bounds": "[945,107][1080,242]"
+        },
+        {
+          "text": "",
+          "label": "Ruta ficticia T12 elite",
+          "clickable": "false",
+          "bounds": "[203,334][979,418]"
+        },
+        {
+          "text": "",
+          "label": "07:00–08:00",
+          "clickable": "false",
+          "bounds": "[101,452][416,522]"
+        },
+        {
+          "text": "",
+          "label": "31-10-2026",
+          "clickable": "false",
+          "bounds": "[461,452][715,522]"
+        },
+        {
+          "text": "",
+          "label": "Capacidad: 3 ocupados · 1 disponible · 4 total",
+          "clickable": "false",
+          "bounds": "[90,668][990,769]"
+        },
+        {
+          "text": "[input]",
+          "label": "",
+          "clickable": "true",
+          "bounds": "[45,933][1035,1099]"
+        },
+        {
+          "text": "",
+          "label": "Limpiar búsqueda",
+          "clickable": "true",
+          "bounds": "[900,948][1035,1083]"
+        },
+        {
+          "text": "",
+          "label": "Collapsed",
+          "clickable": "false",
+          "bounds": "[79,1132][1001,1411]"
+        },
+        {
+          "text": "",
+          "label": "Pasajero ficticio elite 2\nParada ficticia T12 sin domicilio real, Collapsed",
+          "clickable": "true",
+          "bounds": "[79,1132][1001,1411]"
+        },
+        {
+          "text": "",
+          "label": "1 resultado",
+          "clickable": "false",
+          "bounds": "[45,1444][1035,1515]"
+        },
+        {
+          "text": "",
+          "label": "Hoy\nTab 1 of 3",
+          "clickable": "true",
+          "bounds": "[0,2081][360,2298]"
+        },
+        {
+          "text": "",
+          "label": "Mi plan\nTab 2 of 3",
+          "clickable": "true",
+          "bounds": "[360,2081][720,2298]"
+        },
+        {
+          "text": "",
+          "label": "Ayuda\nTab 3 of 3",
+          "clickable": "true",
+          "bounds": "[720,2081][1080,2298]"
+        }
+      ],
+      "file": "android/final-passenger-search.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "9e72063024f68f7586c08c801c4923c73285203335abc756ac438dc0a52556e9"
+    },
+    {
+      "at": "2026-10-31T21:55:12.811554+00:00",
+      "package": "com.example.furgoplus.task12",
+      "apkSha256": "ecf88f06d3846d97196518051cb86169d6fdaa69231d59e3d34d877ae01b6ed1",
+      "model": "Samsung SM-A546E",
+      "screen": "C7 Android Atrás vuelve a Hoy sin iniciar servicio",
+      "fontScale": "1.1",
+      "realDevice": true,
+      "humanApproval": false,
+      "ui": [
+        {
+          "text": "",
+          "label": "FurgoPlus Transporte Escolar",
+          "clickable": "false",
+          "bounds": "[45,124][428,226]"
+        },
+        {
+          "text": "",
+          "label": "Cuenta",
+          "clickable": "true",
+          "bounds": "[785,107][1080,242]"
+        },
+        {
+          "text": "",
+          "label": "Hoy",
+          "clickable": "false",
+          "bounds": "[45,277][185,373]"
+        },
+        {
+          "text": "",
+          "label": "Sábado, 31 de octubre",
+          "clickable": "false",
+          "bounds": "[45,373][504,435]"
+        },
+        {
+          "text": "",
+          "label": "Actualizar día",
+          "clickable": "true",
+          "bounds": "[900,277][1035,412]"
+        },
+        {
+          "text": "",
+          "label": "Datos de ensayo: personas, recorridos y ubicaciones son ficticios. No los uses para un traslado real.",
+          "clickable": "false",
+          "bounds": "[45,480][1035,542]"
+        },
+        {
+          "text": "",
+          "label": "Recorrido seleccionado",
+          "clickable": "false",
+          "bounds": "[101,643][979,705]"
+        },
+        {
+          "text": "",
+          "label": "Planificada",
+          "clickable": "false",
+          "bounds": "[101,727][979,795]"
+        },
+        {
+          "text": "",
+          "label": "07:00 → 08:00",
+          "clickable": "false",
+          "bounds": "[101,840][979,935]"
+        },
+        {
+          "text": "",
+          "label": "Ruta ficticia T12 elite",
+          "clickable": "false",
+          "bounds": "[101,958][979,1042]"
+        },
+        {
+          "text": "",
+          "label": "Iniciar servicio",
+          "clickable": "true",
+          "bounds": "[101,1087][979,1245]"
+        },
+        {
+          "text": "",
+          "label": "Capacidad: 3 ocupados · 1 disponible · 4 total",
+          "clickable": "false",
+          "bounds": "[101,1346][979,1447]"
+        },
+        {
+          "text": "",
+          "label": "Información del recorrido",
+          "clickable": "true",
+          "bounds": "[101,1470][979,1605]"
+        },
+        {
+          "text": "",
+          "label": "Pasajeros del recorrido\n3 pasajeros asignados",
+          "clickable": "true",
+          "bounds": "[101,1740][979,1945]"
+        },
+        {
+          "text": "",
+          "label": "Hoy\nTab 1 of 3",
+          "clickable": "true",
+          "bounds": "[0,2081][360,2298]"
+        },
+        {
+          "text": "",
+          "label": "Mi plan\nTab 2 of 3",
+          "clickable": "true",
+          "bounds": "[360,2081][720,2298]"
+        },
+        {
+          "text": "",
+          "label": "Ayuda\nTab 3 of 3",
+          "clickable": "true",
+          "bounds": "[720,2081][1080,2298]"
+        }
+      ],
+      "file": "android/final-android-back.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "5fbd27595c210daf5f7fa2a099ba86b87e12f42c18e8a99622fe9f7e0cf49378"
+    },
+    {
+      "at": "2026-10-31T21:58:39.002808+00:00",
+      "package": "com.example.furgoplus.task12",
+      "apkSha256": "ecf88f06d3846d97196518051cb86169d6fdaa69231d59e3d34d877ae01b6ed1",
+      "model": "Samsung SM-A546E",
+      "screen": "Consumidor Flutter · información del recorrido en APK final",
+      "fontScale": "1.1",
+      "realDevice": true,
+      "humanApproval": false,
+      "ui": [
+        {
+          "text": "",
+          "label": "Volver a Hoy",
+          "clickable": "true",
+          "bounds": "[11,107][146,242]"
+        },
+        {
+          "text": "",
+          "label": "Tu recorrido",
+          "clickable": "false",
+          "bounds": "[203,140][503,210]"
+        },
+        {
+          "text": "",
+          "label": "Cuenta",
+          "clickable": "true",
+          "bounds": "[945,107][1080,242]"
+        },
+        {
+          "text": "",
+          "label": "Ruta ficticia T12 elite",
+          "clickable": "false",
+          "bounds": "[203,334][979,418]"
+        },
+        {
+          "text": "",
+          "label": "07:00–08:00",
+          "clickable": "false",
+          "bounds": "[101,452][416,522]"
+        },
+        {
+          "text": "",
+          "label": "31-10-2026",
+          "clickable": "false",
+          "bounds": "[461,452][715,522]"
+        },
+        {
+          "text": "",
+          "label": "Destino",
+          "clickable": "false",
+          "bounds": "[197,679][354,741]"
+        },
+        {
+          "text": "",
+          "label": "Escuela ficticia T12",
+          "clickable": "false",
+          "bounds": "[197,741][684,820]"
+        },
+        {
+          "text": "",
+          "label": "Parada sintética T12 sin domicilio real",
+          "clickable": "false",
+          "bounds": "[197,820][979,944]"
+        },
+        {
+          "text": "",
+          "label": "Abrir en mapas",
+          "clickable": "false",
+          "bounds": "[101,966][979,1101]"
+        },
+        {
+          "text": "",
+          "label": "Ubicación ficticia. Mapas no está disponible para datos de ensayo.",
+          "clickable": "false",
+          "bounds": "[101,1135][979,1436]"
+        },
+        {
+          "text": "",
+          "label": "Estado",
+          "clickable": "false",
+          "bounds": "[101,1622][244,1684]"
+        },
+        {
+          "text": "",
+          "label": "Planificada",
+          "clickable": "false",
+          "bounds": "[101,1695][353,1765]"
+        },
+        {
+          "text": "",
+          "label": "Capacidad: 3 ocupados · 1 disponible · 4 total",
+          "clickable": "false",
+          "bounds": "[101,1793][979,1894]"
+        },
+        {
+          "text": "",
+          "label": "Consultar pasajeros",
+          "clickable": "true",
+          "bounds": "[101,1928][979,2063]"
+        },
+        {
+          "text": "",
+          "label": "Hoy\nTab 1 of 3",
+          "clickable": "true",
+          "bounds": "[0,2081][360,2298]"
+        },
+        {
+          "text": "",
+          "label": "Mi plan\nTab 2 of 3",
+          "clickable": "true",
+          "bounds": "[360,2081][720,2298]"
+        },
+        {
+          "text": "",
+          "label": "Ayuda\nTab 3 of 3",
+          "clickable": "true",
+          "bounds": "[720,2081][1080,2298]"
+        }
+      ],
+      "file": "android/final-route-information.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "1ba5728ad1e9e743504ff3bae51b9bb5039bf3f95908f00d48b636782b9ee808"
+    },
+    {
+      "at": "2026-10-31T21:58:51.840244+00:00",
+      "package": "com.example.furgoplus.task12",
+      "apkSha256": "ecf88f06d3846d97196518051cb86169d6fdaa69231d59e3d34d877ae01b6ed1",
+      "model": "Samsung SM-A546E",
+      "screen": "Consumidor Flutter · cuenta sin título duplicado",
+      "fontScale": "1.1",
+      "realDevice": true,
+      "humanApproval": false,
+      "ui": [
+        {
+          "text": "",
+          "label": "Volver",
+          "clickable": "true",
+          "bounds": "[11,107][146,242]"
+        },
+        {
+          "text": "",
+          "label": "Mi cuenta",
+          "clickable": "false",
+          "bounds": "[203,140][446,210]"
+        },
+        {
+          "text": "t12-elite@example.test",
+          "label": "",
+          "clickable": "false",
+          "bounds": "[56,311][1024,769]"
+        },
+        {
+          "text": "",
+          "label": "Cerrar sesión",
+          "clickable": "true",
+          "bounds": "[56,837][534,983]"
+        },
+        {
+          "text": "",
+          "label": "Privacidad",
+          "clickable": "true",
+          "bounds": "[292,1073][544,1208]"
+        },
+        {
+          "text": "",
+          "label": "Términos",
+          "clickable": "true",
+          "bounds": "[558,1073][788,1208]"
+        },
+        {
+          "text": "",
+          "label": "Hoy\nTab 1 of 3",
+          "clickable": "true",
+          "bounds": "[0,2081][360,2298]"
+        },
+        {
+          "text": "",
+          "label": "Mi plan\nTab 2 of 3",
+          "clickable": "true",
+          "bounds": "[360,2081][720,2298]"
+        },
+        {
+          "text": "",
+          "label": "Ayuda\nTab 3 of 3",
+          "clickable": "true",
+          "bounds": "[720,2081][1080,2298]"
+        }
+      ],
+      "file": "android/final-driver-account.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "f07d1e242d48a769bcdf3dfb5847a1d4f7c60ad9576e6dc2962e68c4d2187ce9"
+    },
+    {
+      "at": "2026-10-31T21:59:00.036771+00:00",
+      "package": "com.example.furgoplus.task12",
+      "apkSha256": "ecf88f06d3846d97196518051cb86169d6fdaa69231d59e3d34d877ae01b6ed1",
+      "model": "Samsung SM-A546E",
+      "screen": "C8 Android · aviso de privacidad v0.2 sin banner web",
+      "fontScale": "1.1",
+      "realDevice": true,
+      "humanApproval": false,
+      "ui": [
+        {
+          "text": "",
+          "label": "Cerrar documento",
+          "clickable": "true",
+          "bounds": "[11,106][146,241]"
+        },
+        {
+          "text": "",
+          "label": "Privacidad",
+          "clickable": "false",
+          "bounds": "[203,132][510,216]"
+        },
+        {
+          "text": "Borrador — requiere revisión legal antes de producción",
+          "label": "",
+          "clickable": "false",
+          "bounds": "[90,320][990,455]"
+        },
+        {
+          "text": "Aviso de Privacidad v0.2 — 31-10-2026. Este borrador requiere revisión jurídica chilena antes del lanzamiento en producción, el uso con personas reales, datos reales de niños, niñas o adolescentes, datos reales de apoderados o domicilios y cualquier operación comercial. No constituye aprobación legal ni certificación.",
+          "label": "",
+          "clickable": "false",
+          "bounds": "[56,523][1024,1257]"
+        },
+        {
+          "text": "",
+          "label": "1. Qué es FurgoPlus y quién responde",
+          "clickable": "false",
+          "bounds": "[56,1302][1024,1470]"
+        },
+        {
+          "text": "FurgoPlus es un prototipo para buscar servicios de transporte escolar, solicitar contacto y probar herramientas operativas del conductor. Las pruebas deben usar datos y documentos sintéticos. La entidad legal operadora y responsable del tratamiento, su identificación y el canal oficial de privacidad aún deben definirse antes de producción. Este borrador no ofrece un contacto oficial que todavía no existe.",
+          "label": "",
+          "clickable": "false",
+          "bounds": "[56,1515][1024,2298]"
+        }
+      ],
+      "file": "android/final-native-privacy.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "2cbf9da19f8f21ce4fc257437844a1151c6b2c659a52f14757efa2a8a2389fdc"
+    },
+    {
+      "at": "2026-10-31T21:57:03.831Z",
+      "actualReact": true,
+      "fixture": false,
+      "geometry": {
+        "width": 320,
+        "height": 1000,
+        "scrollWidth": 320,
+        "devicePixelRatio": 1,
+        "focus": "H1",
+        "headings": [
+          "Cookies y almacenamiento",
+          "Tu acceso, protegido",
+          "Qué guardamos y para qué",
+          "Tus opciones",
+          "1. Finalidades y responsable",
+          "2. Cookies técnicas",
+          "3. Otros mecanismos necesarios",
+          "4. Preferencias y terceros",
+          "5. Android y servicios externos",
+          "6. Entornos, control y revisión legal"
+        ]
+      },
+      "axe": {
+        "violations": [],
+        "incomplete": []
+      },
+      "blocked": [],
+      "traffic": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/login/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/passenger-assignments/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/passenger-assignments/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/logout/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        }
+      ],
+      "file": "web/cookies-final-320.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "a21b8805cfad2d70be510a1be1c175be2c500ae468ebe0e9d9271cb668578412"
+    },
+    {
+      "at": "2026-10-31T21:57:03.325Z",
+      "actualReact": true,
+      "fixture": false,
+      "geometry": {
+        "width": 390,
+        "height": 1000,
+        "scrollWidth": 390,
+        "devicePixelRatio": 1,
+        "focus": "H1",
+        "headings": [
+          "Cookies y almacenamiento",
+          "Tu acceso, protegido",
+          "Qué guardamos y para qué",
+          "Tus opciones",
+          "1. Finalidades y responsable",
+          "2. Cookies técnicas",
+          "3. Otros mecanismos necesarios",
+          "4. Preferencias y terceros",
+          "5. Android y servicios externos",
+          "6. Entornos, control y revisión legal"
+        ]
+      },
+      "axe": {
+        "violations": [],
+        "incomplete": []
+      },
+      "blocked": [],
+      "traffic": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/login/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/passenger-assignments/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/passenger-assignments/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/logout/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        }
+      ],
+      "file": "web/cookies-final-390.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "5b776539dbe145200b5f66bb1c7b343358b0b08c2bb4e16e6cd6c4e6bbe3d6a1"
+    },
+    {
+      "at": "2026-10-31T21:57:02.754Z",
+      "actualReact": true,
+      "fixture": false,
+      "geometry": {
+        "width": 768,
+        "height": 1000,
+        "scrollWidth": 768,
+        "devicePixelRatio": 1,
+        "focus": "H1",
+        "headings": [
+          "Cookies y almacenamiento",
+          "Tu acceso, protegido",
+          "Qué guardamos y para qué",
+          "Tus opciones",
+          "1. Finalidades y responsable",
+          "2. Cookies técnicas",
+          "3. Otros mecanismos necesarios",
+          "4. Preferencias y terceros",
+          "5. Android y servicios externos",
+          "6. Entornos, control y revisión legal"
+        ]
+      },
+      "axe": {
+        "violations": [],
+        "incomplete": []
+      },
+      "blocked": [],
+      "traffic": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/login/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/passenger-assignments/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/passenger-assignments/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/logout/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        }
+      ],
+      "file": "web/cookies-final-768.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "6c893170dee23e156b435f8ba46f898f887d2b165fc57ac19f190b2411091496"
+    },
+    {
+      "at": "2026-10-31T21:57:02.314Z",
+      "actualReact": true,
+      "fixture": false,
+      "geometry": {
+        "width": 1440,
+        "height": 1000,
+        "scrollWidth": 1440,
+        "devicePixelRatio": 1,
+        "focus": "H1",
+        "headings": [
+          "Cookies y almacenamiento",
+          "Tu acceso, protegido",
+          "Qué guardamos y para qué",
+          "Tus opciones",
+          "2. Cookies técnicas",
+          "3. Otros mecanismos necesarios",
+          "4. Preferencias y terceros",
+          "5. Android y servicios externos",
+          "6. Entornos, control y revisión legal"
+        ]
+      },
+      "axe": {
+        "violations": [],
+        "incomplete": []
+      },
+      "blocked": [],
+      "traffic": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/login/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/passenger-assignments/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/passenger-assignments/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/logout/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        }
+      ],
+      "file": "web/cookies-final-1440.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "d366bed87dda9cad623a4f82ec4efc7ab741f6fce6d4eacc2268abcdc8d01b09"
+    },
+    {
+      "at": "2026-10-31T22:03:48.214Z",
+      "actualReact": true,
+      "fixture": false,
+      "geometry": {
+        "width": 1440,
+        "height": 1000,
+        "scrollWidth": 1440,
+        "devicePixelRatio": 1,
+        "focus": "SUMMARY",
+        "headings": [
+          "Cookies y almacenamiento",
+          "Tu acceso, protegido",
+          "Qué guardamos y para qué",
+          "Tus opciones",
+          "2. Cookies técnicas",
+          "3. Otros mecanismos necesarios",
+          "4. Preferencias y terceros",
+          "5. Android y servicios externos",
+          "6. Entornos, control y revisión legal"
+        ]
+      },
+      "axe": {
+        "violations": [],
+        "incomplete": []
+      },
+      "blocked": [],
+      "traffic": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/login/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/passenger-assignments/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/passenger-assignments/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/logout/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        }
+      ],
+      "file": "web/cookies-keyboard-detail-1440.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "d7001bd6bc8108a2d509e58d5ba9fbc110ee5c3ff3dcacaad57533584f464b1c"
+    },
+    {
+      "zoom": 2,
+      "geometry": {
+        "width": 720,
+        "scrollWidth": 720,
+        "devicePixelRatio": 2,
+        "rootFontSize": "16px"
+      },
+      "axe": {
+        "violations": [],
+        "incomplete": []
+      },
+      "method": "Chrome tabs.setZoom via a local extension without permissions in an isolated temporary browser; no CSS scaling or modification of user profile",
+      "realApplication": true,
+      "fixture": false,
+      "file": "web/cookies-real-zoom-200.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "eb20c41455d64365773348168b87c0c8ca4a7fff00311790c46b2d3811fd61b7"
+    },
+    {
+      "at": "2026-10-31T21:51:49.883Z",
+      "actualReact": true,
+      "fixture": false,
+      "geometry": {
+        "width": 390,
+        "height": 1000,
+        "scrollWidth": 390,
+        "devicePixelRatio": 1,
+        "focus": "SUMMARY",
+        "headings": []
+      },
+      "axe": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": [
+              [
+                ".focus-panel > p:nth-child(2)"
+              ],
+              [
+                ".passenger-detail-row:nth-child(1) > dl > dd"
+              ]
+            ]
+          }
+        ]
+      },
+      "blocked": [],
+      "traffic": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/csrf/",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/login/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validation/checklist/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/profile/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/communes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/documents/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/validations/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/publication/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/summary/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/contact-requests/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/passenger-assignments/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/routes/",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/driver/passenger-assignments/",
+          "status": 200
+        }
+      ],
+      "file": "web/web-passenger-contact-390.png",
+      "inspectedByAgent": true,
+      "humanProductApproval": false,
+      "imageSha256": "041ba4d164b383fc25b8548f91c218df783ce530b5e4311b3188d5097aa2069f"
+    }
+  ],
+  "cookiesOptionalPresent": false,
+  "cookieValuesOrTokensSaved": false,
+  "excluded": [
+    "cookies-zoom-probe was a keyboard probe with no browser zoom",
+    "initial intermediate Android 42e2 is not the final APK",
+    "initial query 2 matched guardian T12; final search uses elite 2"
+  ],
+  "humanProductApproval": false
+}

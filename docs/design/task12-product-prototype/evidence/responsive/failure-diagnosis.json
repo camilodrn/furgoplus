@@ -1,0 +1,1720 @@
+{
+  "source": "results-fedora-before-fixes.json",
+  "sourceTimestamp": "2026-10-28T12:55:46.428Z",
+  "sourceSHA256": "5e46bae402c2f11f6bf197eea0f13a03f8cc6a5d559df76058b287bac80dcbd8",
+  "numbering": "1-based position in source cases array",
+  "totalCases": 443,
+  "baselineAutomatedPasses": 377,
+  "baselineFailedCases": 66,
+  "baselineCaptures": 24,
+  "byRootCause": {
+    "inline-target": 53,
+    "filter-shrink": 4,
+    "dialog-navigation": 8,
+    "privacy-target": 1
+  },
+  "byScreen": {
+    "web/conductor/servicio": 9,
+    "web/conductor/solicitudes": 4,
+    "android/conductor/hoy": 35,
+    "android/conductor/recorrido/1": 9,
+    "web/conductor/pasajeros": 2,
+    "web/conductor/ayuda": 3,
+    "web/administrador/conductor/1": 2,
+    "android/conductor/cuenta": 2
+  },
+  "byKind": {
+    "viewport": 31,
+    "intermediate": 20,
+    "landscape": 3,
+    "state": 3,
+    "dialog": 9
+  },
+  "failedCases": [
+    {
+      "caseNumber": 2,
+      "rootCause": "inline-target",
+      "route": "web/conductor/servicio",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 320,
+        "smallTargets": [
+          "Editar datos",
+          "Ver revisión",
+          "Gestionar rutas"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 320,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 8,
+      "rootCause": "filter-shrink",
+      "route": "web/conductor/solicitudes",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 320,
+        "smallTargets": [],
+        "clippedButtons": [
+          "Todas 4",
+          "Por responder 2",
+          "Aceptadas 1",
+          "Cerradas 1"
+        ],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 320,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 16,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 320,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 320,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 17,
+      "rootCause": "inline-target",
+      "route": "android/conductor/recorrido/1",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 320,
+        "smallTargets": [
+          "Consultar pasajeros"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 320,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 30,
+      "rootCause": "inline-target",
+      "route": "web/conductor/servicio",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 360,
+        "smallTargets": [
+          "Editar datos",
+          "Ver revisión",
+          "Gestionar rutas"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 360,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 36,
+      "rootCause": "filter-shrink",
+      "route": "web/conductor/solicitudes",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 360,
+        "smallTargets": [],
+        "clippedButtons": [
+          "Todas 4",
+          "Por responder 2",
+          "Aceptadas 1",
+          "Cerradas 1"
+        ],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 360,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 44,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 360,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 360,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 45,
+      "rootCause": "inline-target",
+      "route": "android/conductor/recorrido/1",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 360,
+        "smallTargets": [
+          "Consultar pasajeros"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 360,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 58,
+      "rootCause": "inline-target",
+      "route": "web/conductor/servicio",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 390,
+        "smallTargets": [
+          "Editar datos",
+          "Ver revisión",
+          "Gestionar rutas"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 64,
+      "rootCause": "filter-shrink",
+      "route": "web/conductor/solicitudes",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 390,
+        "smallTargets": [],
+        "clippedButtons": [
+          "Todas 4",
+          "Por responder 2",
+          "Aceptadas 1",
+          "Cerradas 1"
+        ],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 72,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 390,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 73,
+      "rootCause": "inline-target",
+      "route": "android/conductor/recorrido/1",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 390,
+        "smallTargets": [
+          "Consultar pasajeros"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 86,
+      "rootCause": "inline-target",
+      "route": "web/conductor/servicio",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 430,
+        "smallTargets": [
+          "Editar datos",
+          "Ver revisión",
+          "Gestionar rutas"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 430,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 92,
+      "rootCause": "filter-shrink",
+      "route": "web/conductor/solicitudes",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 430,
+        "smallTargets": [],
+        "clippedButtons": [
+          "Todas 4",
+          "Por responder 2",
+          "Aceptadas 1",
+          "Cerradas 1"
+        ],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 430,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 100,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 430,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 430,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 101,
+      "rootCause": "inline-target",
+      "route": "android/conductor/recorrido/1",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 430,
+        "smallTargets": [
+          "Consultar pasajeros"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 430,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 114,
+      "rootCause": "inline-target",
+      "route": "web/conductor/servicio",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 768,
+        "smallTargets": [
+          "Editar datos",
+          "Ver revisión",
+          "Gestionar rutas"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 768,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 128,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 768,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 768,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 129,
+      "rootCause": "inline-target",
+      "route": "android/conductor/recorrido/1",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 768,
+        "smallTargets": [
+          "Consultar pasajeros"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 768,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 142,
+      "rootCause": "inline-target",
+      "route": "web/conductor/servicio",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 794,
+        "smallTargets": [
+          "Editar datos",
+          "Ver revisión",
+          "Gestionar rutas"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1024,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 156,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1024,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 157,
+      "rootCause": "inline-target",
+      "route": "android/conductor/recorrido/1",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Consultar pasajeros"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1024,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 170,
+      "rootCause": "inline-target",
+      "route": "web/conductor/servicio",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 1050,
+        "smallTargets": [
+          "Editar datos",
+          "Ver revisión",
+          "Gestionar rutas"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1280,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 184,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1280,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 185,
+      "rootCause": "inline-target",
+      "route": "android/conductor/recorrido/1",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Consultar pasajeros"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1280,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 198,
+      "rootCause": "inline-target",
+      "route": "web/conductor/servicio",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 1210,
+        "smallTargets": [
+          "Editar datos",
+          "Ver revisión",
+          "Gestionar rutas"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1440,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 212,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1440,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 213,
+      "rootCause": "inline-target",
+      "route": "android/conductor/recorrido/1",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Consultar pasajeros"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1440,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 226,
+      "rootCause": "inline-target",
+      "route": "web/conductor/servicio",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 1440,
+        "smallTargets": [
+          "Editar datos",
+          "Ver revisión",
+          "Gestionar rutas"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1920,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 240,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1920,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 241,
+      "rootCause": "inline-target",
+      "route": "android/conductor/recorrido/1",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Consultar pasajeros"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1920,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 255,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 450,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 450,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 450,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 259,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 451,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 451,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 451,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 263,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 600,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 600,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 600,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 267,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 759,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 759,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 759,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 271,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 760,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 760,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 760,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 275,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 761,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 761,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 761,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 279,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 767,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 767,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 767,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 283,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 769,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 769,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 769,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 287,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 959,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 959,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 959,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 291,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 960,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 960,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 960,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 295,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 961,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 961,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 299,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 999,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 999,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 303,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 1000,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1000,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 307,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 1001,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1001,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 311,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 1023,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1023,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 315,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 1025,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1025,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 319,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 1250,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1250,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 323,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 1251,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1251,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 327,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 1599,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1599,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 331,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 1600,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1600,
+          "height": 900,
+          "visualHeight": 900
+        }
+      }
+    },
+    {
+      "caseNumber": 335,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 568,
+      "height": 320,
+      "kind": "landscape",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 568,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 568,
+          "height": 320,
+          "visualHeight": 320
+        }
+      }
+    },
+    {
+      "caseNumber": 340,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 844,
+      "height": 390,
+      "kind": "landscape",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 844,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 844,
+          "height": 390,
+          "visualHeight": 390
+        }
+      }
+    },
+    {
+      "caseNumber": 345,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy",
+      "width": 932,
+      "height": 430,
+      "kind": "landscape",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 932,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 932,
+          "height": 430,
+          "visualHeight": 430
+        }
+      }
+    },
+    {
+      "caseNumber": 390,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy?estado=muchos",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 320,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 320,
+          "height": 844,
+          "visualHeight": 844
+        }
+      }
+    },
+    {
+      "caseNumber": 391,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy?estado=muchos",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 768,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 768,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 392,
+      "rootCause": "inline-target",
+      "route": "android/conductor/hoy?estado=muchos",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 410,
+        "smallTargets": [
+          "Información del recorrido"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 1440,
+          "height": 1000,
+          "visualHeight": 1000
+        }
+      }
+    },
+    {
+      "caseNumber": 427,
+      "rootCause": "dialog-navigation",
+      "route": "web/conductor/pasajeros",
+      "width": 844,
+      "height": 320,
+      "kind": "dialog",
+      "action": "passenger-new",
+      "status": "fail",
+      "error": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-action=\"passenger-new\"]').first()\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" class=\"btn primary\" data-action=\"passenger-new\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <input value=\"\" type=\"tel\" required=\"\" name=\"phone\"/> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <input type=\"date\" required=\"\" name=\"start\" value=\"2026-11-04\"/> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <input value=\"\" type=\"tel\" required=\"\" name=\"phone\"/> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <label class=\"field \">…</label> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <input type=\"date\" required=\"\" name=\"start\" value=\"2026-11-04\"/> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <input value=\"\" type=\"tel\" required=\"\" name=\"phone\"/> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <label class=\"field \">…</label> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <label class=\"field \">…</label> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n"
+    },
+    {
+      "caseNumber": 428,
+      "rootCause": "dialog-navigation",
+      "route": "web/conductor/pasajeros",
+      "width": 1440,
+      "height": 900,
+      "kind": "dialog",
+      "action": "passenger-new",
+      "status": "fail",
+      "error": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-action=\"passenger-new\"]').first()\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" class=\"btn primary\" data-action=\"passenger-new\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    10 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+    },
+    {
+      "caseNumber": 429,
+      "rootCause": "privacy-target",
+      "route": "web/conductor/ayuda",
+      "width": 320,
+      "height": 480,
+      "kind": "dialog",
+      "action": "support-new",
+      "status": "fail",
+      "measurements": {
+        "headings": 1,
+        "pageOverflow": false,
+        "mobileOverflow": false,
+        "mainWidth": 320,
+        "smallTargets": [
+          "privacy"
+        ],
+        "clippedButtons": [],
+        "formOverflow": [],
+        "badMeters": [],
+        "tables": [],
+        "viewport": {
+          "width": 320,
+          "height": 480,
+          "visualHeight": 480
+        }
+      }
+    },
+    {
+      "caseNumber": 430,
+      "rootCause": "dialog-navigation",
+      "route": "web/conductor/ayuda",
+      "width": 844,
+      "height": 320,
+      "kind": "dialog",
+      "action": "support-new",
+      "status": "fail",
+      "error": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-action=\"support-new\"]').first()\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" class=\"btn primary\" data-action=\"support-new\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <label class=\"check\">…</label> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <textarea name=\"body\" required=\"\" placeholder=\"Describe el problema y el paso en que ocurrió\"></textarea> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <select required=\"\" name=\"severity\">…</select> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <label class=\"check\">…</label> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <textarea name=\"body\" required=\"\" placeholder=\"Describe el problema y el paso en que ocurrió\"></textarea> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <select required=\"\" name=\"severity\">…</select> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <select required=\"\" name=\"severity\">…</select> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n"
+    },
+    {
+      "caseNumber": 431,
+      "rootCause": "dialog-navigation",
+      "route": "web/conductor/ayuda",
+      "width": 1440,
+      "height": 900,
+      "kind": "dialog",
+      "action": "support-new",
+      "status": "fail",
+      "error": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-action=\"support-new\"]').first()\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" class=\"btn primary\" data-action=\"support-new\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    10 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+    },
+    {
+      "caseNumber": 433,
+      "rootCause": "dialog-navigation",
+      "route": "web/administrador/conductor/1",
+      "width": 844,
+      "height": 320,
+      "kind": "dialog",
+      "action": "admin-plan",
+      "status": "fail",
+      "error": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-action=\"admin-plan\"]').first()\u001b[22m\n\u001b[2m    - locator resolved to <button data-id=\"1\" class=\"btn \" type=\"button\" data-action=\"admin-plan\">Editar plan</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <textarea required=\"\" name=\"reason\"></textarea> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <p class=\"small muted\">El estado activo también requiere fechas vigentes…</p> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <textarea required=\"\" name=\"reason\"></textarea> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <label class=\"field\">…</label> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <p class=\"small muted\">El estado activo también requiere fechas vigentes…</p> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <textarea required=\"\" name=\"reason\"></textarea> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <label class=\"field\">…</label> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <label class=\"field\">…</label> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n"
+    },
+    {
+      "caseNumber": 434,
+      "rootCause": "dialog-navigation",
+      "route": "web/administrador/conductor/1",
+      "width": 1440,
+      "height": 900,
+      "kind": "dialog",
+      "action": "admin-plan",
+      "status": "fail",
+      "error": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-action=\"admin-plan\"]').first()\u001b[22m\n\u001b[2m    - locator resolved to <button data-id=\"1\" class=\"btn \" type=\"button\" data-action=\"admin-plan\">Editar plan</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <input name=\"end\" type=\"date\" required=\"\" value=\"2026-12-31\"/> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <button class=\"btn primary\">Revisar cambio</button> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <label class=\"field\">…</label> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <input name=\"end\" type=\"date\" required=\"\" value=\"2026-12-31\"/> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button class=\"btn primary\">Revisar cambio</button> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <label class=\"field\">…</label> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <input name=\"end\" type=\"date\" required=\"\" value=\"2026-12-31\"/> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <input name=\"end\" type=\"date\" required=\"\" value=\"2026-12-31\"/> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n"
+    },
+    {
+      "caseNumber": 436,
+      "rootCause": "dialog-navigation",
+      "route": "android/conductor/cuenta",
+      "width": 844,
+      "height": 320,
+      "kind": "dialog",
+      "action": "logout",
+      "status": "fail",
+      "error": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-action=\"logout\"]').first()\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"btn \" type=\"button\" data-action=\"logout\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <h2 id=\"dialog-title\">Cerrar sesión</h2> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"form-footer\">…</div> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <p>Volverás a la pantalla de acceso de muestra.</p> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <h2 id=\"dialog-title\">Cerrar sesión</h2> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"form-footer\">…</div> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <p>Volverás a la pantalla de acceso de muestra.</p> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <h2 id=\"dialog-title\">Cerrar sesión</h2> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <h2 id=\"dialog-title\">Cerrar sesión</h2> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n"
+    },
+    {
+      "caseNumber": 437,
+      "rootCause": "dialog-navigation",
+      "route": "android/conductor/cuenta",
+      "width": 1440,
+      "height": 900,
+      "kind": "dialog",
+      "action": "logout",
+      "status": "fail",
+      "error": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-action=\"logout\"]').first()\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"btn \" type=\"button\" data-action=\"logout\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <p>Volverás a la pantalla de acceso de muestra.</p> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <p>Volverás a la pantalla de acceso de muestra.</p> from <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <dialog open=\"\" id=\"dialog\" aria-labelledby=\"dialog-title\">…</dialog> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n"
+    }
+  ]
+}

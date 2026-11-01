@@ -520,9 +520,12 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Hoy'), findsOneWidget);
+    expect(find.widgetWithText(NavigationDestination, 'Hoy'), findsOneWidget);
     expect(find.text('Lunes, 28 de septiembre'), findsOneWidget);
-    expect(find.text('No hay rutas programadas para hoy.'), findsOneWidget);
+    expect(
+      find.text('Aquí verás tus recorridos cuando estén programados.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('login sends entered password unchanged before clearing field', (
@@ -584,7 +587,7 @@ void main() {
       await tester.tap(find.text('Crear cuenta de familia'));
       await tester.pumpAndSettle();
       expect(find.text('Cómo te llamas'), findsOneWidget);
-      expect(find.textContaining('información sintética'), findsOneWidget);
+      expect(find.textContaining('datos de prueba'), findsOneWidget);
       await tester.enterText(
         find.widgetWithText(TextField, 'Cómo te llamas'),
         'Familia Demo',
@@ -659,7 +662,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.textContaining('Apoderados y conductores'), findsOneWidget);
+      expect(find.text('Te damos la bienvenida.'), findsOneWidget);
       final field = find.widgetWithText(TextField, 'Contraseña');
       await tester.enterText(field, 'Synthetic-Secret');
       await tester.ensureVisible(find.byTooltip('Mostrar contraseña'));

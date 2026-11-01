@@ -1,0 +1,191 @@
+{
+  "name": "85-web-admin-plan-1440",
+  "role": "administrador",
+  "screen": "A07 Plan asignado, sin modificar",
+  "at": "2026-10-31T13:00:58.503Z",
+  "platform": "Fedora Chromium real React + academic API",
+  "browser": "156.0.8078.4",
+  "origin": "http://127.0.0.1:15174",
+  "geometry": {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "scrollWidth": 1440,
+    "scrollHeight": 1094,
+    "scrollY": 0,
+    "devicePixelRatio": 1,
+    "activeElement": {
+      "tag": "BUTTON",
+      "role": "tab"
+    },
+    "headings": [
+      "Conductor ficticio Básico T12",
+      "Estado del servicio",
+      "Plan",
+      "Plan actual"
+    ]
+  },
+  "blocked": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/support/tickets/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/support/tickets/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/history/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/history/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/plans/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/plans/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/subscription/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/subscription/",
+      "status": 200
+    }
+  ],
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "A07",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/85-web-admin-plan-1440.png",
+      "sha256": "e20542370a546cbad497b71eda57299a86525d71f07dc4bdb255de2cb6330ed1",
+      "pixels": [
+        1440,
+        1000
+      ]
+    },
+    {
+      "file": "capturas-reales/85-web-admin-plan-1440-full.png",
+      "sha256": "4679c86bfec25a80c9237f12654937c184731e8b43d1a82100ddb3a655d4b9b5",
+      "pixels": [
+        1425,
+        1094
+      ]
+    }
+  ]
+}
