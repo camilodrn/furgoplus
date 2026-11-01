@@ -1735,3 +1735,293 @@ def openapi_document():
             for key, value in filters.items()
         )
     return document
+
+
+# Task 12: commercial inclusion is not effective availability.
+CAPABILITY_STATE = control_object(
+    {
+        "included_in_plan": {"type": "boolean"},
+        "implemented": {"type": "boolean"},
+        "enabled": {"type": "boolean"},
+        "blockers": {"type": "array", "items": STRING},
+    }
+)
+COMMERCIAL_PLAN = control_object(
+    {
+        "code": PLAN_CODE,
+        "label": STRING,
+        "monthly_price_clp": {"type": "integer", "minimum": 0},
+        "currency": {"type": "string", "const": "CLP"},
+        "billing_period": {"type": "string", "const": "month"},
+        "commercial_proposal": {"type": "boolean", "const": True},
+        "automatic_billing": {"type": "boolean", "const": False},
+        "support_priority": {
+            "type": "string",
+            "enum": ["standard", "preferred", "priority"],
+        },
+    }
+)
+CAPABILITY_SUBSCRIPTION = control_object(
+    {
+        "status": STRING,
+        "starts_at": {"type": ["string", "null"], "format": "date-time"},
+        "ends_at": {"type": ["string", "null"], "format": "date-time"},
+        "effective": {"type": "boolean"},
+    }
+)
+DRIVER_CAPABILITIES = control_object(
+    {
+        "catalog_version": STRING,
+        "evaluated_at": {"type": "string", "format": "date-time"},
+        "plan": {"oneOf": [COMMERCIAL_PLAN, {"type": "null"}]},
+        "subscription": {"oneOf": [CAPABILITY_SUBSCRIPTION, {"type": "null"}]},
+        "blockers": {"type": "array", "items": STRING},
+        "capabilities": control_object(
+            {
+                code: CAPABILITY_STATE
+                for code in (
+                    "operations.core",
+                    "dashboard.basic",
+                    "reports.monthly.read",
+                    "reports.detail.read",
+                    "reports.xlsx.export",
+                    "analytics.period_comparison",
+                    "help.center",
+                    "support.requests",
+                    "assistant.faq",
+                    "assistant.contextual",
+                )
+            }
+        ),
+    }
+)
+ENDPOINTS += (
+    Endpoint(
+        "driver/capabilities/",
+        "driver-capabilities",
+        "get",
+        "getDriverCapabilities",
+        "Own effective capabilities; inclusion is separate from availability",
+        DRIVER_CAPABILITIES,
+    ),
+)
+
+DATE = {"type": "string", "format": "date"}
+DATETIME = {"type": "string", "format": "date-time"}
+XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+REPORT_PERIOD = control_object(
+    {
+        "month": STRING,
+        "start": DATE,
+        "end_exclusive": DATE,
+        "timezone": {"type": "string", "const": "America/Santiago"},
+    }
+)
+REPORT_SUMMARY = control_object(
+    {
+        "payments": control_object(
+            {
+                s: control_object({"count": INTEGER, "amount_clp": INTEGER})
+                for s in ("pending", "paid", "void")
+            }
+        ),
+        "payment_count": INTEGER,
+        "non_void_amount_clp": INTEGER,
+        "runs": control_object(
+            {s: INTEGER for s in ("planned", "in_progress", "completed")}
+        ),
+        "run_count": INTEGER,
+        "recorded_capacity_total": INTEGER,
+        "contacts": control_object(
+            {s: INTEGER for s in ("pending", "accepted", "declined", "cancelled")}
+        ),
+        "contact_count": INTEGER,
+    }
+)
+REPORT_CAPACITY = control_object(
+    {
+        "as_of": DATE,
+        "routes": {
+            "type": "array",
+            "items": control_object(
+                {
+                    "route_id": INTEGER,
+                    "status": STRING,
+                    "seat_capacity": INTEGER,
+                    "next_service_date": DATE,
+                    "used_seats": INTEGER,
+                    "available_seats": INTEGER,
+                }
+            ),
+        },
+    }
+)
+MONTHLY_REPORT = control_object(
+    {
+        "period": REPORT_PERIOD,
+        "generated_at": DATETIME,
+        "summary": REPORT_SUMMARY,
+        "current_capacity": REPORT_CAPACITY,
+        "notes": {"type": "array", "items": STRING},
+    }
+)
+ENDPOINTS += (
+    Endpoint(
+        "driver/reports/monthly/",
+        "driver-reports-monthly",
+        "get",
+        "getDriverMonthlyReport",
+        "Own monthly cohorts (Pro and Elite)",
+        MONTHLY_REPORT,
+    ),
+)
+
+_reports_openapi_document = openapi_document
+
+REPORT_DETAILS = control_object(
+    {
+        "payments": {
+            "type": "array",
+            "items": control_object(
+                {
+                    "id": INTEGER,
+                    "service_period_start": DATE,
+                    "service_period_end": DATE,
+                    "due_on": DATE,
+                    "status": STRING,
+                    "amount_clp": INTEGER,
+                }
+            ),
+        },
+        "runs": {
+            "type": "array",
+            "items": control_object(
+                {
+                    "id": INTEGER,
+                    "route_id": INTEGER,
+                    "service_date": DATE,
+                    "state": STRING,
+                    "seat_capacity_snapshot": INTEGER,
+                    "start_time_snapshot": STRING,
+                    "end_time_snapshot": STRING,
+                }
+            ),
+        },
+        "contacts": {
+            "type": "array",
+            "items": control_object(
+                {
+                    "id": INTEGER,
+                    "created_at": DATETIME,
+                    "status": STRING,
+                    "resolved_at": {"type": ["string", "null"], "format": "date-time"},
+                }
+            ),
+        },
+    }
+)
+ADVANCED_REPORT = control_object(
+    {
+        **MONTHLY_REPORT["properties"],
+        "previous": control_object(
+            {"period": REPORT_PERIOD, "summary": REPORT_SUMMARY}
+        ),
+        "details": REPORT_DETAILS,
+    }
+)
+ENDPOINTS += (
+    Endpoint(
+        "driver/reports/advanced/",
+        "driver-reports-advanced",
+        "get",
+        "getDriverAdvancedReport",
+        "Own minimal detail and previous-month cohorts (Elite)",
+        ADVANCED_REPORT,
+    ),
+)
+for report_kind in ("payments", "runs", "contacts"):
+    ENDPOINTS += (
+        Endpoint(
+            f"driver/reports/{report_kind}.xlsx",
+            f"driver-reports-{report_kind}-xlsx",
+            "get",
+            f"exportDriver{report_kind.title()}Xlsx",
+            "Private Excel export (Elite)",
+            {"type": "string", "format": "binary"},
+        ),
+    )
+
+
+def openapi_document():
+    document = _reports_openapi_document()
+    for endpoint in ENDPOINTS:
+        if endpoint.name.startswith("driver-reports-"):
+            operation = document["paths"][f"/api/v1/{endpoint.path}"]["get"]
+            operation["parameters"] = [
+                {
+                    "name": "month",
+                    "in": "query",
+                    "schema": {
+                        "type": "string",
+                        "pattern": r"^20[0-9]{2}-(0[1-9]|1[0-2])$",
+                    },
+                    "description": "Mes calendario America/Santiago; por defecto mes "
+                    "actual. Solo un valor; sin otros parámetros.",
+                }
+            ]
+            if endpoint.name.endswith("-xlsx"):
+                operation["responses"]["200"]["content"] = {
+                    XLSX_MIME: {"schema": endpoint.response_schema}
+                }
+                operation["responses"]["200"]["headers"] = {
+                    "Cache-Control": {
+                        "schema": {"type": "string", "const": "no-store"}
+                    },
+                    "Content-Disposition": {"schema": STRING},
+                }
+    return document
+
+
+# Import after the shared schema helpers; no changes to report endpoints.
+from api.support_contracts import build_endpoints  # noqa: E402
+
+ENDPOINTS += build_endpoints()
+_support_openapi_document = openapi_document
+
+
+def openapi_document():
+    document = _support_openapi_document()
+    for name in ("support-list", "admin-support-list"):
+        endpoint = next(e for e in ENDPOINTS if e.name == name)
+        document["paths"][f"/api/v1/{endpoint.path}"]["get"]["parameters"] = [
+            {
+                "name": "offset",
+                "in": "query",
+                "schema": {**INTEGER, "minimum": 0, "default": 0},
+            },
+            {
+                "name": "limit",
+                "in": "query",
+                "schema": {**INTEGER, "minimum": 1, "maximum": 50, "default": 25},
+            },
+        ]
+    document["paths"]["/api/v1/admin/support/tickets/"]["get"]["parameters"].append(
+        {
+            "name": "state",
+            "in": "query",
+            "schema": {
+                "type": "string",
+                "enum": [
+                    "active",
+                    "all",
+                    "open",
+                    "in_progress",
+                    "waiting_user",
+                    "resolved",
+                    "closed",
+                ],
+                "default": "active",
+            },
+        }
+    )
+    return document
