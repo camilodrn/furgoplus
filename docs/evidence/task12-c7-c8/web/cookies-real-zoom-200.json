@@ -1,0 +1,16 @@
+{
+  "zoom": 2,
+  "geometry": {
+    "width": 720,
+    "scrollWidth": 720,
+    "devicePixelRatio": 2,
+    "rootFontSize": "16px"
+  },
+  "axe": {
+    "violations": [],
+    "incomplete": []
+  },
+  "method": "Chrome tabs.setZoom via a local extension without permissions in an isolated temporary browser; no CSS scaling or modification of user profile",
+  "realApplication": true,
+  "fixture": false
+}

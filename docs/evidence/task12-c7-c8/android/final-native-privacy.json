@@ -1,0 +1,48 @@
+{
+  "at": "2026-10-31T21:59:00.036771+00:00",
+  "package": "com.example.furgoplus.task12",
+  "apkSha256": "ecf88f06d3846d97196518051cb86169d6fdaa69231d59e3d34d877ae01b6ed1",
+  "model": "Samsung SM-A546E",
+  "screen": "C8 Android · aviso de privacidad v0.2 sin banner web",
+  "fontScale": "1.1",
+  "realDevice": true,
+  "humanApproval": false,
+  "ui": [
+    {
+      "text": "",
+      "label": "Cerrar documento",
+      "clickable": "true",
+      "bounds": "[11,106][146,241]"
+    },
+    {
+      "text": "",
+      "label": "Privacidad",
+      "clickable": "false",
+      "bounds": "[203,132][510,216]"
+    },
+    {
+      "text": "Borrador — requiere revisión legal antes de producción",
+      "label": "",
+      "clickable": "false",
+      "bounds": "[90,320][990,455]"
+    },
+    {
+      "text": "Aviso de Privacidad v0.2 — 31-10-2026. Este borrador requiere revisión jurídica chilena antes del lanzamiento en producción, el uso con personas reales, datos reales de niños, niñas o adolescentes, datos reales de apoderados o domicilios y cualquier operación comercial. No constituye aprobación legal ni certificación.",
+      "label": "",
+      "clickable": "false",
+      "bounds": "[56,523][1024,1257]"
+    },
+    {
+      "text": "",
+      "label": "1. Qué es FurgoPlus y quién responde",
+      "clickable": "false",
+      "bounds": "[56,1302][1024,1470]"
+    },
+    {
+      "text": "FurgoPlus es un prototipo para buscar servicios de transporte escolar, solicitar contacto y probar herramientas operativas del conductor. Las pruebas deben usar datos y documentos sintéticos. La entidad legal operadora y responsable del tratamiento, su identificación y el canal oficial de privacidad aún deben definirse antes de producción. Este borrador no ofrece un contacto oficial que todavía no existe.",
+      "label": "",
+      "clickable": "false",
+      "bounds": "[56,1515][1024,2298]"
+    }
+  ]
+}

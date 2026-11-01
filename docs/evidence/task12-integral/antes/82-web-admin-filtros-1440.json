@@ -1,0 +1,134 @@
+{
+  "name": "82-web-admin-filtros-1440",
+  "role": "administrador",
+  "screen": "A03 Filtros sin aplicar cambios de negocio",
+  "at": "2026-10-31T12:59:57.888Z",
+  "platform": "Fedora Chromium real React + academic API",
+  "browser": "156.0.8078.4",
+  "origin": "http://127.0.0.1:15174",
+  "geometry": {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "scrollWidth": 1440,
+    "scrollHeight": 1000,
+    "scrollY": 0,
+    "devicePixelRatio": 1,
+    "activeElement": {
+      "tag": "SELECT",
+      "role": null
+    },
+    "headings": [
+      "Conductores",
+      "Filtros de conductores",
+      "Conductor ficticio Básico T12",
+      "Conductor ficticio Pro T12",
+      "Conductor ficticio Elite T12"
+    ]
+  },
+  "blocked": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/support/tickets/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/support/tickets/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    }
+  ],
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "A03",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/82-web-admin-filtros-1440.png",
+      "sha256": "522c31f4b14231eea739aee023c42dafc2c2f92e739f416701aaf199c87b0161",
+      "pixels": [
+        1440,
+        1000
+      ]
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "name": "88-web-admin-validaciones-1440",
+  "role": "administrador",
+  "screen": "A11 Validaciones: pendientes vacíos reales",
+  "at": "2026-10-31T13:02:03.433Z",
+  "platform": "Fedora Chromium real React + academic API",
+  "browser": "156.0.8078.4",
+  "origin": "http://127.0.0.1:15174",
+  "geometry": {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "scrollWidth": 1440,
+    "scrollHeight": 1000,
+    "scrollY": 0,
+    "devicePixelRatio": 1,
+    "activeElement": {
+      "tag": "MAIN",
+      "role": null
+    },
+    "headings": [
+      "Validaciones de conductores",
+      "Solicitudes"
+    ]
+  },
+  "blocked": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/support/tickets/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/support/tickets/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/history/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/history/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/plans/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/plans/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/subscription/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/drivers/1/subscription/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/validations/",
+      "status": 200
+    }
+  ],
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "A11",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/88-web-admin-validaciones-1440.png",
+      "sha256": "035aa7498bb622c1d884b35c008b629ec3dc35b00db74406cd1e7f11cdf35a57",
+      "pixels": [
+        1440,
+        1000
+      ]
+    }
+  ]
+}

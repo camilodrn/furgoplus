@@ -1,0 +1,71 @@
+{
+  "name": "07-web-registro-sin-envio-1440",
+  "role": "publico",
+  "screen": "W02 Registro vacío, sin envío",
+  "at": "2026-10-31T09:39:18.950Z",
+  "platform": "Fedora Chromium real React + academic API",
+  "browser": "156.0.8078.4",
+  "origin": "http://127.0.0.1:15174",
+  "geometry": {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "scrollWidth": 1440,
+    "scrollHeight": 1070,
+    "activeElement": {
+      "tag": "BUTTON",
+      "role": null
+    },
+    "headings": [
+      "Crea tu cuenta de conductor"
+    ]
+  },
+  "blocked": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    }
+  ],
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "W02",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/07-web-registro-sin-envio-1440.png",
+      "sha256": "b999dbe6315e8e774dfa1ce6c385d8e5ca5e3883f1499e179935979cb82a3795",
+      "pixels": [
+        1440,
+        1000
+      ]
+    },
+    {
+      "file": "capturas-reales/07-web-registro-sin-envio-1440-full.png",
+      "sha256": "b8f5f8fdc100ce3c8a80900091c21813bc1e5e252a42026fe1ae67a1662e5152",
+      "pixels": [
+        1425,
+        1070
+      ]
+    }
+  ]
+}

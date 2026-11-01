@@ -1,0 +1,33 @@
+{
+  "name": "57-android-apoderado-detalle-1080",
+  "role": "apoderado",
+  "screen": "P04 Detalle del servicio Básico",
+  "at": "2026-10-31T12:48:09.310115+00:00",
+  "platform": "Samsung A54 physical Android 16 / Flutter current main.dart",
+  "model": "SM-A546E",
+  "resolution": {
+    "width": 1080,
+    "height": 2340
+  },
+  "densityDpi": 450,
+  "fontScale": "1.1",
+  "package": "com.example.furgoplus.task12",
+  "apkSha256": "55f2c602c7c3508d03544918d37002693495f0a61eb68cd7ef2da07c763f17f8",
+  "API_BASE_URL": "http://127.0.0.1:18082",
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "P04",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/57-android-apoderado-detalle-1080.png",
+      "sha256": "0a2138affde4dbafe612a5579ad2afc60386806f3b2151ccf10c627d1a197672",
+      "pixels": [
+        1080,
+        2340
+      ]
+    }
+  ]
+}

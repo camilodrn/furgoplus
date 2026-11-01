@@ -1,0 +1,25 @@
+{
+  "baselineFiles": 1973,
+  "changedSinceBaseline": [
+    ".21st/design.json",
+    "docs/TASK12_FINAL_UX_CLOSURE.md",
+    "docs/TASK12_INTEGRAL_COVERAGE.md",
+    "docs/TASK12_INTEGRAL_IMPLEMENTATION.md",
+    "docs/TASK12_UX_MIGRATION_MATRIX.md",
+    "docs/evidence/task12-closure/index.html",
+    "mobile/assets/legal/privacy.md",
+    "mobile/lib/driver_home.dart",
+    "mobile/test/integral_experience_test.dart",
+    "mobile/test/legal_access_test.dart",
+    "mobile/test/loading_recovery_test.dart",
+    "web/src/DriverOperations.tsx",
+    "web/src/LegalAccess.test.tsx",
+    "web/src/LegalAccess.tsx",
+    "web/src/SessionPrivacy.test.tsx",
+    "web/src/legal-access.css",
+    "web/src/legal/privacy.md",
+    "web/src/operational.css"
+  ],
+  "protectedChanged": [],
+  "removed": []
+}

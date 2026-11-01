@@ -1,0 +1,225 @@
+{
+  "name": "26-web-conductor-solicitudes-390",
+  "role": "conductor",
+  "screen": "W22 Solicitudes responsivo, sesión verificada",
+  "at": "2026-10-31T13:12:13.533Z",
+  "platform": "Fedora Chromium real React + academic API",
+  "browser": "156.0.8078.4",
+  "origin": "http://127.0.0.1:15174",
+  "geometry": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "scrollWidth": 390,
+    "scrollHeight": 1230,
+    "scrollY": 0,
+    "devicePixelRatio": 1,
+    "activeElement": {
+      "tag": "MAIN",
+      "role": null
+    },
+    "headings": [
+      "Solicitudes",
+      "Solicitudes recibidas",
+      "Selecciona una solicitud"
+    ]
+  },
+  "blocked": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/profile/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validation/checklist/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/documents/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validation/checklist/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/profile/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/documents/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/passenger-assignments/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/passenger-assignments/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    }
+  ],
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "W22",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/26-web-conductor-solicitudes-390.png",
+      "sha256": "949d9e75dde6549a3467d37d1b14f2ae5b53ec5d912c636ca0f8f569566df266",
+      "pixels": [
+        390,
+        844
+      ]
+    },
+    {
+      "file": "capturas-reales/26-web-conductor-solicitudes-390-full.png",
+      "sha256": "aaf0f40d71fb679ff80e10aea6f0739406d133003e92002fbddf62ca4aaa4c54",
+      "pixels": [
+        375,
+        1245
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "54-android-apoderado-seleccion-comparar-1080",
+  "role": "apoderado",
+  "screen": "P03 Dos servicios seleccionados para comparar",
+  "at": "2026-10-31T12:47:01.736160+00:00",
+  "platform": "Samsung A54 physical Android 16 / Flutter current main.dart",
+  "model": "SM-A546E",
+  "resolution": {
+    "width": 1080,
+    "height": 2340
+  },
+  "densityDpi": 450,
+  "fontScale": "1.1",
+  "package": "com.example.furgoplus.task12",
+  "apkSha256": "55f2c602c7c3508d03544918d37002693495f0a61eb68cd7ef2da07c763f17f8",
+  "API_BASE_URL": "http://127.0.0.1:18082",
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "P03",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/54-android-apoderado-seleccion-comparar-1080.png",
+      "sha256": "39d60068a6ea36c40848cda0200d185603fbf9c16a838b4e6541e9a43c4b2357",
+      "pixels": [
+        1080,
+        2340
+      ]
+    }
+  ]
+}

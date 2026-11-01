@@ -1,0 +1,114 @@
+{
+  "at": "2026-10-31T21:53:31.780755+00:00",
+  "package": "com.example.furgoplus.task12",
+  "apkSha256": "ecf88f06d3846d97196518051cb86169d6fdaa69231d59e3d34d877ae01b6ed1",
+  "model": "Samsung SM-A546E",
+  "screen": "C7 APK final · contexto, ocupación, búsqueda y pasajeros",
+  "fontScale": "1.1",
+  "realDevice": true,
+  "humanApproval": false,
+  "ui": [
+    {
+      "text": "",
+      "label": "Volver a Hoy",
+      "clickable": "true",
+      "bounds": "[11,107][146,242]"
+    },
+    {
+      "text": "",
+      "label": "Pasajeros",
+      "clickable": "false",
+      "bounds": "[203,140][446,210]"
+    },
+    {
+      "text": "",
+      "label": "Cuenta",
+      "clickable": "true",
+      "bounds": "[945,107][1080,242]"
+    },
+    {
+      "text": "",
+      "label": "Ruta ficticia T12 elite",
+      "clickable": "false",
+      "bounds": "[203,334][979,418]"
+    },
+    {
+      "text": "",
+      "label": "07:00–08:00",
+      "clickable": "false",
+      "bounds": "[101,452][416,522]"
+    },
+    {
+      "text": "",
+      "label": "31-10-2026",
+      "clickable": "false",
+      "bounds": "[461,452][715,522]"
+    },
+    {
+      "text": "",
+      "label": "Capacidad: 3 ocupados · 1 disponible · 4 total",
+      "clickable": "false",
+      "bounds": "[90,668][990,769]"
+    },
+    {
+      "text": "[input]",
+      "label": "",
+      "clickable": "true",
+      "bounds": "[45,933][1035,1099]"
+    },
+    {
+      "text": "",
+      "label": "Collapsed",
+      "clickable": "false",
+      "bounds": "[79,1132][1001,1411]"
+    },
+    {
+      "text": "",
+      "label": "Pasajero ficticio elite 1\nParada ficticia T12 sin domicilio real, Collapsed",
+      "clickable": "true",
+      "bounds": "[79,1132][1001,1411]"
+    },
+    {
+      "text": "",
+      "label": "Collapsed",
+      "clickable": "false",
+      "bounds": "[79,1414][1001,1692]"
+    },
+    {
+      "text": "",
+      "label": "Pasajero ficticio elite 2\nParada ficticia T12 sin domicilio real, Collapsed",
+      "clickable": "true",
+      "bounds": "[79,1414][1001,1692]"
+    },
+    {
+      "text": "",
+      "label": "Collapsed",
+      "clickable": "false",
+      "bounds": "[79,1695][1001,1973]"
+    },
+    {
+      "text": "",
+      "label": "Pasajero ficticio elite 3\nParada ficticia T12 sin domicilio real, Collapsed",
+      "clickable": "true",
+      "bounds": "[79,1695][1001,1973]"
+    },
+    {
+      "text": "",
+      "label": "Hoy\nTab 1 of 3",
+      "clickable": "true",
+      "bounds": "[0,2081][360,2298]"
+    },
+    {
+      "text": "",
+      "label": "Mi plan\nTab 2 of 3",
+      "clickable": "true",
+      "bounds": "[360,2081][720,2298]"
+    },
+    {
+      "text": "",
+      "label": "Ayuda\nTab 3 of 3",
+      "clickable": "true",
+      "bounds": "[720,2081][1080,2298]"
+    }
+  ]
+}

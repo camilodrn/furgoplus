@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-31T21:52:12.193304+00:00",
+  "package": "com.example.furgoplus.task12",
+  "apkSha256": "ecf88f06d3846d97196518051cb86169d6fdaa69231d59e3d34d877ae01b6ed1",
+  "signerSha256": "5faa6cdb7e6554cfd6dcce7cd3739c216406535bbdcb1d4332f40decb748467a",
+  "version": [
+    "versionCode=1 minSdk=24 targetSdk=36",
+    "versionName=0.1.0"
+  ],
+  "updatePreservingData": true,
+  "uninstall": false
+}

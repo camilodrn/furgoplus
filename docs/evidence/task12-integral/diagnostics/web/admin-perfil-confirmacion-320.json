@@ -1,0 +1,14 @@
+{
+  "width": 320,
+  "scrollWidth": 320,
+  "focus": "Confirmar cambio de perfil",
+  "headings": [
+    "Conductor ficticio Básico T12",
+    "Estado del servicio",
+    "Confirmar cambio de perfil",
+    "Resumen",
+    "Última validación enviada",
+    "Última acción administrativa"
+  ],
+  "overflow": []
+}

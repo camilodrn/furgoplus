@@ -1,0 +1,63 @@
+{
+  "name": "09-web-acceso-foco-1440",
+  "role": "publico",
+  "screen": "W01 Foco de teclado",
+  "at": "2026-10-31T11:32:19.309Z",
+  "platform": "Fedora Chromium real React + academic API",
+  "browser": "156.0.8078.4",
+  "origin": "http://127.0.0.1:15174",
+  "geometry": {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "scrollWidth": 1440,
+    "scrollHeight": 1000,
+    "activeElement": {
+      "tag": "BUTTON",
+      "role": null
+    },
+    "headings": [
+      "Inicia sesión"
+    ]
+  },
+  "blocked": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    }
+  ],
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "W01",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/09-web-acceso-foco-1440.png",
+      "sha256": "a4ed11bda5225d232c4d686a0104d6b64b24b3ea6eaac2efda4c5e590c0e5d8c",
+      "pixels": [
+        1440,
+        1000
+      ]
+    }
+  ]
+}

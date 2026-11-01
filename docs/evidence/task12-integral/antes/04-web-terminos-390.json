@@ -1,0 +1,74 @@
+{
+  "name": "04-web-terminos-390",
+  "role": "publico",
+  "screen": "W06 Términos",
+  "at": "2026-10-31T09:36:55.230Z",
+  "platform": "Fedora Chromium real React + academic API",
+  "browser": "156.0.8078.4",
+  "origin": "http://127.0.0.1:15174",
+  "geometry": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "scrollWidth": 390,
+    "scrollHeight": 844,
+    "activeElement": {
+      "tag": "H1",
+      "role": null
+    },
+    "headings": [
+      "Inicia sesión",
+      "Términos",
+      "1. Prototipo y alcance",
+      "2. Cuentas y roles",
+      "3. Información del conductor y publicación",
+      "4. Contacto y coordinación externa",
+      "5. Rutas y operación",
+      "6. Información de pasajeros y apoderados",
+      "7. Registros de pagos",
+      "8. Uso prohibido y privacidad",
+      "9. Disponibilidad, estados y conservación",
+      "10. Materiales del proyecto y futuras versiones"
+    ]
+  },
+  "blocked": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    }
+  ],
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "W06-terminos",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/04-web-terminos-390.png",
+      "sha256": "c6c3a3736f9d8148d5d56eff9e147950533a7a8434a315145f75571402fd63e4",
+      "pixels": [
+        390,
+        844
+      ]
+    }
+  ]
+}
