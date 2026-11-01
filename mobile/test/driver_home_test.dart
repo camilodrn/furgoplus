@@ -92,6 +92,121 @@ AuthController controller(FakeTransport transport, AuthState state) {
 }
 
 void main() {
+  testWidgets(
+    'Today opens native details and passenger destinations with persistent navigation',
+    (tester) async {
+      final transport = FakeTransport((uri, method) => ok(today('planned')));
+      await mountDriver(tester, transport);
+      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(find.text('Recorrido seleccionado'), findsOneWidget);
+      expect(find.text('Colegio demo'), findsNothing);
+      expect(find.text('Estudiante ficticio'), findsNothing);
+      expect(find.byKey(const Key('start-9')).hitTestable(), findsOneWidget);
+      await showDetails(tester);
+      expect(find.text('Colegio demo'), findsOneWidget);
+      expect(find.text('Estudiante ficticio'), findsNothing);
+      await tapKey(tester, const Key('detail-passengers'));
+      expect(find.text('Estudiante ficticio'), findsOneWidget);
+      expect(find.text('912345678'), findsNothing);
+      await tapKey(tester, const Key('passenger-9-0'));
+      expect(find.text('912345678'), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('Tu recorrido'), findsOneWidget);
+      expect(find.text('912345678'), findsNothing);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('start-9')), findsOneWidget);
+      expect(transport.calls.where((call) => call.startsWith('POST')), isEmpty);
+    },
+  );
+
+  for (final (width, height, scale) in [
+    (844.0, 390.0, 1.0),
+    (844.0, 390.0, 2.0),
+    (320.0, 480.0, 2.0),
+  ]) {
+    testWidgets(
+      'journey destinations reflow at $width x $height and text $scale',
+      (tester) async {
+        tester.view.physicalSize = Size(width, height);
+        tester.view.devicePixelRatio = 1;
+        tester.platformDispatcher.textScaleFactorTestValue = scale;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+          tester.view.resetViewInsets();
+          tester.platformDispatcher.clearTextScaleFactorTestValue();
+        });
+        await mountDriver(
+          tester,
+          FakeTransport((uri, method) => ok(today('planned'))),
+        );
+        await showDetails(tester);
+        await tester.ensureVisible(find.byKey(const Key('maps-9')));
+        expect(tester.takeException(), isNull);
+        await showPassengers(tester);
+        await tester.enterText(find.byType(TextField), 'ficticio');
+        await tester.pumpAndSettle();
+        await tapKey(tester, const Key('passenger-9-0'));
+        expect(find.text('912345678'), findsOneWidget);
+        await tester.ensureVisible(find.text('912345678'));
+        expect(find.byType(NavigationBar), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await showToday(tester);
+        expect(find.text('912345678'), findsNothing);
+        await showPassengers(tester);
+        expect(find.text('912345678'), findsNothing);
+      },
+    );
+  }
+
+  for (final state in ['completed', 'unconfirmed']) {
+    testWidgets(
+      '$state does not offer a run mutation and long data remain readable',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 844);
+        tester.view.devicePixelRatio = 1;
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+          tester.platformDispatcher.clearTextScaleFactorTestValue();
+        });
+        final payload = today(state);
+        final route = (payload['routes'] as List).first;
+        route['label'] =
+            'Recorrido de transporte con un nombre extenso para revisión';
+        route['destination_address'] =
+            'Una dirección extensa de prueba para comprobar lectura completa en Android';
+        final transport = FakeTransport((uri, method) => ok(payload));
+        await mountDriver(tester, transport);
+        expect(
+          find.text(
+            state == 'completed' ? 'Completada' : 'Estado por confirmar',
+          ),
+          findsOneWidget,
+        );
+        expect(find.byKey(const Key('start-9')), findsNothing);
+        expect(find.byKey(const Key('end-14')), findsNothing);
+        await showDetails(tester);
+        await tester.ensureVisible(find.byKey(const Key('maps-9')));
+        await tester.pumpAndSettle();
+        expect(
+          tester.getSize(find.byKey(const Key('maps-9'))).height,
+          greaterThanOrEqualTo(48),
+        );
+        await tapKey(tester, const Key('passenger-9-0'));
+        await tester.ensureVisible(find.text('912345678'));
+        expect(tester.takeException(), isNull);
+        expect(
+          transport.calls.where((call) => call.startsWith('POST')),
+          isEmpty,
+        );
+      },
+    );
+  }
+
   test('destination URL contains only encoded destination and no GPS data', () {
     final uri = destinationUri('Av. Chile 123, Concepción');
     expect(uri.scheme, 'https');
@@ -131,13 +246,18 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('Lunes, 28 de septiembre'), findsOneWidget);
+      await showPassengers(tester);
       expect(find.text('Estudiante ficticio'), findsOneWidget);
       await tester.ensureVisible(find.byKey(const Key('passenger-9-0')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('passenger-9-0')));
       await tester.pumpAndSettle();
       expect(find.text('912345678'), findsOneWidget);
-      expect(find.text('1 de 3 cupos usados · 2 disponibles'), findsOneWidget);
+      expect(
+        find.text('1 de 3 cupos ocupados · 2 disponibles'),
+        findsOneWidget,
+      );
+      await showToday(tester);
       await tester.ensureVisible(find.byKey(const Key('start-9')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('start-9')));
@@ -145,15 +265,19 @@ void main() {
       expect(find.byKey(const Key('start-9')), findsOneWidget);
       expect(find.byKey(const Key('end-14')), findsNothing);
       expect(find.byKey(const Key('driver-error')), findsOneWidget);
+      expect(find.text('Estado por confirmar'), findsOneWidget);
 
       launcher.succeeds = false;
+      await showDetails(tester);
       await tester.ensureVisible(find.byKey(const Key('maps-9')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('maps-9')));
       await tester.pumpAndSettle();
       expect(find.textContaining('No se pudo abrir mapas'), findsOneWidget);
+      await showToday(tester);
       expect(find.byKey(const Key('start-9')), findsOneWidget);
       launcher.succeeds = true;
+      await showDetails(tester);
       await tester.ensureVisible(find.byKey(const Key('maps-9')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('maps-9')));
@@ -165,13 +289,16 @@ void main() {
 
       expect(transport.calls.where((c) => c.endsWith('/start/')).length, 1);
       failStart = false;
+      await showToday(tester);
       await tester.ensureVisible(find.text('Actualizar estado'));
       await tester.pumpAndSettle();
+      await showToday(tester);
       await tester.ensureVisible(find.text('Actualizar estado'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Actualizar estado'));
       await tester.pumpAndSettle();
       expect(transport.calls.where((c) => c.endsWith('/start/')).length, 1);
+      await showToday(tester);
       await tester.ensureVisible(find.byKey(const Key('start-9')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('start-9')));
@@ -220,6 +347,7 @@ void main() {
       find.text('El destino se compartirá con la aplicación de mapas.'),
       findsNothing,
     );
+    await showDetails(tester);
     final maps = find.byKey(const Key('maps-9'));
     await tester.ensureVisible(maps);
     await tester.pumpAndSettle();
@@ -269,8 +397,11 @@ void main() {
       AuthApp(controller: controller(transport, AuthState.restoring)),
     );
     await tester.pumpAndSettle();
+    await showPassengers(tester);
     expect(find.text('Estudiante ficticio'), findsOneWidget);
-    await tester.tap(find.text('Salir'));
+    await tester.tap(find.byKey(const Key('open-driver-account')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cerrar sesión'));
     await tester.pumpAndSettle();
     expect(find.text('Estudiante ficticio'), findsNothing);
     await tester.enterText(
@@ -295,11 +426,11 @@ void main() {
     );
     expect(find.text('Estudiante ficticio'), findsNothing);
     expect(find.byType(DriverHome), findsNothing);
-    await tester.tap(find.widgetWithText(NavigationDestination, 'Mi cuenta'));
+    await tester.tap(find.byKey(const Key('open-parent-account')));
     await tester.pumpAndSettle();
     expect(
       tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
-      2,
+      0,
     );
     expect(find.text('parent@example.test'), findsOneWidget);
     expect(find.text('Estudiante ficticio'), findsNothing);
@@ -310,7 +441,7 @@ void main() {
     testWidgets('daily hero and valid primary action: $state', (tester) async {
       final transport = FakeTransport((uri, method) => ok(today(state)));
       await mountDriver(tester, transport);
-      expect(find.text('Hoy'), findsOneWidget);
+      expect(find.widgetWithText(NavigationDestination, 'Hoy'), findsOneWidget);
       expect(
         find.text(switch (state) {
           'planned' => 'Planificada',
@@ -327,6 +458,8 @@ void main() {
         find.byKey(const Key('end-14')),
         state == 'in_progress' ? findsOneWidget : findsNothing,
       );
+      expect(find.text('1 pasajero asignado'), findsOneWidget);
+      await showPassengers(tester);
       expect(find.text('Estudiante ficticio'), findsOneWidget);
       expect(find.text('Parada sintética'), findsOneWidget);
       expect(find.text('912345678'), findsNothing);
@@ -367,7 +500,8 @@ void main() {
     await tapKey(tester, const Key('reload-today'));
     expect(find.text('Sin servicio para hoy'), findsOneWidget);
     expect(find.byKey(const Key('driver-error')), findsNothing);
-    expect(find.byType(FilledButton), findsNothing);
+    expect(find.text('Consultar guías'), findsOneWidget);
+    expect(find.text('¿Esperabas un recorrido?'), findsOneWidget);
     expect(transport.calls.every((c) => c.startsWith('GET ')), isTrue);
   });
 
@@ -384,7 +518,7 @@ void main() {
       final node = tester.getSemantics(
         find.byKey(const Key('driver-capacity')),
       );
-      expect(node.label, 'Capacidad: 1 usados · 2 disponibles · 3 total');
+      expect(node.label, 'Capacidad: 1 ocupado · 2 disponibles · 3 total');
       expect(node.value, isEmpty);
       expect(tester.takeException(), isNull);
       semantics.dispose();
@@ -442,6 +576,7 @@ void main() {
         tester.widget<FilledButton>(find.byKey(const Key('end-14'))).onPressed,
         isNull,
       );
+      await showToday(tester);
       await tester.ensureVisible(find.text('Actualizar estado'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Actualizar estado'));
@@ -470,16 +605,18 @@ void main() {
       await tapKey(tester, const Key('end-14'));
       await tester.tap(find.byKey(const Key('confirm-end')));
       await tester.pumpAndSettle();
-      expect(find.text('En curso'), findsOneWidget);
+      expect(find.text('Estado por confirmar'), findsOneWidget);
       expect(find.textContaining('raw backend detail'), findsNothing);
       expect(
         tester.widget<FilledButton>(find.byKey(const Key('end-14'))).onPressed,
         isNull,
       );
+      await showToday(tester);
       await tester.ensureVisible(find.text('Actualizar estado'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Actualizar estado'));
       await tester.pumpAndSettle();
+      expect(find.text('En curso'), findsOneWidget);
       expect(transport.calls.where((c) => c.endsWith('/end/')).length, 1);
       expect(
         tester.widget<FilledButton>(find.byKey(const Key('end-14'))).onPressed,
@@ -492,6 +629,7 @@ void main() {
     final payload = today('planned');
     (payload['routes'] as List).first['destination_address'] = '   ';
     await mountDriver(tester, FakeTransport((uri, method) => ok(payload)));
+    await showDetails(tester);
     expect(find.byKey(const Key('maps-9')), findsNothing);
   });
 
@@ -514,6 +652,7 @@ void main() {
       await tapKey(tester, const Key('other-routes'));
       await tapKey(tester, const Key('select-route-9'));
       expect(find.byKey(const Key('start-9')), findsOneWidget);
+      await showPassengers(tester);
       expect(find.text('Estudiante ficticio'), findsOneWidget);
     },
   );
@@ -629,6 +768,7 @@ void main() {
         await auth.api.csrf();
         defer = true;
         if (lateKind == 'maps') {
+          await showDetails(tester);
           await tester.ensureVisible(find.byKey(const Key('maps-9')));
           await tester.pumpAndSettle();
           await tester.tap(find.byKey(const Key('maps-9')));
@@ -637,6 +777,7 @@ void main() {
           await tapKey(tester, const Key('end-14'));
           expect(find.textContaining('Ruta A quedará'), findsOneWidget);
         } else {
+          await showToday(tester);
           await tester.ensureVisible(
             find.byKey(Key(lateKind == 'write' ? 'start-9' : 'reload-today')),
           );
@@ -652,7 +793,8 @@ void main() {
         expect(find.text('Ruta A'), findsNothing);
         expect(find.textContaining('Ruta A quedará'), findsNothing);
         expect(find.text('912345678'), findsNothing);
-        expect(find.text('Pasajero B'), findsOneWidget);
+        expect(find.text('Pasajero B'), findsNothing);
+        expect(find.text('Ruta B'), findsOneWidget);
         final readCount = transport.calls
             .where((c) => c.endsWith('/driver/today/'))
             .length;
@@ -673,7 +815,8 @@ void main() {
         await tester.pumpAndSettle();
         expect(auth.state, AuthState.driver);
         expect(auth.email, 'b@example.test');
-        expect(find.text('Pasajero B'), findsOneWidget);
+        expect(find.text('Pasajero B'), findsNothing);
+        expect(find.text('Ruta B'), findsOneWidget);
         expect(find.text('Pasajero A'), findsNothing);
         expect(find.byKey(const Key('start-9')), findsOneWidget);
         expect(find.byKey(const Key('driver-error')), findsNothing);
@@ -693,6 +836,7 @@ void main() {
       final map = DeferredLauncher();
       final first = FakeTransport((uri, method) => ok(today('planned')));
       await mountDriver(tester, first, launcher: map);
+      await showDetails(tester);
       await tester.ensureVisible(find.byKey(const Key('maps-9')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('maps-9')));
@@ -782,8 +926,8 @@ void main() {
           FakeTransport((uri, method) => ok(today('in_progress'))),
         );
         expect(
-          tester.getSize(find.widgetWithText(TextButton, 'Salir')).height,
-          greaterThanOrEqualTo(32 + 18 * scale),
+          tester.getSize(find.byKey(const Key('open-driver-account'))).height,
+          greaterThanOrEqualTo(48),
         );
         await tester.ensureVisible(find.byKey(const Key('end-14')));
         expect(
@@ -798,7 +942,14 @@ void main() {
         await tapKey(tester, const Key('passenger-9-0'));
         await tester.ensureVisible(find.text('912345678'));
         expect(tester.takeException(), isNull);
-        expect(find.byType(Scrollable), findsOneWidget);
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is Scrollable &&
+                widget.axisDirection == AxisDirection.down,
+          ),
+          findsOneWidget,
+        );
       },
     );
   }
@@ -826,7 +977,36 @@ Future<AuthController> mountDriver(
   return auth;
 }
 
+Future<void> showToday(WidgetTester tester) async {
+  if (find.byKey(const Key('journey-back')).evaluate().isNotEmpty) {
+    await tester.tap(find.byKey(const Key('journey-back')));
+    await tester.pumpAndSettle();
+  }
+}
+
+Future<void> showDetails(WidgetTester tester) async {
+  if (find.byKey(const Key('maps-9')).evaluate().isNotEmpty ||
+      find.text('Tu recorrido').evaluate().isNotEmpty)
+    return;
+  await showToday(tester);
+  await tapKey(tester, const Key('journey-details'));
+}
+
+Future<void> showPassengers(WidgetTester tester) async {
+  if (find.byType(DriverTodayPassengers).evaluate().isNotEmpty) return;
+  await showToday(tester);
+  await tapKey(tester, const Key('journey-passengers'));
+}
+
 Future<void> tapKey(WidgetTester tester, Key key) async {
+  if (key.toString().contains('passenger-') &&
+      find.byKey(key).evaluate().isEmpty)
+    await showPassengers(tester);
+  if ((key.toString().contains('start-') ||
+          key.toString().contains('end-') ||
+          key.toString().contains('reload-today')) &&
+      find.byKey(key).evaluate().isEmpty)
+    await showToday(tester);
   await tester.ensureVisible(find.byKey(key));
   await tester.pumpAndSettle();
   await tester.tap(find.byKey(key));

@@ -19,6 +19,7 @@ Future<void> expectAccessibleLinks(WidgetTester tester) async {
     final link = find.widgetWithText(TextButton, name);
     expect(link, findsOneWidget);
     await tester.ensureVisible(link);
+    await tester.pumpAndSettle();
     final semantics = tester.getSemantics(link);
     expect(semantics.label, name);
     expect(semantics.flagsCollection.isButton, isTrue);
@@ -40,6 +41,7 @@ Future<void> open(WidgetTester tester, String name) async {
   );
   final link = find.widgetWithText(TextButton, name);
   await tester.ensureVisible(link);
+  await tester.pumpAndSettle();
   await tester.tap(link);
   await tester.pump();
   await tester.runAsync(
@@ -49,11 +51,16 @@ Future<void> open(WidgetTester tester, String name) async {
   );
   await tester.pumpAndSettle();
   expect(find.text(warning), findsOneWidget);
-  expect(find.textContaining('v0.1 — 07-10-2026'), findsWidgets);
+  expect(
+    find.textContaining(
+      name == 'Privacidad' ? 'v0.2 — 31-10-2026' : 'v0.1 — 07-10-2026',
+    ),
+    findsWidgets,
+  );
   expect(
     find.textContaining(
       name == 'Privacidad'
-          ? 'Aviso de Privacidad v0.1'
+          ? 'Aviso de Privacidad v0.2'
           : 'Términos de Uso v0.1',
     ),
     findsWidgets,
@@ -61,6 +68,11 @@ Future<void> open(WidgetTester tester, String name) async {
   expect(find.byType(Checkbox), findsNothing);
   expect(find.byType(CheckboxListTile), findsNothing);
   expect(find.byType(TextField), findsNothing);
+}
+
+Future<void> androidBack(WidgetTester tester) async {
+  await tester.binding.handlePopRoute();
+  await tester.pumpAndSettle();
 }
 
 void main() {
@@ -130,8 +142,12 @@ void main() {
       final auth = parent.parent(transport);
       await tester.pumpWidget(AuthApp(controller: auth));
       await tester.pumpAndSettle();
+      if (role == 'driver') {
+        await tester.tap(find.byKey(const Key('open-driver-account')));
+        await tester.pumpAndSettle();
+      }
       if (role == 'parent') {
-        await tester.tap(find.text('Mi cuenta'));
+        await tester.tap(find.byKey(const Key('open-parent-account')));
         await tester.pumpAndSettle();
       }
       await expectAccessibleLinks(tester);
@@ -140,13 +156,22 @@ void main() {
       expect(transport.calls.length, calls);
       expect(find.text('A@example.test'), findsNothing);
       expect(find.text('Estudiante ficticio'), findsNothing);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('Mi cuenta'), findsOneWidget);
+      expect(find.text('A@example.test'), findsOneWidget);
+      await open(tester, 'Privacidad');
       account = 'B';
       await auth.login('B@example.test', 'Synthetic-password-781!');
       await tester.pumpAndSettle();
       expect(find.text(warning), findsNothing);
       expect(find.text('A@example.test'), findsNothing);
+      if (role == 'driver') {
+        await tester.tap(find.byKey(const Key('open-driver-account')));
+        await tester.pumpAndSettle();
+      }
       if (role == 'parent') {
-        await tester.tap(find.text('Mi cuenta'));
+        await tester.tap(find.byKey(const Key('open-parent-account')));
         await tester.pumpAndSettle();
         expect(find.text('B@example.test'), findsOneWidget);
       }
@@ -210,7 +235,7 @@ void main() {
         final lastParagraph = tester.getRect(
           find.textContaining(
             name == 'Privacidad'
-                ? 'Esta versión es un borrador fechado'
+                ? 'Abrir en mapas utiliza Google Maps'
                 : 'Este borrador se identifica por versión',
           ),
         );

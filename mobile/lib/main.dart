@@ -5,6 +5,8 @@ import 'auth_app.dart';
 import 'auth_controller.dart';
 import 'health_controller.dart';
 import 'session_api.dart';
+import 'furgo_theme.dart';
+import 'furgo_widgets.dart';
 
 void main() {
   try {
@@ -18,7 +20,30 @@ void main() {
   } on FormatException catch (error) {
     runApp(
       MaterialApp(
-        home: Scaffold(body: Center(child: Text(error.message))),
+        theme: furgoTheme(),
+        home: Scaffold(
+          appBar: AppBar(title: const Text('FurgoPlus')),
+          body: SafeArea(
+            child: ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
+                Text(
+                  'No pudimos abrir FurgoPlus',
+                  style: furgoTheme().textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 16),
+                const FurgoMessage(
+                  'La configuración de conexión no es válida. Solicita ayuda al equipo para revisar la instalación.',
+                  error: true,
+                ),
+                ExpansionTile(
+                  title: const Text('Detalle del problema'),
+                  children: [SelectableText(error.message.toString())],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
