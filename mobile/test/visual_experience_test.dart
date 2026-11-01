@@ -258,7 +258,10 @@ void main() {
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       await help.reveal(tester, find.text('Nueva consulta de soporte'));
-      expect(find.text('Nueva consulta de soporte').hitTestable(), findsOneWidget);
+      expect(
+        find.text('Nueva consulta de soporte').hitTestable(),
+        findsOneWidget,
+      );
       expect(
         tester
             .widget<TextField>(find.widgetWithText(TextField, 'Asunto'))

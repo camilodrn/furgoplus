@@ -72,7 +72,6 @@ El prototipo incorpora controles de rol y propiedad, protección de sesión y re
 
 Esta versión es un borrador fechado, disponible para lectura sin aceptación obligatoria. Una futura versión aprobada deberá conservar su contenido exacto y, si corresponde registrar aceptación, asociarlo de forma auditable a cuenta, fecha y versión. Leer este aviso o compartir el correo en una solicitud no registra aceptación legal.
 
-
 ## 13. Cookies y almacenamiento necesario
 
 La versión auditada utiliza únicamente almacenamiento técnico necesario, sin analítica de visitas, publicidad ni SDK opcionales de seguimiento. En web, sessionid mantiene la sesión hasta 12 horas desde el inicio y csrftoken protege las solicitudes, con una duración configurada de hasta 52 semanas renovable al solicitar protección CSRF. Las cookies son HttpOnly, SameSite=Lax y limitadas al host con Path=/; Secure está activado en la configuración HTTPS de producción y desactivado en el entorno académico HTTP local. El despliegue productivo real requiere verificación propia.

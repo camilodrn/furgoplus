@@ -71,8 +71,8 @@ export function DriverHelpGuides({
             )
           ) : !help.articles.length ? (
             <p role="status">
-              Aún no hay guías disponibles. Puedes enviar una consulta al
-              equipo de soporte.
+              Aún no hay guías disponibles. Puedes enviar una consulta al equipo
+              de soporte.
             </p>
           ) : (
             <>
