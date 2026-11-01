@@ -1,0 +1,16 @@
+{
+  "method": "Static parsing only; no layout engine",
+  "javascriptSyntax": "passed: prototype.js, data.js, audit.cjs",
+  "css": [
+    {
+      "file": "prototype.css",
+      "parsed": true,
+      "declarations": 1278
+    },
+    {
+      "file": "responsive.css",
+      "parsed": true,
+      "declarations": 182
+    }
+  ]
+}

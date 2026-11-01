@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, interactive-widget=resizes-content"
+    />
+    <meta name="theme-color" content="#0752ac" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' file: data:; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>FurgoPlus · Prototipo de experiencia</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="prototype.css" />
+    <link rel="stylesheet" href="responsive.css" />
+    <script defer src="data.js"></script>
+    <script defer src="prototype.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Ir al contenido</a>
+    <header
+      id="review-bar"
+      class="review-bar"
+      aria-label="Controles de revisión del prototipo"
+    ></header>
+    <div id="app"></div>
+    <dialog id="dialog" aria-labelledby="dialog-title"></dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

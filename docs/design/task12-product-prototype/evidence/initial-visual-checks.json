@@ -1,0 +1,102 @@
+{
+  "results": [
+    {
+      "route": "web/conductor/inicio",
+      "width": 1440,
+      "heading": [
+        "Tu servicio, al día"
+      ],
+      "overflow": false,
+      "file": "web-inicio-1440.png"
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 1440,
+      "heading": [
+        "Mi servicio"
+      ],
+      "overflow": false,
+      "file": "web-mi-servicio-1440.png"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1440,
+      "heading": [
+        "Pasajeros"
+      ],
+      "overflow": false,
+      "file": "web-pasajeros-1440.png"
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 1440,
+      "heading": [
+        "Pagos"
+      ],
+      "overflow": false,
+      "file": "web-pagos-1440.png"
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 1440,
+      "heading": [
+        "Solicitudes"
+      ],
+      "overflow": false,
+      "file": "web-solicitudes-1440.png"
+    },
+    {
+      "route": "web/administrador/expediente/1?estado=pendiente",
+      "width": 1440,
+      "heading": [
+        "Transportes Los Aromos"
+      ],
+      "overflow": false,
+      "file": "web-expediente-1440.png"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1080,
+      "heading": [
+        "Hoy"
+      ],
+      "overflow": false,
+      "file": "android-hoy-412.png"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1080,
+      "heading": [
+        "Busca tu transporte"
+      ],
+      "overflow": false,
+      "file": "android-buscar-412.png"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 390,
+      "heading": [
+        "Hoy"
+      ],
+      "overflow": false,
+      "file": "android-hoy-390.png"
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=muchos",
+      "width": 1280,
+      "heading": [
+        "Pasajeros"
+      ],
+      "overflow": false,
+      "file": "web-pasajeros-muchos-1280.png"
+    }
+  ],
+  "errors": [],
+  "requests": [
+    "http://127.0.0.1:8768/",
+    "http://127.0.0.1:8768/prototype.css",
+    "http://127.0.0.1:8768/data.js",
+    "http://127.0.0.1:8768/prototype.js",
+    "http://127.0.0.1:8768/assets/furgoplus-logo.png"
+  ]
+}
