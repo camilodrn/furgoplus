@@ -1,11 +1,11 @@
 import json
 from collections import Counter
 
-from academic_boundary import DATABASE, PROJECT
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection, transaction
 from django.utils import timezone
 
+from academic_boundary import DATABASE, PROJECT
 from drivers.management.commands.prepare_academic_scenario import add_destination
 
 
@@ -18,7 +18,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         from accounts.models import DriverProfile, User
-
         from drivers.academic_scenario import check_schema, identity, table_models
         from drivers.capabilities import driver_capabilities
         from drivers.capacity import capacity_snapshot

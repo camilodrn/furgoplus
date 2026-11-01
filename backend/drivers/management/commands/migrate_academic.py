@@ -1,6 +1,6 @@
-from academic_boundary import DATABASE, PROJECT
 from django.core.management.base import BaseCommand, CommandError
 
+from academic_boundary import DATABASE, PROJECT
 from drivers.management.commands.prepare_academic_scenario import add_destination
 
 

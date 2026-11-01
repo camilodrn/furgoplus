@@ -13,8 +13,6 @@ from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
 
-from academic_boundary import DATABASE, PROJECT
-from accounts.models import DriverProfile, User
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.db import connection, transaction
@@ -23,6 +21,8 @@ from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.test import APIRequestFactory, force_authenticate
 
+from academic_boundary import DATABASE, PROJECT
+from accounts.models import DriverProfile, User
 from drivers.academic_scenario import (
     ACCOUNTS,
     check_schema,

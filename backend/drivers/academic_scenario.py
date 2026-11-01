@@ -11,14 +11,6 @@ from contextlib import contextmanager
 from datetime import timedelta
 from pathlib import Path
 
-from academic_boundary import (
-    DATABASE,
-    PROJECT,
-    VERSION,
-    verify_configuration,
-    verify_server,
-)
-from accounts.models import DriverProfile, ParentProfile, User
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
@@ -31,6 +23,14 @@ from django.utils import timezone
 from PIL import Image, ImageDraw
 from rest_framework.test import APIRequestFactory, force_authenticate
 
+from academic_boundary import (
+    DATABASE,
+    PROJECT,
+    VERSION,
+    verify_configuration,
+    verify_server,
+)
+from accounts.models import DriverProfile, ParentProfile, User
 from drivers import api, contact_api, operations_api, publication_api, support_api
 from drivers.capabilities import driver_capabilities
 from drivers.models import AdminActionLog, Commune, DriverDocument, Plan

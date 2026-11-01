@@ -3,8 +3,9 @@
 import os
 from pathlib import Path
 
-from academic_boundary import API_ORIGIN, DATABASE, PROJECT, ROLE, WEB_ORIGIN
 from django.core.exceptions import ImproperlyConfigured
+
+from academic_boundary import API_ORIGIN, DATABASE, PROJECT, ROLE, WEB_ORIGIN
 
 
 def secret(name):

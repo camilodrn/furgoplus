@@ -1,5 +1,6 @@
-from academic_boundary import DATABASE, PROJECT
 from django.core.management.base import BaseCommand, CommandError
+
+from academic_boundary import DATABASE, PROJECT
 
 
 def add_destination(parser):
