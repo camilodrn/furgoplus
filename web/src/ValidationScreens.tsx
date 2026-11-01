@@ -4,6 +4,13 @@ import { ChileanDateField, visibleExpiry } from "./ChileanDateField";
 import { AdminPublicationScreen } from "./PublicationScreens";
 import { humanChileanDate, parseChileanDate } from "./dates";
 import { validateForm } from "./formValidation";
+import { ServiceOverview } from "./ServiceOverview";
+import { useModal } from "./useModal";
+import {
+  CollectionPages,
+  searchText,
+  useLocalPage,
+} from "./OperationsNavigation";
 import type {
   AdminValidation,
   AdminValidations,
@@ -34,12 +41,16 @@ const queueStates: Record<string, string> = {
 };
 
 function statusLabel(state: string) {
-  return states[state] ?? "Estado disponible";
+  return Object.hasOwn(states, state) ? states[state] : "Estado por confirmar";
 }
 
 function StatusBadge({ state }: { state: string }) {
   return (
-    <span className={`status-badge status-${state}`}>{statusLabel(state)}</span>
+    <span
+      className={`status-badge status-${Object.hasOwn(states, state) ? state : "unknown"}`}
+    >
+      {statusLabel(state)}
+    </span>
   );
 }
 
@@ -165,26 +176,22 @@ function Confirmation({
   children: React.ReactNode;
   restoreFocus?: () => void;
 }) {
-  const root = useRef<HTMLDivElement>(null);
+  const root = useModal(true, restoreFocus);
   useEffect(() => {
-    const trigger = document.activeElement;
     root.current?.focus();
-    return () => {
-      requestAnimationFrame(() => {
-        if (restoreFocus) restoreFocus();
-        else if (trigger instanceof HTMLElement && trigger.isConnected)
-          trigger.focus();
-      });
-    };
   }, []);
   return (
-    <div
+    <dialog
       className="validation-confirmation"
       role="alertdialog"
       aria-label={title}
       aria-describedby="validation-confirmation-description"
       tabIndex={-1}
       ref={root}
+      onCancel={(event) => {
+        event.preventDefault();
+        if (!busy) onCancel();
+      }}
       onKeyDown={(event) => {
         if (event.key === "Escape" && !busy) {
           event.stopPropagation();
@@ -201,11 +208,12 @@ function Confirmation({
       >
         Cancelar
       </button>
-    </div>
+    </dialog>
   );
 }
 
 type DriverSection =
+  | "service"
   | "profile"
   | "documents"
   | "validation"
@@ -318,6 +326,10 @@ export function DriverOnboarding({
   const [checklist, setChecklist] = useState<DriverChecklist | null>(null);
   const [documents, setDocuments] = useState<DriverDocuments | null>(null);
   const [history, setHistory] = useState<DriverValidations | null>(null);
+  const historyPage = useLocalPage(
+    history?.validations ?? [],
+    "validation-history",
+  );
   const [busy, setBusy] = useState("");
   const lock = useRef(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
@@ -505,6 +517,43 @@ export function DriverOnboarding({
 
   return (
     <>
+      {activeSection === "service" && (
+        <>
+          {profile && checklist && documents ? (
+            <ServiceOverview
+              profile={profile}
+              checklist={checklist}
+              documents={documents}
+              publication={publication}
+              observations={
+                history?.validations.find(
+                  (entry) =>
+                    entry.state === "rejected" &&
+                    entry.revision === profile.current_validation_revision,
+                )?.observations
+              }
+              headingRef={stepHeading}
+              onNavigate={(section) =>
+                go(section === "help" ? "publication" : section)
+              }
+            />
+          ) : (
+            <p className="loading-text">Cargando tu servicio…</p>
+          )}
+          <Notice feedback={feedback} area="page" />
+          {feedback?.area === "page" && feedback.error && (
+            <button
+              className="button button-outline"
+              disabled={!!busy}
+              onClick={() =>
+                void perform("page", refresh, "Información actualizada.")
+              }
+            >
+              Reintentar carga
+            </button>
+          )}
+        </>
+      )}
       <div hidden={activeSection !== "summary"}>
         {activeSection === "summary" && (
           <section
@@ -536,26 +585,43 @@ export function DriverOnboarding({
         )}
       </div>
       <section
-        hidden={activeSection === "summary"}
+        hidden={activeSection === "summary" || activeSection === "service"}
         className="screen onboarding-screen"
+        data-driver-section={activeSection ?? "all"}
       >
         <div className="page-heading">
           <div>
             <p className="eyebrow">Mi servicio</p>
-            <h1 ref={stepHeading} tabIndex={-1}>
-              {activeSection === "publication" || activeSection === "routes"
-                ? "Gestiona tu servicio"
-                : "Prepara tu información"}
+            <h1
+              ref={activeSection === "service" ? undefined : stepHeading}
+              tabIndex={-1}
+            >
+              {activeSection === "profile"
+                ? "Datos del servicio"
+                : activeSection === "documents"
+                  ? "Documentos"
+                  : activeSection === "validation"
+                    ? "Revisión e historial"
+                    : activeSection === "routes"
+                      ? "Rutas"
+                      : activeSection === "publication"
+                        ? "Publicación"
+                        : "Información del servicio"}
             </h1>
             <p className="intro">
-              Completa los datos de tu servicio y los documentos de
-              demostración. Luego envíalos a FurgoPlus para revisión.
+              {activeSection === "profile"
+                ? "Actualiza el nombre, la descripción y el correo de contacto."
+                : activeSection === "documents"
+                  ? "Revisa los requisitos y carga los archivos de demostración."
+                  : "Consulta los requisitos, el estado y las observaciones de tus envíos."}
             </p>
           </div>
-          {profile && <StatusBadge state={profile.validation_state} />}
+          {profile && profile.validation_state !== "approved" && (
+            <StatusBadge state={profile.validation_state} />
+          )}
         </div>
         <p className="demo-notice">{demoNotice}</p>
-        {profile && (
+        {profile && profile.validation_state !== "approved" && (
           <div className="next-step" role="status">
             <strong>Siguiente paso: </strong>
             {activeSection === "publication" || activeSection === "routes"
@@ -563,7 +629,22 @@ export function DriverOnboarding({
               : nextAction}
           </div>
         )}
-        <nav aria-label="Preparación de mi servicio">
+        {onSectionChange && activeSection !== undefined && (
+          <button
+            className="button button-outline"
+            onClick={() => go("service")}
+          >
+            Volver al resumen de mi servicio
+          </button>
+        )}
+        <nav
+          hidden={activeSection === "routes" || activeSection === "publication"}
+          aria-label={
+            profile?.validation_state === "approved"
+              ? "Información de mi servicio"
+              : "Preparación de mi servicio"
+          }
+        >
           <ol className="onboarding-steps">
             {onboardingSteps.map(({ id, label }, index) => (
               <li key={id}>
@@ -573,24 +654,30 @@ export function DriverOnboarding({
                   aria-current={activeSection === id ? "step" : undefined}
                   onClick={() => go(id)}
                 >
-                  <span className="step-number" aria-hidden="true">
+                  <span
+                    className="step-number"
+                    aria-hidden="true"
+                    hidden={profile?.validation_state === "approved"}
+                  >
                     {index + 1}
                   </span>
                   <span>
                     {label}
-                    <small>
-                      {id === "profile"
-                        ? profile
-                          ? "Datos guardados"
-                          : "Cargando…"
-                        : id === "documents"
-                          ? checklist
-                            ? `${checklist.items.length - missingCount} de ${checklist.items.length} cargados`
+                    {profile?.validation_state !== "approved" && (
+                      <small>
+                        {id === "profile"
+                          ? profile
+                            ? "Datos guardados"
                             : "Cargando…"
-                          : profile
-                            ? statusLabel(profile.validation_state)
-                            : "Cargando…"}
-                    </small>
+                          : id === "documents"
+                            ? checklist
+                              ? `${checklist.items.length - missingCount} de ${checklist.items.length} cargados`
+                              : "Cargando…"
+                            : profile
+                              ? statusLabel(profile.validation_state)
+                              : "Cargando…"}
+                      </small>
+                    )}
                   </span>
                 </button>
               </li>
@@ -640,7 +727,7 @@ export function DriverOnboarding({
               <div className="panel-heading">
                 <span className="step-number">1</span>
                 <div>
-                  <h2 id="profile-heading">Datos del servicio</h2>
+                  <h2 id="profile-heading">Identidad y contacto</h2>
                   <p>
                     El nombre y la descripción podrán aparecer para los
                     apoderados cuando tu servicio esté publicado.
@@ -691,6 +778,16 @@ export function DriverOnboarding({
                     Por ejemplo: Transporte escolar Los Aromos.
                   </span>
                 </label>
+                {(profile.validation_state === "approved" ||
+                  profile.validation_state === "pending") && (
+                  <p className="inline-warning profile-warning">
+                    {profile.validation_state === "approved"
+                      ? "Si cambias el nombre del servicio que ya fue aprobado, tendremos que revisarlo nuevamente."
+                      : "Si cambias el nombre mientras está en revisión, tendrás que enviar tu información nuevamente."}{" "}
+                    Cambiar la descripción o el correo no reinicia la revisión.
+                  </p>
+                )}
+
                 <label>
                   <span id="service-summary-label">
                     Descripción del servicio
@@ -727,13 +824,10 @@ export function DriverOnboarding({
                     al correo de tu cuenta.
                   </span>
                 </label>
-                {(profile.validation_state === "approved" ||
-                  profile.validation_state === "pending") && (
-                  <p className="inline-warning profile-warning">
-                    {profile.validation_state === "approved"
-                      ? "Si cambias el nombre del servicio que ya fue aprobado, tendremos que revisarlo nuevamente."
-                      : "Si cambias el nombre mientras está en revisión, tendrás que enviar tu información nuevamente."}{" "}
-                    Cambiar la descripción o el correo no reinicia la revisión.
+                {onSectionChange && (
+                  <p className="helper-text">
+                    Guarda los cambios antes de continuar a documentos.
+                    Continuar solo cambia de sección.
                   </p>
                 )}
                 <div className="action-line">
@@ -1125,15 +1219,22 @@ export function DriverOnboarding({
               aria-labelledby="history-heading"
               hidden={!!activeSection && activeSection !== "validation"}
             >
-              <h2 id="history-heading">Historial de revisiones</h2>
+              <h2 id="history-heading" tabIndex={-1}>
+                Historial de revisiones
+              </h2>
               <p className="panel-subtitle">
                 Consulta los envíos, documentos y observaciones anteriores.
+              </p>
+              <p className="helper-text">
+                Paginación local de {history.validations.length} revisiones
+                recibidas. La API entrega hasta las 100 más recientes; el total
+                histórico no está disponible.
               </p>
               {history.validations.length === 0 ? (
                 <p>Aún no has enviado información a revisión.</p>
               ) : (
                 <div className="history-list">
-                  {history.validations.map((item) => (
+                  {historyPage.rows.map((item) => (
                     <details className="history-item" key={item.id}>
                       <summary>
                         <span>
@@ -1195,6 +1296,14 @@ export function DriverOnboarding({
                   ))}
                 </div>
               )}
+              {history.validations.length > 10 && (
+                <CollectionPages
+                  {...historyPage}
+                  busy={!!busy}
+                  label="Páginas de revisiones"
+                  resultsId="history-heading"
+                />
+              )}
             </section>
           </div>
         )}
@@ -1213,10 +1322,27 @@ type PendingDecision = {
   observations: string;
 };
 
-export function AdminValidationScreen({ api }: { api: AuthApi }) {
+export function AdminValidationScreen({
+  api,
+  initialValidationId,
+  onAllPending,
+}: {
+  api: AuthApi;
+  initialValidationId?: number;
+  onAllPending?: () => void;
+}) {
   const [state, setState] = useState("pending");
+  const [search, setSearch] = useState("");
+  const detailGeneration = useRef(0);
   const [queue, setQueue] = useState<AdminValidations | null>(null);
   const [detail, setDetail] = useState<AdminValidation | null>(null);
+  const received = (queue?.results ?? []).filter((item) =>
+    searchText(
+      `${item.display_name_snapshot} ${item.driver.display_name} ${item.driver.email} ${item.revision}`,
+    ).includes(searchText(search)),
+  );
+  const page = useLocalPage(received, `${state}:${search}`);
+
   const [observations, setObservations] = useState("");
   const [confirmation, setConfirmation] = useState<PendingDecision | null>(
     null,
@@ -1259,21 +1385,35 @@ export function AdminValidationScreen({ api }: { api: AuthApi }) {
     if (detail) heading.current?.focus();
   }, [detail?.id]);
 
+  useEffect(() => {
+    if (initialValidationId !== undefined) void open(initialValidationId);
+    return () => {
+      detailGeneration.current++;
+      lock.current = false;
+    };
+  }, [api, initialValidationId]);
+
   async function open(id: number) {
     if (lock.current) return;
     lock.current = true;
+    const request = ++detailGeneration.current;
     setBusy("open");
     setFeedback(null);
     setConfirmation(null);
     try {
-      setDetail(await api.adminValidation(id));
+      const selected = await api.adminValidation(id);
+      if (request !== detailGeneration.current) return;
+      setDetail(selected);
       setDetailSection("validation");
       setObservations("");
     } catch (reason) {
-      setFeedback({ area: "queue", message: errorText(reason), error: true });
+      if (request === detailGeneration.current)
+        setFeedback({ area: "queue", message: errorText(reason), error: true });
     } finally {
-      lock.current = false;
-      setBusy("");
+      if (request === detailGeneration.current) {
+        lock.current = false;
+        setBusy("");
+      }
     }
   }
 
@@ -1446,11 +1586,11 @@ export function AdminValidationScreen({ api }: { api: AuthApi }) {
           <div className="queue-heading">
             <div>
               <h2 id="queue-heading" tabIndex={-1}>
-                Solicitudes
+                Envíos recientes
               </h2>
               <p>
                 {queue
-                  ? `${queue.results.length} ${queue.results.length === 1 ? "resultado" : "resultados"}`
+                  ? `${queue.results.length} ${queue.results.length === 1 ? "envío recibido" : "envíos recibidos"}`
                   : "Cargando solicitudes…"}
               </p>
             </div>
@@ -1474,11 +1614,40 @@ export function AdminValidationScreen({ api }: { api: AuthApi }) {
               </select>
             </label>
           </div>
+          <p className="helper-text">
+            El servidor entrega hasta 50 envíos recientes del estado elegido. La
+            búsqueda y las páginas siguientes solo recorren ese conjunto; no son
+            el historial global.
+          </p>
+          {onAllPending && (
+            <button className="button button-outline" onClick={onAllPending}>
+              Buscar todos los conductores pendientes
+            </button>
+          )}
+          {queue?.results.length === 50 && (
+            <p className="admin-limit-notice" role="status">
+              Se alcanzó el límite de 50 envíos. Busca el conductor para abrir
+              revisiones anteriores desde su ficha.
+            </p>
+          )}
+          <label>
+            Buscar en los envíos recibidos
+            <input
+              type="search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Servicio, correo o revisión"
+            />
+          </label>
           <Notice feedback={feedback} area="queue" />
           {queue &&
-            (queue.results.length ? (
-              <div className="queue-list">
-                {queue.results.map((item) => (
+            (received.length ? (
+              <div
+                className="queue-list"
+                id="admin-review-results"
+                tabIndex={-1}
+              >
+                {page.rows.map((item) => (
                   <article
                     className={`queue-item ${detail?.id === item.id ? "queue-selected" : ""}`}
                     key={item.id}
@@ -1505,8 +1674,21 @@ export function AdminValidationScreen({ api }: { api: AuthApi }) {
                 ))}
               </div>
             ) : (
-              <p className="empty-state">No hay solicitudes en este estado.</p>
+              <p className="empty-state">
+                {search
+                  ? "No hay envíos que coincidan en el conjunto recibido."
+                  : "No hay solicitudes en este estado."}
+              </p>
             ))}
+          {queue && (
+            <CollectionPages
+              {...page}
+              setSize={page.setSize}
+              resultsId="admin-review-results"
+              label="Páginas de envíos recibidos"
+              busy={!!busy}
+            />
+          )}
         </section>
         <section
           className="panel detail-panel"
@@ -1588,7 +1770,13 @@ export function AdminValidationScreen({ api }: { api: AuthApi }) {
                   </p>
                 )}
                 {detail.observations && (
-                  <div className="correction-note">
+                  <div
+                    className={
+                      detail.state === "rejected"
+                        ? "correction-note"
+                        : "review-note"
+                    }
+                  >
                     <strong>Observaciones de esta revisión</strong>
                     <p>{detail.observations}</p>
                   </div>

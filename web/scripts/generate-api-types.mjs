@@ -25,7 +25,7 @@ function typeOf(schema) {
     return `{ ${Object.entries(schema.properties ?? {})
       .map(
         ([key, value]) =>
-          `${key}${schema.required?.includes(key) ? "" : "?"}: ${typeOf(value)}`,
+          `${JSON.stringify(key)}${schema.required?.includes(key) ? "" : "?"}: ${typeOf(value)}`,
       )
       .join("; ")} }`;
   }
@@ -33,6 +33,22 @@ function typeOf(schema) {
 }
 
 const types = [
+  ["HelpCenter", "/api/v1/help/", "get", "200"],
+  ["SupportTickets", "/api/v1/support/tickets/", "get", "200"],
+  ["SupportTicket", "/api/v1/support/tickets/{id}/", "get", "200"],
+  ["SupportTicketInput", "/api/v1/support/tickets/", "post", "request"],
+  ["SupportReplyInput", "/api/v1/support/tickets/{id}/", "post", "request"],
+  [
+    "AdminSupportInput",
+    "/api/v1/admin/support/tickets/{id}/",
+    "post",
+    "request",
+  ],
+  ["AssistantInput", "/api/v1/assistant/", "post", "request"],
+  ["AssistantAnswer", "/api/v1/assistant/", "post", "200"],
+  ["MonthlyReport", "/api/v1/driver/reports/monthly/", "get", "200"],
+  ["AdvancedReport", "/api/v1/driver/reports/advanced/", "get", "200"],
+  ["DriverCapabilities", "/api/v1/driver/capabilities/", "get", "200"],
   ["Health", "/api/v1/health/", "get", "200"],
   ["Csrf", "/api/v1/auth/csrf/", "get", "200"],
   ["Identity", "/api/v1/auth/me/", "get", "200"],

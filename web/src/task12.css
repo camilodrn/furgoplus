@@ -1,0 +1,329 @@
+/* Shared patterns for Task 12; deliberately scoped to its two screens. */
+.task12-screen {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+  max-width: var(--content-width);
+}
+.task12-screen .task12-heading,
+.task12-screen .task12-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.task12-heading p,
+.task12-screen .task12-row p {
+  margin-bottom: 0;
+}
+.task12-screen .task12-muted {
+  color: var(--muted);
+}
+.task12-eyebrow {
+  color: var(--brand);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.task12-screen .panel {
+  box-shadow: none;
+  margin: 0;
+}
+.task12-screen .task12-section {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.task12-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.task12-actions:empty {
+  display: none;
+}
+.task12-screen .task12-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 30px;
+  padding: 6px 12px;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 0.9rem;
+  font-weight: 750;
+  line-height: 1.4;
+}
+.task12-screen .is-positive {
+  background: var(--positive-soft);
+  color: var(--positive);
+}
+.task12-screen .is-warning {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+.task12-feedback,
+.task12-empty,
+.task12-loading {
+  padding: 20px 24px;
+  border-radius: 12px;
+  background: var(--brand-soft);
+  color: var(--ink);
+}
+.task12-feedback p,
+.task12-empty p {
+  margin: 8px 0 0;
+  max-width: 70ch;
+}
+.task12-feedback button,
+.task12-empty .task12-actions {
+  margin-top: 16px;
+}
+.task12-error {
+  background: var(--danger-soft);
+  border-left: 4px solid var(--danger);
+}
+.task12-screen details {
+  min-width: 0;
+}
+.task12-screen summary {
+  min-height: 48px;
+  padding: 12px 0;
+  color: var(--brand);
+  font-weight: 650;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.task12-disclosure {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.task12-screen .task12-disclosure > summary {
+  padding: 16px 20px;
+  border-radius: 12px;
+}
+.task12-screen summary:hover {
+  background: var(--brand-soft);
+}
+.task12-screen summary:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 3px;
+}
+.task12-disclosure-body {
+  border-top: 1px solid var(--border);
+  padding: 20px;
+  overflow-wrap: anywhere;
+}
+.task12-disclosure-body > :last-child {
+  margin-bottom: 0;
+}
+.task12-screen li + li {
+  margin-top: 8px;
+}
+.plan-card {
+  border-top: 4px solid var(--brand);
+}
+.plan-card h2 {
+  font-size: 1.9rem;
+}
+.plan-price {
+  margin-top: 24px;
+}
+.plan-price strong {
+  font-size: 1.7rem;
+}
+.plan-price span {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.plan-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 48px;
+  margin-block: 24px;
+}
+.plan-dates dt {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.plan-dates dd {
+  margin: 4px 0 0;
+  font-weight: 600;
+}
+.report-filter {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.report-filter label {
+  font-size: 0.95rem;
+}
+.report-filter input {
+  min-width: 0;
+  max-width: 100%;
+}
+.report-period {
+  text-transform: capitalize;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+}
+.report-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+.report-summary-card {
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+.report-summary-card > .product-icon {
+  color: var(--brand);
+  margin-bottom: 16px;
+}
+.report-summary-card h3 {
+  font-size: 1.1rem;
+  min-height: 2.6em;
+  margin-bottom: 8px;
+}
+.report-summary-card > .task12-muted {
+  min-height: 3em;
+  font-size: 1rem;
+}
+.report-value {
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+  margin: 0 0 8px;
+}
+.report-value span {
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: normal;
+}
+.report-summary-card details {
+  border-top: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+.report-breakdown {
+  margin: 0;
+}
+.report-breakdown > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.report-breakdown dd {
+  margin: 0;
+  font-weight: 650;
+}
+.report-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin: 24px 0 0;
+}
+.report-comparison dt {
+  font-weight: 650;
+}
+.report-comparison dd {
+  margin: 8px 0 0;
+}
+.report-comparison strong {
+  display: block;
+  font-size: 1.4rem;
+}
+.report-comparison span {
+  display: block;
+  color: var(--muted);
+  font-size: 1rem;
+}
+.report-comparison .comparison-difference {
+  color: var(--ink);
+  margin-top: 8px;
+}
+.report-downloads {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-block: 20px 0;
+}
+.reports-screen .reports-table {
+  overflow-x: auto;
+  margin-block: 16px;
+}
+.reports-screen table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+.reports-screen caption {
+  text-align: left;
+  font-weight: 650;
+  margin-bottom: 12px;
+}
+.reports-screen th,
+.reports-screen td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+@media (max-width: 1150px) and (min-width: 901px), (max-width: 760px) {
+  .report-summary-grid,
+  .report-downloads {
+    grid-template-columns: 1fr;
+  }
+  .report-summary-card h3,
+  .report-summary-card > .task12-muted {
+    min-height: 0;
+  }
+}
+@media (max-width: 600px) {
+  .task12-screen .panel,
+  .report-summary-card {
+    padding: 20px;
+  }
+  .task12-screen button,
+  .task12-screen input:not([type="checkbox"]),
+  .task12-screen select,
+  .task12-screen summary {
+    min-height: var(--touch-target);
+  }
+  .task12-heading > button,
+  .task12-actions > button,
+  .report-filter,
+  .report-filter > * {
+    width: 100%;
+  }
+  .report-comparison {
+    grid-template-columns: 1fr;
+  }
+  .report-comparison > div + div {
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+}
+
+.task12-screen .service-continuity {
+  padding: 16px 20px;
+}
+.service-continuity h2 {
+  font-size: 1.125rem;
+}
+.service-continuity p:last-child {
+  margin-bottom: 0;
+}

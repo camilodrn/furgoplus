@@ -1,0 +1,417 @@
+/* Task-specific driver compositions within the shared product system. */
+.driver-shell :is(.reports-screen, .driver-help) {
+  width: 100%;
+  max-width: none;
+  gap: var(--driver-gap);
+  font-size: 1rem;
+}
+.driver-shell :is(.reports-screen, .driver-help) .task12-heading h1 {
+  margin: 0 0 8px;
+}
+.driver-shell :is(.reports-screen, .driver-help) :is(h2, h3) {
+  margin-top: 0;
+}
+.driver-shell :is(.reports-screen, .driver-help) h2 {
+  font-size: 1.25rem;
+}
+.driver-shell :is(.reports-screen, .driver-help) .panel {
+  border-radius: var(--operational-radius);
+  padding: 20px 24px;
+}
+.driver-shell .publication-summary {
+  max-width: none;
+  grid-template-columns: minmax(0, 1.6fr) minmax(16rem, 1fr);
+  align-items: start;
+}
+.driver-shell .publication-summary .publication-visibility {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+}
+.publication-status-copy {
+  flex: 1 1 26rem;
+  min-width: 0;
+}
+.publication-status-copy .hero-icon {
+  display: none;
+}
+.publication-status-copy p {
+  max-width: 65ch;
+}
+.driver-shell .publication-visibility > .button {
+  margin: 0;
+  max-width: 24rem;
+}
+.publication-service-notice {
+  grid-column: 1 / -1;
+}
+.publication-service-notice:empty {
+  display: none;
+}
+.driver-shell .publication-service-notice .panel {
+  margin: 0;
+  padding: 16px 24px;
+  background: var(--warning-soft);
+}
+.driver-shell .publication-requirements {
+  grid-column: 1;
+  grid-row: span 2;
+}
+.driver-shell .publication-summary .plan-block {
+  grid-column: 2;
+  margin: 0;
+  padding: 20px 24px;
+}
+.driver-shell .publication-explanation {
+  grid-column: 2;
+  padding: 4px 20px;
+}
+.driver-shell .publication-explanation p {
+  margin: 0 0 16px;
+}
+/* Explicit selection, continuous inbox rows and a readable detail area. */
+.requests-workspace .request-layout {
+  grid-template-columns: minmax(16rem, 0.85fr) minmax(0, 1.35fr);
+}
+.requests-workspace .surface-heading h2 {
+  font-size: 1.125rem;
+  margin: 0;
+}
+.requests-workspace .surface-heading p {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.requests-workspace .request-list {
+  gap: 0;
+}
+.requests-workspace .request-row {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  border-radius: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 0;
+}
+.requests-workspace .request-row :is(.status-pill, .request-open) {
+  justify-self: start;
+}
+.requests-workspace .request-context {
+  font-size: 0.875rem;
+}
+.requests-workspace .request-open {
+  color: var(--brand);
+}
+.requests-workspace .request-detail {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.requests-workspace .request-message {
+  padding: 16px;
+  background: var(--driver-table-heading);
+  border-block: 1px solid var(--border);
+  line-height: 1.6;
+}
+.requests-workspace .request-reading > .empty-state {
+  padding: 32px 24px;
+}
+.requests-workspace .operations-pages {
+  padding: 16px 20px;
+  margin: 0;
+  border-top: 1px solid var(--border);
+}
+/* Compact plan summary; continuous metrics using the Payments hierarchy. */
+.driver-shell .reports-screen .plan-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 32px;
+  border: 1px solid var(--border);
+}
+.driver-shell .plan-card > .task12-row {
+  flex: 1 1 16rem;
+  justify-content: start;
+}
+.driver-shell .plan-card h2 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+.driver-shell .plan-card .plan-price {
+  margin: 0;
+  flex: 1 1 16rem;
+}
+.driver-shell .plan-card .plan-price strong {
+  font-size: 1.25rem;
+}
+.driver-shell .plan-card .plan-dates {
+  margin: 0;
+  gap: 12px 24px;
+}
+.driver-shell .plan-card > p:not(.plan-price) {
+  flex-basis: 100%;
+  margin: 0;
+  max-width: 75ch;
+}
+.driver-shell .monthly-report {
+  padding: 20px 24px;
+}
+.driver-shell .monthly-report > .task12-row {
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.driver-shell .report-summary-grid {
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--operational-radius);
+  overflow: hidden;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.driver-shell .report-summary-card {
+  border: 0;
+  border-radius: 0;
+  padding: 20px;
+}
+.driver-shell .report-summary-card + .report-summary-card {
+  border-left: 1px solid var(--border);
+}
+.driver-shell .report-summary-card > .product-icon {
+  display: none;
+}
+.driver-shell .report-summary-card h3 {
+  min-height: 0;
+  color: var(--muted);
+  font-size: 1rem;
+  font-weight: 500;
+}
+.driver-shell .report-summary-card > .task12-muted {
+  min-height: 0;
+}
+.driver-shell .report-value {
+  font-size: 1.75rem;
+}
+.driver-shell .report-analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 24px;
+  align-items: start;
+}
+.report-analysis-grid:empty {
+  display: none;
+}
+.driver-shell .report-downloads {
+  grid-template-columns: minmax(0, 1fr);
+}
+/* Help: exclusive task views, with progressive guide and case detail. */
+.driver-help .help-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.driver-help .help-destination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.driver-help .help-destination > span {
+  display: none;
+}
+.driver-help .help-destination[aria-current="page"] {
+  border-bottom-color: var(--brand);
+  color: var(--brand);
+}
+.driver-help .help-destination strong {
+  font-weight: 600;
+}
+.driver-help .help-content > section {
+  padding: 20px 24px;
+}
+.driver-help .help-cases {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.driver-help .help-cases > button {
+  justify-self: start;
+}
+.driver-help .help-cases > .task12-row p {
+  margin-bottom: 0;
+}
+.driver-help :is(.help-guide-search, .help-topic-filter, .support-case-filter) {
+  display: grid;
+  gap: 8px;
+  max-width: none;
+}
+.driver-help .help-topic .task12-disclosure {
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  margin: 0;
+}
+.driver-help .help-topic .task12-disclosure > summary {
+  padding: 16px 0;
+  border-radius: 0;
+}
+.driver-help .help-topic .task12-disclosure-body {
+  padding: 16px 0;
+  line-height: 1.6;
+}
+.driver-help .support-list {
+  gap: 0;
+}
+.driver-help .support-list button {
+  grid-template-columns: minmax(0, 1fr) auto;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  padding: 16px 0;
+  gap: 8px 16px;
+}
+.driver-help .support-list button > strong {
+  grid-column: 1;
+  grid-row: 1;
+}
+.driver-help .support-list button > .task12-badge {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+.driver-help .support-list button > .task12-muted {
+  grid-column: 1;
+  font-size: 0.875rem;
+}
+.driver-help .support-thread {
+  display: grid;
+  gap: 20px;
+  border-radius: var(--operational-radius);
+}
+.driver-help .support-thread > button {
+  justify-self: start;
+}
+.driver-help .support-thread .support-reply {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--operational-radius);
+  background: var(--driver-table-heading);
+}
+.driver-help form {
+  border-radius: var(--operational-radius);
+}
+.driver-help .support-thread .support-events {
+  margin-top: 0;
+}
+.driver-help .help-service-notice {
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--operational-radius);
+}
+@media (max-width: 1100px) {
+  .driver-shell .publication-summary,
+  .requests-workspace .request-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .driver-shell .publication-summary > * {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+@media (max-width: 760px) {
+  .driver-shell .report-summary-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .driver-shell .report-summary-card + .report-summary-card {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+  }
+  .driver-shell :is(.monthly-report, .help-guides, .driver-help .help-cases) {
+    padding: 16px;
+  }
+  .driver-shell .publication-visibility > .button {
+    max-width: none;
+    width: 100%;
+  }
+  .driver-help .support-list button {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .driver-help .support-list button > .task12-badge {
+    grid-column: 1;
+    grid-row: 2;
+  }
+}
+.driver-help .help-destination #assistant-availability {
+  display: none;
+}
+/* Keep editor reading widths while sharing section rhythm and control geometry. */
+.driver-shell .onboarding-screen .panel {
+  border-radius: var(--operational-radius);
+  box-shadow: none;
+}
+.driver-shell .onboarding-screen .panel-heading h2 {
+  font-size: 1.25rem;
+}
+.driver-shell .onboarding-screen .content-stack {
+  max-width: 48rem;
+}
+.driver-shell .publication-area {
+  margin-top: 16px;
+}
+.driver-shell
+  .onboarding-screen[data-driver-section="documents"]
+  .content-stack,
+.driver-shell
+  .onboarding-screen[data-driver-section="validation"]
+  .content-stack {
+  max-width: none;
+}
+.driver-shell
+  .onboarding-screen[data-driver-section="validation"]
+  .content-stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.driver-shell .onboarding-screen .panel-heading > .step-number {
+  display: none;
+}
+.driver-shell .onboarding-screen .document-grid {
+  gap: 0;
+}
+.driver-shell .onboarding-screen .document-card {
+  padding: 20px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+}
+.driver-shell .onboarding-screen .document-card h3 {
+  font-size: 1.125rem;
+  margin-bottom: 8px;
+}
+.driver-shell .onboarding-screen .document-card .upload-controls {
+  max-width: 44rem;
+}
+.driver-shell .onboarding-screen .history-panel {
+  margin: 0;
+}
+@media (max-width: 1100px) {
+  .driver-shell
+    .onboarding-screen[data-driver-section="validation"]
+    .content-stack {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* Preserve the shared component's original direct-child layout for other roles. */
+.help-content,
+.help-support:not(.driver-help) .help-cases {
+  display: contents;
+}

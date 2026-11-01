@@ -195,6 +195,23 @@ export function ChileanDateField({
               ›
             </button>
           </div>
+          <label className="expiry-native-date">
+            Elegir fecha
+            <input
+              type="date"
+              value={selected ?? ""}
+              min="0001-01-01"
+              max="9999-12-31"
+              onChange={(event) => {
+                if (!event.target.value) return;
+                const formatted = formatChileanDate(event.target.value);
+                if (!formatted) return;
+                onChange(formatted);
+                setOpen(false);
+                inputRef.current?.focus();
+              }}
+            />
+          </label>
           <div className="expiry-calendar-grid">
             {weekdays.map((weekday) => (
               <span className="expiry-calendar-weekday" key={weekday}>

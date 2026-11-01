@@ -246,24 +246,60 @@ function section(name: string) {
     screen.getByRole("navigation", { name: "Secciones del conductor" }),
   ).getByRole("button", { name });
 }
+function showAdminSection(name: string) {
+  fireEvent.click(
+    within(
+      screen.getByRole("navigation", {
+        name: "Secciones del detalle del conductor",
+      }),
+    ).getByRole("tab", { name }),
+  );
+}
+async function openAdminPlan() {
+  showAdminSection("Plan");
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Administrar plan" }),
+  );
+}
+function openMoreActions() {
+  const summary = screen.getByText("Más acciones").closest("summary")!;
+  if (!summary.closest("details")!.open) fireEvent.click(summary);
+}
 function openAdminDisclosure(title: string) {
+  if (title === "Filtros") {
+    fireEvent.click(screen.getByRole("button", { name: /^Filtros/ }));
+    return;
+  }
+  if (
+    title === "Validación y observaciones" ||
+    title === "Historial administrativo"
+  ) {
+    showAdminSection(
+      title === "Historial administrativo" ? "Historial" : "Validaciones",
+    );
+    return;
+  }
   const summary = screen.getByText(title).closest("summary")!;
   fireEvent.click(summary);
   summary.parentElement!.setAttribute("open", "");
 }
+async function enterConductores() {
+  const nav = await screen.findByRole("navigation", { name: "Administración" });
+  const button = within(nav).getByRole("button", { name: "Conductores" });
+  if (button.getAttribute("aria-current") !== "page") fireEvent.click(button);
+}
 async function openControl(readyPlan = true) {
+  await enterConductores();
   fireEvent.click(await screen.findByText("Ver conductor"));
   await screen.findByRole("region", { name: "Estado del servicio" });
   openAdminDisclosure("Validación y observaciones");
-  openAdminDisclosure("Historial administrativo");
   expect(screen.queryByText("Private observation 1")).toBeNull();
   fireEvent.click(screen.getByRole("button", { name: "Ver observación" }));
   await screen.findByText("Private observation 1");
+  openAdminDisclosure("Historial administrativo");
+  if (readyPlan) await openAdminPlan();
+  openMoreActions();
   fireEvent.click(screen.getByRole("button", { name: "Suspender perfil" }));
-  if (readyPlan)
-    fireEvent.click(
-      await screen.findByRole("button", { name: "Administrar plan" }),
-    );
 }
 afterEach(() => {
   cleanup();
@@ -343,6 +379,7 @@ test("same-role admin A to B discards a loaded queue, detail, plan and confirmat
   );
   refreshIdentity();
   await screen.findByText("Account B");
+  await enterConductores();
   expect(screen.queryByText("private-1@example.test")).toBeNull();
   expect(screen.queryByText("Private observation 1")).toBeNull();
   expect(screen.queryByDisplayValue("Private reason A")).toBeNull();
@@ -350,8 +387,9 @@ test("same-role admin A to B discards a loaded queue, detail, plan and confirmat
   expect(screen.queryByLabelText("Motivo")).toBeNull();
   await waitFor(() =>
     expect(
-      mock.fetchMock.mock.calls.filter(([path]) =>
-        path.includes("admin/drivers/?"),
+      mock.fetchMock.mock.calls.filter(
+        ([path]) =>
+          path.includes("admin/drivers/?") && !path.includes("limit=1"),
       ),
     ).toHaveLength(2),
   );
@@ -446,15 +484,13 @@ test("admin history expiry removes loaded queue, observations, confirmation and 
     initialSubscription.resolve(ok({ publication, version: 8 }));
   });
   expect(await screen.findByText("Visible para apoderados")).toBeTruthy();
-  fireEvent.click(
-    await screen.findByRole("button", { name: "Administrar plan" }),
-  );
+  await openAdminPlan();
   expect(
     screen.getByRole("region", { name: "Plan del conductor" }).textContent,
   ).toContain("Basic");
-  expect((screen.getByLabelText("Plan") as HTMLSelectElement).value).toBe(
-    "basic",
-  );
+  expect(
+    (screen.getByRole("combobox", { name: "Plan" }) as HTMLSelectElement).value,
+  ).toBe("basic");
   expect(screen.getByDisplayValue("01/10/2026")).toBeTruthy();
   expect(screen.getByText("Motivo: Private history 1")).toBeTruthy();
   fireEvent.change(screen.getByLabelText("Motivo del cambio de perfil"), {
@@ -676,7 +712,8 @@ test("account replacement clears selected upload bytes, filename and saved docum
   );
   render(<App />);
   await screen.findByLabelText("Nombre del servicio");
-  fireEvent.click(screen.getByRole("button", { name: /Documentos.*1 de 1/ }));
+  fireEvent.click(section("Mi servicio"));
+  fireEvent.click(screen.getByRole("button", { name: "Revisar documentos" }));
   fireEvent.change(screen.getByLabelText("Archivo para Documento sintético"), {
     target: {
       files: [
@@ -1040,12 +1077,18 @@ test.each(operationalCases)(
       });
       if (destination !== "Rutas")
         fireEvent.click(screen.getByRole("button", { name: "Cerrar" }));
-      if (destination === "Pasajeros")
+      if (destination === "Pasajeros") {
+        fireEvent.click(
+          screen.getAllByRole("button", { name: /^Detalle de / })[0]!,
+        );
         fireEvent.click(
           screen.getByRole("button", { name: "Finalizar asignación" }),
         );
+      }
       if (destination === "Pagos") {
-        fireEvent.click(screen.getByText("Ver registro"));
+        fireEvent.click(
+          screen.getAllByRole("button", { name: /^Ver registro/ })[0]!,
+        );
         fireEvent.click(screen.getByRole("button", { name: "Anular" }));
       }
     }
@@ -1110,8 +1153,12 @@ test.each([
           ? "Synthetic route A"
           : "Synthetic student A",
     );
-    if (destination === "Pasajeros")
+    if (destination === "Pasajeros") {
+      fireEvent.click(
+        screen.getAllByRole("button", { name: /^Detalle de / })[0]!,
+      );
       fireEvent.click(screen.getByRole("button", { name: "Editar" }));
+    }
     if (destination === "Solicitudes") {
       fireEvent.click(
         screen.getByRole("button", { name: /Synthetic parent A/ }),
@@ -1131,6 +1178,14 @@ test.each([
       path.endsWith(endpoint) ? write.promise : operationalReads(mock, path),
     );
     fireEvent.click(screen.getByRole("button", { name: action }));
+    if (destination === "Solicitudes")
+      fireEvent.click(
+        screen.getByRole("button", { name: "Confirmar aceptación" }),
+      );
+    if (destination === "Pagos")
+      fireEvent.click(
+        screen.getByRole("button", { name: "Confirmar registro como pagado" }),
+      );
     await waitFor(() =>
       expect(
         mock.fetchMock.mock.calls.some(([path]) => path.endsWith(endpoint)),
@@ -1224,6 +1279,9 @@ test.each(["replacement", "expiry", "logout"] as const)(
     await screen.findByRole("navigation", { name: "Secciones del conductor" });
     fireEvent.click(section("Pasajeros"));
     await screen.findByText("Synthetic student A");
+    fireEvent.click(
+      screen.getAllByRole("button", { name: /^Detalle de / })[0]!,
+    );
     fireEvent.click(screen.getByRole("button", { name: "Editar" }));
     fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }));
     const notice = await screen.findByRole("complementary", {
@@ -1274,6 +1332,7 @@ test.each(["replacement", "expiry"] as const)(
   async (boundary) => {
     const mock = fixture("admin");
     render(<App />);
+    await enterConductores();
     fireEvent.change(await screen.findByLabelText("Buscar conductor"), {
       target: { value: "Private filter A" },
     });
@@ -1388,6 +1447,8 @@ test.each(["replacement", "expiry"] as const)(
       await act(async () =>
         bQueue.resolve(ok({ results: [mock.control()], count: 1 })),
       );
+      await enterConductores();
+      await screen.findByLabelText("Buscar conductor");
       expect(
         (screen.getByLabelText("Buscar conductor") as HTMLInputElement).value,
       ).toBe("");
@@ -1395,10 +1456,9 @@ test.each(["replacement", "expiry"] as const)(
       await screen.findByRole("region", { name: "Estado del servicio" });
       expect(screen.queryByLabelText("Motivo")).toBeNull();
       expect(screen.queryByRole("alertdialog")).toBeNull();
-      const history = screen
-        .getByText("Historial administrativo")
-        .closest("details")!;
-      expect(history.open).toBe(false);
+      expect(
+        screen.queryByRole("region", { name: "Historial administrativo" }),
+      ).toBeNull();
     }
   },
 );
@@ -1428,6 +1488,9 @@ test.each(["profile", "plan"] as const)(
         target: { value: "Private plan A" },
       });
       fireEvent.click(screen.getByText("Guardar plan"));
+      fireEvent.click(
+        screen.getByRole("button", { name: "Confirmar cambio de plan" }),
+      );
     }
     await waitFor(() =>
       expect(
@@ -1529,11 +1592,12 @@ test.each(["replacement", "expiry"] as const)(
         : undefined,
     );
     render(<App />);
+    await enterConductores();
     fireEvent.click(await screen.findByText("Ver conductor"));
     await screen.findByRole("region", { name: "Estado del servicio" });
     openAdminDisclosure("Validación y observaciones");
     const context = within(
-      screen.getByText("Validación y observaciones").closest("details")!,
+      screen.getByRole("region", { name: "Validación y observaciones" }),
     );
     expect(context.getAllByRole("listitem")).toHaveLength(3);
     fireEvent.click(
@@ -1544,7 +1608,9 @@ test.each(["replacement", "expiry"] as const)(
       fireEvent.click(
         context.getByRole("button", { name: "Ver validaciones anteriores" }),
       );
-    expect(context.getAllByRole("listitem")).toHaveLength(25);
+    expect(context.getAllByRole("listitem")).toHaveLength(1);
+    fireEvent.click(context.getByRole("button", { name: "Ver observación" }));
+    expect(context.getByText("Private retained observation 25")).toBeTruthy();
     const old = deferred<Response>();
     mock.intercept((path) =>
       path.includes("admin/drivers/7/validations/") ? old.promise : undefined,
@@ -1570,7 +1636,7 @@ test.each(["replacement", "expiry"] as const)(
     refreshIdentity();
     if (boundary === "replacement") await screen.findByText("Account B");
     else await screen.findByRole("button", { name: "Iniciar sesión" });
-    expect(screen.queryByText("Validación y observaciones")).toBeNull();
+    expect(document.getElementById("driver-section-validations")).toBeNull();
     expect(screen.queryByText(/Private retained observation/)).toBeNull();
     await act(async () =>
       old.resolve(
@@ -1596,15 +1662,16 @@ test.each(["replacement", "expiry"] as const)(
       ),
     ).toBeNull();
     if (boundary === "replacement") {
+      await enterConductores();
       fireEvent.click(await screen.findByText("Ver conductor"));
       await screen.findByRole("region", { name: "Estado del servicio" });
       expect(
-        screen.getByText("Validación y observaciones").closest("details")!.open,
-      ).toBe(false);
+        screen.queryByRole("region", { name: "Validación y observaciones" }),
+      ).toBeNull();
       openAdminDisclosure("Validación y observaciones");
       expect(
         within(
-          screen.getByText("Validación y observaciones").closest("details")!,
+          screen.getByRole("region", { name: "Validación y observaciones" }),
         ).getAllByRole("listitem"),
       ).toHaveLength(1);
       expect(screen.queryByText("Private observation 2")).toBeNull();
@@ -1630,7 +1697,7 @@ test("admin control navigation exposes only the authorized workspace and sends v
     within(nav)
       .getAllByRole("button")
       .map((button) => button.textContent?.trim()),
-  ).toEqual(["Validaciones", "Conductores"]);
+  ).toEqual(["Inicio", "Validaciones", "Conductores"]);
   expect(mock.fetchMock.mock.calls.map(([path]) => path).join(" ")).not.toMatch(
     /\/driver\/|passenger|payment|contact-request|route-run/,
   );
@@ -1640,6 +1707,7 @@ test("admin control navigation exposes only the authorized workspace and sends v
   );
   expect(screen.queryByRole("button", { name: "Descargar" })).toBeNull();
   expect(screen.queryByRole("button", { name: "Aprobar" })).toBeNull();
+  showAdminSection("Validaciones");
   fireEvent.click(screen.getByRole("button", { name: "Ir a Validaciones" }));
   await screen.findByRole("button", { name: "Revisar" });
   expect(
@@ -1662,6 +1730,7 @@ test.each(["sidebar", "back"] as const)(
         : undefined,
     );
     render(<App />);
+    await enterConductores();
     fireEvent.change(await screen.findByLabelText("Buscar conductor"), {
       target: { value: "Contexto sintético" },
     });
@@ -1673,8 +1742,8 @@ test.each(["sidebar", "back"] as const)(
     await screen.findByText("Búsqueda: Contexto sintético");
     fireEvent.click(screen.getByRole("button", { name: "Siguiente →" }));
     await screen.findByText("Página 2 de 3");
-    const queueRequests = mock.fetchMock.mock.calls.filter(([path]) =>
-      path.includes("admin/drivers/?"),
+    const queueRequests = mock.fetchMock.mock.calls.filter(
+      ([path]) => path.includes("admin/drivers/?") && !path.includes("limit=1"),
     );
     expect(queueRequests.at(-1)![0]).toContain("offset=25");
     expect(queueRequests.at(-1)![0]).toContain("validation_state=approved");
@@ -1783,8 +1852,9 @@ test.each(["sidebar", "back"] as const)(
       screen.queryByRole("region", { name: "Detalle del conductor" }),
     ).toBeNull();
     expect(
-      mock.fetchMock.mock.calls.filter(([path]) =>
-        path.includes("admin/drivers/?"),
+      mock.fetchMock.mock.calls.filter(
+        ([path]) =>
+          path.includes("admin/drivers/?") && !path.includes("limit=1"),
       ),
     ).toHaveLength(queueRequests.length);
     mock.intercept(() => undefined);
@@ -1793,8 +1863,9 @@ test.each(["sidebar", "back"] as const)(
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(screen.queryByRole("alertdialog")).toBeNull();
     expect(
-      screen.getByText("Historial administrativo").closest("details")!.open,
-    ).toBe(false);
+      screen.queryByRole("region", { name: "Historial administrativo" }),
+    ).toBeNull();
+    openMoreActions();
     fireEvent.click(screen.getByRole("button", { name: "Suspender perfil" }));
     expect(
       (
@@ -1804,7 +1875,8 @@ test.each(["sidebar", "back"] as const)(
       ).value,
     ).toBe("");
     fireEvent.click(screen.getByRole("button", { name: "Cerrar" }));
-    fireEvent.click(screen.getByRole("button", { name: "Administrar plan" }));
+    // Profile and subscription reload independently after returning to a driver.
+    await openAdminPlan();
     expect((screen.getByLabelText("Motivo") as HTMLTextAreaElement).value).toBe(
       "",
     );
@@ -1817,14 +1889,22 @@ test.each(["driver", "admin"] as const)(
     const mock = fixture(role);
     render(<App />);
     await screen.findByText("Account A");
-    if (role === "driver")
+    if (role === "driver") {
       await screen.findByDisplayValue("contact-1@example.test");
-    else await screen.findByText("Ver conductor");
+      await screen.findByText("Sin solicitudes por responder.");
+    } else {
+      await enterConductores();
+      await screen.findByText("Ver conductor");
+    }
     const sidebar = screen.getByRole("complementary");
     const legalLinks = within(sidebar).getByRole("navigation", {
       name: "Documentos legales",
     });
-    expect(within(legalLinks).getAllByRole("button")).toHaveLength(2);
+    expect(
+      within(legalLinks)
+        .getAllByRole("button")
+        .map((button) => button.textContent),
+    ).toEqual(["Privacidad", "Términos", "Cookies y almacenamiento"]);
     for (const name of ["Privacidad", "Términos"]) {
       const link = within(legalLinks).getByRole("button", { name });
       expect(link.className).toBe("legal-link");

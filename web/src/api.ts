@@ -1,5 +1,16 @@
 import { demoRegistrationNotice, isDemoMode } from "./demo";
 import type {
+  HelpCenter,
+  SupportTickets,
+  SupportTicket,
+  SupportTicketInput,
+  SupportReplyInput,
+  AdminSupportInput,
+  AssistantInput,
+  AssistantAnswer,
+  DriverCapabilities,
+  MonthlyReport,
+  AdvancedReport,
   AdminValidation,
   AdminDrivers,
   AdminDriver,
@@ -165,6 +176,100 @@ export class AuthApi {
     return this.guarded(() => request<T>(...args));
   }
 
+  // Bound the full response/body read for the operational collections. Keep the
+  // deadline inside guarded(), so an abandoned late error cannot expire a session.
+  private operationalRead<T>(path: string): Promise<T> {
+    return this.guarded(async () => {
+      const controller = new AbortController();
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const deadline = new Promise<never>((_, reject) => {
+        timer = setTimeout(() => {
+          reject(
+            new ApiError(
+              0,
+              "request_timeout",
+              "La carga superó el tiempo de espera. Puedes reintentar.",
+            ),
+          );
+          controller.abort();
+        }, 15_000);
+      });
+      try {
+        return await Promise.race([
+          request<T>(path, "GET", undefined, undefined, controller.signal),
+          deadline,
+        ]);
+      } finally {
+        clearTimeout(timer);
+        controller.abort();
+      }
+    });
+  }
+
+  helpCenter(): Promise<HelpCenter> {
+    return this.request("help/", "GET");
+  }
+  supportTickets(
+    admin = false,
+    offset = 0,
+    state = "active",
+  ): Promise<SupportTickets> {
+    return this.request(
+      `${admin ? "admin/" : ""}support/tickets/?offset=${offset}&limit=25${admin ? `&state=${encodeURIComponent(state)}` : ""}`,
+      "GET",
+    );
+  }
+  supportTicket(id: number, admin = false): Promise<SupportTicket> {
+    return this.request(
+      `${admin ? "admin/" : ""}support/tickets/${id}/`,
+      "GET",
+    );
+  }
+  createSupportTicket(input: SupportTicketInput): Promise<SupportTicket> {
+    return this.unsafe("support/tickets/", input);
+  }
+  replySupportTicket(
+    id: number,
+    input: SupportReplyInput,
+  ): Promise<SupportTicket> {
+    return this.unsafe(`support/tickets/${id}/`, input);
+  }
+  updateSupportTicket(
+    id: number,
+    input: AdminSupportInput,
+  ): Promise<SupportTicket> {
+    return this.unsafe(`admin/support/tickets/${id}/`, input);
+  }
+  askAssistant(input: AssistantInput): Promise<AssistantAnswer> {
+    return this.unsafe("assistant/", input);
+  }
+
+  driverCapabilities(): Promise<DriverCapabilities> {
+    return this.request("driver/capabilities/", "GET");
+  }
+  monthlyReport(month: string): Promise<MonthlyReport> {
+    return this.request(
+      `driver/reports/monthly/?month=${encodeURIComponent(month)}`,
+      "GET",
+    );
+  }
+  advancedReport(month: string): Promise<AdvancedReport> {
+    return this.request(
+      `driver/reports/advanced/?month=${encodeURIComponent(month)}`,
+      "GET",
+    );
+  }
+  downloadReport(
+    kind: "payments" | "runs" | "contacts",
+    month: string,
+  ): Promise<Blob> {
+    return this.guarded(() =>
+      downloadPrivateDocument(
+        `driver/reports/${kind}.xlsx?month=${encodeURIComponent(month)}`,
+      ),
+    );
+  }
+
   async csrf(): Promise<void> {
     const generation = this.generation;
     const body = await this.request<Csrf>("auth/csrf/", "GET");
@@ -306,7 +411,7 @@ export class AuthApi {
     return this.request("driver/communes/", "GET");
   }
   routes(): Promise<Routes> {
-    return this.request("driver/routes/", "GET");
+    return this.operationalRead("driver/routes/");
   }
   createRoute(input: RouteInput): Promise<Route> {
     return this.unsafe("driver/routes/", input);
@@ -318,9 +423,8 @@ export class AuthApi {
     return this.request("driver/summary/", "GET");
   }
   assignments(routeId?: number): Promise<Assignments> {
-    return this.request(
+    return this.operationalRead(
       `driver/passenger-assignments/${routeId ? `?route_id=${routeId}` : ""}`,
-      "GET",
     );
   }
   createAssignment(input: AssignmentInput): Promise<Assignment> {
@@ -335,7 +439,7 @@ export class AuthApi {
     });
   }
   payments(): Promise<Payments> {
-    return this.request("driver/payments/", "GET");
+    return this.operationalRead("driver/payments/");
   }
   createPayment(input: PaymentInput): Promise<Payment> {
     return this.unsafe("driver/payments/", input);

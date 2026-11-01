@@ -40,6 +40,25 @@ const domain = (path: string) => {
       active_route_count: 0,
       coverage: [],
     });
+  if (path.includes("driver/summary"))
+    return ok({
+      publication: {
+        profile_status: "active",
+        eligible: false,
+        publication_requested: false,
+        validation_state: "draft",
+        current_validation_revision: 1,
+        approved_revision: null,
+        active_route_count: 0,
+        coverage: [],
+        subscription: null,
+        blockers: [],
+      },
+      routes: [],
+      active_assignments: 0,
+      payment_counts: { pending: 0, paid: 0, void: 0 },
+    });
+  if (path.includes("driver/contact-requests")) return ok({ results: [] });
   if (path.includes("driver/routes")) return ok({ routes: [] });
   if (path.includes("driver/communes")) return ok({ communes: [] });
   if (path.includes("driver/profile"))
@@ -91,7 +110,15 @@ test("restores a driver through csrf then me", async () => {
   vi.stubGlobal("fetch", fetchMock);
   render(<App />);
   expect(screen.getByRole("status")).toBeTruthy();
-  expect(await screen.findByText("Prepara tu información")).toBeTruthy();
+  expect(
+    await screen.findByRole("region", { name: "Resumen operativo" }),
+  ).toBeTruthy();
+  expect(
+    screen.getByRole("heading", { name: "Inicio", level: 1 }),
+  ).toBeTruthy();
+  expect(
+    screen.queryByRole("heading", { name: "Prepara tu información" }),
+  ).toBeNull();
   expect(screen.getByAltText("FurgoPlus Transporte Escolar")).toBeTruthy();
   expect(screen.getByText("Sample")).toBeTruthy();
   expect(fetchMock.mock.calls.map(([path]) => path).slice(0, 2)).toEqual([
@@ -109,6 +136,14 @@ test("successful profile update automatically fetches publication state", async 
     .mockImplementation((path: string) => Promise.resolve(domain(path)));
   vi.stubGlobal("fetch", fetchMock);
   render(<App />);
+  fireEvent.click(
+    within(
+      await screen.findByRole("navigation", {
+        name: "Secciones del conductor",
+      }),
+    ).getByRole("button", { name: "Mi servicio" }),
+  );
+  fireEvent.click(await screen.findByRole("button", { name: "Editar datos" }));
   await screen.findByLabelText("Nombre del servicio");
   await waitFor(() =>
     expect(
@@ -134,6 +169,113 @@ test("successful profile update automatically fetches publication state", async 
     ).getByRole("button", { name: "Mi servicio" }),
   ).toBeTruthy();
 });
+
+test.each([true, false])(
+  "UX01 driver enters Inicio (published=%s) and retains service draft across navigation",
+  async (published) => {
+    const publication = {
+      profile_status: "active",
+      publication_requested: published,
+      eligible: published,
+      validation_state: published ? "approved" : "draft",
+      current_validation_revision: 1,
+      approved_revision: published ? 1 : null,
+      active_route_count: published ? 1 : 0,
+      coverage: [],
+      subscription: null,
+      blockers: published
+        ? []
+        : [{ code: "profile_summary_missing", message: "INTERNAL" }],
+    };
+    const fetchMock = vi.fn((path: string) => {
+      if (path.endsWith("auth/csrf/")) return Promise.resolve(csrf);
+      if (path.endsWith("auth/me/")) return Promise.resolve(ok(driver));
+      if (path.endsWith("driver/publication/"))
+        return Promise.resolve(ok(publication));
+      if (published && path.endsWith("driver/profile/"))
+        return Promise.resolve(
+          ok({
+            display_name: "Sample",
+            service_summary: "Servicio académico",
+            service_contact_email: "sample@example.test",
+            validation_state: "approved",
+            current_validation_revision: 1,
+            approved_revision: 1,
+          }),
+        );
+      if (path.endsWith("driver/summary/"))
+        return Promise.resolve(
+          ok({
+            publication,
+            routes: [],
+            active_assignments: 2,
+            payment_counts: { pending: 3, paid: 0, void: 0 },
+          }),
+        );
+      return Promise.resolve(domain(path));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+    await screen.findByText(
+      published ? "Tu servicio está visible" : "Servicio no publicado",
+    );
+    expect(screen.getByRole("main").className).toBe("workspace home-workspace");
+    const nav = within(
+      screen.getByRole("navigation", { name: "Secciones del conductor" }),
+    );
+    expect(
+      nav.getByRole("button", { name: "Inicio" }).getAttribute("aria-current"),
+    ).toBe("page");
+    expect(
+      screen.queryByRole("button", { name: "Guardar cambios" }),
+    ).toBeNull();
+    const preparation = within(
+      screen.getByRole("region", { name: "Resumen operativo" }),
+    )
+      .getByText("Ver preparación del servicio", { selector: "summary" })
+      .closest("details")!;
+    expect(preparation.open).toBe(false);
+    if (published) {
+      expect(
+        screen.getByRole("region", { name: "Resumen de pagos" }).textContent,
+      ).toContain("3 pendientes");
+      fireEvent.click(nav.getByRole("button", { name: "Mi servicio" }));
+      await screen.findByRole("heading", { name: "Resumen de tu servicio" });
+      expect(screen.getByRole("main").className).toBe(
+        "workspace service-workspace",
+      );
+      expect(screen.queryByRole("textbox")).toBeNull();
+      fireEvent.click(screen.getByRole("button", { name: "Editar datos" }));
+      expect(screen.getByRole("main").className).toBe("workspace");
+    } else {
+      fireEvent.click(
+        within(
+          screen.getByRole("region", { name: "Visibilidad del servicio" }),
+        ).getByRole("button", { name: "Completar datos del servicio" }),
+      );
+    }
+    expect(document.activeElement).toBe(screen.getByRole("main"));
+    fireEvent.change(await screen.findByLabelText("Descripción del servicio"), {
+      target: { value: "Borrador UX01" },
+    });
+    fireEvent.click(nav.getByRole("button", { name: "Inicio" }));
+    expect(screen.getByRole("main").className).toBe("workspace home-workspace");
+    await screen.findByText(
+      published ? "Tu servicio está visible" : "Servicio no publicado",
+    );
+    fireEvent.click(nav.getByRole("button", { name: "Mi servicio" }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Editar datos" }),
+    );
+    expect(
+      (screen.getByLabelText("Descripción del servicio") as HTMLTextAreaElement)
+        .value,
+    ).toBe("Borrador UX01");
+    expect(
+      fetchMock.mock.calls.some(([path]) => path.endsWith("driver/summary/")),
+    ).toBe(true);
+  },
+);
 
 test("assignment create, edit and end refresh server capacity in routes and summary", async () => {
   vi.useFakeTimers({ toFake: ["Date"] });
@@ -221,7 +363,12 @@ test("assignment create, edit and end refresh server capacity in routes and summ
   render(<App />);
   await screen.findByRole("navigation", { name: "Secciones del conductor" });
   fireEvent.click(section("Rutas"));
-  expect(await screen.findByText(/0 de 12 cupos utilizados/)).toBeTruthy();
+  await waitFor(() => {
+    const visible = screen
+      .getAllByText(/0 de 12 cupos utilizados/)
+      .filter((node) => !node.closest("[hidden]"));
+    expect(visible).toHaveLength(1);
+  });
 
   fireEvent.click(section("Pasajeros"));
   await screen.findByText("Aún no tienes pasajeros asignados.");
@@ -240,21 +387,42 @@ test("assignment create, edit and end refresh server capacity in routes and summ
   fireEvent.click(screen.getByRole("button", { name: "Crear asignación" }));
   expect(await screen.findByText("Estudiante Ficticio")).toBeTruthy();
   fireEvent.click(section("Rutas"));
-  expect(await screen.findByText(/4 de 12 cupos utilizados/)).toBeTruthy();
+  await waitFor(() => {
+    const visible = screen
+      .getAllByText(/4 de 12 cupos utilizados/)
+      .filter((node) => !node.closest("[hidden]"));
+    expect(visible).toHaveLength(1);
+  });
   fireEvent.click(section("Inicio"));
-  expect(await screen.findByText(/4 de 12 cupos utilizados/)).toBeTruthy();
+  await waitFor(() => {
+    const visible = screen
+      .getAllByText(/4 de 12 cupos utilizados/)
+      .filter((node) => !node.closest("[hidden]"));
+    expect(visible).toHaveLength(1);
+  });
 
   fireEvent.click(section("Pasajeros"));
-  fireEvent.click(await screen.findByRole("button", { name: "Editar" }));
+  fireEvent.click(
+    (await screen.findAllByRole("button", { name: /^Detalle de / }))[0]!,
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Editar" }));
   fireEvent.change(screen.getByLabelText("Fecha de término (opcional)"), {
     target: { value: "30/09/2026" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }));
   await screen.findByText(/28\/09\/2026–30\/09\/2026/);
   fireEvent.click(section("Rutas"));
-  expect(await screen.findByText(/6 de 12 cupos utilizados/)).toBeTruthy();
+  await waitFor(() => {
+    const visible = screen
+      .getAllByText(/6 de 12 cupos utilizados/)
+      .filter((node) => !node.closest("[hidden]"));
+    expect(visible).toHaveLength(1);
+  });
 
   fireEvent.click(section("Pasajeros"));
+  fireEvent.click(
+    (await screen.findAllByRole("button", { name: /^Detalle de / }))[0]!,
+  );
   fireEvent.click(
     await screen.findByRole("button", { name: "Finalizar asignación" }),
   );
@@ -266,9 +434,19 @@ test("assignment create, edit and end refresh server capacity in routes and summ
   );
   await screen.findByText(/28\/09\/2026–28\/09\/2026/);
   fireEvent.click(section("Rutas"));
-  expect(await screen.findByText(/0 de 12 cupos utilizados/)).toBeTruthy();
+  await waitFor(() => {
+    const visible = screen
+      .getAllByText(/0 de 12 cupos utilizados/)
+      .filter((node) => !node.closest("[hidden]"));
+    expect(visible).toHaveLength(1);
+  });
   fireEvent.click(section("Inicio"));
-  expect(await screen.findByText(/0 de 12 cupos utilizados/)).toBeTruthy();
+  await waitFor(() => {
+    const visible = screen
+      .getAllByText(/0 de 12 cupos utilizados/)
+      .filter((node) => !node.closest("[hidden]"));
+    expect(visible).toHaveLength(1);
+  });
   expect(
     fetchMock.mock.calls.filter(
       ([path, options]) =>
@@ -667,6 +845,8 @@ test("administrator can open control queue and retain the authorized document re
     );
   vi.stubGlobal("fetch", fetchMock);
   render(<App />);
+  await screen.findByRole("heading", { name: "Inicio administrativo" });
+  fireEvent.click(screen.getByRole("button", { name: "Conductores" }));
   await screen.findByText("No hay conductores con estos filtros.");
   fireEvent.click(screen.getByRole("button", { name: "Validaciones" }));
   await screen.findByText("No hay solicitudes en este estado.");
@@ -903,4 +1083,315 @@ test("an obsolete logout failure cannot clear a newer account's rotated CSRF", a
   expect(
     (logouts[1] as unknown as [string, RequestInit])[1].headers,
   ).toMatchObject({ "X-CSRFToken": "new-rotated" });
+});
+
+test("compact driver drawer contains focus, inerts content and closes on desktop resize", async () => {
+  const media = new EventTarget() as EventTarget & { matches: boolean };
+  media.matches = true;
+  vi.stubGlobal("matchMedia", () => media);
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (path: string) =>
+      path.includes("csrf")
+        ? csrf
+        : path.includes("auth/me")
+          ? ok(driver)
+          : domain(path),
+    ),
+  );
+  render(<App />);
+  await screen.findByRole("navigation", { name: "Secciones del conductor" });
+  const toggle = screen.getByRole("button", { name: "Menú" });
+  fireEvent.click(toggle);
+  const drawer = screen.getByRole("dialog", { name: "Menú del conductor" });
+  const close = within(drawer).getByRole("button", { name: "Cerrar menú" });
+  expect(document.activeElement).toBe(close);
+  expect((screen.getByRole("main") as HTMLElement).inert).toBe(true);
+  fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+  expect(document.activeElement?.textContent).toBe("Cerrar sesión");
+  fireEvent.keyDown(document, { key: "Tab" });
+  expect(document.activeElement).toBe(close);
+  fireEvent.click(close);
+  expect(document.activeElement).toBe(toggle);
+  expect((screen.getByRole("main") as HTMLElement).inert).toBe(false);
+  fireEvent.click(toggle);
+  act(() => {
+    media.matches = false;
+    media.dispatchEvent(new Event("change"));
+  });
+  expect(
+    screen.queryByRole("dialog", { name: "Menú del conductor" }),
+  ).toBeNull();
+  expect((screen.getByRole("main") as HTMLElement).inert).toBe(false);
+});
+
+test("driver Back hides the route dialog and returning restores its unsaved draft", async () => {
+  const fetchMock = vi.fn(async (path: string) =>
+    path.includes("csrf")
+      ? csrf
+      : path.includes("auth/me")
+        ? ok(driver)
+        : domain(path),
+  );
+  vi.stubGlobal("fetch", fetchMock);
+  render(<App />);
+  await screen.findByRole("navigation", { name: "Secciones del conductor" });
+  fireEvent.click(
+    within(
+      screen.getByRole("navigation", { name: "Secciones del conductor" }),
+    ).getByRole("button", { name: "Rutas" }),
+  );
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Crear primera ruta" }),
+  );
+  fireEvent.change(screen.getByLabelText("Nombre de la ruta"), {
+    target: { value: "Borrador para revisar" },
+  });
+  act(() =>
+    window.dispatchEvent(
+      new PopStateEvent("popstate", {
+        state: { furgoDriverSection: "summary", furgoHelp: false },
+      }),
+    ),
+  );
+  expect(screen.queryByRole("dialog", { name: "Crear ruta" })).toBeNull();
+  act(() =>
+    window.dispatchEvent(
+      new PopStateEvent("popstate", {
+        state: { furgoDriverSection: "routes", furgoHelp: false },
+      }),
+    ),
+  );
+  expect(await screen.findByDisplayValue("Borrador para revisar")).toBeTruthy();
+  expect(screen.getByRole("dialog", { name: "Crear ruta" })).toBeTruthy();
+  expect(
+    fetchMock.mock.calls.filter((call) => call[0].endsWith("driver/routes/"))
+      .length,
+  ).toBeGreaterThan(0);
+});
+
+test("driver publication and routes each expose a single page title and retain their overview return", async () => {
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValueOnce(csrf)
+    .mockResolvedValueOnce(ok(driver))
+    .mockImplementation((path: string) => Promise.resolve(domain(path)));
+  vi.stubGlobal("fetch", fetchMock);
+  render(<App />);
+  const nav = within(
+    await screen.findByRole("navigation", { name: "Secciones del conductor" }),
+  );
+  for (const [destination, title] of [
+    ["Publicación", "Publicación"],
+    ["Rutas", "Mis rutas"],
+  ]) {
+    fireEvent.click(nav.getByRole("button", { name: destination }));
+    await screen.findByRole("heading", { name: title, level: 1 });
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Volver al resumen de mi servicio" }),
+    );
+    await screen.findByRole("region", { name: "Resumen de mi servicio" });
+  }
+});
+
+test("driver help preserves exclusive task state across workspace destinations and clears it at sign out", async () => {
+  const articles = Array.from({ length: 18 }, (_, i) => ({
+    id: `guide-${i + 1}`,
+    role: "driver",
+    category: "Planes",
+    title: `Guía ${i + 1}`,
+    body: `Orientación ${i + 1}`,
+  }));
+  const row = {
+    id: 33,
+    subject: "Consulta de publicación",
+    state: "waiting_user",
+    updated_at: "2026-10-19T12:00:00Z",
+  };
+  const fetchMock = vi.fn(async (path: string) => {
+    if (path.endsWith("auth/csrf/")) return csrf;
+    if (path.endsWith("auth/me/")) return ok(driver);
+    if (path.endsWith("auth/logout/")) return ok({ ok: true });
+    if (path.endsWith("help/"))
+      return ok({
+        version: "test",
+        service_notice: "Servicio de prueba",
+        privacy_notice: "Sin datos privados",
+        assistant_modes: [],
+        articles,
+      });
+    if (path.includes("support/tickets/?"))
+      return ok({ count: 26, results: [row] });
+    return domain(path);
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  render(<App />);
+  await screen.findByRole("heading", { name: "Inicio", level: 1 });
+  fireEvent.click(screen.getByRole("button", { name: "Ayuda y soporte" }));
+  const guideNav = () =>
+    within(screen.getByRole("navigation", { name: "Páginas de guías" }));
+  const caseNav = () =>
+    within(
+      screen.getByRole("navigation", {
+        name: "Páginas de consultas de soporte",
+      }),
+    );
+  await screen.findByText(/Contenido revisado/);
+  expect(
+    fetchMock.mock.calls.some(([path]) => path.includes("support/tickets/?")),
+  ).toBe(false);
+  fireEvent.change(screen.getByLabelText("Tema de ayuda"), {
+    target: { value: "Planes" },
+  });
+  fireEvent.change(screen.getByLabelText("Buscar una guía"), {
+    target: { value: "orientación" },
+  });
+  fireEvent.click(guideNav().getByRole("button", { name: "Siguiente" }));
+  fireEvent.click(screen.getByRole("button", { name: "Guía 6" }));
+  expect(screen.getByRole("article", { name: "Guía 6" })).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "Consultas de soporte" }));
+  await screen.findByRole("button", { name: /#33/ });
+  fireEvent.click(caseNav().getByRole("button", { name: "Siguiente" }));
+  await screen.findByRole("button", { name: /#33/ });
+  fireEvent.change(screen.getByLabelText("Estado en esta página"), {
+    target: { value: "waiting_user" },
+  });
+  fireEvent.change(
+    screen.getByLabelText("Buscar en esta página de consultas"),
+    { target: { value: "publicacion" } },
+  );
+  fireEvent.click(
+    within(
+      screen.getByRole("navigation", { name: "Secciones del conductor" }),
+    ).getByRole("button", { name: "Inicio" }),
+  );
+  expect(screen.queryByRole("region", { name: "Ayuda y soporte" })).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Ayuda y soporte" }));
+  await screen.findByRole("button", { name: /#33/ });
+  expect(screen.queryByRole("region", { name: "Guías" })).toBeNull();
+  expect(
+    (screen.getByLabelText("Estado en esta página") as HTMLSelectElement).value,
+  ).toBe("waiting_user");
+  expect(
+    (
+      screen.getByLabelText(
+        "Buscar en esta página de consultas",
+      ) as HTMLInputElement
+    ).value,
+  ).toBe("publicacion");
+  expect(caseNav().getByText(/Página 2 de 2/)).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "Guías de ayuda" }));
+  expect(screen.getByRole("article", { name: "Guía 6" })).toBeTruthy();
+  expect(
+    screen.queryByRole("region", { name: "Consultas de soporte" }),
+  ).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Volver a las guías" }));
+  expect(guideNav().getByText(/Página 2 de 4/)).toBeTruthy();
+  expect(
+    (screen.getByLabelText("Buscar una guía") as HTMLInputElement).value,
+  ).toBe("orientación");
+  expect(
+    (screen.getByLabelText("Tema de ayuda") as HTMLSelectElement).value,
+  ).toBe("Planes");
+  expect(sessionStorage.length).toBe(0);
+  fireEvent.click(screen.getByRole("button", { name: "Cerrar sesión" }));
+  await screen.findByRole("heading", { name: "Inicia sesión" });
+  expect(screen.queryByText("Consulta de publicación")).toBeNull();
+});
+
+test("compact admin drawer contains focus, inerts content and closes on desktop resize", async () => {
+  const media = new EventTarget() as EventTarget & { matches: boolean };
+  media.matches = true;
+  vi.stubGlobal("matchMedia", () => media);
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (path: string) =>
+      path.includes("csrf")
+        ? csrf
+        : path.includes("auth/me")
+          ? ok({ ...driver, role: "admin" })
+          : path.includes("admin/")
+            ? ok({ results: [], count: 0 })
+            : domain(path),
+    ),
+  );
+  render(<App />);
+  await screen.findByRole("navigation", { name: "Administración" });
+  const toggle = screen.getByRole("button", { name: "Menú" });
+  fireEvent.click(toggle);
+  const drawer = screen.getByRole("dialog", { name: "Menú de administración" });
+  const close = within(drawer).getByRole("button", { name: "Cerrar menú" });
+  expect(document.activeElement).toBe(close);
+  expect((screen.getByRole("main") as HTMLElement).inert).toBe(true);
+  fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+  expect(document.activeElement?.textContent).toBe("Cerrar sesión");
+  fireEvent.keyDown(document, { key: "Tab" });
+  expect(document.activeElement).toBe(close);
+  fireEvent.click(close);
+  expect(document.activeElement).toBe(toggle);
+  expect((screen.getByRole("main") as HTMLElement).inert).toBe(false);
+  fireEvent.click(toggle);
+  act(() => {
+    media.matches = false;
+    media.dispatchEvent(new Event("change"));
+  });
+  expect(
+    screen.queryByRole("dialog", { name: "Menú de administración" }),
+  ).toBeNull();
+  expect((screen.getByRole("main") as HTMLElement).inert).toBe(false);
+});
+
+test("integral contact filters survive destinations and browser Back without a write", async () => {
+  const fetchMock = vi.fn(async (path: string) =>
+    path.includes("csrf")
+      ? csrf
+      : path.includes("auth/me")
+        ? ok(driver)
+        : domain(path),
+  );
+  vi.stubGlobal("fetch", fetchMock);
+  render(<App />);
+  const navigation = await screen.findByRole("navigation", {
+    name: "Secciones del conductor",
+  });
+  const destination = (name: string) =>
+    within(navigation).getByRole("button", { name });
+  fireEvent.click(destination("Solicitudes"));
+  const accepted = await screen.findByRole("button", { name: /^Aceptadas/ });
+  fireEvent.click(accepted);
+  fireEvent.click(destination("Inicio"));
+  fireEvent.click(destination("Solicitudes"));
+  expect(
+    screen
+      .getByRole("button", { name: /^Aceptadas/ })
+      .getAttribute("aria-pressed"),
+  ).toBe("true");
+  act(() =>
+    window.dispatchEvent(
+      new PopStateEvent("popstate", {
+        state: { furgoDriverSection: "summary", furgoHelp: false },
+      }),
+    ),
+  );
+  expect(
+    screen.getByRole("heading", { name: "Inicio", level: 1 }),
+  ).toBeTruthy();
+  act(() =>
+    window.dispatchEvent(
+      new PopStateEvent("popstate", {
+        state: { furgoDriverSection: "requests", furgoHelp: false },
+      }),
+    ),
+  );
+  expect(
+    screen
+      .getByRole("button", { name: /^Aceptadas/ })
+      .getAttribute("aria-pressed"),
+  ).toBe("true");
+  expect(
+    fetchMock.mock.calls.some(
+      ([path]) => path.includes("/accept/") || path.includes("/decline/"),
+    ),
+  ).toBe(false);
 });
