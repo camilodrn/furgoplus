@@ -99,7 +99,7 @@ class RegisterView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        if settings.DEMO_MODE:
+        if settings.DEMO_MODE and not settings.DEMO_REGISTRATION_ENABLED:
             # Reject before reading the payload, consuming a counter or any writes.
             return no_store(
                 Response(
@@ -132,6 +132,11 @@ class RegisterView(APIView):
             raise ValidationError(
                 {"display_name": ["Enter a display name of at most 100 characters."]}
             )
+        if settings.DEMO_MODE and settings.DEMO_REGISTRATION_ENABLED:
+            if not email.strip().lower().endswith("@example.test"):
+                raise ValidationError(
+                    {"email": ["En esta feria usa un correo ficticio @example.test."]}
+                )
         try:
             email = User.objects.normalize_email(email)
             candidate = User(email=email, role=role)

@@ -266,6 +266,94 @@ void main() {
     },
   );
 
+  testWidgets(
+    'fair demo allows parent registration with CSRF and no automatic login',
+    (tester) async {
+      final fair = ApiConfig(
+        'https://demo.furgoplus.cl',
+        demoRegistrationEnabled: true,
+      );
+      expect(fair.demoMode, isTrue);
+      expect(fair.demoRegistrationEnabled, isTrue);
+      expect(
+        ApiConfig(
+          'https://api.example.test',
+          demoRegistrationEnabled: true,
+        ).demoRegistrationEnabled,
+        isFalse,
+      );
+
+      final transport = PendingAuthTransport()
+        ..responses.addAll([
+          reply(200, {'csrf_token': csrf}, [csrfCookie]),
+          reply(403, {'code': 'not_authenticated', 'message': 'Signed out'}),
+          reply(200, {'csrf_token': csrf}, [csrfCookie]),
+        ]);
+      final storage = MemoryStorage();
+      final controller = AuthController(
+        NativeSessionApi(fair, storage, transport: transport),
+      );
+
+      await tester.pumpWidget(AuthApp(controller: controller));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Crear cuenta de familia'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Crea tu cuenta de familia'), findsOneWidget);
+      expect(find.text('Registro ilustrativo de familia'), findsNothing);
+
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Cómo te llamas'),
+        'Familia Feria',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Correo electrónico'),
+        'familia-feria@example.test',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Contraseña'),
+        'Clave-Feria-123!',
+      );
+
+      await tester.ensureVisible(find.text('Crear cuenta'));
+      await tester.tap(find.text('Crear cuenta'));
+      await tester.pump();
+
+      final registrations = transport.calls
+          .where((call) => call.uri.path.endsWith('/auth/register/'))
+          .toList();
+
+      expect(registrations, hasLength(1));
+      final request = registrations.single;
+      expect(request.method, 'POST');
+      expect(request.uri.scheme, 'https');
+      expect(request.uri.host, 'demo.furgoplus.cl');
+      expect(request.headers['X-CSRFToken'], csrf);
+
+      final body = jsonDecode(request.body!) as Map<String, dynamic>;
+      expect(body['role'], 'parent');
+      expect(body['email'], 'familia-feria@example.test');
+      expect(body['display_name'], 'Familia Feria');
+
+      transport.completion.complete(
+        reply(201, {
+          'id': 124,
+          'email': 'familia-feria@example.test',
+          'role': 'parent',
+          'display_name': 'Familia Feria',
+        }),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(controller.state, AuthState.registered);
+      expect(find.text('Cuenta creada. Inicia sesión.'), findsOneWidget);
+      expect(storage.value, isNull);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   test('native POST sends complete UTF-8 JSON with a content length', () async {
     final client = ProbeClient();
     final body = jsonEncode({
@@ -319,9 +407,8 @@ void main() {
   });
 
   test('main Android manifest permits network access and disables backup', () {
-    final manifest = File(
-      'android/app/src/main/AndroidManifest.xml',
-    ).readAsStringSync();
+    final manifest = File('android/app/src/main/AndroidManifest.xml')
+        .readAsStringSync();
     expect(manifest, contains('android.permission.INTERNET'));
     expect(manifest, contains('android:allowBackup="false"'));
   });

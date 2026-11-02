@@ -15,6 +15,7 @@ def flag(name: str, default: bool = False) -> bool:
 
 DEBUG = flag("DJANGO_DEBUG")
 DEMO_MODE = flag("FURGOPLUS_DEMO_MODE")
+DEMO_REGISTRATION_ENABLED = flag("FURGOPLUS_DEMO_REGISTRATION_ENABLED")
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "")
 if not SECRET_KEY or SECRET_KEY.startswith("replace-"):
     raise ImproperlyConfigured("Set DJANGO_SECRET_KEY to a unique secret")

@@ -6,5 +6,12 @@ export function isDemoMode(hostname = window.location.hostname): boolean {
   );
 }
 
+export function isDemoRegistrationEnabled(): boolean {
+  return (
+    isDemoMode() &&
+    import.meta.env.VITE_FURGOPLUS_DEMO_REGISTRATION_ENABLED === "true"
+  );
+}
+
 export const demoRegistrationNotice =
   "Registro ilustrativo: esta demostración no crea cuentas. Los datos del formulario no se envían ni se guardan en la aplicación. Las cuentas ficticias las prepara el equipo.";

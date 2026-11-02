@@ -6,7 +6,7 @@ from accounts.models import AuthThrottle, DriverProfile, ParentProfile, User
 from api.test_auth import BASE, PASSWORD
 
 
-@override_settings(DEMO_MODE=True)
+@override_settings(DEMO_MODE=True, DEMO_REGISTRATION_ENABLED=False)
 class DemoRegistrationTests(TestCase):
     def setUp(self):
         self.client = Client(enforce_csrf_checks=True)
@@ -82,6 +82,83 @@ class DemoRegistrationTests(TestCase):
                 response = self.client.get("/api/v1/" + path, secure=True)
                 self.assertEqual(response.status_code, 403)
                 self.assertEqual(response.json()["code"], "not_authenticated")
+
+
+    @override_settings(DEMO_REGISTRATION_ENABLED=True)
+    def test_fair_creates_only_parent_and_driver_accounts(self):
+        for role, profile in (
+            ("parent", ParentProfile),
+            ("driver", DriverProfile),
+        ):
+            response = self.post(
+                "register/",
+                {
+                    "email": f"{role}@example.test",
+                    "password": PASSWORD,
+                    "role": role,
+                    "display_name": "Persona Feria",
+                },
+            )
+            self.assertEqual(response.status_code, 201)
+            self.assertTrue(
+                profile.objects.filter(
+                    user__email=f"{role}@example.test"
+                ).exists()
+            )
+            self.assertNotIn("sessionid", response.cookies)
+
+    @override_settings(DEMO_REGISTRATION_ENABLED=True)
+    def test_fair_rejects_non_synthetic_addresses(self):
+        for email in (
+            "teacher@gmail.com",
+            "test@sub.example.test",
+            "test@example.test.evil",
+        ):
+            response = self.post(
+                "register/",
+                {
+                    "email": email,
+                    "password": PASSWORD,
+                    "role": "parent",
+                    "display_name": "Persona Feria",
+                },
+            )
+            self.assertEqual(response.status_code, 400)
+        self.assertFalse(User.objects.exists())
+
+    @override_settings(DEMO_REGISTRATION_ENABLED=True)
+    def test_fair_never_allows_public_administrators(self):
+        for extra in (
+            {"role": "admin"},
+            {"role": "driver", "is_staff": True},
+        ):
+            response = self.post(
+                "register/",
+                {
+                    "email": "admin@example.test",
+                    "password": PASSWORD,
+                    "display_name": "Persona Feria",
+                    **extra,
+                },
+            )
+            self.assertEqual(response.status_code, 400)
+        self.assertFalse(User.objects.exists())
+
+    @override_settings(DEMO_REGISTRATION_ENABLED=True)
+    def test_fair_registration_preserves_csrf(self):
+        response = self.post(
+            "register/",
+            {
+                "email": "parent@example.test",
+                "password": PASSWORD,
+                "role": "parent",
+                "display_name": "Persona Feria",
+            },
+            token="invalid",
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.json()["code"], "csrf_failed")
+        self.assertFalse(User.objects.exists())
 
     @override_settings(DEMO_MODE=False)
     def test_normal_registration_remains_available_for_both_roles(self):

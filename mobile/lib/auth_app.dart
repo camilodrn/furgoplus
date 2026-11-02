@@ -61,7 +61,9 @@ class _AuthAppState extends State<AuthApp> {
 
   Future<void> submit() async {
     if (pending) return;
-    if (register && widget.controller.api.config.demoMode) {
+    if (register &&
+        widget.controller.api.config.demoMode &&
+        !widget.controller.api.config.demoRegistrationEnabled) {
       TextInput.finishAutofillContext(shouldSave: false);
       FocusManager.instance.primaryFocus?.unfocus();
       setState(() {
@@ -84,6 +86,13 @@ class _AuthAppState extends State<AuthApp> {
         fieldErrors['password'] = 'Escribe tu contraseña.';
       } else if (register && password.text.length < 8) {
         fieldErrors['password'] = 'Usa al menos 8 caracteres.';
+      }
+      if (register &&
+          widget.controller.api.config.demoRegistrationEnabled &&
+          email.text.trim().isNotEmpty &&
+          !email.text.trim().toLowerCase().endsWith('@example.test')) {
+        fieldErrors['email'] =
+            'Para la feria usa un correo ficticio @example.test.';
       }
       if (register && name.text.trim().isEmpty) {
         fieldErrors['name'] = 'Escribe cómo te llamas.';
@@ -123,7 +132,10 @@ class _AuthAppState extends State<AuthApp> {
 
   Widget authContent(BuildContext context) {
     final controller = widget.controller;
-    final illustrative = register && controller.api.config.demoMode;
+    final illustrative =
+        register &&
+        controller.api.config.demoMode &&
+        !controller.api.config.demoRegistrationEnabled;
     final headingStyle = Theme.of(context).textTheme.headlineMedium;
     final supportStyle = Theme.of(context).textTheme.bodySmall;
     if (controller.state == AuthState.restoring) {
@@ -186,7 +198,7 @@ class _AuthAppState extends State<AuthApp> {
       );
     }
     return AutofillGroup(
-      onDisposeAction: illustrative
+      onDisposeAction: register && controller.api.config.demoMode
           ? AutofillContextAction.cancel
           : AutofillContextAction.commit,
       child: Column(
@@ -220,7 +232,9 @@ class _AuthAppState extends State<AuthApp> {
             if (!illustrative) ...[
               const SizedBox(height: 8),
               Text(
-                'Usa solo datos de prueba en esta demostración.',
+                controller.api.config.demoMode
+                    ? 'Feria: usa un correo ficticio @example.test y datos inventados. No ingreses información personal real.'
+                    : 'Usa solo datos de prueba en esta demostración.',
                 style: supportStyle,
               ),
             ],
@@ -235,7 +249,9 @@ class _AuthAppState extends State<AuthApp> {
               enabled: !pending,
               maxLength: 100,
               textCapitalization: TextCapitalization.words,
-              autofillHints: illustrative ? null : const [AutofillHints.name],
+              autofillHints: register && controller.api.config.demoMode
+                  ? null
+                  : const [AutofillHints.name],
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 labelText: 'Cómo te llamas',
@@ -248,7 +264,9 @@ class _AuthAppState extends State<AuthApp> {
             controller: email,
             enabled: !pending,
             keyboardType: TextInputType.emailAddress,
-            autofillHints: illustrative ? null : const [AutofillHints.email],
+            autofillHints: register && controller.api.config.demoMode
+                ? null
+                : const [AutofillHints.email],
             autocorrect: false,
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
@@ -263,7 +281,7 @@ class _AuthAppState extends State<AuthApp> {
             obscureText: !showPassword,
             autocorrect: false,
             enableSuggestions: false,
-            autofillHints: illustrative
+            autofillHints: register && controller.api.config.demoMode
                 ? null
                 : [
                     register
@@ -330,7 +348,8 @@ class _AuthAppState extends State<AuthApp> {
             onPressed: pending
                 ? null
                 : () => setState(() {
-                    if (controller.api.config.demoMode) {
+                    if (controller.api.config.demoMode &&
+                        !controller.api.config.demoRegistrationEnabled) {
                       TextInput.finishAutofillContext(shouldSave: false);
                       name.clear();
                       email.clear();

@@ -1,7 +1,11 @@
 import { TaskVisibility } from "./useModal";
 import { useEffect, useRef, useState } from "react";
 import { ApiError, AuthApi } from "./api";
-import { demoRegistrationNotice, isDemoMode } from "./demo";
+import {
+  demoRegistrationNotice,
+  isDemoMode,
+  isDemoRegistrationEnabled,
+} from "./demo";
 import type { Identity, Publication } from "./api-types";
 import "./style.css";
 import { LegalAccess } from "./LegalAccess";
@@ -29,6 +33,7 @@ type State =
 
 export default function App() {
   const demoMode = isDemoMode();
+  const illustrativeRegistration = demoMode && !isDemoRegistrationEnabled();
   const authForm = useRef<HTMLFormElement>(null);
   const [state, setState] = useState<State>({ kind: "loading" });
   const [restoreAttempt, setRestoreAttempt] = useState(0);
@@ -130,7 +135,7 @@ export default function App() {
     if (submitting.current) return;
     setMessageKind("error");
     const form = event.currentTarget;
-    if (mode === "register" && demoMode) {
+    if (mode === "register" && illustrativeRegistration) {
       form.reset();
       setShowPassword(false);
       setFieldErrors({});
@@ -147,6 +152,15 @@ export default function App() {
     if (!value("email").trim()) errors.email = "Ingresa tu correo electrónico.";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value("email").trim()))
       errors.email = "Ingresa un correo electrónico válido.";
+    if (
+      mode === "register" &&
+      demoMode &&
+      isDemoRegistrationEnabled() &&
+      !errors.email &&
+      !value("email").trim().toLowerCase().endsWith("@example.test")
+    ) {
+      errors.email = "Para la feria usa un correo ficticio @example.test.";
+    }
     if (!value("password")) errors.password = "Ingresa tu contraseña.";
     setFieldErrors(errors);
     const firstInvalid = Object.keys(errors)[0];
@@ -302,22 +316,24 @@ export default function App() {
             <h1>
               {mode === "login"
                 ? "Inicia sesión"
-                : demoMode
+                : illustrativeRegistration
                   ? "Registro ilustrativo de conductor"
                   : "Crea tu cuenta de conductor"}
             </h1>
             <p className="auth-intro">
               {mode === "login"
                 ? "Coordina tu transporte escolar con FurgoPlus."
-                : demoMode
+                : illustrativeRegistration
                   ? "Puedes explorar el formulario. El registro público está cerrado en esta demostración."
                   : "Primero crea tu cuenta. Después podrás completar tus datos y enviar tus documentos para aprobación."}
             </p>
             {mode === "register" && (
               <p className="auth-notice auth-demo-notice notice-warning">
-                {demoMode
+                {illustrativeRegistration
                   ? "No ingreses datos reales. Las cuentas ficticias las prepara el equipo."
-                  : "Entorno de demostración: usa únicamente información sintética de prueba."}
+                  : demoMode
+                    ? "Feria: usa un correo ficticio @example.test y datos inventados. No ingreses información personal real."
+                    : "Entorno de demostración: usa únicamente información sintética de prueba."}
               </p>
             )}
             <form
@@ -461,7 +477,7 @@ export default function App() {
                 className="button-outline"
                 disabled={pending}
                 onClick={() => {
-                  if (demoMode) authForm.current?.reset();
+                  if (illustrativeRegistration) authForm.current?.reset();
                   setMode(mode === "login" ? "register" : "login");
                   setShowPassword(false);
                   setMessage("");

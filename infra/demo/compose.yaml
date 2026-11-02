@@ -48,6 +48,7 @@ services:
       DB_PORT: "5432"
       PGCONNECT_TIMEOUT: "3"
       DEMO_SYNTHETIC_ONLY: ${DEMO_SYNTHETIC_ONLY:?Acknowledge synthetic-only demo}
+      FURGOPLUS_DEMO_REGISTRATION_ENABLED: ${FURGOPLUS_DEMO_REGISTRATION_ENABLED:-false}
       DEMO_CADDY_IP: ${DEMO_CADDY_IP:-172.30.81.2}
     secrets: [db_password, django_secret_key]
     volumes:
@@ -81,6 +82,8 @@ services:
     build:
       context: ../..
       dockerfile: infra/demo/web.Dockerfile
+      args:
+        FURGOPLUS_DEMO_REGISTRATION_ENABLED: ${FURGOPLUS_DEMO_REGISTRATION_ENABLED:-false}
     restart: unless-stopped
     ports:
       - "127.0.0.1:${DEMO_HTTP_PORT:-18080}:8080"

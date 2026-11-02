@@ -1,4 +1,8 @@
-import { demoRegistrationNotice, isDemoMode } from "./demo";
+import {
+  demoRegistrationNotice,
+  isDemoMode,
+  isDemoRegistrationEnabled,
+} from "./demo";
 import type {
   HelpCenter,
   SupportTickets,
@@ -302,7 +306,7 @@ export class AuthApi {
   }
 
   register(input: RegisterRequest): Promise<Identity> {
-    if (isDemoMode())
+    if (isDemoMode() && !isDemoRegistrationEnabled())
       return Promise.reject(
         new ApiError(403, "registration_disabled", demoRegistrationNotice, {}),
       );

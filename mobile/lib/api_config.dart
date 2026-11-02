@@ -5,17 +5,24 @@ class ApiConfig {
     String rawUrl, {
     bool allowHttpForDevelopment = false,
     bool demoMode = false,
+    bool demoRegistrationEnabled = false,
   }) : baseUri = _parse(rawUrl, allowHttpForDevelopment),
-       _demoMode = demoMode;
+       _demoMode = demoMode,
+       _demoRegistrationEnabled = demoRegistrationEnabled;
 
   final Uri baseUri;
   final bool _demoMode;
+  final bool _demoRegistrationEnabled;
+  bool get demoRegistrationEnabled => demoMode && _demoRegistrationEnabled;
   bool get demoMode => _demoMode || baseUri.host == 'demo.furgoplus.cl';
 
   static final ApiConfig fromEnvironment = ApiConfig(
     const String.fromEnvironment('API_BASE_URL'),
     allowHttpForDevelopment: const bool.fromEnvironment('ALLOW_HTTP_API'),
     demoMode: const bool.fromEnvironment('FURGOPLUS_DEMO_MODE'),
+    demoRegistrationEnabled: const bool.fromEnvironment(
+      'FURGOPLUS_DEMO_REGISTRATION_ENABLED',
+    ),
   );
 
   static Uri _parse(String rawUrl, bool allowHttpForDevelopment) {

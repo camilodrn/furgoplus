@@ -291,7 +291,7 @@ class NativeSessionApi {
     String password,
     String displayName,
   ) async {
-    if (config.demoMode) {
+    if (config.demoMode && !config.demoRegistrationEnabled) {
       throw AuthFailure(403, 'registration_disabled', demoRegistrationNotice);
     }
     final generation = _generation;

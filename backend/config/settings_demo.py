@@ -46,7 +46,7 @@ read_secret("DB_PASSWORD", 20)
 
 from .settings import *  # noqa: E402
 
-# This deployment never permits public account creation, regardless of caller/role.
+# Registration remains closed unless the explicit synthetic fair flag is enabled.
 DEMO_MODE = True
 
 try:
