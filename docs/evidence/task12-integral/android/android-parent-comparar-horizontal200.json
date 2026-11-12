@@ -1,0 +1,19 @@
+{
+  "name": "android-parent-comparar-horizontal200",
+  "role": "apoderado",
+  "screen": "P03-S10-S11",
+  "at": "2026-10-31T15:39:35.878499+00:00",
+  "platform": "Samsung A54 physical Android 16 / Flutter current main.dart",
+  "model": "SM-A546E",
+  "resolution": {
+    "width": 2340,
+    "height": 1080
+  },
+  "densityDpi": 450,
+  "fontScale": "2.0",
+  "package": "com.example.furgoplus.task12",
+  "apkSha256": "6fa78b8687fc8c1d44746c504e0565f7c281ccdb3da4ade5ffb9374ac5982373",
+  "API_BASE_URL": "http://127.0.0.1:18082",
+  "inspectedByAgent": false,
+  "humanReviewed": false
+}

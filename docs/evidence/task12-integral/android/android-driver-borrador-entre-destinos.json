@@ -1,0 +1,19 @@
+{
+  "name": "android-driver-borrador-entre-destinos",
+  "role": "conductor",
+  "screen": "D10-F05",
+  "at": "2026-10-31T16:14:20.977014+00:00",
+  "platform": "Samsung A54 physical Android 16 / Flutter current main.dart",
+  "model": "SM-A546E",
+  "resolution": {
+    "width": 1080,
+    "height": 2340
+  },
+  "densityDpi": 450,
+  "fontScale": "1.1",
+  "package": "com.example.furgoplus.task12",
+  "apkSha256": "b957d8a625b8a538cae8c83f801063d62693e5356d41ea70c1c0eb11205956da",
+  "API_BASE_URL": "http://127.0.0.1:18082",
+  "inspectedByAgent": false,
+  "humanReviewed": false
+}

@@ -1,0 +1,19 @@
+{
+  "name": "android-parent-solicitud-aceptada",
+  "role": "apoderado",
+  "screen": "P09",
+  "at": "2026-10-31T15:51:57.984710+00:00",
+  "platform": "Samsung A54 physical Android 16 / Flutter current main.dart",
+  "model": "SM-A546E",
+  "resolution": {
+    "width": 1080,
+    "height": 2340
+  },
+  "densityDpi": 450,
+  "fontScale": "1.1",
+  "package": "com.example.furgoplus.task12",
+  "apkSha256": "14d43305f73a3b151ac0e7035b23184f25cf12b97a38542c647694dda9d0fb2e",
+  "API_BASE_URL": "http://127.0.0.1:18082",
+  "inspectedByAgent": false,
+  "humanReviewed": false
+}

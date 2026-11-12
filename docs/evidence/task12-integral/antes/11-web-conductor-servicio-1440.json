@@ -1,0 +1,185 @@
+{
+  "name": "11-web-conductor-servicio-1440",
+  "role": "conductor",
+  "screen": "W08 Mi servicio",
+  "at": "2026-10-31T12:19:33.697Z",
+  "platform": "Fedora Chromium real React + academic API",
+  "browser": "156.0.8078.4",
+  "origin": "http://127.0.0.1:15174",
+  "geometry": {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "scrollWidth": 1440,
+    "scrollHeight": 1000,
+    "activeElement": {
+      "tag": "MAIN",
+      "role": null
+    },
+    "headings": [
+      "Resumen de tu servicio",
+      "Documentos",
+      "Documento de vehículo demo",
+      "Credencial con vencimiento demo",
+      "Documento de identidad demo",
+      "Datos del servicio",
+      "Revisión e historial",
+      "Rutas",
+      "Gestiona tu servicio",
+      "Datos del servicio",
+      "Documentos requeridos",
+      "Documento de identidad demo",
+      "Documento de vehículo demo",
+      "Credencial con vencimiento demo",
+      "Tu información fue aprobada",
+      "Historial de revisiones",
+      "Documentos enviados",
+      "Publicación",
+      "Visibilidad de tu servicio",
+      "Requisitos de publicación",
+      "Plan actual",
+      "Mis rutas",
+      "Ruta ficticia T12 elite"
+    ]
+  },
+  "blocked": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/profile/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validation/checklist/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/documents/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validation/checklist/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/profile/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/documents/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    }
+  ],
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "W08",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/11-web-conductor-servicio-1440.png",
+      "sha256": "e18464fd09b2fe5d5eccc0664d2d913119bc57e599ce45726f45b9e46ac1b387",
+      "pixels": [
+        1440,
+        1000
+      ]
+    }
+  ]
+}

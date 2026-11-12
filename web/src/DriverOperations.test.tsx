@@ -168,6 +168,7 @@ test("roster creates, edits and ends an owned fictional assignment", async () =>
     ).getByRole("status").textContent,
   ).toContain("Pasajero agregado correctamente");
   expect(screen.getByText(/28\/09\/2026–sin término/)).toBeTruthy();
+  fireEvent.click(screen.getAllByRole("button", { name: /^Detalle de / })[0]!);
   fireEvent.click(screen.getByRole("button", { name: "Editar" }));
   expect(
     (screen.getByLabelText("Fecha de inicio") as HTMLInputElement).value,
@@ -185,6 +186,7 @@ test("roster creates, edits and ends an owned fictional assignment", async () =>
     expect.objectContaining({ ends_on: "2026-11-27" }),
   );
   expect(screen.getByText(/28\/09\/2026–27\/11\/2026/)).toBeTruthy();
+  fireEvent.click(screen.getAllByRole("button", { name: /^Detalle de / })[0]!);
   fireEvent.click(screen.getByRole("button", { name: "Finalizar asignación" }));
   fireEvent.change(screen.getByLabelText("Último día de traslado"), {
     target: { value: "31/02/2026" },
@@ -300,18 +302,25 @@ test("payments create pending then mark paid and void", async () => {
     due_on: "2026-10-05",
   });
   expect(screen.queryByLabelText("Monto CLP")).toBeNull();
-  const disclosure = screen.getByText("Ver registro").closest("details")!;
-  expect(disclosure.open).toBe(false);
-  fireEvent.click(screen.getByText("Ver registro"));
-  expect(disclosure.open).toBe(true);
+  fireEvent.click(screen.getByRole("button", { name: /^Ver registro/ }));
+  expect(screen.getByRole("dialog", { name: "Registro #8" })).toBeTruthy();
   expect(
     screen.getByText(
       /Período: 28\/09\/2026–28\/10\/2026 · Vence: 05\/10\/2026/,
     ),
   ).toBeTruthy();
   fireEvent.click(await screen.findByRole("button", { name: "Marcar pagado" }));
+  expect(api.markPaymentPaid).not.toHaveBeenCalled();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar registro como pagado" }),
+  );
   await waitFor(() => expect(api.markPaymentPaid).toHaveBeenCalledWith(8));
-  expect(screen.getByText(/Pagado: 28\/09\/2026/)).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: /^Ver registro/ }));
+  expect(screen.getByText(/Registrado como pagado: 28\/09\/2026/)).toBeTruthy();
+  fireEvent.click(
+    within(screen.getByRole("dialog")).getByRole("button", { name: "Cerrar" }),
+  );
+  fireEvent.click(screen.getAllByRole("button", { name: /^Ver registro/ })[0]!);
   fireEvent.click(screen.getByRole("button", { name: "Anular" }));
   fireEvent.click(screen.getByRole("button", { name: "Confirmar anulación" }));
   await waitFor(() => expect(api.voidPayment).toHaveBeenCalledWith(8));
@@ -494,7 +503,7 @@ test("home reserves retry for read errors and keeps manual refresh after recover
   expect(screen.queryByText(/Reintentar/)).toBeNull();
   expect(screen.queryByRole("alert")).toBeNull();
   const refresh = screen.getByRole("button", { name: "Actualizar" });
-  expect(refresh.className).toContain("button-link driver-refresh");
+  expect(refresh.className).toContain("button-quiet driver-refresh");
   api.summary.mockResolvedValueOnce({
     ...summary,
     payment_counts: { pending: 2, paid: 0, void: 0 },
@@ -600,10 +609,12 @@ test("visual home follows server blockers and navigates to the exact next task",
   expect(screen.queryByText(/completa.*validación/i)).toBeNull();
   fireEvent.click(screen.getByRole("button", { name: "Configurar una ruta" }));
   expect(onNavigate).toHaveBeenCalledWith("routes");
-  expect(
-    (await screen.findByRole("region", { name: "Resumen de solicitudes" }))
-      .textContent,
-  ).toContain("1 por responder");
+  await waitFor(() =>
+    expect(
+      screen.getByRole("region", { name: "Resumen de solicitudes" })
+        .textContent,
+    ).toContain("1 por responder"),
+  );
   // The backend result stays authoritative even if its other fields look approved.
   api.summary.mockResolvedValueOnce({
     ...(await api.summary()),
@@ -632,6 +643,7 @@ test("future passengers use minimal student wording and authoritative capacity r
   };
   render(<DriverRoster api={api as unknown as AuthApi} />);
   await screen.findByText("Comienza próximamente");
+  fireEvent.click(screen.getByRole("button", { name: /^Detalle de / }));
   expect(
     screen.getByText(/Esta asignación comienza el 01\/01\/2099/),
   ).toBeTruthy();
@@ -692,13 +704,13 @@ test.each(["roster", "payments"])(
     );
     if (area === "payments")
       expect(
-        screen.getByText(/Registra los pagos acordados con las familias/),
+        screen.getByText(/Registro manual de pagos acordados con las familias/),
       ).toBeTruthy();
     expect(screen.queryByRole("button", { name: "Reintentar" })).toBeNull();
     const refresh = screen.getByRole("button", {
       name: area === "roster" ? "Actualizar pasajeros" : "Actualizar pagos",
     });
-    expect(refresh.className).toContain("button-link driver-refresh");
+    expect(refresh.className).toContain("button-quiet driver-refresh");
     fireEvent.click(refresh);
     const read = area === "roster" ? api.assignments : api.payments;
     await waitFor(() => expect(read).toHaveBeenCalledTimes(3));
@@ -743,22 +755,26 @@ test("home shows four actionable activation steps, four operational cards and da
     />,
   );
   await screen.findByText("Servicio no publicado");
-  expect(screen.getByText("1 de 4 requisitos completados")).toBeTruthy();
+  expect(screen.getByText("2 de 4 requisitos completados")).toBeTruthy();
   expect(
-    screen.getByRole("region", { name: "Progreso de activación" }),
+    screen.getByRole("group", { name: "Preparación del servicio" }),
   ).toBeTruthy();
   const path = screen.getByRole("list", {
     name: "Pasos para aparecer en FurgoPlus",
   });
   expect(path.querySelectorAll(":scope > li")).toHaveLength(4);
-  expect(path.querySelectorAll(".step-complete")).toHaveLength(1);
+  expect(path.querySelectorAll(".step-complete")).toHaveLength(2);
   expect(
     screen.queryByRole("button", {
       name: /Revisar mi plan|cambiar.*plan|asignar.*plan/i,
     }),
   ).toBeNull();
-  fireEvent.click(screen.getByRole("button", { name: "Ver estado del plan" }));
-  expect(onNavigate).toHaveBeenLastCalledWith("publication");
+  fireEvent.click(
+    within(
+      screen.getByRole("region", { name: "Visibilidad del servicio" }),
+    ).getByRole("button", { name: "Consultar plan con soporte" }),
+  );
+  expect(onNavigate).toHaveBeenLastCalledWith("help");
   fireEvent.click(screen.getByRole("button", { name: "Configurar una ruta" }));
   expect(onNavigate).toHaveBeenLastCalledWith("routes");
   expect(
@@ -811,8 +827,13 @@ test.each(["roster", "payments"])(
       const counts = screen.getAllByRole("definition")[0]!.parentElement;
       expect(counts?.textContent).toContain("Pendientes1");
       expect(
-        screen.getAllByRole("definition").map((item) => item.textContent),
-      ).toEqual(["1", "1", "1"]);
+        screen
+          .getAllByRole("definition")
+          .filter(
+            (item) => !item.classList.contains("operations-summary-amount"),
+          )
+          .map((item) => item.textContent),
+      ).toEqual(["1 registros", "1 registros manuales", "1 registros"]);
     }
     trigger.focus();
     fireEvent.click(trigger);
@@ -925,6 +946,7 @@ test("confirmed passenger save stays successful when the following read fails; r
   };
   render(<DriverRoster api={api as unknown as AuthApi} />);
   await screen.findByText(assignment.student_display_name);
+  fireEvent.click(screen.getAllByRole("button", { name: /^Detalle de / })[0]!);
   fireEvent.click(screen.getByRole("button", { name: "Editar" }));
   fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }));
   const notice = await screen.findByRole("complementary", {
@@ -959,7 +981,11 @@ test("payment domain errors keep authoritative contextual details out of global 
   render(<DriverPayments api={api as unknown as AuthApi} />);
   await screen.findByText(assignment.student_display_name);
   fireEvent.click(screen.getByText("Ver registro"));
+  fireEvent.click(screen.getAllByRole("button", { name: /^Ver registro/ })[0]!);
   fireEvent.click(screen.getByRole("button", { name: "Marcar pagado" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar registro como pagado" }),
+  );
   const notice = await screen.findByRole("complementary", {
     name: "Aviso de la acción",
   });
@@ -972,4 +998,323 @@ test("payment domain errors keep authoritative contextual details out of global 
   ).toContain("Private payment detail");
   expect(screen.queryByRole("button", { name: "Reintentar" })).toBeNull();
   expect(api.markPaymentPaid).toHaveBeenCalledWith(payment.id);
+});
+
+test("passenger capacity is server dated; search spans local pages and direct route access resets filters", async () => {
+  const rows = Array.from({ length: 23 }, (_, index) => ({
+    ...assignment,
+    id: index + 1,
+    student_display_name: `Pasajero ${index}`,
+    guardian_display_name: index === 22 ? "Ángela" : "Apoderado",
+    route_id: index === 22 ? 3 : 2,
+  }));
+  const api = {
+    routes: vi.fn(async () => ({
+      routes: [
+        { ...route, seat_capacity: 30, used_seats: 22, available_seats: 8 },
+        {
+          ...route,
+          id: 3,
+          label: "Ruta norte",
+          seat_capacity: 10,
+          used_seats: 1,
+          available_seats: 9,
+        },
+      ],
+    })),
+    assignments: vi.fn(async () => ({ assignments: rows })),
+  };
+  render(<DriverRoster api={api as unknown as AuthApi} />);
+  const capacities = await screen.findByRole("region", {
+    name: "Cupos por ruta",
+  });
+  expect(capacities.textContent).toContain("8 cupos disponibles");
+  expect(capacities.textContent).toContain("9 cupos disponibles");
+  expect(capacities.textContent).toContain("Próximo servicio: 28/09/2026");
+  expect(screen.queryByText("Pasajero 22")).toBeNull();
+  const pages = screen.getByRole("navigation", {
+    name: "Páginas de pasajeros",
+  });
+  fireEvent.click(within(pages).getByRole("button", { name: "Siguiente" }));
+  expect(screen.getByText("Pasajero 10")).toBeTruthy();
+  expect(document.activeElement?.id).toBe("roster-results");
+  fireEvent.change(screen.getByLabelText("Buscar pasajero o apoderado"), {
+    target: { value: "angela" },
+  });
+  expect(screen.getByText("Pasajero 22")).toBeTruthy();
+  expect(pages.textContent).toContain("Página 1 de 1");
+  fireEvent.change(screen.getByLabelText("Estado de asignación"), {
+    target: { value: "ended" },
+  });
+  expect(
+    screen.getByText("No hay pasajeros que coincidan con los filtros."),
+  ).toBeTruthy();
+  fireEvent.click(
+    screen.getByRole("button", { name: /^Ver pasajeros de Ruta norte/ }),
+  );
+  expect(
+    (screen.getByLabelText("Filtrar por ruta") as HTMLSelectElement).value,
+  ).toBe("3");
+  expect(screen.getByText("Pasajero 22")).toBeTruthy();
+  expect(api.assignments).toHaveBeenCalledTimes(1);
+  expect(api.assignments).toHaveBeenCalledWith();
+});
+
+test("route summaries use local pages and direct route selection reveals its capacity", async () => {
+  const api = {
+    routes: vi.fn(async () => ({
+      routes: Array.from({ length: 15 }, (_, index) => ({
+        ...route,
+        id: index + 1,
+        label: `Ruta ${index + 1}`,
+      })),
+    })),
+    assignments: vi.fn(async () => ({ assignments: [] })),
+  };
+  render(<DriverRoster api={api as unknown as AuthApi} />);
+  const group = await screen.findByRole("region", { name: "Cupos por ruta" });
+  expect(
+    within(group).getAllByRole("button", { name: /Ver pasajeros de/ }),
+  ).toHaveLength(5);
+  expect(
+    within(group).queryByRole("button", { name: /^Ver pasajeros de Ruta 15/ }),
+  ).toBeNull();
+  fireEvent.change(screen.getByLabelText("Filtrar por ruta"), {
+    target: { value: "15" },
+  });
+  expect(
+    within(group).getByRole("button", { name: /^Ver pasajeros de Ruta 15/ }),
+  ).toBeTruthy();
+});
+
+test("payments search and combined filters cover received rows with API amounts and overlapping service months", async () => {
+  const rows: Payment[] = Array.from({ length: 24 }, (_, index) => ({
+    ...payment,
+    id: index + 1,
+    status: index < 22 ? "pending" : index === 22 ? "paid" : "void",
+    assignment_id: index === 22 ? 7 : 5,
+  }));
+  rows[22] = {
+    ...rows[22]!,
+    service_period_start: "2026-09-30",
+    service_period_end: "2026-10-01",
+  };
+  const api = {
+    payments: vi.fn(async () => ({ payments: rows })),
+    assignments: vi.fn(async () => ({
+      assignments: [
+        assignment,
+        { ...assignment, id: 7, student_display_name: "Ángela Pérez" },
+      ],
+    })),
+    markPaymentPaid: vi.fn(),
+    voidPayment: vi.fn(),
+  };
+  render(<DriverPayments api={api as unknown as AuthApi} />);
+  const summary = await screen.findByLabelText("Resumen de pagos");
+  expect(summary.textContent).toContain("22");
+  expect(summary.textContent).toContain("$1.100.000");
+  expect(summary.textContent).toContain("Registrados como pagados");
+  const pages = screen.getByRole("navigation", { name: "Páginas de pagos" });
+  expect(
+    within(screen.getByRole("table", { name: "Registros de pagos" }))
+      .getAllByRole("row")
+      .slice(1),
+  ).toHaveLength(10);
+  fireEvent.click(within(pages).getByRole("button", { name: "Siguiente" }));
+  expect(pages.textContent).toContain("Página 2 de 3");
+  fireEvent.change(screen.getByLabelText("Buscar pago"), {
+    target: { value: "angela perez" },
+  });
+  fireEvent.change(screen.getByLabelText("Estado del pago"), {
+    target: { value: "paid" },
+  });
+  fireEvent.change(screen.getByLabelText("Pasajero del pago"), {
+    target: { value: "7" },
+  });
+  fireEvent.change(screen.getByLabelText("Mes del servicio"), {
+    target: { value: "2026-10" },
+  });
+  expect(
+    within(screen.getByRole("table", { name: "Registros de pagos" }))
+      .getAllByRole("row")
+      .slice(1),
+  ).toHaveLength(1);
+  expect(screen.getByText("Ángela Pérez")).toBeTruthy();
+  expect(pages.textContent).toContain("Página 1 de 1");
+  fireEvent.change(screen.getByLabelText("Mes del servicio"), {
+    target: { value: "2026-11" },
+  });
+  expect(
+    screen.getByText("No hay pagos que coincidan con los filtros."),
+  ).toBeTruthy();
+  expect(screen.queryByText("Aún no has registrado pagos.")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Limpiar filtros" }));
+  expect(
+    within(screen.getByRole("table", { name: "Registros de pagos" }))
+      .getAllByRole("row")
+      .slice(1),
+  ).toHaveLength(10);
+  expect(pages.textContent).toContain("Página 1 de 3");
+  expect(api.payments).toHaveBeenCalledWith();
+  expect(api.payments).toHaveBeenCalledTimes(1);
+  expect(api.markPaymentPaid).not.toHaveBeenCalled();
+  expect(api.voidPayment).not.toHaveBeenCalled();
+});
+
+test("payment confirmation can cancel safely and a confirmed transition clamps the last filtered page", async () => {
+  let rows = Array.from({ length: 11 }, (_, index) => ({
+    ...payment,
+    id: index + 1,
+  }));
+  const api = {
+    payments: vi.fn(async () => ({ payments: rows })),
+    assignments: vi.fn(async () => ({ assignments: [assignment] })),
+    markPaymentPaid: vi.fn(async (id: number) => {
+      rows = rows.map((row) =>
+        row.id === id ? { ...row, status: "paid" as const } : row,
+      );
+      return rows.find((row) => row.id === id)!;
+    }),
+  };
+  render(<DriverPayments api={api as unknown as AuthApi} />);
+  await screen.findByLabelText("Resumen de pagos");
+  fireEvent.change(screen.getByLabelText("Estado del pago"), {
+    target: { value: "pending" },
+  });
+  const pages = screen.getByRole("navigation", { name: "Páginas de pagos" });
+  fireEvent.click(within(pages).getByRole("button", { name: "Siguiente" }));
+  fireEvent.click(screen.getByText("Ver registro"));
+  fireEvent.click(screen.getAllByRole("button", { name: /^Ver registro/ })[0]!);
+  fireEvent.click(screen.getByRole("button", { name: "Marcar pagado" }));
+  expect(api.markPaymentPaid).not.toHaveBeenCalled();
+  const confirmation = screen.getByRole("region", { name: /Marcar pagado:/ });
+  expect(confirmation.textContent).toContain(
+    "no verifica movimientos bancarios",
+  );
+  fireEvent.keyDown(confirmation, { key: "Escape" });
+  expect(api.markPaymentPaid).not.toHaveBeenCalled();
+  fireEvent.click(screen.getAllByRole("button", { name: /^Ver registro/ })[0]!);
+  fireEvent.click(screen.getByRole("button", { name: "Marcar pagado" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Confirmar registro como pagado" }),
+  );
+  await waitFor(() => expect(pages.textContent).toContain("Página 1 de 1"));
+  expect(api.markPaymentPaid).toHaveBeenCalledExactlyOnceWith(11);
+  expect(
+    within(screen.getByRole("table", { name: "Registros de pagos" }))
+      .getAllByRole("row")
+      .slice(1),
+  ).toHaveLength(10);
+});
+
+test.each(["roster", "payments"])(
+  "%s offers recovery for a local timeout without reporting unknown counts as zero",
+  async (area) => {
+    const timeout = new ApiError(
+      0,
+      "request_timeout",
+      "La carga superó el tiempo de espera. Puedes reintentar.",
+    );
+    const api = {
+      routes: vi.fn(async () => ({ routes: [] })),
+      assignments: vi.fn(async () => ({ assignments: [] })),
+      payments: vi.fn(async () => ({ payments: [] })),
+    };
+    if (area === "roster") api.assignments.mockRejectedValueOnce(timeout);
+    else api.payments.mockRejectedValueOnce(timeout);
+    render(
+      area === "roster" ? (
+        <DriverRoster api={api as unknown as AuthApi} />
+      ) : (
+        <DriverPayments api={api as unknown as AuthApi} />
+      ),
+    );
+    expect((await screen.findByRole("alert")).textContent).toContain(
+      "tiempo de espera",
+    );
+    expect(screen.queryByText("Cargando información…")).toBeNull();
+    expect(screen.queryByLabelText("Resumen de pagos")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Reintentar" }));
+    await screen.findByText(
+      area === "roster"
+        ? "Aún no tienes pasajeros asignados."
+        : "Aún no has registrado pagos.",
+    );
+  },
+);
+
+test("payment page size and guardian search leave the authoritative summary intact", async () => {
+  const api = {
+    payments: vi.fn(async () => ({
+      payments: Array.from({ length: 23 }, (_, index) => ({
+        ...payment,
+        id: index + 1,
+      })),
+    })),
+    assignments: vi.fn(async () => ({
+      assignments: [{ ...assignment, guardian_display_name: "Ángela Norte" }],
+    })),
+  };
+  render(<DriverPayments api={api as unknown as AuthApi} />);
+  const summary = await screen.findByLabelText("Resumen de pagos");
+  const totals = summary.textContent;
+  const pages = screen.getByRole("navigation", { name: "Páginas de pagos" });
+  fireEvent.change(within(pages).getByLabelText("Filas por página"), {
+    target: { value: "5" },
+  });
+  expect(screen.getAllByRole("button", { name: /^Ver registro/ })).toHaveLength(
+    5,
+  );
+  fireEvent.click(within(pages).getByRole("button", { name: "Siguiente" }));
+  expect(pages.textContent).toContain("Página 2 de 5");
+  fireEvent.change(screen.getByLabelText("Buscar pago"), {
+    target: { value: "angela norte" },
+  });
+  expect(pages.textContent).toContain("Página 1 de 5");
+  expect(screen.getAllByRole("button", { name: /^Ver registro/ })).toHaveLength(
+    5,
+  );
+  expect(summary.textContent).toBe(totals);
+  expect(api.payments).toHaveBeenCalledExactlyOnceWith();
+});
+
+test("route capacity options are paged independently from passengers and retain direct route selection", async () => {
+  const api = {
+    routes: vi.fn().mockResolvedValue({
+      routes: Array.from({ length: 13 }, (_, index) => ({
+        ...route,
+        id: index + 1,
+        label: `Ruta ${index + 1}`,
+      })),
+    }),
+    assignments: vi
+      .fn()
+      .mockResolvedValue({ assignments: [{ ...assignment, route_id: 13 }] }),
+  };
+  render(<DriverRoster api={api as unknown as AuthApi} />);
+  const nav = within(
+    await screen.findByRole("navigation", {
+      name: "Páginas de cupos por ruta de pasajeros",
+    }),
+  );
+  expect(
+    screen.queryByRole("button", { name: /^Ver pasajeros de Ruta 6/ }),
+  ).toBeNull();
+  fireEvent.click(nav.getByRole("button", { name: "Siguiente" }));
+  expect(
+    screen.getByRole("button", { name: /^Ver pasajeros de Ruta 6/ }),
+  ).toBeTruthy();
+  fireEvent.change(screen.getByLabelText("Filtrar por ruta"), {
+    target: { value: "13" },
+  });
+  expect(
+    screen.getByText("Estudiante Ficticio", { selector: "strong" }),
+  ).toBeTruthy();
+  expect(nav.getByText(/Página 3 de 3/)).toBeTruthy();
+  fireEvent.change(nav.getByRole("combobox"), { target: { value: "20" } });
+  expect(nav.getByText(/Página 1 de 1/)).toBeTruthy();
+  fireEvent.change(nav.getByRole("combobox"), { target: { value: "5" } });
+  expect(nav.getByText(/Página 1 de 3/)).toBeTruthy();
+  expect(api.routes).toHaveBeenCalledTimes(1);
 });

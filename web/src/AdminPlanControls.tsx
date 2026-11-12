@@ -7,6 +7,7 @@ import {
   humanChileanDate,
   parseChileanDate,
 } from "./dates";
+import { planValidity } from "./PlanValidity";
 import { ChileanDateField } from "./ChileanDateField";
 import { ActionNotice, useActionFeedback } from "./ActionFeedback";
 import {
@@ -14,7 +15,6 @@ import {
   AdminFocusPanel,
   AdminServiceSummary,
   adminError,
-  adminLabels,
   adminRetryable,
   visibilityFeedback,
 } from "./AdminExperience";
@@ -70,6 +70,9 @@ export function AdminPublicationScreen({
 }) {
   const [data, setData] = useState<AdminSubscription | null>(null);
   const [plans, setPlans] = useState<Plans | null>(null);
+  const [pending, setPending] = useState<
+    Parameters<AuthApi["changeSubscription"]>[1] | null
+  >(null);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [confirmHidden, setConfirmHidden] = useState(false);
   const [readError, setReadError] = useState("");
@@ -119,6 +122,7 @@ export function AdminPublicationScreen({
         setData(null);
         setPlans(null);
         setDraft(null);
+        setPending(null);
         setConfirmHidden(false);
         setError("");
         feedback.clear();
@@ -131,6 +135,7 @@ export function AdminPublicationScreen({
     // An explicit overall refresh cancels editing instead of adopting a newer
     // subscription version into an open draft. History pagination does not.
     setDraft(null);
+    setPending(null);
     setConfirmHidden(false);
     void refresh();
     return () => {
@@ -138,6 +143,7 @@ export function AdminPublicationScreen({
     };
   }, [api, driverId, refreshKey]);
   function close() {
+    setPending(null);
     setDraft(null);
     setConfirmHidden(false);
     setError("");
@@ -188,21 +194,25 @@ export function AdminPublicationScreen({
       return;
     }
     if (!starts_at || !ends_at) return;
+    setPending({
+      plan_code: input.plan,
+      status: input.status,
+      starts_at,
+      ends_at,
+      reason: input.reason,
+      expected_version: input.version,
+    });
+  }
+  async function confirmPlan() {
+    if (!pending || busyRef.current) return;
+    const input = pending;
     busyRef.current = true;
     setBusy(true);
     setError("");
     feedback.clear();
-    // Reject prior reads before the write, in addition to AuthApi generations.
     generation.current += 1;
     try {
-      const current = await api.changeSubscription(driverId, {
-        plan_code: input.plan,
-        status: input.status,
-        starts_at,
-        ends_at,
-        reason: input.reason,
-        expected_version: input.version,
-      });
+      const current = await api.changeSubscription(driverId, input);
       if (!alive.current) return;
       apply(current);
       close();
@@ -219,6 +229,7 @@ export function AdminPublicationScreen({
         (cause instanceof ApiError && cause.code === "stale_request")
       )
         return;
+      setPending(null);
       setError(adminError(cause));
       feedback.show({
         kind: "error",
@@ -235,6 +246,7 @@ export function AdminPublicationScreen({
         feedback.clear();
       } else if (cause instanceof ApiError && cause.status === 409) {
         setDraft(null);
+        setPending(null);
         setConfirmHidden(false);
         const updated = await refresh();
         if (alive.current) {
@@ -252,6 +264,12 @@ export function AdminPublicationScreen({
     }
   }
   const sub = data?.publication.subscription;
+  const validity = data
+    ? planValidity(
+        data.publication.subscription,
+        data.publication.blockers.map((item) => item.code),
+      )
+    : null;
   return (
     <section
       ref={section}
@@ -277,6 +295,24 @@ export function AdminPublicationScreen({
           Actualizar plan
         </button>
       </div>
+      <p className="helper-text">
+        Asignación académica de capacidades. No habilita contratación, cobro de
+        suscripción ni verificación bancaria.
+      </p>
+      <details className="admin-disclosure">
+        <summary>Capacidades académicas por plan</summary>
+        <ul>
+          <li>Basic: operación y registro manual, sin reporte mensual.</li>
+          <li>Pro: resumen mensual.</li>
+          <li>
+            Elite: detalle, comparación y exportaciones Excel autorizadas.
+          </li>
+        </ul>
+        <p>
+          Las capacidades y la vigencia efectiva se comprueban en el servidor.
+          Cambiar el plan requiere motivo y confirmación.
+        </p>
+      </details>
       {loading && <p role="status">Cargando plan…</p>}
       {readError && (
         <div role="alert">
@@ -298,15 +334,8 @@ export function AdminPublicationScreen({
           {sub ? (
             <>
               <p className="admin-plan-name">{sub.plan_label}</p>
-              <AdminBadge
-                positive={
-                  sub.status === "active" &&
-                  !data.publication.blockers.some((item) =>
-                    item.code.startsWith("subscription_"),
-                  )
-                }
-              >
-                {adminLabels[sub.status]}
+              <AdminBadge positive={validity === "Vigente"}>
+                {validity}
               </AdminBadge>
               <p>
                 {humanChileanDate(sub.starts_at)} →{" "}
@@ -341,9 +370,15 @@ export function AdminPublicationScreen({
       {error && !draft && <p role="alert">{error}</p>}
       {draft && (
         <AdminFocusPanel
-          title={`Administrar plan: ${driverName}`}
+          key={pending ? "confirm-plan" : "edit-plan"}
+          title={
+            pending
+              ? "Confirmar cambio de plan"
+              : `Administrar plan: ${driverName}`
+          }
+          confirmation={!!pending}
           busy={busy}
-          onClose={close}
+          onClose={() => (pending ? setPending(null) : close())}
           restoreFocus={() => {
             if (
               planTrigger.current?.isConnected &&
@@ -354,195 +389,240 @@ export function AdminPublicationScreen({
             else section.current?.focus({ preventScroll: true });
           }}
         >
-          <p>
-            Este cambio puede afectar inmediatamente la visibilidad del
-            servicio.
-          </p>
-          <form
-            noValidate
-            className="admin-plan-form"
-            onSubmit={(event) => void save(event)}
-          >
-            <fieldset disabled={busy}>
-              <label>
-                Plan
-                <select
-                  value={draft.plan}
-                  onChange={(event) =>
-                    setDraft({
-                      ...draft,
-                      plan: event.target.value as Draft["plan"],
-                    })
-                  }
-                >
-                  {plans?.plans.map((item) => (
-                    <option key={item.code} value={item.code}>
-                      {item.display_label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Estado del plan
-                <select
-                  value={draft.status}
-                  onChange={(event) => {
-                    setDraft({
-                      ...draft,
-                      status: event.target.value as Draft["status"],
-                    });
-                    setConfirmHidden(false);
-                  }}
-                >
-                  <option value="inactive">Inactivo</option>
-                  <option value="active">Activo</option>
-                  <option value="suspended">Suspendido</option>
-                </select>
-              </label>
-              {draft.status !== "active" && (
-                <div className="admin-plan-consequence">
-                  <p>
-                    Al guardar el plan{" "}
-                    {draft.status === "suspended" ? "suspendido" : "inactivo"},
-                    el servicio dejará de aparecer para los apoderados.
-                  </p>
-                  <label className="admin-checkbox">
-                    <input
-                      type="checkbox"
-                      checked={confirmHidden}
+          {pending ? (
+            <>
+              <p>
+                <strong>Servicio: {driverName}</strong>
+              </p>
+              <p>
+                Plan resultante:{" "}
+                {plans?.plans.find((plan) => plan.code === pending.plan_code)
+                  ?.display_label ?? pending.plan_code}
+                . Estado administrativo:{" "}
+                {pending.status === "active"
+                  ? "Activo"
+                  : pending.status === "suspended"
+                    ? "Suspendido"
+                    : "Inactivo"}
+                .
+              </p>
+              <p>
+                Vigencia: {humanChileanDate(pending.starts_at)} →{" "}
+                {humanChileanDate(pending.ends_at)}.
+              </p>
+              <p>Motivo: {pending.reason}</p>
+              <p>
+                Se volverán a comprobar los requisitos de visibilidad. Esta
+                asignación es académica y no realiza cobros.
+              </p>
+              <button
+                className="button button-primary"
+                disabled={busy}
+                onClick={() => void confirmPlan()}
+              >
+                {busy ? "Guardando…" : "Confirmar cambio de plan"}
+              </button>
+            </>
+          ) : (
+            <>
+              <p>
+                Este cambio puede afectar inmediatamente la visibilidad del
+                servicio.
+              </p>
+              <form
+                noValidate
+                className="admin-plan-form"
+                onSubmit={(event) => void save(event)}
+              >
+                <fieldset disabled={busy}>
+                  <label>
+                    Plan
+                    <select
+                      value={draft.plan}
                       onChange={(event) =>
-                        setConfirmHidden(event.target.checked)
+                        setDraft({
+                          ...draft,
+                          plan: event.target.value as Draft["plan"],
+                        })
+                      }
+                    >
+                      {plans?.plans.map((item) => (
+                        <option key={item.code} value={item.code}>
+                          {item.display_label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Estado administrativo del plan
+                    <select
+                      value={draft.status}
+                      onChange={(event) => {
+                        setDraft({
+                          ...draft,
+                          status: event.target.value as Draft["status"],
+                        });
+                        setConfirmHidden(false);
+                      }}
+                    >
+                      <option value="inactive">Inactivo</option>
+                      <option value="active">Activo</option>
+                      <option value="suspended">Suspendido</option>
+                    </select>
+                  </label>
+                  {draft.status !== "active" && (
+                    <div className="admin-plan-consequence">
+                      <p>
+                        Al guardar el plan{" "}
+                        {draft.status === "suspended"
+                          ? "suspendido"
+                          : "inactivo"}
+                        , el servicio dejará de aparecer para los apoderados.
+                      </p>
+                      <label className="admin-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={confirmHidden}
+                          onChange={(event) =>
+                            setConfirmHidden(event.target.checked)
+                          }
+                        />
+                        Confirmo que este plan dejará de habilitar la
+                        visibilidad
+                      </label>
+                    </div>
+                  )}
+                  <p className="admin-form-wide">
+                    El período usa la fecha y hora de Chile. Reactivar un plan
+                    solo permite mostrar el servicio si cumple todos los demás
+                    requisitos.
+                  </p>
+                  <ChileanDateField
+                    id="subscription-start-date"
+                    label="Fecha de inicio"
+                    value={draft.startDate}
+                    error={
+                      !!fieldErrors.startDate ||
+                      (!!draft.startDate && !parseChileanDate(draft.startDate))
+                    }
+                    errorMessage={fieldErrors.startDate}
+                    required
+                    onChange={(startDate) => setDraft({ ...draft, startDate })}
+                  />
+                  <label>
+                    Hora de inicio
+                    <input
+                      type="time"
+                      lang="es-CL"
+                      step="60"
+                      value={draft.startTime}
+                      data-plan-field="startTime"
+                      aria-required="true"
+                      aria-invalid={!!fieldErrors.startTime}
+                      aria-describedby={
+                        fieldErrors.startTime
+                          ? "plan-start-time-error"
+                          : undefined
+                      }
+                      onChange={(event) =>
+                        setDraft({ ...draft, startTime: event.target.value })
                       }
                     />
-                    Confirmo que este plan dejará de habilitar la visibilidad
+                    {fieldErrors.startTime && (
+                      <span
+                        id="plan-start-time-error"
+                        className="field-error"
+                        role="alert"
+                      >
+                        {fieldErrors.startTime}
+                      </span>
+                    )}
                   </label>
-                </div>
-              )}
-              <p className="admin-form-wide">
-                El período usa la fecha y hora de Chile. Reactivar un plan solo
-                permite mostrar el servicio si cumple todos los demás
-                requisitos.
-              </p>
-              <ChileanDateField
-                id="subscription-start-date"
-                label="Fecha de inicio"
-                value={draft.startDate}
-                error={
-                  !!fieldErrors.startDate ||
-                  (!!draft.startDate && !parseChileanDate(draft.startDate))
-                }
-                errorMessage={fieldErrors.startDate}
-                required
-                onChange={(startDate) => setDraft({ ...draft, startDate })}
-              />
-              <label>
-                Hora de inicio
-                <input
-                  type="time"
-                  lang="es-CL"
-                  step="60"
-                  value={draft.startTime}
-                  data-plan-field="startTime"
-                  aria-required="true"
-                  aria-invalid={!!fieldErrors.startTime}
-                  aria-describedby={
-                    fieldErrors.startTime ? "plan-start-time-error" : undefined
-                  }
-                  onChange={(event) =>
-                    setDraft({ ...draft, startTime: event.target.value })
-                  }
-                />
-                {fieldErrors.startTime && (
-                  <span
-                    id="plan-start-time-error"
-                    className="field-error"
-                    role="alert"
+                  <ChileanDateField
+                    id="subscription-end-date"
+                    label="Fecha de término"
+                    value={draft.endDate}
+                    error={
+                      !!fieldErrors.endDate ||
+                      (!!draft.endDate && !parseChileanDate(draft.endDate))
+                    }
+                    errorMessage={fieldErrors.endDate}
+                    required
+                    onChange={(endDate) => setDraft({ ...draft, endDate })}
+                  />
+                  <label>
+                    Hora de término
+                    <input
+                      type="time"
+                      lang="es-CL"
+                      step="60"
+                      value={draft.endTime}
+                      data-plan-field="endTime"
+                      aria-required="true"
+                      aria-invalid={!!fieldErrors.endTime}
+                      aria-describedby={
+                        fieldErrors.endTime ? "plan-end-time-error" : undefined
+                      }
+                      onChange={(event) =>
+                        setDraft({ ...draft, endTime: event.target.value })
+                      }
+                    />
+                    {fieldErrors.endTime && (
+                      <span
+                        id="plan-end-time-error"
+                        className="field-error"
+                        role="alert"
+                      >
+                        {fieldErrors.endTime}
+                      </span>
+                    )}
+                  </label>
+                  <p className="admin-form-wide helper-text">
+                    El plan deja de estar vigente al llegar la fecha y hora de
+                    término.
+                  </p>
+                  <label className="admin-form-wide">
+                    Motivo
+                    <textarea
+                      value={draft.reason}
+                      data-plan-field="reason"
+                      aria-required="true"
+                      aria-invalid={!!fieldErrors.reason}
+                      aria-describedby={
+                        fieldErrors.reason ? "plan-reason-error" : undefined
+                      }
+                      maxLength={1000}
+                      onChange={(event) =>
+                        setDraft({ ...draft, reason: event.target.value })
+                      }
+                    />
+                    {fieldErrors.reason && (
+                      <span
+                        id="plan-reason-error"
+                        className="field-error"
+                        role="alert"
+                      >
+                        {fieldErrors.reason}
+                      </span>
+                    )}
+                  </label>
+                  {error && (
+                    <p className="admin-form-wide" role="alert">
+                      {error}
+                    </p>
+                  )}
+                  <button
+                    className="button button-primary admin-form-wide"
+                    disabled={
+                      busy || (draft.status !== "active" && !confirmHidden)
+                    }
                   >
-                    {fieldErrors.startTime}
-                  </span>
-                )}
-              </label>
-              <ChileanDateField
-                id="subscription-end-date"
-                label="Fecha de término"
-                value={draft.endDate}
-                error={
-                  !!fieldErrors.endDate ||
-                  (!!draft.endDate && !parseChileanDate(draft.endDate))
-                }
-                errorMessage={fieldErrors.endDate}
-                required
-                onChange={(endDate) => setDraft({ ...draft, endDate })}
-              />
-              <label>
-                Hora de término
-                <input
-                  type="time"
-                  lang="es-CL"
-                  step="60"
-                  value={draft.endTime}
-                  data-plan-field="endTime"
-                  aria-required="true"
-                  aria-invalid={!!fieldErrors.endTime}
-                  aria-describedby={
-                    fieldErrors.endTime ? "plan-end-time-error" : undefined
-                  }
-                  onChange={(event) =>
-                    setDraft({ ...draft, endTime: event.target.value })
-                  }
-                />
-                {fieldErrors.endTime && (
-                  <span
-                    id="plan-end-time-error"
-                    className="field-error"
-                    role="alert"
-                  >
-                    {fieldErrors.endTime}
-                  </span>
-                )}
-              </label>
-              <p className="admin-form-wide helper-text">
-                El plan deja de estar vigente al llegar la fecha y hora de
-                término.
-              </p>
-              <label className="admin-form-wide">
-                Motivo
-                <textarea
-                  value={draft.reason}
-                  data-plan-field="reason"
-                  aria-required="true"
-                  aria-invalid={!!fieldErrors.reason}
-                  aria-describedby={
-                    fieldErrors.reason ? "plan-reason-error" : undefined
-                  }
-                  maxLength={1000}
-                  onChange={(event) =>
-                    setDraft({ ...draft, reason: event.target.value })
-                  }
-                />
-                {fieldErrors.reason && (
-                  <span
-                    id="plan-reason-error"
-                    className="field-error"
-                    role="alert"
-                  >
-                    {fieldErrors.reason}
-                  </span>
-                )}
-              </label>
-              {error && (
-                <p className="admin-form-wide" role="alert">
-                  {error}
-                </p>
-              )}
-              <button
-                className="button button-primary admin-form-wide"
-                disabled={busy || (draft.status !== "active" && !confirmHidden)}
-              >
-                {busy ? "Guardando…" : "Guardar plan"}
-              </button>
-            </fieldset>
-          </form>
+                    {busy ? "Guardando…" : "Guardar plan"}
+                  </button>
+                </fieldset>
+              </form>
+            </>
+          )}
         </AdminFocusPanel>
       )}
     </section>

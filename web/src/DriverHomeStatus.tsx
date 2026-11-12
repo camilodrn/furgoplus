@@ -10,7 +10,7 @@ export function homeSteps(publication: Publication) {
     const codes = step.pending.map((item) => item.code);
     let action = step.action;
     let destination = step.destination;
-    if (step.title === "Información aprobada") {
+    if (step.title === "Datos y documentos") {
       if (
         codes.some(
           (code) =>
@@ -26,7 +26,15 @@ export function homeSteps(publication: Publication) {
       ) {
         action = "Completar documentos";
         destination = "documents";
-      } else action = "Revisar validación";
+      }
+    }
+    if (
+      step.title === "Ruta y publicación" &&
+      (codes.includes("active_route_missing") ||
+        publication.active_route_count === 0)
+    ) {
+      action = "Configurar una ruta";
+      destination = "routes";
     }
     return {
       ...step,
@@ -39,10 +47,11 @@ export function homeSteps(publication: Publication) {
 
 export function homeStatus(publication: Publication) {
   const steps = homeSteps(publication);
-  const account = steps.find((step) => step.title === "Estado de tu servicio");
+  const waiting = (step: (typeof steps)[number]) =>
+    step.title === "Revisión del equipo" &&
+    publication.validation_state === "pending";
   const next =
-    account ??
-    steps.find((step) => !step.complete && step.pending.length) ??
+    steps.find((step) => !step.complete && !waiting(step)) ??
     steps.find((step) => !step.complete);
   const suspended =
     publication.profile_status === "suspended" ||
@@ -75,21 +84,24 @@ export function homeStatus(publication: Publication) {
 export function HomeRequirements({
   publication,
   onNavigate,
+  currentDestination,
 }: {
   publication: Publication;
   onNavigate?: (destination: DriverDestination) => void;
+  currentDestination?: DriverDestination;
 }) {
-  const { steps, next } = homeStatus(publication);
+  const { steps } = homeStatus(publication);
   const brief: Record<string, string> = {
-    "Información aprobada":
+    "Datos y documentos": "Completa la información de tu servicio.",
+    "Revisión del equipo":
       publication.validation_state === "pending"
         ? "El equipo está revisando tu información."
-        : "Datos, documentos y revisión del servicio.",
+        : publication.validation_state === "rejected"
+          ? "Revisa las observaciones del equipo."
+          : "Envía tu información al equipo para revisión.",
     "Plan vigente": "Revisa la vigencia del plan con el equipo.",
-    "Ruta activa y completa":
-      "Necesitas una ruta con horario, destino, cupos y cobertura.",
-    "Solicitud de publicación": "Indica que quieres aparecer en la búsqueda.",
-    "Estado de tu servicio": "Revisa las condiciones de tu cuenta y servicio.",
+    "Ruta y publicación":
+      "Prepara una ruta e indica que quieres aparecer en la búsqueda.",
   };
   return (
     <ol
@@ -110,18 +122,27 @@ export function HomeRequirements({
           <div>
             <div className="home-requirement-heading">
               <h3>{step.title}</h3>
-              <span>{step.complete ? "Completado" : "Pendiente"}</span>
+              <span>
+                {step.complete
+                  ? "Completado"
+                  : step.title === "Revisión del equipo" &&
+                      publication.validation_state === "pending"
+                    ? "En revisión"
+                    : "Pendiente"}
+              </span>
             </div>
             {!step.complete && <p>{brief[step.title]}</p>}
-            {!step.complete && step.title !== next?.title && onNavigate && (
-              <button
-                type="button"
-                className="button button-link"
-                onClick={() => onNavigate(step.destination)}
-              >
-                {step.action}
-              </button>
-            )}
+            {!step.complete &&
+              step.destination !== currentDestination &&
+              onNavigate && (
+                <button
+                  type="button"
+                  className="button button-link"
+                  onClick={() => onNavigate(step.destination)}
+                >
+                  {step.action}
+                </button>
+              )}
             <details>
               <summary>Ver detalles de {step.title.toLowerCase()}</summary>
               {step.pending.length ? (
@@ -142,5 +163,39 @@ export function HomeRequirements({
         </li>
       ))}
     </ol>
+  );
+}
+
+export function ServicePreparation({
+  publication,
+  onNavigate,
+  currentDestination,
+}: {
+  publication: Publication;
+  onNavigate?: (destination: DriverDestination) => void;
+  currentDestination?: DriverDestination;
+}) {
+  const { steps } = homeStatus(publication);
+  const complete = steps.filter((step) => step.complete).length;
+  return (
+    <details
+      className="panel activation-section service-preparation"
+      aria-label="Preparación del servicio"
+    >
+      <summary>Ver preparación del servicio</summary>
+      <p>
+        {complete} de {steps.length} requisitos completados
+      </p>
+      <progress
+        aria-label="Requisitos completados"
+        max={steps.length}
+        value={complete}
+      />
+      <HomeRequirements
+        publication={publication}
+        onNavigate={onNavigate}
+        currentDestination={currentDestination}
+      />
+    </details>
   );
 }

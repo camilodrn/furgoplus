@@ -1,0 +1,26 @@
+{
+  "coverageRows": 99,
+  "views": 87,
+  "transversal": 12,
+  "classifications": {
+    "Conservada y verificada porque ya cumple el sistema": 5,
+    "Implementada con validación visual pendiente": 57,
+    "Migrada y verificada": 37
+  },
+  "capturedImages": {
+    "antes": 71,
+    "web": 100,
+    "android": 76
+  },
+  "synthetic": 70,
+  "axeAudits": 61,
+  "axeViolations": 0,
+  "axeIncompleteAudits": 30,
+  "brokenDocumentLinks": [],
+  "imageHashesMatch": true,
+  "protectedBaselineFilesUnchanged": true,
+  "noPreexistingFilesDeleted": true,
+  "galleryLocalLinksChecked": 827,
+  "brokenGalleryLinks": [],
+  "installedApkSourcesMatchCurrentMobileLib": true
+}

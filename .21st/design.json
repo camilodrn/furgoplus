@@ -1,0 +1,193 @@
+{
+  "version": 1,
+  "project": {
+    "name": "FurgoPlus",
+    "productType": "Transporte escolar: conductor, apoderado y administración; web y Android",
+    "stack": [
+      "react",
+      "typescript",
+      "vite",
+      "css",
+      "flutter",
+      "dart",
+      "material3"
+    ]
+  },
+  "sources": {
+    "tokens": [
+      "web/src/style.css",
+      "web/src/operational.css",
+      "mobile/lib/furgo_theme.dart"
+    ],
+    "components": [
+      "web/src/ServiceOverview.tsx",
+      "web/src/ValidationScreens.tsx",
+      "web/src/App.tsx",
+      "web/src/OperationalPanel.tsx",
+      "web/src/DriverOperations.tsx",
+      "mobile/lib/driver_home.dart",
+      "mobile/lib/furgo_widgets.dart"
+    ],
+    "assets": [
+      "web/public/brand/furgoplus-logo.png"
+    ],
+    "instructions": []
+  },
+  "design": {
+    "colorMode": "light",
+    "colors": {
+      "brand": "#0752ac",
+      "brandSoft": "#eaf3ff",
+      "ink": "#202b3a",
+      "muted": "#526176",
+      "surface": "#ffffff",
+      "border": "#d8e0eb",
+      "canvas": "#f5f7fb",
+      "controlOutline": "#68788d",
+      "positive": "#16643f",
+      "positiveSoft": "#e9f6ed",
+      "attention": "#835313",
+      "attentionSoft": "#fff5df",
+      "danger": "#a32735",
+      "dangerSoft": "#fff0f1",
+      "neutral": "#526176",
+      "neutralSoft": "#eef1f5"
+    },
+    "typography": {
+      "family": "system-ui",
+      "overviewBody": "1rem",
+      "overviewTitle": "1.75rem–2.25rem"
+    },
+    "spacing": {
+      "scale": [
+        4,
+        8,
+        12,
+        16,
+        20,
+        24,
+        32,
+        48
+      ]
+    },
+    "radius": {
+      "overviewSurface": "12px"
+    },
+    "shadows": {},
+    "motion": {
+      "decorative": "none"
+    },
+    "density": "balanced"
+  },
+  "components": {
+    "installed": [
+      "React 19.2.8"
+    ],
+    "preferredPrimitives": [
+      "native buttons",
+      "semantic headings",
+      "definition lists",
+      "ServiceAvailabilityNotice",
+      "existing status-badge styles"
+    ],
+    "patterns": [
+      "compact independent publication and review",
+      "contextual intervention",
+      "document rows with API dates",
+      "two service areas separated by a divider"
+    ]
+  },
+  "constraints": {
+    "must": [
+      "Active authorization: integral F01–F13 across 87 views and 12 transversal situations; historical batch restrictions are superseded. Preserve React, Material 3, #0752AC and existing product capabilities.",
+      "Use shared tokens, one owner per primitive, task-specific compact exploration and spacious consequence review. No accumulated CSS overrides or duplicate surface wrappers.",
+      "Preserve role/session boundaries, server permissions, consent, privacy, single-flight writes, uncertain outcomes and private data cleanup. No backend, contracts, academic data, infrastructure or deployment changes.",
+      "Keep implementation separate from verified visual coverage. Use authentic academic browser and Android evidence; document incomplete verification by matrix row without silently deferring a role."
+    ],
+    "avoid": [
+      "New dependencies without explicit approval, new UI wrappers duplicating existing primitives, decorative dashboards and permanent CSS overrides.",
+      "Changes to backend, contracts, authentication, business logic, academic data, infrastructure, containers, public demo, commit, push, merge or deploy."
+    ]
+  },
+  "decisions": [
+    {
+      "id": "t12-c7-physical-c8-storage",
+      "createdAt": "2026-10-31",
+      "decision": "C7 verified in updated academic A54 APK, same package/signature with preserved data. C8 audits only necessary session/CSRF storage: permanent transparent information, no inert consent buttons or optional tracking. Existing surfaces/native navigation retained. Human and legal approval not inferred.",
+      "source": "docs/TASK12_C7_APK_PHYSICAL_VERIFICATION.md; docs/TASK12_C8_STORAGE_PRIVACY_AUDIT.md"
+    },
+    {
+      "id": "t12-closure-c1-c7",
+      "createdAt": "2026-10-31",
+      "decision": "User authorizes C1–C7 and transversal professional visual quality. Evaluate functionality, ease, visual quality and consistency separately. No approval by tests/shared primitive inheritance. Existing #0752AC, React and Material 3 retained; no new UI dependencies. See final UX closure and authentic/synthetic evidence separation.",
+      "source": "Current user scope; docs/TASK12_FINAL_UX_CLOSURE.md"
+    },
+    {
+      "id": "t12-integral-f01-f13",
+      "createdAt": "2026-10-31",
+      "decision": "User definitively approves ChatGPT Work direction and all F01–F13 for the complete product. All roles/platforms, navigation, forms, responsive and accessibility are in scope. Historical first-batch restrictions no longer apply. Delivery requires honest row coverage and actual evidence; no automatic acceptance.",
+      "source": "Current user scope; docs/TASK12_INTEGRAL_IMPLEMENTATION.md"
+    },
+    {
+      "id": "t12-unified-implementation-first-increment",
+      "createdAt": "2026-10-31",
+      "decision": "Current user authorizes the first transversal implementation using the unified proposal, preserving all previous T12 work. Consolidate current primitives across their real consumers, prioritize comparison by truthful public attributes and operational readability. Existing temporary role/batch limits are superseded by this authorization; human visual acceptance is still pending. React global sizing stays unchanged because current browser rendering is blocked. No second batch dependent on visual approval.",
+      "source": "Current implementation request; docs/TASK12_VISUAL_IMPLEMENTATION_REVIEW.md; docs/TASK12_UX_MIGRATION_MATRIX.md"
+    },
+    {
+      "id": "t12-admin-driver-filters-popover",
+      "createdAt": "2026-10-29",
+      "decision": "Human review preserves the approved driver detail tabs and administrative actions, but rejects the expanded full-width filter form. Implement only the Conductores toolbar: closed initially, bounded desktop popover with two columns and Apply/Clear/Close, one-column mobile panel, applied count and persistent drafts. Search submits its query with applied filters; advanced drafts require Apply. No new dependencies or changes to other screens. Visual acceptance remains pending on Fedora.",
+      "source": "User continuation in this execution; docs/TASK12_ADMIN_DRIVER_FILTERS_PANEL.md"
+    },
+    {
+      "id": "t12-mi-servicio-operational",
+      "decision": "User approved A · Panel operativo with B row/divider simplicity. Keep publication compact for approved and published services; reserve prominence for intervention. Implement only the real Mi servicio overview with a balanced desktop width and stacked mobile areas.",
+      "createdAt": "2026-10-27",
+      "source": "User approval in this conversation; docs/design/task12-mi-servicio/README.md"
+    },
+    {
+      "id": "t12-shared-operational-batch1",
+      "decision": "Human Fedora review confirms A as the visual direction. Extend its language with B rows/dividers progressively to web and Android, using task-specific composition. Implement only Inicio web and Hoy driver Flutter in batch 1; plan other batches without modifying their screens. Human acceptance of this batch remains pending.",
+      "createdAt": "2026-10-27",
+      "source": "User instruction in this execution; docs/TASK12_SHARED_VISUAL_SYSTEM.md; docs/TASK12_VISUAL_ROLLOUT_MATRIX.md"
+    },
+    {
+      "id": "t12-recovery-operations-batch",
+      "decision": "Continuation authorized by the user: diagnose and fix bounded Android loading; extend A/B task patterns to React passengers and manual payments and native Today roster only. Local collection pages do not imply server pagination. Human review remains pending; no other rollout screens are authorized.",
+      "createdAt": "2026-10-28",
+      "source": "User continuation; docs/TASK12_RECOVERY_PASSENGERS_PAYMENTS.md"
+    },
+    {
+      "id": "t12-product-prototype-driver-implementation",
+      "createdAt": "2026-10-28",
+      "decision": "Human closes prototyping and provisionally approves the integral prototype. Implement the complete driver web and Android experience using existing API data and reusable components; preserve previous work. Responsive prototype evidence is 443 passed, 0 failed, 24 screenshots. Acceptance of the real React/Flutter implementation remains human.",
+      "source": "User instruction in this execution; docs/design/task12-product-prototype/; docs/TASK12_DRIVER_IMPLEMENTATION.md"
+    },
+    {
+      "id": "t12-help-exclusive-task-views",
+      "createdAt": "2026-10-28",
+      "decision": "Human Fedora review does not approve simultaneous guide and support collections. Implement exclusive Guías / Mis solicitudes task views using the approved operational pattern: choose a category or search, open only one complete guide, keep the inbox paginated and open case detail on demand. Single progressive flow on mobile, no fixed-height lists. Visual acceptance remains pending. Backend, Flutter, academic data, Task 13/14 and demo r4 are excluded.",
+      "source": "User continuation and before-edit Fedora source/module verification in this session; docs/TASK12_HELP_TASK_VIEWS_REVIEW.md"
+    }
+  ],
+  "evidence": [
+    {
+      "fact": "React 19.2.8, React DOM 19.2.8, Vite 7.3.6; no UI library",
+      "source": "web/package.json"
+    },
+    {
+      "fact": "Existing FurgoPlus semantic tokens and sidebar layout",
+      "source": "web/src/style.css"
+    },
+    {
+      "fact": "Existing API profiles, checklist, documents, history and publication states",
+      "source": "web/src/api-types.ts"
+    },
+    {
+      "fact": "Flutter Material 3 with existing semantic colours and widgets; no new dependencies",
+      "source": "mobile/lib/furgo_theme.dart; mobile/pubspec.yaml"
+    }
+  ],
+  "generatedAt": "2026-10-28T00:51:48.088Z"
+}

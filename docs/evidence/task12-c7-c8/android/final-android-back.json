@@ -1,0 +1,114 @@
+{
+  "at": "2026-10-31T21:55:12.811554+00:00",
+  "package": "com.example.furgoplus.task12",
+  "apkSha256": "ecf88f06d3846d97196518051cb86169d6fdaa69231d59e3d34d877ae01b6ed1",
+  "model": "Samsung SM-A546E",
+  "screen": "C7 Android Atrás vuelve a Hoy sin iniciar servicio",
+  "fontScale": "1.1",
+  "realDevice": true,
+  "humanApproval": false,
+  "ui": [
+    {
+      "text": "",
+      "label": "FurgoPlus Transporte Escolar",
+      "clickable": "false",
+      "bounds": "[45,124][428,226]"
+    },
+    {
+      "text": "",
+      "label": "Cuenta",
+      "clickable": "true",
+      "bounds": "[785,107][1080,242]"
+    },
+    {
+      "text": "",
+      "label": "Hoy",
+      "clickable": "false",
+      "bounds": "[45,277][185,373]"
+    },
+    {
+      "text": "",
+      "label": "Sábado, 31 de octubre",
+      "clickable": "false",
+      "bounds": "[45,373][504,435]"
+    },
+    {
+      "text": "",
+      "label": "Actualizar día",
+      "clickable": "true",
+      "bounds": "[900,277][1035,412]"
+    },
+    {
+      "text": "",
+      "label": "Datos de ensayo: personas, recorridos y ubicaciones son ficticios. No los uses para un traslado real.",
+      "clickable": "false",
+      "bounds": "[45,480][1035,542]"
+    },
+    {
+      "text": "",
+      "label": "Recorrido seleccionado",
+      "clickable": "false",
+      "bounds": "[101,643][979,705]"
+    },
+    {
+      "text": "",
+      "label": "Planificada",
+      "clickable": "false",
+      "bounds": "[101,727][979,795]"
+    },
+    {
+      "text": "",
+      "label": "07:00 → 08:00",
+      "clickable": "false",
+      "bounds": "[101,840][979,935]"
+    },
+    {
+      "text": "",
+      "label": "Ruta ficticia T12 elite",
+      "clickable": "false",
+      "bounds": "[101,958][979,1042]"
+    },
+    {
+      "text": "",
+      "label": "Iniciar servicio",
+      "clickable": "true",
+      "bounds": "[101,1087][979,1245]"
+    },
+    {
+      "text": "",
+      "label": "Capacidad: 3 ocupados · 1 disponible · 4 total",
+      "clickable": "false",
+      "bounds": "[101,1346][979,1447]"
+    },
+    {
+      "text": "",
+      "label": "Información del recorrido",
+      "clickable": "true",
+      "bounds": "[101,1470][979,1605]"
+    },
+    {
+      "text": "",
+      "label": "Pasajeros del recorrido\n3 pasajeros asignados",
+      "clickable": "true",
+      "bounds": "[101,1740][979,1945]"
+    },
+    {
+      "text": "",
+      "label": "Hoy\nTab 1 of 3",
+      "clickable": "true",
+      "bounds": "[0,2081][360,2298]"
+    },
+    {
+      "text": "",
+      "label": "Mi plan\nTab 2 of 3",
+      "clickable": "true",
+      "bounds": "[360,2081][720,2298]"
+    },
+    {
+      "text": "",
+      "label": "Ayuda\nTab 3 of 3",
+      "clickable": "true",
+      "bounds": "[720,2081][1080,2298]"
+    }
+  ]
+}

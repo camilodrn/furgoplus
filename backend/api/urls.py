@@ -5,14 +5,32 @@ from api.contracts import ENDPOINTS
 from api.views import HealthView
 from drivers import api as driver_api
 from drivers import (
+    capabilities_api,
     contact_api,
     control_api,
     daily_operation,
     operations_api,
     publication_api,
+    reports_api,
+    support_api,
 )
 
 VIEWS = {
+    "help-center": support_api.HelpView,
+    "support-list": support_api.TicketsView,
+    "support-create": support_api.TicketsView,
+    "support-detail": support_api.TicketDetailView,
+    "support-reply": support_api.TicketDetailView,
+    "admin-support-list": support_api.AdminTicketsView,
+    "admin-support-detail": support_api.AdminTicketDetailView,
+    "admin-support-update": support_api.AdminTicketDetailView,
+    "assistant": support_api.AssistantView,
+    "driver-reports-monthly": reports_api.MonthlyReportsView,
+    "driver-reports-advanced": reports_api.AdvancedReportsView,
+    "driver-reports-payments-xlsx": reports_api.PaymentsExportView,
+    "driver-reports-runs-xlsx": reports_api.RunsExportView,
+    "driver-reports-contacts-xlsx": reports_api.ContactsExportView,
+    "driver-capabilities": capabilities_api.DriverCapabilitiesView,
     "health": HealthView,
     "auth-csrf": CsrfView,
     "auth-register": RegisterView,

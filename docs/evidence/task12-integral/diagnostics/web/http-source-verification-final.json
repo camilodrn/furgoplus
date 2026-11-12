@@ -1,0 +1,221 @@
+{
+  "at": "2026-10-31T15:53:12.842Z",
+  "origin": "http://127.0.0.1:15174",
+  "checks": [
+    {
+      "path": "src/ActionFeedback.tsx",
+      "sha256": "d49484326baf1df34a1e30dcd2c157175f14b3477d131637034272c412a9cefe",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/AdminControls.tsx",
+      "sha256": "9da0cd64cc650511021fda25307bc3acd818f2024d2c3064fc7440c189b625a8",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/AdminExperience.tsx",
+      "sha256": "fc0bd83dd254aeaeb5ae984ec0a42658f1d87ce46afad791994b1d9815ebb6a2",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/AdminOverview.tsx",
+      "sha256": "6ba2ac3cadf207a20a63f4f81aec9ed941ee1afdb5835a67ff7d54259445c37d",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/AdminPlanControls.tsx",
+      "sha256": "4fb3af7e8be1ec044d283b764f7dfb1e97103186a535d6c26aa24075364b6841",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/App.tsx",
+      "sha256": "da381f9776f75a386c1b5ff80e628d8d1781408c5938b547d8a7e269e90fb5de",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/ChileanDateField.tsx",
+      "sha256": "53417071d5a0f479c79bd4c8ed542e560f4161d8425bd4952dea84000a66ddbc",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/DriverExperience.tsx",
+      "sha256": "cdae6e3291b6dd4251c265fb8e32b56b2ab5902687a453b59da2dcaf6d64ed45",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/DriverHelpGuides.tsx",
+      "sha256": "9a2f532466bb6a2eafed222cab7176d7964c730d77aaa60c1bce30aa32a2d806",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/DriverHomeStatus.tsx",
+      "sha256": "66d441347742b2a324f74112384e37e75f9f05a129ef2d83ac42559a485376e6",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/DriverOperations.tsx",
+      "sha256": "bdf3dff93e14c6226dbf8a2978d3a67e54649d6ac27eed6ecfc11952fc02d049",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/DriverReports.tsx",
+      "sha256": "cc3f2aff49fcf4cadbd9f2c7a555aebcace4395c3c2b2047bcb00623e6046cbe",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/DriverRequests.tsx",
+      "sha256": "8390d8e85464fed863b25f7acc375f90658c765e314ce9b273105ba995994819",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/HelpSupport.tsx",
+      "sha256": "690b592ef952c7e5ba38c907c4468c6de3d6b1e1bf23e86378cc78d42797e934",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/LegalAccess.tsx",
+      "sha256": "8acaa8f04cc929fe3c33d7773f1026f8812c308db066abc215eb375e9e2c934a",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/OperationalPanel.tsx",
+      "sha256": "8ff5e24533e0eb4f3cda640fcc8ad9f84990888361de7b88e2e456b59c787382",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/OperationsNavigation.tsx",
+      "sha256": "c3afe8aff4245aea601ad2ecb27bd98a08ee7aed797e5496d929f1411b711481",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/PlanValidity.ts",
+      "sha256": "6460348f0a244c42afdd12db81a111b5ba6fa08b0b189a8704d98cc9a86f0a5b",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/PublicationScreens.tsx",
+      "sha256": "9728b06ee8247d7d631f3c05e2e98aaf657d704c7bc765dc3b385f25ae531970",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/ServiceOverview.tsx",
+      "sha256": "9135716db809c7cf251b0690b0ed98bb9b4e93fa53fa75a3a3dd05212e1a158c",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/ValidationScreens.tsx",
+      "sha256": "4c80da6559d67717a5841ac968893109091da8916c17e04483dcba8bba9c3111",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/admin-coherence.css",
+      "sha256": "c3719fd19925f4d80a9e69a856db25115989cd7502d7995d63627a3466172827",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/api-types.ts",
+      "sha256": "d35af33049e7104706648c04e0f8f08985755c9735690b77929ebbc43f184a0a",
+      "verifiedFromHTTP": true,
+      "method": "Vite raw source (type-only/TS)"
+    },
+    {
+      "path": "src/api.ts",
+      "sha256": "04b6713fd7517cc2068647ee557196b930d5904678393f52027d293de32a1acc",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/dates.ts",
+      "sha256": "dd3e0bd567f599f35e98bb93052e1a284a322076fa2b77d7f69e08343bc08a1f",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/demo.ts",
+      "sha256": "219f46bdb30e98032fa87549560e313efe757c28fc018e3d721414d4a8b4729a",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/driver-coherence.css",
+      "sha256": "c1a265a4e33d50b0e352e2e5ec60fc142055b97ce2ef03692247b20de82d8e35",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/formValidation.ts",
+      "sha256": "6dcbe35a867ea6b67194ecea919d769be93577ac950f1e38a43178c3df4e9132",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/help-support.css",
+      "sha256": "a26aff1ec32185f4a029c1d289b319455c0582056c7d8a1a7d7df88a387e7e27",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/legal-access.css",
+      "sha256": "a1b7b89998818bf87467853786b2fa1da40907f34f85d766cd8efbc41ce7cd82",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/main.tsx",
+      "sha256": "daedab8e601d5b57b2e2bf1b61a85ca18894c350e267b4ef260fec4f300e6318",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/operational.css",
+      "sha256": "4d186d32cace8060ddadc1bbf31da3e85ff4fdf9da7bc0a17f8608f6880ea97c",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/style.css",
+      "sha256": "2778e51f12f025e5c1bb9539cd41964de51db22e03197fd7b1fd81ad1eccfd6b",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/task12.css",
+      "sha256": "61d8c08f5fb32dfd003e190ae8d9f1e68ae4e8ea1d07ca3972ca267f97ad3f96",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "src/useModal.ts",
+      "sha256": "3dea574649da82e581cad9a71103cc7c9f5028ff9b38cd70b97aa27e38a84815",
+      "verifiedFromHTTP": true,
+      "method": "sourcemap"
+    },
+    {
+      "path": "public/brand/furgoplus-logo.png",
+      "sha256": "8836d12f6059b42d6a21089c5d32e04f595e280bbeb555f0931ddb5a1628f8d0",
+      "verifiedFromHTTP": true
+    }
+  ]
+}

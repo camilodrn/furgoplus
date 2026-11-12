@@ -12,7 +12,9 @@ import { DriverRequests } from "./DriverRequests";
 import type { DriverContactRequest } from "./api-types";
 import { readFileSync } from "node:fs";
 
-const styles = readFileSync("src/style.css", "utf8");
+const styles =
+  readFileSync("src/style.css", "utf8") +
+  readFileSync("src/operational.css", "utf8");
 
 afterEach(() => {
   cleanup();
@@ -53,6 +55,7 @@ test("driver opens own request and accepts with consented email visible", async 
   expect(await screen.findByText("Consulta sintética")).toBeTruthy();
   expect(screen.getByText("parent@example.test")).toBeTruthy();
   fireEvent.click(screen.getByRole("button", { name: "Aceptar" }));
+  fireEvent.click(screen.getByRole("button", { name: "Confirmar aceptación" }));
   await waitFor(() =>
     expect(api.decideContactRequest).toHaveBeenCalledWith(7, "accept"),
   );
@@ -65,6 +68,7 @@ test("driver can decline pending request", async () => {
   render(<DriverRequests api={api as unknown as AuthApi} />);
   fireEvent.click(await screen.findByRole("button", { name: /Familia Demo/ }));
   fireEvent.click(await screen.findByRole("button", { name: "Rechazar" }));
+  fireEvent.click(screen.getByRole("button", { name: "Confirmar rechazo" }));
   await waitFor(() =>
     expect(api.decideContactRequest).toHaveBeenCalledWith(7, "decline"),
   );
@@ -131,11 +135,13 @@ test("eligibility and stale conflicts keep confirmed pending state", async () =>
   render(<DriverRequests api={api as unknown as AuthApi} />);
   fireEvent.click(await screen.findByRole("button", { name: /Familia Demo/ }));
   fireEvent.click(await screen.findByRole("button", { name: "Aceptar" }));
+  fireEvent.click(screen.getByRole("button", { name: "Confirmar aceptación" }));
   expect((await screen.findByRole("alert")).textContent).toContain(
     "No puedes aceptar mientras",
   );
   expect(screen.getByRole("button", { name: "Rechazar" })).toBeTruthy();
   fireEvent.click(screen.getByRole("button", { name: "Rechazar" }));
+  fireEvent.click(screen.getByRole("button", { name: "Confirmar rechazo" }));
   await waitFor(() =>
     expect(screen.getByRole("alert").textContent).toContain(
       "La información cambió",
@@ -175,7 +181,7 @@ test("contact empty history and pending decision prevent duplicate writes", asyn
   const refresh = screen.getByRole("button", {
     name: "Actualizar solicitudes",
   });
-  expect(refresh.className).toContain("button-link driver-refresh");
+  expect(refresh.className).toContain("button-quiet driver-refresh");
   fireEvent.click(refresh);
   await waitFor(() =>
     expect(api.driverContactRequests).toHaveBeenCalledTimes(2),
@@ -195,7 +201,9 @@ test("contact empty history and pending decision prevent duplicate writes", asyn
     ).toBe(false),
   );
   fireEvent.click(screen.getByRole("button", { name: "Aceptar" }));
-  fireEvent.click(screen.getByRole("button", { name: "Aceptar" }));
+  const confirm = screen.getByRole("button", { name: "Confirmar aceptación" });
+  fireEvent.click(confirm);
+  fireEvent.click(confirm);
   expect(api.decideContactRequest).toHaveBeenCalledTimes(1);
   expect(
     (screen.getByRole("button", { name: "Rechazar" }) as HTMLButtonElement)
@@ -258,7 +266,9 @@ test("full-width request rows keep selected text and badge readable without inve
       ],
     });
     render(<DriverRequests api={api as unknown as AuthApi} />);
-    const list = screen.getByRole("list", { name: "Solicitudes recibidas" });
+    const list = await screen.findByRole("list", {
+      name: "Solicitudes recibidas",
+    });
     const row = await within(list).findByRole("button", {
       name: /Familia Demo/,
     });
@@ -327,7 +337,7 @@ function pagination() {
   );
 }
 
-test("a single inline detail follows its expanded row and toggling never changes the page", async () => {
+test("one detail occupies the reading pane and toggling never changes the page", async () => {
   const api = fakeApi();
   const rows = requestRows(13).map((row) => ({
     ...row,
@@ -356,8 +366,10 @@ test("a single inline detail follows its expanded row and toggling never changes
   await screen.findByText("Mensaje privado 12");
   await waitUntilIdle();
   const detail = screen.getByRole("region", { name: "Solicitud de contacto" });
-  expect(within(detail).queryByRole("button", { name: "Cerrar" })).toBeNull();
-  const expansion = row(12).nextElementSibling;
+  expect(within(detail).getByRole("button", { name: "Cerrar" })).toBeTruthy();
+  const expansion = document.getElementById(
+    row(12).getAttribute("aria-controls")!,
+  );
   expect(expansion).toBe(
     document.getElementById(row(12).getAttribute("aria-controls")!),
   );
@@ -375,9 +387,10 @@ test("a single inline detail follows its expanded row and toggling never changes
   expect(
     screen.getAllByRole("region", { name: "Solicitud de contacto" }),
   ).toHaveLength(1);
-  expect(row(13).nextElementSibling?.firstElementChild).toBe(
-    screen.getByRole("region", { name: "Solicitud de contacto" }),
-  );
+  expect(
+    document.getElementById(row(13).getAttribute("aria-controls")!)
+      ?.firstElementChild,
+  ).toBe(screen.getByRole("region", { name: "Solicitud de contacto" }));
   expect(row(12).nextElementSibling).toBeNull();
   expect(row(12).getAttribute("aria-expanded")).toBe("false");
   expect(within(row(12)).getByText("Ver solicitud →")).toBeTruthy();
@@ -573,6 +586,7 @@ test("authoritative post-decision refresh updates counts, removes hidden detail 
     ).toBe(false),
   );
   fireEvent.click(screen.getByRole("button", { name: "Aceptar" }));
+  fireEvent.click(screen.getByRole("button", { name: "Confirmar aceptación" }));
   await screen.findByRole("button", { name: "Por responder 10" });
   expect(
     screen.queryByRole("navigation", { name: "Páginas de solicitudes" }),
@@ -681,4 +695,43 @@ test("narrow row and pagination styles stack and wrap without a nested scrolling
   } finally {
     style.remove();
   }
+});
+
+test("cancelling a contact confirmation never shares the service email or mutates the request", async () => {
+  const api = fakeApi();
+  render(<DriverRequests api={api as unknown as AuthApi} />);
+  fireEvent.click(await screen.findByRole("button", { name: /Familia Demo/ }));
+  fireEvent.click(await screen.findByRole("button", { name: "Aceptar" }));
+  const dialog = screen.getByRole("dialog", { name: "Confirmar contacto" });
+  expect(dialog.textContent).toContain(
+    "no reserva un cupo ni agrega un pasajero",
+  );
+  expect(api.decideContactRequest).not.toHaveBeenCalled();
+  fireEvent.click(within(dialog).getByRole("button", { name: "Cancelar" }));
+  expect(screen.queryByRole("dialog")).toBeNull();
+  expect(screen.getByText("Pendiente de respuesta")).toBeTruthy();
+  expect(api.decideContactRequest).not.toHaveBeenCalled();
+});
+
+test("a single request requires explicit opening and close restores its trigger without a decision", async () => {
+  const api = fakeApi();
+  render(<DriverRequests api={api as unknown as AuthApi} />);
+  const row = await screen.findByRole("button", { name: /Familia Demo/ });
+  expect(row.getAttribute("aria-pressed")).toBe("false");
+  expect(screen.queryByText(pending.message)).toBeNull();
+  expect(api.driverContactRequest).not.toHaveBeenCalled();
+  row.focus();
+  fireEvent.click(row);
+  const panel = await screen.findByRole("region", {
+    name: "Solicitud de contacto",
+  });
+  await waitFor(() => expect(row.hasAttribute("disabled")).toBe(false));
+  expect(row.getAttribute("aria-pressed")).toBe("true");
+  expect(document.activeElement).toBe(
+    within(panel).getByRole("heading", { name: "Solicitud de contacto" }),
+  );
+  fireEvent.click(within(panel).getByRole("button", { name: "Cerrar" }));
+  expect(screen.queryByText(pending.parent_email)).toBeNull();
+  expect(document.activeElement).toBe(row);
+  expect(api.decideContactRequest).not.toHaveBeenCalled();
 });

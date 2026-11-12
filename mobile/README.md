@@ -27,3 +27,49 @@ For the local Samsung academic demo, use the [demo runbook](../docs/DEMO_RUNBOOK
 target uses its own port (normally 18001) on both sides of reverse and in the build.
 Reverse must be re-established after USB reconnect/reboot. This local HTTP path is
 not the HTTPS/secure-storage acceptance gate; never bypass certificate validation.
+
+Task 12.10 now provides a persistent Material 3 driver bottom bar: **Hoy**, **Mi plan**,
+and **Ayuda**, with labels always shown. **Cuenta** in the header opens the account view, which includes
+**Cerrar sesión**. Plan benefits and help are separate screens; guides, support
+and the effective assistant remain under Ayuda. An empty Hoy explains the next step.
+The current parent navigation is described below; earlier header-only Help is superseded. Role guides, own support history,
+confirmed creation/replies, and the effective Pro/Elite assistant reuse the native
+session/CSRF adapter. Monthly reports and Excel remain on React. Plan changes,
+payments and automated renewals are not mobile actions. Nothing from these screens
+is persisted. Dates use the device timezone, explicitly labelled. See
+[Task 12 mobile validation](../docs/TASK12_FLUTTER_VALIDATION.md) for test evidence,
+the restricted-environment test runner, known limits and the mobile acceptance script.
+The [navigation review](../docs/TASK12_FLUTTER_NAVIGATION_REVIEW.md) supersedes the
+original driver header navigation and records the Samsung UX rejection, correction,
+current evidence and short phone inspection. Android debug retains the separate
+`com.example.furgoplus.task12` application ID.
+
+The comprehensive Flutter visual revision keeps Task 12 acceptance pending on the
+real Samsung A54. It replaces the driver account dialog with an integrated view,
+shares design tokens across roles, simplifies login/plan/help and keeps the parent
+bottom bar in Help and above the keyboard. See the [visual review and five-screen
+acceptance script](../docs/TASK12_FLUTTER_VISUAL_REVIEW.md), the [design guide](../docs/TASK12_FLUTTER_DESIGN_SYSTEM.md)
+and [current evidence](../docs/evidence/task12-flutter-visual/README.md). Earlier
+validation documents are historical; automated tests do not grant UX acceptance.
+
+
+The [integral Android review (29 October)](../docs/TASK12_FLUTTER_INTEGRAL.md)
+is the current acceptance matrix for both roles. Driver navigation remains
+**Hoy / Mi plan / Ayuda**; parent navigation is **Buscar / Solicitudes / Ayuda**.
+Both expose **Cuenta** in the header and preserve the active help draft while
+consulting the account. Guides support text search and topic disclosure. Capacity
+has the same occupied/available meaning in both roles, and small lists do not
+show redundant page controls. Plan expiry appears once, with extra benefits and
+conditions under disclosure.
+
+Reserved `.test` account emails, existing demo mode, and the build flag
+`--dart-define=FURGOPLUS_SYNTHETIC_DATA=true` identify synthetic data and disable
+external maps. Set that flag when a synthetic environment uses other email
+domains. This marker grants no permissions and does not alter API operations.
+Normal real-data accounts retain the existing external maps action.
+
+See the [new widget evidence](../docs/evidence/task12-flutter-integral/README.md)
+and the Samsung script in the matrix. Acceptance is read-only: do not start/end
+runs, recover services, send/reply/cancel requests or save profile changes. A fresh
+APK and physical accessibility review remain required; historical APKs and HTML
+prototype screenshots do not validate this implementation.

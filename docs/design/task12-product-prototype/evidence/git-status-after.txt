@@ -1,0 +1,104 @@
+M backend/api/contracts.py
+ M backend/api/urls.py
+ M backend/drivers/models.py
+ M backend/openapi.json
+ M backend/requirements.txt
+ M mobile/README.md
+ M mobile/android/app/build.gradle.kts
+ M mobile/lib/auth_app.dart
+ M mobile/lib/auth_controller.dart
+ M mobile/lib/driver_home.dart
+ M mobile/lib/furgo_theme.dart
+ M mobile/lib/legal_access.dart
+ M mobile/lib/parent_home.dart
+ M mobile/lib/parent_presentation.dart
+ M mobile/lib/session_api.dart
+ M mobile/test/driver_home_test.dart
+ M mobile/test/legal_access_test.dart
+ M mobile/test/session_test.dart
+ M web/scripts/generate-api-types.mjs
+ M web/src/AdminControls.test.tsx
+ M web/src/AdminControls.tsx
+ M web/src/AdminExperience.tsx
+ M web/src/AdminPlanControls.tsx
+ M web/src/App.test.tsx
+ M web/src/App.tsx
+ M web/src/DriverExperience.tsx
+ M web/src/DriverHomeStatus.test.tsx
+ M web/src/DriverHomeStatus.tsx
+ M web/src/DriverOperations.test.tsx
+ M web/src/DriverOperations.tsx
+ M web/src/PublicationScreens.test.tsx
+ M web/src/PublicationScreens.tsx
+ M web/src/SessionPrivacy.test.tsx
+ M web/src/ValidationScreens.test.tsx
+ M web/src/ValidationScreens.tsx
+ M web/src/api-types.ts
+ M web/src/api.test.ts
+ M web/src/api.ts
+ M web/src/style.css
+?? .21st/
+?? backend/academic_boundary.py
+?? backend/api/support_contracts.py
+?? backend/config/settings_academic.py
+?? backend/config/settings_task12_tests.py
+?? backend/drivers/academic_scenario.py
+?? backend/drivers/capabilities.py
+?? backend/drivers/capabilities_api.py
+?? backend/drivers/help_content.py
+?? backend/drivers/management/commands/audit_academic_scenario.py
+?? backend/drivers/management/commands/migrate_academic.py
+?? backend/drivers/management/commands/prepare_academic_scenario.py
+?? backend/drivers/migrations/0009_supportticket_supportevent_supportusage_and_more.py
+?? backend/drivers/reports.py
+?? backend/drivers/reports_api.py
+?? backend/drivers/reports_xlsx.py
+?? backend/drivers/support.py
+?? backend/drivers/support_api.py
+?? backend/drivers/test_academic_scenario.py
+?? backend/drivers/test_capabilities.py
+?? backend/drivers/test_reports.py
+?? backend/drivers/test_support.py
+?? backend/scripts/
+?? docs/PLAN_CAPABILITIES_SPEC.md
+?? docs/TASK12_ACADEMIC_PREPARATION.md
+?? docs/TASK12_ADMIN_SUPPORT_UX_REVIEW.md
+?? docs/TASK12_FLUTTER_DESIGN_SYSTEM.md
+?? docs/TASK12_FLUTTER_NAVIGATION_REVIEW.md
+?? docs/TASK12_FLUTTER_VALIDATION.md
+?? docs/TASK12_FLUTTER_VISUAL_REVIEW.md
+?? docs/TASK12_INICIO_HOY_BATCH1.md
+?? docs/TASK12_RECOVERY_PASSENGERS_PAYMENTS.md
+?? docs/TASK12_REPORTS_VALIDATION.md
+?? docs/TASK12_SHARED_VISUAL_SYSTEM.md
+?? docs/TASK12_SUPPORT_VALIDATION.md
+?? docs/TASK12_UX_UI_REVIEW.md
+?? docs/TASK12_VISUAL_ROLLOUT_MATRIX.md
+?? docs/TASK12_WEB_MI_SERVICIO_PANEL.md
+?? docs/TASK12_WEB_MI_SERVICIO_REVIEW.md
+?? docs/TASK12_WEB_UX_AUDIT.md
+?? docs/TASK12_WEB_UX_PHASE1.md
+?? docs/design/
+?? docs/evidence/
+?? infra/academic/
+?? mobile/lib/furgo_widgets.dart
+?? mobile/lib/plan_help_screen.dart
+?? mobile/lib/plan_help_service.dart
+?? mobile/test/loading_recovery_test.dart
+?? mobile/test/plan_help_test.dart
+?? mobile/test/visual_experience_test.dart
+?? mobile/tool/
+?? web/src/DriverReports.test.tsx
+?? web/src/DriverReports.tsx
+?? web/src/HelpSupport.test.tsx
+?? web/src/HelpSupport.tsx
+?? web/src/HelpSupportSession.test.tsx
+?? web/src/OperationalPanel.tsx
+?? web/src/OperationsNavigation.tsx
+?? web/src/PlanValidity.ts
+?? web/src/ServiceOverview.test.tsx
+?? web/src/ServiceOverview.tsx
+?? web/src/Task12UxPhaseOne.test.tsx
+?? web/src/help-support.css
+?? web/src/operational.css
+?? web/src/task12.css

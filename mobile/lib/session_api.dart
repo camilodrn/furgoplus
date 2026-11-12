@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -124,12 +125,19 @@ class SessionCookie {
 }
 
 class NativeSessionApi {
-  NativeSessionApi(this.config, this.storage, {AuthTransport? transport})
-    : _transport = transport ?? IoAuthTransport();
+  NativeSessionApi(
+    this.config,
+    this.storage, {
+    AuthTransport? transport,
+    this.requestTimeout = const Duration(seconds: 15),
+    this.storageTimeout = const Duration(seconds: 5),
+  }) : _transport = transport ?? IoAuthTransport();
 
   final ApiConfig config;
   final AuthStorage storage;
   final AuthTransport _transport;
+  final Duration requestTimeout;
+  final Duration storageTimeout;
   SessionCookie? _session;
   String? _csrfCookie;
   String? _csrfToken;
@@ -154,16 +162,16 @@ class NativeSessionApi {
       await action();
     });
     _storageWork = next.catchError((Object _) {});
-    return next;
+    return next.timeout(storageTimeout);
   }
 
   Uri get _origin => config.baseUri;
 
   Future<void> restoreCookies() async {
     final generation = _generation;
-    await _storageWork;
+    await _storageWork.timeout(storageTimeout);
     _checkGeneration(generation);
-    final stored = await storage.read();
+    final stored = await storage.read().timeout(storageTimeout);
     _checkGeneration(generation);
     _session = SessionCookie.fromJson(stored, _origin);
     if (_session == null) await _store(generation, storage.clear);
@@ -173,6 +181,7 @@ class NativeSessionApi {
     String path,
     String method, {
     Map<String, Object?>? data,
+    Duration? timeout,
   }) async {
     final generation = _generation;
     final uri = config.endpoint('api/v1/$path');
@@ -193,12 +202,15 @@ class NativeSessionApi {
       headers['Content-Type'] = 'application/json';
       if (_csrfToken != null) headers['X-CSRFToken'] = _csrfToken!;
     }
-    final response = await _transport.send(
+    final pendingResponse = _transport.send(
       uri,
       method,
       headers: headers,
       body: data == null ? null : jsonEncode(data),
     );
+    // Time out at the transport await so late responses cannot rotate cookies
+    // or continue a timed-out CSRF bootstrap into a later write.
+    final response = await pendingResponse.timeout(timeout ?? requestTimeout);
     _checkGeneration(generation);
     if (response.status >= 300 && response.status < 400) {
       throw const HttpException('API redirect rejected');
@@ -248,7 +260,9 @@ class NativeSessionApi {
     }
     if (response.status >= 400) {
       final code = body['code'] is String ? body['code'] as String : 'error';
-      if (code == 'csrf_failed' && path != 'auth/csrf/') await csrf();
+      if (code == 'csrf_failed' && path != 'auth/csrf/') {
+        await csrf(timeout: timeout);
+      }
       _checkGeneration(generation);
       if (code == 'not_authenticated') await clear();
       throw AuthFailure(
@@ -262,9 +276,9 @@ class NativeSessionApi {
     return body;
   }
 
-  Future<void> csrf() async {
+  Future<void> csrf({Duration? timeout}) async {
     final generation = _generation;
-    final body = await _request('auth/csrf/', 'GET');
+    final body = await _request('auth/csrf/', 'GET', timeout: timeout);
     _checkGeneration(generation);
     final token = body['csrf_token'];
     if (token is! String || token.isEmpty)
@@ -314,17 +328,19 @@ class NativeSessionApi {
 
   Future<Map<String, dynamic>> me() => _request('auth/me/', 'GET');
 
-  Future<Map<String, dynamic>> get(String path) => _request(path, 'GET');
+  Future<Map<String, dynamic>> get(String path, {Duration? timeout}) =>
+      _request(path, 'GET', timeout: timeout);
 
   Future<Map<String, dynamic>> write(
     String path,
     Map<String, Object?> data, {
     String method = 'POST',
+    Duration? timeout,
   }) async {
     final generation = _generation;
-    if (_csrfToken == null) await csrf();
+    if (_csrfToken == null) await csrf(timeout: timeout);
     _checkGeneration(generation);
-    return _request(path, method, data: data);
+    return _request(path, method, data: data, timeout: timeout);
   }
 
   Future<void> clear() async {
@@ -353,4 +369,21 @@ class NativeSessionApi {
   }
 
   void close() => _transport.close();
+}
+
+// Copy never includes raw transport errors, response bodies or private data.
+String loadFailureMessage(Object cause, String subject) {
+  if (cause is TimeoutException) {
+    return 'La carga de $subject superó el tiempo de espera. Puedes reintentar.';
+  }
+  if (cause is SocketException || cause is HandshakeException) {
+    return 'No se pudo comunicar con el servicio. Revisa tu conexión y vuelve a intentarlo.';
+  }
+  if (cause is AuthFailure) {
+    return 'El servicio no pudo cargar $subject. Intenta de nuevo.';
+  }
+  if (cause is FormatException || cause is HttpException) {
+    return 'El servicio devolvió una respuesta no válida para $subject. Intenta de nuevo.';
+  }
+  return 'Ocurrió un error de aplicación al cargar $subject. Intenta de nuevo.';
 }

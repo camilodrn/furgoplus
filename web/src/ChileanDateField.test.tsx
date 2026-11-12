@@ -107,3 +107,19 @@ test("manual DD/MM/YYYY entry stays strict, including leap years", () => {
   expect(input.getAttribute("aria-invalid")).toBe("true");
   expect(screen.getByTestId("iso").textContent).toBe("");
 });
+
+test("compact native date selection preserves the Chilean value and return focus", () => {
+  render(<DateHarness initial="23/09/2026" />);
+  fireEvent.click(screen.getByRole("button", { name: "Abrir calendario" }));
+  fireEvent.change(screen.getByLabelText("Elegir fecha"), {
+    target: { value: "2026-11-04" },
+  });
+  expect(
+    (screen.getByLabelText("Fecha de vencimiento") as HTMLInputElement).value,
+  ).toBe("04/11/2026");
+  expect(screen.getByTestId("iso").textContent).toBe("2026-11-04");
+  expect(screen.queryByRole("dialog")).toBeNull();
+  expect(document.activeElement).toBe(
+    screen.getByLabelText("Fecha de vencimiento"),
+  );
+});

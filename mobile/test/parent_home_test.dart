@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:furgoplus/api_config.dart';
 import 'package:furgoplus/auth_controller.dart';
 import 'package:furgoplus/furgo_theme.dart';
+import 'package:furgoplus/furgo_widgets.dart';
 import 'package:furgoplus/parent_home.dart';
 import 'package:furgoplus/parent_presentation.dart';
 import 'package:furgoplus/session_api.dart';
@@ -94,14 +95,17 @@ final catalog = {
 
 Future<void> search(WidgetTester tester) async {
   await tester.pumpAndSettle();
+  await reveal(tester, const Key('open-filters'));
   await tester.tap(find.byKey(const Key('open-filters')));
   await tester.pumpAndSettle();
+  await reveal(tester, const Key('commune-filter'));
   await tester.tap(find.byKey(const Key('commune-filter')));
   await tester.pumpAndSettle();
-  await tester.tap(find.text('Comuna Demo Norte'));
+  await tester.tap(find.text('Comuna Demo Norte').last);
   await tester.pumpAndSettle();
-  await tester.tap(find.text('Buscar servicios'));
+  await tapControl(tester, find.text('Buscar servicios'));
   await tester.pumpAndSettle();
+  await reveal(tester, const Key('open-filters'));
 }
 
 Finder pageScroll() => find.byElementPredicate(
@@ -236,7 +240,7 @@ Future<void> openService(WidgetTester tester, [int id = 1]) async {
   await reveal(tester, ValueKey('driver-card-$id'));
   final target = find.descendant(
     of: find.byKey(ValueKey('driver-card-$id')),
-    matching: find.widgetWithText(FilledButton, 'Ver servicio'),
+    matching: find.widgetWithText(OutlinedButton, 'Ver servicio'),
   );
   await tapControl(tester, target);
 }
@@ -259,6 +263,31 @@ Future<void> consentAndSend(WidgetTester tester) async {
 void main() {
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
   tearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
+
+  testWidgets(
+    'attribute comparison opens the chosen service and preserves selection on return',
+    (tester) async {
+      final transport = fixture();
+      await mount(tester, transport);
+      await tapVisible(tester, const ValueKey('compare-driver-1'));
+      await tapVisible(tester, const ValueKey('compare-driver-2'));
+      await tapVisible(tester, const Key('compare-selected'));
+      await openService(tester, 2);
+      expect(transport.calls.last, 'GET /api/v1/discovery/drivers/2/');
+      expect(find.byKey(const Key('service-hero')), findsOneWidget);
+      await tapControl(tester, find.text('Volver a comparar'));
+      expect(find.byKey(const ValueKey('comparison-schedule')), findsOneWidget);
+      await tapVisible(tester, const Key('comparison-back'));
+      for (final id in [1, 2]) {
+        final choice = find.byKey(ValueKey('compare-driver-$id'));
+        await reveal(tester, ValueKey('compare-driver-$id'));
+        expect(tester.widget<ParentCompareAction>(choice).selected, isTrue);
+      }
+      await tapVisible(tester, const Key('compare-selected'));
+      expect(find.byKey(const ValueKey('comparison-schedule')), findsOneWidget);
+      expect(transport.calls.where((call) => !call.startsWith('GET')), isEmpty);
+    },
+  );
 
   testWidgets(
     'commune search renders normalized cards and empty review detail',
@@ -406,7 +435,7 @@ void main() {
     );
     await reveal(tester, const Key('parent-error'));
     expect(
-      tester.widget<Text>(find.byKey(const Key('parent-error'))).data,
+      tester.widget<FurgoMessage>(find.byKey(const Key('parent-error'))).text,
       'Selecciona como máximo 3 servicios.',
     );
     await reveal(tester, const Key('compare-selected'));
@@ -458,7 +487,7 @@ void main() {
     ]);
     await reveal(tester, const Key('parent-error'));
     expect(
-      tester.widget<Text>(find.byKey(const Key('parent-error'))).data,
+      tester.widget<FurgoMessage>(find.byKey(const Key('parent-error'))).text,
       'Este servicio ya no está disponible.',
     );
     expect(find.byTooltip('Actualizar búsqueda'), findsOneWidget);
@@ -591,7 +620,7 @@ void main() {
       expect(find.text('Encuentra transporte'), findsOneWidget);
       expect(find.text('Buscar'), findsOneWidget);
       expect(find.text('Solicitudes'), findsOneWidget);
-      expect(find.text('Mi cuenta'), findsOneWidget);
+      expect(find.byKey(const Key('open-parent-account')), findsOneWidget);
       expect(find.byKey(const Key('commune-filter')), findsNothing);
       await search(tester);
       expect(
@@ -610,7 +639,7 @@ void main() {
       expect(find.text('Pendiente'), findsOneWidget);
       expect(find.text('Consulta privada 7'), findsNothing);
       expect(find.textContaining('service@example.test'), findsNothing);
-      await tester.tap(find.text('Mi cuenta'));
+      await tester.tap(find.byKey(const Key('open-parent-account')));
       await tester.pumpAndSettle();
       expect(find.text('parent@example.test'), findsOneWidget);
       expect(find.text('Apoderado/a'), findsOneWidget);
@@ -682,7 +711,10 @@ void main() {
         ),
       );
       expect(find.text('Conductor validado'), findsOneWidget);
-      expect(find.text('3 de 3 disponibles'), findsOneWidget);
+      expect(
+        find.text('0 de 3 cupos ocupados · 3 disponibles'),
+        findsOneWidget,
+      );
       expect(find.text('Cupos para el 28-09-2026'), findsOneWidget);
       await openService(tester);
       expect(find.text('Solicitar contacto'), findsOneWidget);
@@ -795,7 +827,7 @@ void main() {
       await reveal(tester, const ValueKey('driver-card-3'));
       final thirdRemove = find.descendant(
         of: find.byKey(const ValueKey('driver-card-3')),
-        matching: find.widgetWithText(TextButton, 'Quitar de comparación'),
+        matching: find.widgetWithText(TextButton, 'Quitar'),
       );
       await tapControl(tester, thirdRemove);
       await reveal(tester, const Key('comparison-back'));
@@ -804,7 +836,7 @@ void main() {
       await reveal(tester, const ValueKey('driver-card-2'));
       final secondRemove = find.descendant(
         of: find.byKey(const ValueKey('driver-card-2')),
-        matching: find.widgetWithText(TextButton, 'Quitar de comparación'),
+        matching: find.widgetWithText(TextButton, 'Quitar'),
       );
       await tapControl(tester, secondRemove);
       expect(find.text('Encuentra transporte'), findsOneWidget);
@@ -1009,27 +1041,24 @@ void main() {
     );
   }
 
-  testWidgets('request inbox shows small batches and no messages or contact', (
-    tester,
-  ) async {
-    await mount(
-      tester,
-      fixture(
-        requests: [for (var id = 8; id >= 1; id--) request(id, driverId: id)],
-      ),
-    );
-    await tester.tap(find.text('Solicitudes'));
-    await tester.pumpAndSettle();
-    await reveal(tester, const ValueKey('request-card-6'));
-    expect(find.byKey(const ValueKey('request-card-5')), findsNothing);
-    await tapControl(
-      tester,
-      find.widgetWithText(OutlinedButton, 'Ver solicitudes anteriores'),
-    );
-    await reveal(tester, const ValueKey('request-card-3'));
-    expect(find.byKey(const ValueKey('request-card-3')), findsOneWidget);
-    expect(find.textContaining('Consulta privada'), findsNothing);
-  });
+  testWidgets(
+    'request inbox shows eight records without unnecessary batching or private contacts',
+    (tester) async {
+      await mount(
+        tester,
+        fixture(
+          requests: [for (var id = 8; id >= 1; id--) request(id, driverId: id)],
+        ),
+      );
+      await tester.tap(find.text('Solicitudes'));
+      await tester.pumpAndSettle();
+      await reveal(tester, const ValueKey('request-card-1'));
+      expect(find.byKey(const ValueKey('request-card-1')), findsOneWidget);
+      expect(find.text('Ver solicitudes anteriores'), findsNothing);
+      expect(find.textContaining('Consulta privada'), findsNothing);
+      expect(find.textContaining('service@example.test'), findsNothing);
+    },
+  );
 
   testWidgets(
     'narrow phone, doubled text and keyboard keep contact controls reachable',
@@ -1338,6 +1367,9 @@ void main() {
     await tester.ensureVisible(find.text('Cancelar solicitud'));
     await tester.tap(find.text('Cancelar solicitud'));
     await tester.pumpAndSettle();
+    expect(transport.calls.where((call) => call.contains('/cancel/')), isEmpty);
+    await tester.tap(find.text('Confirmar cancelación'));
+    await tester.pumpAndSettle();
     expect(find.text('Cancelada'), findsOneWidget);
     expect(find.textContaining('el cambio está confirmado'), findsOneWidget);
     expect(
@@ -1370,6 +1402,12 @@ void main() {
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.text('Cancelar solicitud'));
       await tester.tap(find.text('Cancelar solicitud'));
+      await tester.pumpAndSettle();
+      expect(
+        transport.calls.where((call) => call.contains('/cancel/')),
+        isEmpty,
+      );
+      await tester.tap(find.text('Confirmar cancelación'));
       await tester.pumpAndSettle();
       expect(find.textContaining('La solicitud cambió'), findsOneWidget);
       expect(find.text('Reintentar'), findsNothing);
@@ -1472,13 +1510,13 @@ void main() {
       };
       final transport = fixture(services: [service]);
       await mount(tester, transport);
-      expect(
-        find.text('Sin cupos disponibles · 0 de 3 disponibles'),
-        findsOneWidget,
-      );
+      expect(find.text('Sin cupos disponibles'), findsOneWidget);
       await search(tester);
       expect(find.textContaining('Ruta Norte'), findsOneWidget);
-      expect(find.text('3 de 3 disponibles'), findsOneWidget);
+      expect(
+        find.text('0 de 3 cupos ocupados · 3 disponibles'),
+        findsOneWidget,
+      );
       expect(find.textContaining('Ruta Sur'), findsNothing);
       expect(
         transport.calls.last,
@@ -1509,7 +1547,9 @@ void main() {
         expect(inside(find.text('Cupos para el 28-09-2026')), findsOneWidget);
         expect(
           inside(
-            find.bySemanticsLabel('Cupos disponibles, 3 de 3 disponibles'),
+            find.bySemanticsLabel(
+              'Capacidad: 0 ocupados · 3 disponibles · 3 total',
+            ),
           ),
           findsOneWidget,
         );
@@ -1588,7 +1628,7 @@ void main() {
         expect(find.text('Para: Conductor Demo 1'), findsOneWidget);
         expect(
           find.text(
-            'Este correo se compartirá con Conductor Demo 1 para facilitar el contacto.',
+            'Solo se comparte al enviar esta solicitud. No reserva transporte.',
           ),
           findsOneWidget,
         );
@@ -1787,33 +1827,45 @@ void main() {
     },
   );
 
-  testWidgets('service actions have clearance above navigation at 390x844', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1;
-    tester.view.padding = const FakeViewPadding(bottom: 24);
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    addTearDown(tester.view.resetPadding);
-    await mount(tester, fixture());
-    Finder action(int id) => find.descendant(
-      of: find.byKey(ValueKey('driver-card-$id')),
-      matching: find.widgetWithText(FilledButton, 'Ver servicio'),
-    );
-    final navTop = tester.getTopLeft(find.byType(NavigationBar)).dy;
-    expect(action(1).hitTestable(), findsOneWidget);
-    expect(tester.getRect(action(1)).bottom, lessThanOrEqualTo(navTop - 16));
-    final scroll = tester.state<ScrollableState>(pageScroll()).position;
-    scroll.jumpTo(scroll.maxScrollExtent);
-    await tester.pumpAndSettle();
-    expect(action(3).hitTestable(), findsOneWidget);
-    expect(tester.getRect(action(3)).bottom, lessThanOrEqualTo(navTop - 24));
-    await tester.tap(action(3));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('service-hero')), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'service facts precede reachable actions above navigation at 390x844',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      tester.view.padding = const FakeViewPadding(bottom: 24);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPadding);
+      await mount(tester, fixture());
+      Finder action(int id) => find.descendant(
+        of: find.byKey(ValueKey('driver-card-$id')),
+        matching: find.widgetWithText(OutlinedButton, 'Ver servicio'),
+      );
+      final navTop = tester.getTopLeft(find.byType(NavigationBar)).dy;
+      final card = find.byKey(const ValueKey("driver-card-1"));
+      final capacity = find.descendant(
+        of: card,
+        matching: find.byType(FurgoCapacity),
+      );
+      expect(
+        tester.getTopLeft(capacity).dy,
+        lessThan(tester.getTopLeft(action(1)).dy),
+      );
+      await Scrollable.ensureVisible(tester.element(action(1)), alignment: 0.5);
+      await tester.pumpAndSettle();
+      expect(action(1).hitTestable(), findsOneWidget);
+      expect(tester.getRect(action(1)).bottom, lessThanOrEqualTo(navTop - 16));
+      final scroll = tester.state<ScrollableState>(pageScroll()).position;
+      scroll.jumpTo(scroll.maxScrollExtent);
+      await tester.pumpAndSettle();
+      expect(action(3).hitTestable(), findsOneWidget);
+      expect(tester.getRect(action(3)).bottom, lessThanOrEqualTo(navTop - 24));
+      await tester.tap(action(3));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('service-hero')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'account summary and supported name edit retain account content',
@@ -1834,7 +1886,7 @@ void main() {
         },
       );
       await mount(tester, transport);
-      await tester.tap(find.text('Mi cuenta'));
+      await tester.tap(find.byKey(const Key('open-parent-account')));
       await tester.pumpAndSettle();
       expect(find.text('Apoderado/a'), findsOneWidget);
       expect(find.text('Familia Demo'), findsOneWidget);
@@ -1899,14 +1951,151 @@ void main() {
       await reveal(tester, const Key('request-message'));
       await tapControl(tester, find.text('Tu mensaje'));
       expect(find.text('Consulta privada 7'), findsOneWidget);
-      await tester.tap(find.text('Mi cuenta'));
+      await tester.tap(find.byKey(const Key('open-parent-account')));
       await tester.pumpAndSettle();
       await tapControl(tester, find.text('Editar nombre'));
       expect(find.byType(TextField), findsOneWidget);
-      await tapControl(tester, find.text('Volver a Mi cuenta'));
+      await tester.tap(find.byTooltip('Volver'));
+      await tester.pumpAndSettle();
       await tapControl(tester, find.text('Cerrar sesión'));
       expect(find.text('parent@example.test'), findsNothing);
       expect(tester.takeException(), isNull);
+    },
+  );
+  testWidgets(
+    'integral filter keeps draft separate, Back closes in context, destinations retain selection',
+    (tester) async {
+      final transport = fixture();
+      await mount(tester, transport);
+      await tapVisible(tester, const ValueKey('compare-driver-1'));
+      final initialReads = transport.calls
+          .where((c) => c.contains('/discovery/drivers/'))
+          .length;
+      await tapVisible(tester, const Key('open-filters'));
+      await reveal(tester, const Key('commune-filter'));
+      await tester.tap(find.byKey(const Key('commune-filter')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Comuna Demo Norte').last);
+      await tester.pumpAndSettle();
+      expect(
+        transport.calls.where((c) => c.contains('/discovery/drivers/')).length,
+        initialReads,
+      );
+      expect(find.byKey(const ValueKey('driver-card-1')), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('commune-context-filter')), findsNothing);
+      await tester.tap(find.text('Solicitudes'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Buscar'));
+      await tester.pumpAndSettle();
+      expect(
+        transport.calls.where((c) => c.contains('/discovery/drivers/')).length,
+        initialReads,
+      );
+      await reveal(tester, const ValueKey('compare-driver-1'));
+      expect(
+        tester
+            .widget<ParentCompareAction>(
+              find.byKey(const ValueKey('compare-driver-1')),
+            )
+            .selected,
+        isTrue,
+      );
+      await search(tester);
+      expect(
+        transport.calls.lastWhere((c) => c.contains('/discovery/drivers/')),
+        contains('commune=demo-norte'),
+      );
+      await tapVisible(tester, const Key('open-filters'));
+      await tapControl(tester, find.text('Limpiar selección'));
+      expect(
+        transport.calls.lastWhere((c) => c.contains('/discovery/drivers/')),
+        contains('commune=demo-norte'),
+      );
+      await tapControl(tester, find.text('Buscar servicios'));
+      expect(
+        transport.calls.lastWhere((c) => c.contains('/discovery/drivers/')),
+        endsWith('/drivers/'),
+      );
+    },
+  );
+
+  testWidgets(
+    'integral contact draft survives destinations and Account without sending',
+    (tester) async {
+      final transport = fixture();
+      await mount(tester, transport);
+      await beginContact(tester);
+      await tester.tap(find.text('Solicitudes'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Buscar'));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const Key('contact-message')))
+            .controller!
+            .text,
+        'Consulta sintética',
+      );
+      await tester.tap(find.byKey(const Key('open-parent-account')));
+      await tester.pumpAndSettle();
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const Key('contact-message')))
+            .controller!
+            .text,
+        'Consulta sintética',
+      );
+      expect(transport.calls.where((c) => c.startsWith('POST')), isEmpty);
+    },
+  );
+
+  testWidgets(
+    'integral pending contacts precede all history before the ten-row limit',
+    (tester) async {
+      final rows = [
+        ...List.generate(12, (i) => request(i + 20, status: 'accepted')),
+        request(7),
+      ];
+      await mount(tester, fixture(requests: rows));
+      await tester.tap(find.text('Solicitudes'));
+      await tester.pumpAndSettle();
+      await reveal(tester, const ValueKey('request-card-7'));
+      expect(find.byKey(const ValueKey('request-card-7')), findsOneWidget);
+      final cards = find
+          .byWidgetPredicate((w) => w.key.toString().contains('request-card-'))
+          .evaluate()
+          .map((e) => e.widget.key)
+          .toList();
+      expect(cards.first, const ValueKey('request-card-7'));
+      await tapControl(tester, find.text('Ver solicitudes anteriores'));
+      await reveal(tester, const ValueKey('request-card-31'));
+      expect(find.byKey(const ValueKey('request-card-31')), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'integral cancellation can be dismissed and is removed on expiry without writing',
+    (tester) async {
+      final transport = fixture();
+      final auth = await mount(tester, transport);
+      await tester.tap(find.text('Solicitudes'));
+      await tester.pumpAndSettle();
+      await tapControl(tester, find.text('Ver solicitud'));
+      await tapControl(tester, find.text('Cancelar solicitud'));
+      expect(find.byType(AlertDialog), findsOneWidget);
+      await tester.tap(find.text('Mantener solicitud'));
+      await tester.pumpAndSettle();
+      expect(transport.calls.where((c) => c.contains('/cancel/')), isEmpty);
+      await tapControl(tester, find.text('Cancelar solicitud'));
+      auth.expire();
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.textContaining('Conductor Demo'), findsNothing);
+      expect(transport.calls.where((c) => c.contains('/cancel/')), isEmpty);
     },
   );
 }

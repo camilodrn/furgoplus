@@ -1,0 +1,25 @@
+{
+  "width": 1440,
+  "scrollWidth": 1440,
+  "focus": "Privacidad",
+  "headings": [
+    "Privacidad",
+    "1. Qué es FurgoPlus y quién responde",
+    "2. Marco legal de esta versión",
+    "3. Cuenta y seguridad de acceso",
+    "4. Servicio público y datos privados del conductor",
+    "5. Solicitudes de contacto: permiso específico",
+    "6. Pasajeros y apoderados: información operativa de alto riesgo",
+    "7. Restricción sobre menores y datos reales",
+    "8. Documentos y revisión administrativa",
+    "9. Pagos, planes e historial",
+    "10. Mapas externos y proveedores",
+    "11. Conservación, derechos y solicitudes",
+    "12. Límites de seguridad y cambios",
+    "Ayuda y soporte",
+    "Consulta ficticia académica",
+    "Historial del caso",
+    "Responder al solicitante"
+  ],
+  "overflow": []
+}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { StrictMode, useState } from "react";
 import { afterEach, expect, test, vi } from "vitest";
 import {
   cleanup,
@@ -440,6 +440,7 @@ test("three task steps retain drafts, identify the current step and keep publica
   const { api } = driverApi();
   function Harness() {
     const [section, setSection] = useState<
+      | "service"
       | "profile"
       | "documents"
       | "validation"
@@ -521,7 +522,7 @@ test("submission confirmation is keyboard reachable and Escape restores focus", 
   expect(submitValidation).not.toHaveBeenCalled();
 });
 
-test("next step reflects published, ready, and blocked publication states", async () => {
+test("service overview reflects published, unrequested, and blocked publication states without repeating approval", async () => {
   const { api } = driverApi({ state: "approved", documents: [document] });
   const base: Publication = {
     profile_status: "active",
@@ -536,18 +537,14 @@ test("next step reflects published, ready, and blocked publication states", asyn
     coverage: [],
   };
   const view = render(
-    <DriverOnboarding
-      api={api}
-      activeSection="publication"
-      publication={base}
-    />,
+    <DriverOnboarding api={api} activeSection="service" publication={base} />,
   );
-  expect(await screen.findByText(/Tu servicio ya está publicado/)).toBeTruthy();
-  expect(screen.queryByText(/Revisa Publicación/)).toBeNull();
+  expect(await screen.findByText("Visible para apoderados")).toBeTruthy();
+  expect(screen.queryByText(/Siguiente paso/)).toBeNull();
   view.rerender(
     <DriverOnboarding
       api={api}
-      activeSection="publication"
+      activeSection="service"
       publication={{
         ...base,
         eligible: false,
@@ -561,11 +558,11 @@ test("next step reflects published, ready, and blocked publication states", asyn
       }}
     />,
   );
-  expect(screen.getByText(/Tu configuración está lista/)).toBeTruthy();
+  expect(screen.getByText("No visible · sin solicitar")).toBeTruthy();
   view.rerender(
     <DriverOnboarding
       api={api}
-      activeSection="publication"
+      activeSection="service"
       publication={{
         ...base,
         eligible: false,
@@ -579,8 +576,10 @@ test("next step reflects published, ready, and blocked publication states", asyn
       }}
     />,
   );
-  expect(screen.getByText("Crea una ruta activa y completa.")).toBeTruthy();
-  expect(screen.queryByText(/Falta un plan asignado/)).toBeNull();
+  expect(
+    screen.getByText("Necesitas al menos una ruta activa y completa."),
+  ).toBeTruthy();
+  expect(screen.getByText("Aún no tienes un plan asignado.")).toBeTruthy();
 });
 
 test("admin queue uses Spanish labels, opens detail, and downloads via binary action", async () => {
@@ -1390,6 +1389,7 @@ test("home keeps the onboarding next action and profile drafts when returning to
   const { api } = driverApi();
   function Harness() {
     const [section, setSection] = useState<
+      | "service"
       | "profile"
       | "documents"
       | "validation"
@@ -1680,4 +1680,115 @@ test("an owner document denial never creates a download URL or exposes another d
   );
   expect(read).toHaveBeenCalledWith(7, false);
   expect(create).not.toHaveBeenCalled();
+});
+
+test("revision history pages only received records, states its API cap and retains downloads", async () => {
+  const { api } = driverApi();
+  const read = vi.fn().mockResolvedValue({
+    validation_state: "approved",
+    current_validation_revision: 23,
+    approved_revision: 23,
+    validations: Array.from({ length: 23 }, (_, index) => ({
+      ...validation,
+      id: 23 - index,
+      revision: 23 - index,
+      display_name_snapshot: `Envío ${23 - index}`,
+      documents: [document],
+    })),
+  });
+  api.validations = read;
+  render(<DriverOnboarding api={api} activeSection="validation" />);
+  const panel = await screen.findByRole("region", {
+    name: "Historial de revisiones",
+  });
+  const nav = within(panel).getByRole("navigation", {
+    name: "Páginas de revisiones",
+  });
+  expect(panel.querySelectorAll(".history-item")).toHaveLength(10);
+  expect(
+    within(panel).getByText(/total histórico no está disponible/),
+  ).toBeTruthy();
+  fireEvent.click(within(nav).getByRole("button", { name: "Siguiente" }));
+  fireEvent.click(within(nav).getByRole("button", { name: "Siguiente" }));
+  expect(panel.querySelectorAll(".history-item")).toHaveLength(3);
+  expect(within(panel).getByText("Nombre enviado: Envío 1")).toBeTruthy();
+  const last = panel.querySelectorAll(".history-item")[2]!;
+  fireEvent.click(last.querySelector("summary")!);
+  expect(
+    within(last as HTMLElement).getByRole("button", { name: "Descargar" }),
+  ).toBeTruthy();
+  expect(read).toHaveBeenCalledTimes(1);
+  expect(globalThis.document.activeElement?.id).toBe("history-heading");
+});
+
+test("admin searches and pages only the 50 received submissions and offers the complete pending-driver queue", async () => {
+  const { api } = adminApi();
+  vi.spyOn(api, "adminValidations").mockResolvedValue({
+    results: Array.from({ length: 50 }, (_, index) => ({
+      ...adminValidation,
+      id: index + 1,
+      display_name_snapshot: `Servicio sintético ${index + 1}`,
+    })),
+  });
+  const allPending = vi.fn();
+  render(<AdminValidationScreen api={api} onAllPending={allPending} />);
+  await screen.findByText(/Se alcanzó el límite de 50 envíos/);
+  const queue = screen
+    .getByRole("heading", { name: "Envíos recientes" })
+    .closest("section")!;
+  expect(within(queue).getAllByRole("article")).toHaveLength(10);
+  fireEvent.click(within(queue).getByRole("button", { name: "Siguiente" }));
+  expect(within(queue).getByText("Servicio sintético 11")).toBeTruthy();
+  expect(api.adminValidations).toHaveBeenCalledTimes(1);
+  fireEvent.change(screen.getByLabelText("Buscar en los envíos recibidos"), {
+    target: { value: "sintetico 49" },
+  });
+  expect(within(queue).getAllByRole("article")).toHaveLength(1);
+  expect(within(queue).getByText("Servicio sintético 49")).toBeTruthy();
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: "Buscar todos los conductores pendientes",
+    }),
+  );
+  expect(allPending).toHaveBeenCalledOnce();
+});
+
+test("direct review opens an older immutable submission outside the capped global list", async () => {
+  const { api, adminValidationDetail, adminDecision } = adminApi();
+  vi.spyOn(api, "adminValidations").mockResolvedValue({ results: [] });
+  render(
+    <StrictMode>
+      <AdminValidationScreen api={api} initialValidationId={9} />
+    </StrictMode>,
+  );
+  await screen.findByRole("heading", { name: "Conductor Demo" });
+  expect(adminValidationDetail).toHaveBeenCalledWith(9);
+  expect(adminDecision).not.toHaveBeenCalled();
+  expect(screen.getByRole("button", { name: "Aprobar" })).toBeTruthy();
+});
+
+test("unknown review states stay neutral in driver information and admin dossiers", async () => {
+  const { api, submitValidation } = driverApi({ state: "unrecognized" });
+  const driver = render(
+    <DriverOnboarding api={api} activeSection="validation" />,
+  );
+  await screen.findAllByText("Estado por confirmar");
+  expect(
+    driver.container.querySelectorAll(".status-unknown").length,
+  ).toBeGreaterThan(0);
+  expect(screen.queryByText("Estado disponible")).toBeNull();
+  expect(submitValidation).not.toHaveBeenCalled();
+  driver.unmount();
+
+  const futureState = {
+    ...adminValidation,
+    state: "unrecognized",
+  } as unknown as AdminValidation;
+  const admin = adminApi(undefined, futureState);
+  const view = render(<AdminValidationScreen api={admin.api} />);
+  await screen.findAllByText("Estado por confirmar");
+  expect(
+    view.container.querySelectorAll(".status-unknown").length,
+  ).toBeGreaterThan(0);
+  expect(admin.adminDecision).not.toHaveBeenCalled();
 });

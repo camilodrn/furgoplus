@@ -1,0 +1,3147 @@
+{
+  "timestamp": "2026-10-28T13:19:33.564Z",
+  "status": "blocked",
+  "method": "Playwright; file://; Chromium; no server or app APIs",
+  "limitations": [
+    "Real browser zoom at 200% must be checked manually.",
+    "Reduced viewport height models available space, not a native mobile keyboard.",
+    "Screenshots require human inspection for visual overlap and reading order.",
+    "Android here is HTML, not Flutter, TalkBack or a physical device."
+  ],
+  "cases": [
+    {
+      "route": "web/conductor/inicio",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/datos",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/documentos",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductores",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/ayuda",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/recorrido/1",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/cuenta",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/acceso/registro",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/acceso/ingresar",
+      "width": 320,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/datos",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/documentos",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductores",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/ayuda",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/recorrido/1",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/cuenta",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/acceso/registro",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/acceso/ingresar",
+      "width": 360,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/datos",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/documentos",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductores",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/ayuda",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/recorrido/1",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/cuenta",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/acceso/registro",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/acceso/ingresar",
+      "width": 390,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/datos",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/documentos",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductores",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/ayuda",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/recorrido/1",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/cuenta",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/acceso/registro",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/acceso/ingresar",
+      "width": 430,
+      "height": 844,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/datos",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/documentos",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductores",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/ayuda",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/recorrido/1",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/cuenta",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/acceso/registro",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/acceso/ingresar",
+      "width": 768,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/datos",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/documentos",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductores",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/ayuda",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/recorrido/1",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/cuenta",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/acceso/registro",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/acceso/ingresar",
+      "width": 1024,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/datos",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/documentos",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductores",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/ayuda",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/recorrido/1",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/cuenta",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/acceso/registro",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/acceso/ingresar",
+      "width": 1280,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/datos",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/documentos",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductores",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/ayuda",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/recorrido/1",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/cuenta",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/acceso/registro",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/acceso/ingresar",
+      "width": 1440,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/datos",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/documentos",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductores",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/ayuda",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/recorrido/1",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/cuenta",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "android/acceso/registro",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/acceso/ingresar",
+      "width": 1920,
+      "height": 1000,
+      "kind": "viewport",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 450,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 450,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 450,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 450,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 451,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 451,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 451,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 451,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 600,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 600,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 600,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 600,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 759,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 759,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 759,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 759,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 760,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 760,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 760,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 760,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 761,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 761,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 761,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 761,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 767,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 767,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 767,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 767,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 769,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 769,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 769,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 769,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 959,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 959,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 959,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 959,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 960,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 960,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 960,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 960,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 961,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 961,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 961,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 961,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 999,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 999,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 999,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 999,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1000,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1000,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1000,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1000,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1001,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1001,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1001,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1001,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1023,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1023,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1023,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1023,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1025,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1025,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1025,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1025,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1250,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1250,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1250,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1250,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1251,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1251,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1251,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1251,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1599,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1599,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1599,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1599,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1600,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1600,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1600,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1600,
+      "height": 900,
+      "kind": "intermediate",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 568,
+      "height": 320,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 568,
+      "height": 320,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 568,
+      "height": 320,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 568,
+      "height": 320,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 568,
+      "height": 320,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 844,
+      "height": 390,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 844,
+      "height": 390,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 844,
+      "height": 390,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 844,
+      "height": 390,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 844,
+      "height": 390,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 932,
+      "height": 430,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 932,
+      "height": 430,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 932,
+      "height": 430,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 932,
+      "height": 430,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 932,
+      "height": 430,
+      "kind": "landscape",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=vacio",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=vacio",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=vacio",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones?estado=vacio",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones?estado=vacio",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones?estado=vacio",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy?estado=vacio",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy?estado=vacio",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy?estado=vacio",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar?estado=vacio",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar?estado=vacio",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar?estado=vacio",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=carga",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=carga",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=carga",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones?estado=carga",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones?estado=carga",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones?estado=carga",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy?estado=carga",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy?estado=carga",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy?estado=carga",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar?estado=carga",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar?estado=carga",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar?estado=carga",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=error",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=error",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=error",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones?estado=error",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones?estado=error",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones?estado=error",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy?estado=error",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy?estado=error",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy?estado=error",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar?estado=error",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar?estado=error",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar?estado=error",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=muchos",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=muchos",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=muchos",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones?estado=muchos",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones?estado=muchos",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones?estado=muchos",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy?estado=muchos",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy?estado=muchos",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy?estado=muchos",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar?estado=muchos",
+      "width": 320,
+      "height": 844,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar?estado=muchos",
+      "width": 768,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar?estado=muchos",
+      "width": 1440,
+      "height": 1000,
+      "kind": "state",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 320,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 768,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1440,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 320,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 768,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1440,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 320,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 768,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1440,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 320,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 768,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1440,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 320,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 768,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 1440,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 320,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 768,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 1440,
+      "height": 900,
+      "kind": "text-200",
+      "textScale": 200,
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 640,
+      "height": 500,
+      "kind": "zoom-reflow-approximation",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 640,
+      "height": 500,
+      "kind": "zoom-reflow-approximation",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 640,
+      "height": 500,
+      "kind": "zoom-reflow-approximation",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 640,
+      "height": 500,
+      "kind": "zoom-reflow-approximation",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 720,
+      "height": 500,
+      "kind": "zoom-reflow-approximation",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 720,
+      "height": 500,
+      "kind": "zoom-reflow-approximation",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 720,
+      "height": 500,
+      "kind": "zoom-reflow-approximation",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 720,
+      "height": 500,
+      "kind": "zoom-reflow-approximation",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 960,
+      "height": 500,
+      "kind": "zoom-reflow-approximation",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 960,
+      "height": 500,
+      "kind": "zoom-reflow-approximation",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 960,
+      "height": 500,
+      "kind": "zoom-reflow-approximation",
+      "status": "pending"
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 960,
+      "height": 500,
+      "kind": "zoom-reflow-approximation",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 320,
+      "height": 480,
+      "kind": "dialog",
+      "action": "passenger-new",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 844,
+      "height": 320,
+      "kind": "dialog",
+      "action": "passenger-new",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1440,
+      "height": 900,
+      "kind": "dialog",
+      "action": "passenger-new",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 320,
+      "height": 480,
+      "kind": "dialog",
+      "action": "support-new",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 844,
+      "height": 320,
+      "kind": "dialog",
+      "action": "support-new",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 1440,
+      "height": 900,
+      "kind": "dialog",
+      "action": "support-new",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 320,
+      "height": 480,
+      "kind": "dialog",
+      "action": "admin-plan",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 844,
+      "height": 320,
+      "kind": "dialog",
+      "action": "admin-plan",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 1440,
+      "height": 900,
+      "kind": "dialog",
+      "action": "admin-plan",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 320,
+      "height": 480,
+      "kind": "dialog",
+      "action": "logout",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 844,
+      "height": 320,
+      "kind": "dialog",
+      "action": "logout",
+      "status": "pending"
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 1440,
+      "height": 900,
+      "kind": "dialog",
+      "action": "logout",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 320,
+      "height": 844,
+      "kind": "navigation",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 768,
+      "height": 844,
+      "kind": "navigation",
+      "status": "pending"
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 1024,
+      "height": 844,
+      "kind": "navigation",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 320,
+      "height": 844,
+      "kind": "navigation",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 768,
+      "height": 844,
+      "kind": "navigation",
+      "status": "pending"
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1024,
+      "height": 844,
+      "kind": "navigation",
+      "status": "pending"
+    }
+  ],
+  "captures": [],
+  "errors": [],
+  "blocker": "browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /home/duran/.cache/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-linux64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-br7lfs --remote-debugging-pipe --no-startup-window\n<launched> pid=14\n[pid=14][err] [1028/101933.969793:FATAL:content/browser/sandbox_host_linux.cc:41] Check failed: . shutdown: Operation not permitted (1)\nCall log:\n\u001b[2m  - <launching> /home/duran/.cache/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-linux64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-br7lfs --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=14\u001b[22m\n\u001b[2m  - [pid=14][err] [1028/101933.969793:FATAL:content/browser/sandbox_host_linux.cc:41] Check failed: . shutdown: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=14] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=14] <kill>\u001b[22m\n\u001b[2m  - [pid=14] <will force kill>\u001b[22m\n\u001b[2m  - [pid=14] <process did exit: exitCode=null, signal=SIGTRAP>\u001b[22m\n\u001b[2m  - [pid=14] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=14] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=14] <gracefully close end>\u001b[22m\n"
+}

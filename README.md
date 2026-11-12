@@ -2,6 +2,13 @@
 
 FurgoPlus connects parents and guardians with school transport drivers in Greater Concepción. The October MVP has three actors: parent on mobile, driver on mobile and web, and administrator on web. [Task 00](CODEX_TASK_00.md) defines product scope; [Task 01](CODEX_TASK_01.md) built the foundation; [Task 02](CODEX_TASK_02.md) adds accounts and shared session authentication; [Task 03](CODEX_TASK_03.md) adds synthetic driver onboarding and private administrator validation; [Task 04](CODEX_TASK_04.md) adds manual plans, route setup and derived publication eligibility. The [auth operations and acceptance guide](docs/AUTH_ACCEPTANCE.md) covers the protocol and required HTTPS/device gate.
 
+## Continuidad de trabajo
+
+En este worktree, consulta el [estado y continuidad](docs/continuity/PROJECT_STATE.md)
+y las [ideas y backlog](docs/continuity/IDEAS_BACKLOG.md) para retomar el contexto.
+Contrasta sus resúmenes con el estado real de Git y los informes pertinentes;
+distingue documentación histórica, evidencia y aceptación humana.
+
 ## Repository and toolchains
 
 | Path | Purpose |

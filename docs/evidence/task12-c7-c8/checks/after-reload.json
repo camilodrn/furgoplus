@@ -1,0 +1,62 @@
+{
+  "at": "2026-10-31T21:47:00.462Z",
+  "cookieMetadataOnly": [
+    {
+      "name": "csrftoken",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": 1824932819.940125,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "localStorageKeys": [],
+  "sessionStorageKeys": [],
+  "serviceWorkers": 0,
+  "indexedDB": [],
+  "javascriptVisibleCookieNames": [],
+  "blocked": [],
+  "traffic": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    }
+  ]
+}

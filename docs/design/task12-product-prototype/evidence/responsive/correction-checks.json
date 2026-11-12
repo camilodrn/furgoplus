@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-28T13:22:37.125720+00:00",
+  "externalFilesCompared": 367,
+  "externalFilesChanged": [],
+  "externalFilesAdded": [],
+  "headUnchangedFromPrototypeBaseline": true,
+  "branchUnchangedFromPrototypeBaseline": true,
+  "auditSHA256": "072f78a176b04df23dff87fe8bb6076c2cdeaef04bc04c9360bcc10bef7f1a1e",
+  "auditUnmodified": true,
+  "fedoraReportSHA256": "5e46bae402c2f11f6bf197eea0f13a03f8cc6a5d559df76058b287bac80dcbd8",
+  "fedoraResultsPreservedByteForByte": true,
+  "caseIdentitiesPreserved": 443,
+  "originalFailedCasesClassified": 66,
+  "baselineCaptureFilesPresent": true,
+  "baselineCaptureCount": 24,
+  "javascriptSyntax": "pass: node --check prototype.js",
+  "review21st": {
+    "errors": 0,
+    "warnings": 0,
+    "suggestions": 42
+  },
+  "browserValidation": {
+    "status": "blocked",
+    "attempts": 1,
+    "reason": "sandbox_host_linux.cc: Operation not permitted",
+    "executedCases": 0,
+    "newCaptures": 0,
+    "report": "results-correction-attempt.json"
+  },
+  "manualFedoraRerunRequired": true,
+  "cssSyntax": {
+    "parser": "PostCSS, dependencia existente leída sin modificaciones",
+    "rules": 119,
+    "errors": 0
+  }
+}

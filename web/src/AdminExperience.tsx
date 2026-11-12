@@ -1,6 +1,8 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { ApiError } from "./api";
 import type { Publication } from "./api-types";
+import { planValidity } from "./PlanValidity";
+import { useModal } from "./useModal";
 
 export const adminLabels = {
   active: "Activo",
@@ -85,16 +87,19 @@ export function AdminBadge({
   children,
   positive = false,
   danger = false,
+  neutral = false,
 }: {
   children: React.ReactNode;
   positive?: boolean;
   danger?: boolean;
+  neutral?: boolean;
 }) {
   return (
     <span
-      className={`admin-badge ${positive ? "is-positive" : danger ? "is-danger" : "is-warning"}`}
+      className={`admin-badge ${positive ? "is-positive" : danger ? "is-danger" : neutral ? "is-neutral" : "is-warning"}`}
     >
-      <span aria-hidden="true">{positive ? "✓" : "!"}</span> {children}
+      <span aria-hidden="true">{positive ? "✓" : neutral ? "·" : "!"}</span>{" "}
+      {children}
     </span>
   );
 }
@@ -103,6 +108,10 @@ export function AdminStatusBadges({
 }: {
   publication: Publication;
 }) {
+  const validity = planValidity(
+    p.subscription,
+    p.blockers.map((item) => item.code),
+  );
   return (
     <div className="admin-status-badges">
       <AdminBadge
@@ -111,22 +120,20 @@ export function AdminStatusBadges({
       >
         Perfil: {adminLabels[p.profile_status]}
       </AdminBadge>
-      <AdminBadge positive={p.validation_state === "approved"}>
+      <AdminBadge
+        positive={p.validation_state === "approved"}
+        neutral={p.validation_state === "pending"}
+      >
         Validación: {adminLabels[p.validation_state]}
       </AdminBadge>
       <AdminBadge positive={p.eligible}>
         Visibilidad: {p.eligible ? "Visible" : "No visible"}
       </AdminBadge>
-      <AdminBadge
-        positive={
-          p.subscription?.status === "active" &&
-          !p.blockers.some((item) => item.code.startsWith("subscription_"))
-        }
-      >
+      <AdminBadge positive={validity === "Vigente"}>
         Plan:{" "}
         {p.subscription
-          ? `${p.subscription.plan_label} · ${adminLabels[p.subscription.status]}`
-          : "Sin plan"}
+          ? `${p.subscription.plan_label} · ${validity}`
+          : "Sin plan asignado"}
       </AdminBadge>
     </div>
   );
@@ -207,7 +214,10 @@ export function AdminServiceSummary({
           <dt>Plan</dt>
           <dd>
             {p.subscription
-              ? `${p.subscription.plan_label} · ${adminLabels[p.subscription.status]}`
+              ? `${p.subscription.plan_label} · ${planValidity(
+                  p.subscription,
+                  p.blockers.map((item) => item.code),
+                )}`
               : "Sin plan asignado"}
           </dd>
         </div>
@@ -230,8 +240,6 @@ export function AdminServiceSummary({
     </section>
   );
 }
-let openAdminPanels = 0;
-let bodyOverflowBeforePanels = "";
 // Native modal keeps editors out of page flow and makes the background inert.
 // Focus returns only if its trigger survives the authoritative refresh.
 export function AdminFocusPanel({
@@ -251,33 +259,9 @@ export function AdminFocusPanel({
 }) {
   const id = useId();
   const heading = useRef<HTMLHeadingElement>(null);
-  const dialog = useRef<HTMLDialogElement>(null);
-  const trigger = useRef<HTMLElement | null>(null);
-  const restore = useRef(restoreFocus);
-  restore.current = restoreFocus;
+  const dialog = useModal(true, restoreFocus);
   useEffect(() => {
-    trigger.current =
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
-    const panel = dialog.current!;
-    if (openAdminPanels === 0)
-      bodyOverflowBeforePanels = document.body.style.overflow;
-    openAdminPanels += 1;
-    document.body.style.overflow = "hidden";
-    // jsdom does not implement the browser's top-layer dialog API.
-    if (typeof panel.showModal === "function") panel.showModal();
-    else panel.setAttribute("open", "");
     heading.current?.focus({ preventScroll: true });
-    return () => {
-      if (typeof panel.close === "function") panel.close();
-      openAdminPanels -= 1;
-      if (openAdminPanels === 0)
-        document.body.style.overflow = bodyOverflowBeforePanels;
-      if (restore.current) restore.current();
-      else if (trigger.current?.isConnected)
-        trigger.current.focus({ preventScroll: true });
-    };
   }, []);
   return (
     <dialog

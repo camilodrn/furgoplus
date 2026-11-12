@@ -1,0 +1,63 @@
+{
+  "name": "01-web-acceso-1440",
+  "role": "publico",
+  "screen": "W01 Acceso",
+  "at": "2026-10-31T09:35:35.556Z",
+  "platform": "Fedora Chromium real React + academic API",
+  "browser": "156.0.8078.4",
+  "origin": "http://127.0.0.1:15174",
+  "geometry": {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "scrollWidth": 1440,
+    "scrollHeight": 1000,
+    "activeElement": {
+      "tag": "BODY",
+      "role": null
+    },
+    "headings": [
+      "Inicia sesión"
+    ]
+  },
+  "blocked": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    }
+  ],
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "W01",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/01-web-acceso-1440.png",
+      "sha256": "99df2ee210f0e8375c75eced5f938991bb2e0b6ac9ffb6ed67f079089c032e44",
+      "pixels": [
+        1440,
+        1000
+      ]
+    }
+  ]
+}

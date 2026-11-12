@@ -1,0 +1,465 @@
+{
+  "name": "driver-w07-390",
+  "role": "conductor",
+  "screen": "W07",
+  "at": "2026-10-31T15:00:16.522Z",
+  "platform": "Fedora Chromium real React + academic API",
+  "browser": "156.0.8078.4",
+  "origin": "http://127.0.0.1:15174",
+  "geometry": {
+    "viewport": {
+      "width": 390,
+      "height": 1000
+    },
+    "scrollWidth": 390,
+    "scrollHeight": 1851,
+    "scrollY": 0,
+    "devicePixelRatio": 1,
+    "activeElement": {
+      "tag": "MAIN",
+      "role": null
+    },
+    "headings": [
+      "Inicio",
+      "Hola, Conductor ficticio Elite T12",
+      "Tu servicio está visible",
+      "Pendientes",
+      "Solicitudes",
+      "Pagos",
+      "Tu operación",
+      "Rutas",
+      "Pasajeros",
+      "Datos y documentos",
+      "Revisión del equipo",
+      "Plan vigente",
+      "Ruta y publicación",
+      "Rutas y cupos",
+      "Ruta ficticia T12 elite"
+    ]
+  },
+  "blocked": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/profile/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validation/checklist/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validation/checklist/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/documents/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/profile/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/documents/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validation/checklist/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/profile/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/documents/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validation/checklist/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/profile/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/documents/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/capabilities/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/capabilities/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/reports/advanced/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/capabilities/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/reports/advanced/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/capabilities/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/reports/advanced/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/capabilities/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/reports/advanced/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/passenger-assignments/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/passenger-assignments/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/payments/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/passenger-assignments/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/passenger-assignments/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/payments/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/capabilities/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/reports/advanced/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    }
+  ],
+  "inspectedByAgent": false,
+  "humanReviewed": false
+}

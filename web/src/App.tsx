@@ -1,3 +1,4 @@
+import { TaskVisibility } from "./useModal";
 import { useEffect, useRef, useState } from "react";
 import { ApiError, AuthApi } from "./api";
 import { demoRegistrationNotice, isDemoMode } from "./demo";
@@ -8,12 +9,18 @@ import { ActionFeedbackProvider } from "./ActionFeedback";
 import { AdminValidationScreen, DriverOnboarding } from "./ValidationScreens";
 import { DriverPublicationScreen } from "./PublicationScreens";
 import { AdminControlScreen } from "./AdminControls";
+import { AdminOverview } from "./AdminOverview";
+import "./admin-coherence.css";
 import { DriverRequests } from "./DriverRequests";
+import { DriverReports } from "./DriverReports";
+import { ProductIcon } from "./DriverExperience";
+import { HelpSupport } from "./HelpSupport";
 import {
   DriverPayments,
   DriverRoster,
   DriverSummaryScreen,
 } from "./DriverOperations";
+import "./driver-coherence.css";
 
 const marker = "furgoplus-signed-out";
 type State =
@@ -509,6 +516,7 @@ function AuthenticatedWorkspace({
   onSignOut: () => void;
 }) {
   const [driverSection, setDriverSection] = useState<
+    | "service"
     | "profile"
     | "documents"
     | "validation"
@@ -518,40 +526,168 @@ function AuthenticatedWorkspace({
     | "summary"
     | "roster"
     | "payments"
-  >("profile");
-  const [adminSection, setAdminSection] = useState<"control" | "validation">(
-    "control",
-  );
+    | "reports"
+  >("summary");
+  const [adminSection, setAdminSection] = useState<
+    "summary" | "control" | "validation"
+  >("summary");
+  const [adminPendingDrivers, setAdminPendingDrivers] = useState(false);
+  const [adminValidationTarget, setAdminValidationTarget] = useState<
+    number | undefined
+  >();
   const [adminRootNavigationKey, setAdminRootNavigationKey] = useState(0);
+  const [visitedDriver, setVisitedDriver] = useState<string[]>([]);
+  const [visitedAdmin, setVisitedAdmin] = useState<string[]>([]);
+  useEffect(() => {
+    if (user.role === "driver")
+      setVisitedDriver((current) =>
+        current.includes(driverSection) ? current : [...current, driverSection],
+      );
+    if (user.role === "admin")
+      setVisitedAdmin((current) =>
+        current.includes(adminSection) ? current : [...current, adminSection],
+      );
+  }, [driverSection, adminSection, user.role]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [helpVisited, setHelpVisited] = useState(false);
+  useEffect(() => {
+    if (helpOpen) setHelpVisited(true);
+  }, [helpOpen]);
   const menuButton = useRef<HTMLButtonElement>(null);
+  const sidebar = useRef<HTMLElement>(null);
   const main = useRef<HTMLElement>(null);
   const serviceSections = [
+    "service",
     "profile",
     "documents",
     "validation",
     "publication",
     "routes",
   ];
+  const historyReady = useRef(false);
+  const historyPop = useRef(false);
+  useEffect(() => {
+    if (user.role !== "driver" && user.role !== "admin") return;
+    const restore = (event: PopStateEvent) => {
+      if (user.role === "admin") {
+        const section = event.state?.furgoAdminSection;
+        if (!["summary", "control", "validation"].includes(section)) return;
+        historyPop.current = true;
+        setAdminSection(section);
+        setHelpOpen(Boolean(event.state?.furgoHelp));
+        setMenuOpen(false);
+        main.current?.focus();
+        return;
+      }
+      const section = event.state?.furgoDriverSection;
+      if (
+        ![
+          "service",
+          "profile",
+          "documents",
+          "validation",
+          "publication",
+          "routes",
+          "requests",
+          "summary",
+          "roster",
+          "payments",
+          "reports",
+        ].includes(section)
+      )
+        return;
+      historyPop.current = true;
+      setDriverSection(section);
+      setHelpOpen(Boolean(event.state?.furgoHelp));
+      setMenuOpen(false);
+      main.current?.focus();
+    };
+    window.addEventListener("popstate", restore);
+    return () => window.removeEventListener("popstate", restore);
+  }, [user.role]);
+  useEffect(() => {
+    if (user.role !== "driver" && user.role !== "admin") return;
+    if (historyPop.current) {
+      historyPop.current = false;
+      return;
+    }
+    const state = {
+      ...window.history.state,
+      furgoDriverSection: user.role === "driver" ? driverSection : undefined,
+      furgoAdminSection: user.role === "admin" ? adminSection : undefined,
+      furgoHelp: helpOpen,
+    };
+    if (!historyReady.current) {
+      window.history.replaceState(state, "");
+      historyReady.current = true;
+    } else window.history.pushState(state, "");
+  }, [driverSection, adminSection, helpOpen, user.role]);
   const inService = serviceSections.includes(driverSection);
   const driverDestinations = [
     { id: "summary", label: "Inicio", icon: "home" },
-    { id: "profile", label: "Mi servicio", icon: "route" },
+    { id: "service", label: "Mi servicio", icon: "route" },
     { id: "roster", label: "Pasajeros", icon: "people" },
     { id: "requests", label: "Solicitudes", icon: "message" },
     { id: "payments", label: "Pagos", icon: "payment" },
+    { id: "reports", label: "Plan y reportes", icon: "reports" },
   ] as const;
   function navigate(action: () => void) {
+    setHelpOpen(false);
     action();
     setMenuOpen(false);
     main.current?.focus();
+    requestAnimationFrame(() => main.current?.focus());
   }
+  useEffect(() => {
+    if (!menuOpen || (user.role !== "driver" && user.role !== "admin")) return;
+    const compact = window.matchMedia?.("(max-width: 900px)");
+    if (compact && !compact.matches) {
+      setMenuOpen(false);
+      return;
+    }
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const content = main.current;
+    if (content) content.inert = true;
+    const controls = () =>
+      Array.from(
+        sidebar.current?.querySelectorAll<HTMLElement>(
+          "button:not(:disabled), a[href], input, select, summary",
+        ) ?? [],
+      ).filter((node) => !node.closest("[hidden]"));
+    controls()[0]?.focus();
+    const trap = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const nodes = controls(),
+        first = nodes[0],
+        last = nodes.at(-1);
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+    const resize = () => {
+      if (compact && !compact.matches) setMenuOpen(false);
+    };
+    document.addEventListener("keydown", trap);
+    compact?.addEventListener("change", resize);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      if (content) content.inert = false;
+      document.removeEventListener("keydown", trap);
+      compact?.removeEventListener("change", resize);
+    };
+  }, [menuOpen, user.role]);
   const [publication, setPublication] = useState<Publication | null>(null);
   const [publicationRefreshKey, setPublicationRefreshKey] = useState(0);
 
   return (
     <div
-      className={`workspace-shell ${user.role === "admin" ? "admin-shell" : ""}`}
+      className={`workspace-shell ${user.role === "admin" ? "admin-shell" : user.role === "driver" ? "driver-shell" : ""}`}
       onKeyDown={(event) => {
         if (event.key === "Escape" && menuOpen) {
           setMenuOpen(false);
@@ -575,9 +711,40 @@ function AuthenticatedWorkspace({
         </button>
       </header>
       <aside
+        ref={sidebar}
         id="workspace-sidebar"
+        role={
+          (user.role === "driver" || user.role === "admin") && menuOpen
+            ? "dialog"
+            : undefined
+        }
+        aria-modal={
+          (user.role === "driver" || user.role === "admin") && menuOpen
+            ? true
+            : undefined
+        }
+        aria-label={
+          menuOpen
+            ? user.role === "driver"
+              ? "Menú del conductor"
+              : user.role === "admin"
+                ? "Menú de administración"
+                : undefined
+            : undefined
+        }
         className={`workspace-sidebar ${menuOpen ? "menu-open" : ""}`}
       >
+        {(user.role === "driver" || user.role === "admin") && (
+          <button
+            className={`button button-outline ${user.role === "admin" ? "admin-menu-close" : "driver-menu-close"}`}
+            onClick={() => {
+              setMenuOpen(false);
+              menuButton.current?.focus();
+            }}
+          >
+            Cerrar menú
+          </button>
+        )}
         <div className="sidebar-brand">
           <Brand />
           <p>Transporte escolar</p>
@@ -590,16 +757,17 @@ function AuthenticatedWorkspace({
                   <button
                     className="sidebar-link"
                     aria-current={
-                      (id === "profile" ? inService : driverSection === id)
+                      !helpOpen &&
+                      (id === "service" ? inService : driverSection === id)
                         ? "page"
                         : undefined
                     }
                     onClick={() => navigate(() => setDriverSection(id))}
                   >
-                    <NavIcon name={icon} />
+                    <ProductIcon size={24} name={icon} />
                     {label}
                   </button>
-                  {id === "profile" && (
+                  {id === "service" && (
                     <ul
                       className="sidebar-subnav"
                       aria-label="Configuración de mi servicio"
@@ -614,7 +782,9 @@ function AuthenticatedWorkspace({
                           <button
                             className="sidebar-link"
                             aria-current={
-                              driverSection === section ? "page" : undefined
+                              !helpOpen && driverSection === section
+                                ? "page"
+                                : undefined
                             }
                             onClick={() =>
                               navigate(() => setDriverSection(section))
@@ -638,21 +808,43 @@ function AuthenticatedWorkspace({
                 <button
                   className="sidebar-link"
                   aria-current={
-                    adminSection === "validation" ? "page" : undefined
+                    !helpOpen && adminSection === "summary" ? "page" : undefined
                   }
-                  onClick={() => navigate(() => setAdminSection("validation"))}
+                  onClick={() => navigate(() => setAdminSection("summary"))}
                 >
-                  <NavIcon name="check" />
+                  <ProductIcon size={24} name="home" />
+                  Inicio
+                </button>
+              </li>
+              <li>
+                <button
+                  className="sidebar-link"
+                  aria-current={
+                    !helpOpen && adminSection === "validation"
+                      ? "page"
+                      : undefined
+                  }
+                  onClick={() =>
+                    navigate(() => {
+                      setAdminValidationTarget(undefined);
+                      setAdminSection("validation");
+                    })
+                  }
+                >
+                  <ProductIcon size={24} name="check" />
                   Validaciones
                 </button>
               </li>
               <li>
                 <button
                   className="sidebar-link"
-                  aria-current={adminSection === "control" ? "page" : undefined}
+                  aria-current={
+                    !helpOpen && adminSection === "control" ? "page" : undefined
+                  }
                   onClick={() => {
                     navigate(() => {
                       setAdminSection("control");
+                      setAdminPendingDrivers(false);
                       setAdminRootNavigationKey((key) => key + 1);
                     });
                     requestAnimationFrame(() => {
@@ -665,13 +857,31 @@ function AuthenticatedWorkspace({
                     });
                   }}
                 >
-                  <NavIcon name="people" />
+                  <ProductIcon size={24} name="people" />
                   Conductores
                 </button>
               </li>
             </ul>
           </nav>
         )}
+        <nav aria-label="Ayuda">
+          <button
+            className="sidebar-link"
+            aria-current={helpOpen ? "page" : undefined}
+            onClick={() => navigate(() => setHelpOpen(true))}
+          >
+            <ProductIcon size={24} name="support" />
+            Ayuda y soporte
+          </button>
+          {user.role === "parent" && helpOpen && (
+            <button
+              className="sidebar-link"
+              onClick={() => navigate(() => setHelpOpen(false))}
+            >
+              Inicio
+            </button>
+          )}
+        </nav>
         <div className="sidebar-account">
           <span className="auth-support">Tu cuenta</span>
           <strong>{user.display_name || user.email}</strong>
@@ -681,119 +891,252 @@ function AuthenticatedWorkspace({
           </button>
         </div>
       </aside>
-      <main id="main-content" ref={main} tabIndex={-1} className="workspace">
-        {user.role === "driver" && (
-          <>
-            {!inService && (
-              <h1>
-                {
-                  driverDestinations.find((item) => item.id === driverSection)
-                    ?.label
-                }
-              </h1>
-            )}
-            <div hidden={!inService}>
-              <DriverOnboarding
-                showNavigation={false}
-                api={api}
-                activeSection={
-                  driverSection === "summary" ? "profile" : driverSection
-                }
-                onSectionChange={setDriverSection}
-                publication={publication}
-                onRelevantChange={() =>
-                  setPublicationRefreshKey((key) => key + 1)
-                }
-              />
-            </div>
-            <DriverPublicationScreen
-              api={api}
-              refreshKey={publicationRefreshKey}
-              onPublicationChange={setPublication}
-              onNavigate={(destination) =>
-                navigate(() => setDriverSection(destination))
-              }
-              activeSection={
-                driverSection === "publication" ? "publication" : "routes"
-              }
-              visible={
-                driverSection === "publication" || driverSection === "routes"
-              }
-            />
-            {driverSection === "requests" && <DriverRequests api={api} />}
-            {driverSection === "summary" && (
-              <DriverSummaryScreen
-                api={api}
-                name={user.display_name ?? ""}
-                onNavigate={(destination) =>
-                  navigate(() => setDriverSection(destination))
-                }
-              />
-            )}
-            {driverSection === "roster" && (
-              <DriverRoster
-                api={api}
-                onAssignmentChange={() =>
-                  setPublicationRefreshKey((key) => key + 1)
-                }
-              />
-            )}
-            {driverSection === "payments" && <DriverPayments api={api} />}
-          </>
-        )}
+      {user.role === "driver" && (
+        <header className="driver-context-bar" aria-label="Ubicación actual">
+          <span>Conductor</span>
+          <span aria-hidden="true">›</span>
+          <strong>
+            {helpOpen
+              ? "Ayuda y soporte"
+              : {
+                  summary: "Inicio",
+                  service: "Mi servicio",
+                  profile: "Datos del servicio",
+                  documents: "Documentos",
+                  validation: "Revisión e historial",
+                  publication: "Publicación",
+                  routes: "Rutas",
+                  roster: "Pasajeros",
+                  requests: "Solicitudes",
+                  payments: "Pagos",
+                  reports: "Plan y reportes",
+                }[driverSection]}
+          </strong>
+        </header>
+      )}
+      <main
+        id="main-content"
+        ref={main}
+        tabIndex={-1}
+        className={`workspace${!helpOpen && user.role === "driver" && driverSection === "service" ? " service-workspace" : ""}${!helpOpen && user.role === "driver" && driverSection === "summary" ? " home-workspace" : ""}`}
+      >
         {user.role === "admin" && (
-          <>
-            {adminSection === "control" ? (
-              <AdminControlScreen
+          <p className="admin-academic-context">
+            Administración académica · Usa únicamente datos sintéticos de
+            demostración.
+          </p>
+        )}
+        <div hidden={!helpOpen}>
+          {(helpOpen || helpVisited) && (
+            <HelpSupport
+              api={api}
+              admin={user.role === "admin"}
+              driver={user.role === "driver"}
+              active={helpOpen}
+            />
+          )}
+        </div>
+        <div hidden={helpOpen}>
+          {user.role === "driver" && (
+            <>
+              {!inService && driverSection === "summary" && (
+                <h1>
+                  {
+                    driverDestinations.find((item) => item.id === driverSection)
+                      ?.label
+                  }
+                </h1>
+              )}
+              <div
+                hidden={
+                  !inService ||
+                  driverSection === "publication" ||
+                  driverSection === "routes"
+                }
+              >
+                <DriverOnboarding
+                  showNavigation={false}
+                  api={api}
+                  activeSection={
+                    driverSection === "summary" || driverSection === "reports"
+                      ? "profile"
+                      : driverSection
+                  }
+                  onSectionChange={setDriverSection}
+                  publication={publication}
+                  onRelevantChange={() =>
+                    setPublicationRefreshKey((key) => key + 1)
+                  }
+                />
+              </div>
+              <DriverPublicationScreen
                 api={api}
-                rootNavigationKey={adminRootNavigationKey}
-                onValidations={() =>
-                  navigate(() => setAdminSection("validation"))
+                onBack={() => navigate(() => setDriverSection("service"))}
+                refreshKey={publicationRefreshKey}
+                onPublicationChange={setPublication}
+                onNavigate={(destination) =>
+                  navigate(() =>
+                    destination === "help"
+                      ? setHelpOpen(true)
+                      : setDriverSection(destination),
+                  )
+                }
+                activeSection={
+                  driverSection === "publication" ? "publication" : "routes"
+                }
+                visible={
+                  !helpOpen &&
+                  (driverSection === "publication" ||
+                    driverSection === "routes")
                 }
               />
-            ) : (
-              <AdminValidationScreen api={api} />
-            )}
-          </>
-        )}
-        {user.role === "parent" && (
-          <>
-            <h1>Usa la aplicación móvil</h1>
-            <p>
-              Desde allí puedes buscar transporte escolar y revisar tus
-              solicitudes.
-            </p>
-          </>
-        )}
+              {(driverSection === "requests" ||
+                visitedDriver.includes("requests")) && (
+                <TaskVisibility.Provider
+                  value={!helpOpen && driverSection === "requests"}
+                >
+                  <div hidden={driverSection !== "requests"}>
+                    <DriverRequests
+                      api={api}
+                      active={!helpOpen && driverSection === "requests"}
+                    />
+                  </div>
+                </TaskVisibility.Provider>
+              )}
+              {driverSection === "summary" && (
+                <DriverSummaryScreen
+                  api={api}
+                  name={user.display_name ?? ""}
+                  onNavigate={(destination) =>
+                    navigate(() =>
+                      destination === "help"
+                        ? setHelpOpen(true)
+                        : setDriverSection(destination),
+                    )
+                  }
+                />
+              )}
+              {(driverSection === "roster" ||
+                visitedDriver.includes("roster")) && (
+                <TaskVisibility.Provider
+                  value={!helpOpen && driverSection === "roster"}
+                >
+                  <div hidden={driverSection !== "roster"}>
+                    <DriverRoster
+                      api={api}
+                      active={!helpOpen && driverSection === "roster"}
+                      onAssignmentChange={() =>
+                        setPublicationRefreshKey((key) => key + 1)
+                      }
+                    />
+                  </div>
+                </TaskVisibility.Provider>
+              )}
+              {(driverSection === "payments" ||
+                visitedDriver.includes("payments")) && (
+                <TaskVisibility.Provider
+                  value={!helpOpen && driverSection === "payments"}
+                >
+                  <div hidden={driverSection !== "payments"}>
+                    <DriverPayments
+                      api={api}
+                      active={!helpOpen && driverSection === "payments"}
+                    />
+                  </div>
+                </TaskVisibility.Provider>
+              )}
+              {(driverSection === "reports" ||
+                visitedDriver.includes("reports")) && (
+                <TaskVisibility.Provider
+                  value={!helpOpen && driverSection === "reports"}
+                >
+                  <div hidden={driverSection !== "reports"}>
+                    <DriverReports
+                      api={api}
+                      active={!helpOpen && driverSection === "reports"}
+                      onHome={() => navigate(() => setDriverSection("summary"))}
+                      onHelp={() => navigate(() => setHelpOpen(true))}
+                    />
+                  </div>
+                </TaskVisibility.Provider>
+              )}
+            </>
+          )}
+          {user.role === "admin" && (
+            <>
+              {adminSection === "summary" && (
+                <AdminOverview
+                  api={api}
+                  onDrivers={(pending = false) =>
+                    navigate(() => {
+                      setAdminPendingDrivers(pending);
+                      setAdminSection("control");
+                      setAdminRootNavigationKey((key) => key + 1);
+                    })
+                  }
+                  onValidations={() =>
+                    navigate(() => {
+                      setAdminValidationTarget(undefined);
+                      setAdminSection("validation");
+                    })
+                  }
+                  onSupport={() => navigate(() => setHelpOpen(true))}
+                />
+              )}
+              {(adminSection === "control" ||
+                visitedAdmin.includes("control")) && (
+                <TaskVisibility.Provider
+                  value={!helpOpen && adminSection === "control"}
+                >
+                  <div hidden={adminSection !== "control"}>
+                    <AdminControlScreen
+                      api={api}
+                      rootNavigationKey={adminRootNavigationKey}
+                      pendingOnly={adminPendingDrivers}
+                      onValidations={(id) =>
+                        navigate(() => {
+                          setAdminValidationTarget(id);
+                          setAdminSection("validation");
+                        })
+                      }
+                    />
+                  </div>
+                </TaskVisibility.Provider>
+              )}
+              {(adminSection === "validation" ||
+                visitedAdmin.includes("validation")) && (
+                <TaskVisibility.Provider
+                  value={!helpOpen && adminSection === "validation"}
+                >
+                  <div hidden={adminSection !== "validation"}>
+                    <AdminValidationScreen
+                      key={adminValidationTarget ?? "queue"}
+                      api={api}
+                      initialValidationId={adminValidationTarget}
+                      onAllPending={() =>
+                        navigate(() => {
+                          setAdminPendingDrivers(true);
+                          setAdminSection("control");
+                          setAdminRootNavigationKey((key) => key + 1);
+                        })
+                      }
+                    />
+                  </div>
+                </TaskVisibility.Provider>
+              )}
+            </>
+          )}
+          {user.role === "parent" && (
+            <>
+              <h1>Usa la aplicación móvil</h1>
+              <p>
+                Desde allí puedes buscar transporte escolar y revisar tus
+                solicitudes.
+              </p>
+            </>
+          )}
+        </div>
       </main>
     </div>
-  );
-}
-
-function NavIcon({ name }: { name: string }) {
-  const paths: Record<string, string> = {
-    home: "M3 10 12 3l9 7M5 9v12h5v-7h4v7h5V9",
-    route: "M4 6h12a4 4 0 0 1 0 8H8a4 4 0 0 0 0 8M4 3v6m-3-3h6M16 19l3 3-3 1",
-    people:
-      "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-4M16 3a4 4 0 0 1 0 8",
-    message:
-      "M21 15a3 3 0 0 1-3 3H8l-5 3V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3ZM7 8h10M7 12h7",
-    payment: "M3 5h18v14H3ZM3 9h18M7 15h4",
-    check: "m5 12 4 4L19 6M3 3h18v18H3Z",
-  };
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d={paths[name]} />
-    </svg>
   );
 }

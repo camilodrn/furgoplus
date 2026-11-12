@@ -1,0 +1,33 @@
+{
+  "name": "46-android-acceso-1080",
+  "role": "publico",
+  "screen": "M01 Acceso Android sin credenciales",
+  "at": "2026-10-31T12:30:00.931709+00:00",
+  "platform": "Samsung A54 physical Android 16 / Flutter current main.dart",
+  "model": "SM-A546E",
+  "resolution": {
+    "width": 1080,
+    "height": 2340
+  },
+  "densityDpi": 450,
+  "fontScale": "1.1",
+  "package": "com.example.furgoplus.task12",
+  "apkSha256": "55f2c602c7c3508d03544918d37002693495f0a61eb68cd7ef2da07c763f17f8",
+  "API_BASE_URL": "http://127.0.0.1:18082",
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "M01",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/46-android-acceso-1080.png",
+      "sha256": "f69bc9a1d274574aeb46343fc61fc53af6f24fed00a4432afb02a0d47adf1fce",
+      "pixels": [
+        1080,
+        2340
+      ]
+    }
+  ]
+}

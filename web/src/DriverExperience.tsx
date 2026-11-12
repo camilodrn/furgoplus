@@ -12,7 +12,8 @@ export type DriverDestination =
   | "routes"
   | "requests"
   | "roster"
-  | "payments";
+  | "payments"
+  | "help";
 const blockers: Record<
   Publication["blockers"][number]["code"],
   [string, string, DriverDestination]
@@ -199,7 +200,11 @@ export function useDriverResource<T>(
             ? driverError(cause, area)
             : "No pudimos cargar la información. Revisa tu conexión e inténtalo de nuevo.",
         );
-        setRetryable(!(cause instanceof ApiError) || cause.status >= 500);
+        setRetryable(
+          !(cause instanceof ApiError) ||
+            cause.code === "request_timeout" ||
+            cause.status >= 500,
+        );
         return;
       }
       setFields(cause instanceof ApiError ? cause.fields : {});
@@ -449,10 +454,29 @@ export function VisibilityStatus({
 
 export function ProductIcon({
   name,
+  size = 28,
 }: {
-  name: "route" | "people" | "message" | "payment" | "visible" | "waiting";
+  name:
+    | "home"
+    | "check"
+    | "route"
+    | "people"
+    | "message"
+    | "payment"
+    | "visible"
+    | "waiting"
+    | "reports"
+    | "book"
+    | "support";
+  size?: number;
 }) {
   const paths = {
+    home: "M3 10 12 3l9 7M5 9v12h5v-7h4v7h5V9",
+    check: "m5 12 4 4L19 6M3 3h18v18H3Z",
+    reports: "M4 3h12l4 4v14H4ZM8 16v-3m4 3V9m4 7v-5",
+    book: "M12 5v16M12 5C9 3 5 3 2 4v15c3-1 7-1 10 2 3-3 7-3 10-2V4c-3-1-7-1-10 1Z",
+    support:
+      "M8 8 5 5m11 3 3-3M8 16l-3 3m11-3 3 3M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10",
     route: "M4 6h12a4 4 0 0 1 0 8H8a4 4 0 0 0 0 8M4 3v6m-3-3h6M16 19l3 3-3 1",
     people:
       "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-4M16 3a4 4 0 0 1 0 8",
@@ -466,8 +490,8 @@ export function ProductIcon({
   return (
     <svg
       className="product-icon"
-      width="28"
-      height="28"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -536,12 +560,9 @@ export function FocusPanel({
   );
 }
 
-// Presentation groups only. eligible and the server's blockers remain the sole
-// authority for visibility; these steps never enable or prohibit server actions.
+// Presentation groups only. Visibility and permissions stay on the server.
 export function activationSteps(publication: Publication) {
-  const infoCodes = [
-    "validation_not_approved",
-    "approved_revision_stale",
+  const dataCodes = [
     "required_document_missing",
     "required_document_expired",
     "profile_display_name_missing",
@@ -550,121 +571,84 @@ export function activationSteps(publication: Publication) {
   ];
   const groups = [
     {
-      title: "Información aprobada",
-      matches: (code: string) => infoCodes.includes(code),
+      title: "Datos y documentos",
+      matches: (code: string) => dataCodes.includes(code),
+      confirmed: true,
+      destination: "profile" as DriverDestination,
+      action: "Completar datos del servicio",
+    },
+    {
+      title: "Revisión del equipo",
+      matches: (code: string) =>
+        ["validation_not_approved", "approved_revision_stale"].includes(code),
       confirmed: publication.validation_state === "approved",
       destination: "validation" as DriverDestination,
-      action: "Revisar mi validación",
+      action: "Revisar validación",
     },
     {
       title: "Plan vigente",
       matches: (code: string) => code.startsWith("subscription_"),
       confirmed: publication.subscription?.status === "active",
-      destination: "publication" as DriverDestination,
-      action: "Ver estado del plan",
+      destination: "help" as DriverDestination,
+      action: "Consultar plan con soporte",
     },
     {
-      title: "Ruta activa y completa",
-      matches: (code: string) => code === "active_route_missing",
-      confirmed: publication.active_route_count > 0,
-      destination: "routes" as DriverDestination,
-      action: "Configurar una ruta",
-    },
-    {
-      title: "Solicitud de publicación",
-      matches: (code: string) => code === "publication_not_requested",
-      confirmed: publication.publication_requested,
+      title: "Ruta y publicación",
+      matches: (code: string) =>
+        ["active_route_missing", "publication_not_requested"].includes(code),
+      confirmed:
+        publication.active_route_count > 0 && publication.publication_requested,
       destination: "publication" as DriverDestination,
       action: "Solicitar que mi servicio sea visible",
     },
   ];
-  const steps = groups.map((group) => {
+  return groups.map((group) => {
     const pending = publication.blockers.filter((item) =>
       group.matches(item.code),
     );
     return {
       ...group,
       pending,
-      complete: !!group.confirmed && pending.length === 0,
+      complete: publication.eligible || (!!group.confirmed && !pending.length),
     };
   });
-  const other = publication.blockers.filter(
-    (item) => !groups.some((group) => group.matches(item.code)),
-  );
-  if (other.length)
-    steps.push({
-      title: "Estado de tu servicio",
-      matches: () => false,
-      confirmed: false,
-      destination: "publication",
-      action: "Ver estado del servicio",
-      pending: other,
-      complete: false,
-    });
-  return steps;
 }
-export function ActivationPath({
+
+export function ServiceAvailabilityNotice({
   publication,
   onNavigate,
 }: {
   publication: Publication;
   onNavigate?: (destination: DriverDestination) => void;
 }) {
+  const reasons = publication.blockers.filter((item) =>
+    ["account_inactive", "driver_suspended", "driver_deactivated"].includes(
+      item.code,
+    ),
+  );
+  // Preserve an explicit profile status even if a caller has no blocker details.
+  if (!reasons.length && publication.profile_status === "active") return null;
   return (
-    <ol
-      className="activation-path"
-      aria-label="Pasos para aparecer en FurgoPlus"
-    >
-      {activationSteps(publication).map((step) => (
-        <li
-          key={step.title}
-          className={step.complete ? "step-complete" : "step-pending"}
+    <section className="panel" aria-label="Estado de tu servicio">
+      <h3>Estado de tu servicio</h3>
+      {reasons.length ? (
+        reasons.map((item) => <p key={item.code}>{publicationBlocker(item)}</p>)
+      ) : (
+        <p>
+          {publication.profile_status === "suspended"
+            ? "Tu servicio está suspendido."
+            : "Tu servicio está desactivado."}
+        </p>
+      )}
+      {onNavigate && (
+        <button
+          type="button"
+          className="button button-outline"
+          onClick={() => onNavigate("help")}
         >
-          <span className="step-marker" aria-hidden="true">
-            {step.complete ? "✓" : "○"}
-          </span>
-          <div>
-            <h3>{step.title}</h3>
-            <span className="step-caption">
-              {step.complete ? "Completado" : "Pendiente"}
-            </span>
-            {!step.complete &&
-              (step.pending.length ? (
-                step.pending.map((item) => (
-                  <div key={item.code}>
-                    <p>{publicationBlocker(item)}</p>
-                    {onNavigate && (
-                      <button
-                        type="button"
-                        className="button button-link"
-                        onClick={() => onNavigate(blockerAction(item)[2])}
-                      >
-                        {blockerAction(item)[1]}
-                      </button>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <div>
-                  <p>
-                    {step.title === "Solicitud de publicación"
-                      ? "Pide que los apoderados puedan encontrar tu servicio."
-                      : "Revisa este paso en el estado de tu servicio."}
-                  </p>
-                  {onNavigate && (
-                    <button
-                      type="button"
-                      className="button button-link"
-                      onClick={() => onNavigate(step.destination)}
-                    >
-                      {step.action}
-                    </button>
-                  )}
-                </div>
-              ))}
-          </div>
-        </li>
-      ))}
-    </ol>
+          Consultar soporte
+        </button>
+      )}
+    </section>
   );
 }

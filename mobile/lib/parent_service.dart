@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'parent_presentation.dart';
+import 'furgo_widgets.dart';
+import 'furgo_theme.dart';
 
 // Render only the public discovery allowlist; never inspect private profile data.
 List<Map<String, dynamic>> publicRows(dynamic value) =>
@@ -92,7 +94,7 @@ class ParentStateLabel extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(99),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -124,7 +126,6 @@ class ParentRouteSummary extends StatelessWidget {
     final available = route['available_seats'] as int;
     final capacity = route['seat_capacity'] as int;
     final date = parentDate(route['next_service_date'] as String);
-    final availability = '$available de $capacity disponibles';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -145,28 +146,12 @@ class ParentRouteSummary extends StatelessWidget {
           'Cupos para el $date',
           style: Theme.of(context).textTheme.bodySmall,
         ),
-        Semantics(
-          container: true,
-          label: 'Cupos disponibles, $availability',
-          excludeSemantics: true,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                available == 0
-                    ? 'Sin cupos disponibles · $availability'
-                    : availability,
-              ),
-              const SizedBox(height: 8),
-              LinearProgressIndicator(
-                value: capacity > 0 ? (available / capacity).clamp(0, 1) : 0,
-                color: available <= 0 ? parentAmber : parentGreen,
-                backgroundColor: const Color(0xFFE4EBE7),
-                minHeight: 6,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ],
-          ),
+        if (available == 0)
+          const ExcludeSemantics(child: Text('Sin cupos disponibles')),
+        FurgoCapacity(
+          used: route['used_seats'] as int,
+          total: capacity,
+          available: available,
         ),
       ],
     );
@@ -195,28 +180,30 @@ class ParentServiceCard extends StatelessWidget {
     final routes = displayRoutes(driver, commune);
     return ParentPanel(
       key: ValueKey('driver-card-${driver['id']}'),
+      soft: selected,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ParentServiceIdentity(driver: driver),
+          ParentServiceIdentity(driver: driver, compact: true),
           const SizedBox(height: 8),
           ParentMetadata(
             Icons.location_on_outlined,
             coverageSummary(driver['coverage'], commune),
           ),
+          const SizedBox(height: 8),
           if (routes.isNotEmpty) ParentRouteSummary(routes.first),
           ParentMetadata(
             Icons.star_outline,
             '${reviewSummary(driver)}${routes.length > 1 ? ' · +${routes.length - 1} rutas' : ''}',
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Wrap(
             spacing: 8,
             runSpacing: 4,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               if (onOpen != null)
-                FilledButton(
+                OutlinedButton(
                   onPressed: onOpen,
                   child: const Text('Ver servicio'),
                 ),
@@ -241,37 +228,230 @@ class ParentServiceCard extends StatelessWidget {
 }
 
 class ParentServiceIdentity extends StatelessWidget {
-  const ParentServiceIdentity({super.key, required this.driver});
+  const ParentServiceIdentity({
+    super.key,
+    required this.driver,
+    this.compact = false,
+  });
   final Map<String, dynamic> driver;
+  final bool compact;
 
   @override
-  Widget build(BuildContext context) => Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const ParentIcon(Icons.directions_bus_outlined),
-      const SizedBox(width: 12),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Semantics(
-              header: true,
-              child: Text(
-                driver['display_name'] as String,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final identity = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Semantics(
+            header: true,
+            child: Text(
+              driver['display_name'] as String,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+            ),
+          ),
+          const SizedBox(height: 6),
+          const ParentStateLabel(
+            'Conductor validado',
+            icon: Icons.fact_check_outlined,
+            color: FurgoColors.neutral,
+          ),
+          if (!compact) const SizedBox(height: 4),
+          if (!compact)
+            Text(
+              'Revisión interna; no es una certificación de seguridad.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+        ],
+      );
+      // Decorative identity icon yields space to names and states at large text.
+      if (compact ||
+          constraints.maxWidth / MediaQuery.textScalerOf(context).scale(1) <
+              240)
+        return identity;
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ParentIcon(Icons.directions_bus_outlined),
+          const SizedBox(width: 12),
+          Expanded(child: identity),
+        ],
+      );
+    },
+  );
+}
+
+/// Public discovery attributes stay grouped so families compare the same facts.
+/// No fees, reservations or private data are derived here.
+class ParentServiceComparison extends StatelessWidget {
+  const ParentServiceComparison({
+    super.key,
+    required this.drivers,
+    this.commune,
+    this.onOpen,
+    this.onRemove,
+  });
+  final List<Map<String, dynamic>> drivers;
+  final String? commune;
+  final ValueChanged<int>? onOpen, onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final routes = drivers
+        .map((driver) => displayRoutes(driver, commune).firstOrNull)
+        .toList();
+    // The same selected public route supplies schedule, coverage, date and seats.
+    Widget attribute(
+      String id,
+      String title,
+      Widget Function(int) value,
+    ) => Padding(
+      key: ValueKey('comparison-$id'),
+      padding: const EdgeInsets.symmetric(vertical: FurgoLayout.space4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Semantics(
+            header: true,
+            child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+          ),
+          const SizedBox(height: FurgoLayout.space2),
+          for (var index = 0; index < drivers.length; index++)
+            Padding(
+              key: id == 'schedule'
+                  ? ValueKey('driver-card-${drivers[index]['id']}')
+                  : null,
+              padding: const EdgeInsets.symmetric(vertical: FurgoLayout.space2),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final name = Text(
+                    drivers[index]['display_name'] as String,
+                    style: Theme.of(context).textTheme.titleSmall,
+                  );
+                  final information = Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      value(index),
+                      if (id == 'schedule')
+                        Wrap(
+                          spacing: FurgoLayout.space2,
+                          children: [
+                            OutlinedButton(
+                              onPressed: onOpen == null
+                                  ? null
+                                  : () => onOpen!(drivers[index]['id'] as int),
+                              child: const Text('Ver servicio'),
+                            ),
+                            TextButton.icon(
+                              onPressed: onRemove == null
+                                  ? null
+                                  : () =>
+                                        onRemove!(drivers[index]['id'] as int),
+                              icon: const Icon(Icons.remove_circle_outline),
+                              label: Text(
+                                'Quitar',
+                                semanticsLabel:
+                                    'Quitar ${drivers[index]['display_name']} de comparación',
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  );
+                  if (constraints.maxWidth /
+                          MediaQuery.textScalerOf(context).scale(1) <
+                      300) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        name,
+                        const SizedBox(height: FurgoLayout.space2),
+                        information,
+                      ],
+                    );
+                  }
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(flex: 2, child: name),
+                      const SizedBox(width: FurgoLayout.space4),
+                      Expanded(flex: 3, child: information),
+                    ],
+                  );
+                },
               ),
             ),
-            const SizedBox(height: 6),
-            const ParentStateLabel(
-              'Conductor validado',
-              icon: Icons.verified_outlined,
-              color: parentGreen,
-            ),
-          ],
-        ),
+        ],
       ),
-    ],
-  );
+    );
+    String routeValue(int index, String Function(Map<String, dynamic>) read) =>
+        routes[index] == null
+        ? 'Información por confirmar'
+        : read(routes[index]!);
+    return FurgoSurface(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          attribute(
+            'schedule',
+            'Días y horario',
+            (i) => Text(routeValue(i, routeSchedule)),
+          ),
+          const Divider(height: 1),
+          attribute(
+            'route',
+            'Ruta comparada',
+            (i) => Text(routeValue(i, (route) => route['label'] as String)),
+          ),
+          const Divider(height: 1),
+          attribute(
+            'coverage',
+            'Cobertura de la ruta',
+            (i) =>
+                Text(routeValue(i, (route) => coverageText(route['coverage']))),
+          ),
+          const Divider(height: 1),
+          attribute(
+            'capacity',
+            'Fecha y cupos',
+            (i) => routes[i] == null
+                ? const Text('Información por confirmar')
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Para el ${parentDate(routes[i]!['next_service_date'] as String)}',
+                      ),
+                      const SizedBox(height: FurgoLayout.space2),
+                      FurgoCapacity(
+                        used: routes[i]!['used_seats'] as int,
+                        total: routes[i]!['seat_capacity'] as int,
+                        available: routes[i]!['available_seats'] as int,
+                      ),
+                    ],
+                  ),
+          ),
+          const Divider(height: 1),
+          attribute(
+            'reviews',
+            'Reseñas',
+            (i) => Text(reviewSummary(drivers[i])),
+          ),
+          const Divider(),
+          const Divider(),
+          const Text(
+            'Los datos de cada servicio corresponden a la ruta indicada. Las fechas y los cupos pueden ser distintos entre servicios.',
+          ),
+          const Divider(height: 1),
+          const SizedBox(height: FurgoLayout.space4),
+          const Text(
+            'Conductores validados: revisión interna de información y documentos. No es una certificación estatal ni una garantía de seguridad.',
+          ),
+          const SizedBox(height: FurgoLayout.space2),
+          const Text('Solicitar contacto no reserva un cupo.'),
+        ],
+      ),
+    );
+  }
 }

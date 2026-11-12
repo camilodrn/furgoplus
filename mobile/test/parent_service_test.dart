@@ -44,12 +44,12 @@ void main() {
     },
   );
   for (final (available, capacity, progress) in [
-    (3, 3, 1.0),
-    (2, 3, 2 / 3),
-    (0, 3, 0.0),
+    (3, 3, 0.0),
+    (2, 3, 1 / 3),
+    (0, 3, 1.0),
     (0, 0, 0.0),
-    (4, 3, 1.0),
-    (-1, 3, 0.0),
+    (4, 3, 0.0),
+    (-1, 3, 1.0),
   ]) {
     testWidgets(
       'availability $available/$capacity has one readable announcement and a visual meter',
@@ -66,6 +66,7 @@ void main() {
                   'end_time': '08:00',
                   'next_service_date': '2026-09-28',
                   'available_seats': available,
+                  'used_seats': capacity - available,
                   'seat_capacity': capacity,
                 }),
               ),
@@ -83,18 +84,15 @@ void main() {
                 .value,
             progress,
           );
-          final availability = '$available de $capacity disponibles';
+          final used = capacity - available;
           expect(
             find.text(
-              available == 0
-                  ? 'Sin cupos disponibles · $availability'
-                  : availability,
+              '$used de $capacity cupos ocupados · $available ${available == 1 ? 'disponible' : 'disponibles'}',
             ),
             findsOneWidget,
           );
-
           final announcement = find.bySemanticsLabel(
-            'Cupos disponibles, $availability',
+            'Capacidad: $used ${used == 1 ? 'ocupado' : 'ocupados'} · $available ${available == 1 ? 'disponible' : 'disponibles'} · $capacity total',
           );
           expect(announcement, findsOneWidget);
           expect(tester.getSemantics(announcement).value, isEmpty);

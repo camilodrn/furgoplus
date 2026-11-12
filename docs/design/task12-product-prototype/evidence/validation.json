@@ -1,0 +1,1054 @@
+{
+  "checks": [
+    "Accent-insensitive search covers records outside visible page",
+    "Full-route conflict preserves assignment draft",
+    "Assignment updates route capacity",
+    "Payment confirmation states manual bank distinction",
+    "Cancel payment does not mutate",
+    "Confirm payment updates status",
+    "Approval preserves publication and plan distinction",
+    "Complete review journey enables explicit publication",
+    "Admin action isolates selected driver",
+    "Cancel finish preserves run in progress",
+    "Run journey reaches completed state",
+    "Comparison includes selected services",
+    "Cross-role contact reveals service email after acceptance",
+    "Accepted contact does not automatically add passengers",
+    "Duplicate contact points to existing request",
+    "Support conversation retains both sides",
+    "Uncertain run blocks repeat start",
+    "Uncertain run recovers by read before action",
+    "Read error does not show invented zero totals",
+    "Read retry restores content",
+    "Pagination changes visible range",
+    "State normal renders web/conductor/pasajeros",
+    "State normal renders web/conductor/pagos",
+    "State normal renders web/conductor/publicacion",
+    "State normal renders web/administrador/validaciones",
+    "State normal renders android/conductor/hoy",
+    "State normal renders android/apoderado/buscar",
+    "State pendiente renders web/conductor/pasajeros",
+    "State pendiente renders web/conductor/pagos",
+    "State pendiente renders web/conductor/publicacion",
+    "State pendiente renders web/administrador/validaciones",
+    "State pendiente renders android/conductor/hoy",
+    "State pendiente renders android/apoderado/buscar",
+    "State vacio renders web/conductor/pasajeros",
+    "State vacio renders web/conductor/pagos",
+    "State vacio renders web/conductor/publicacion",
+    "State vacio renders web/administrador/validaciones",
+    "State vacio renders android/conductor/hoy",
+    "State vacio renders android/apoderado/buscar",
+    "State error renders web/conductor/pasajeros",
+    "State error renders web/conductor/pagos",
+    "State error renders web/conductor/publicacion",
+    "State error renders web/administrador/validaciones",
+    "State error renders android/conductor/hoy",
+    "State error renders android/apoderado/buscar",
+    "State muchos renders web/conductor/pasajeros",
+    "State muchos renders web/conductor/pagos",
+    "State muchos renders web/conductor/publicacion",
+    "State muchos renders web/administrador/validaciones",
+    "State muchos renders android/conductor/hoy",
+    "State muchos renders android/apoderado/buscar",
+    "State carga renders web/conductor/pasajeros",
+    "State carga renders web/conductor/pagos",
+    "State carga renders web/conductor/publicacion",
+    "State carga renders web/administrador/validaciones",
+    "State carga renders android/conductor/hoy",
+    "State carga renders android/apoderado/buscar",
+    "State incierto renders web/conductor/pasajeros",
+    "State incierto renders web/conductor/pagos",
+    "State incierto renders web/conductor/publicacion",
+    "State incierto renders web/administrador/validaciones",
+    "State incierto renders android/conductor/hoy",
+    "State incierto renders android/apoderado/buscar",
+    "No browser JavaScript or console errors",
+    "No external network requests",
+    "No network writes",
+    "Direct file opening works",
+    "Direct file opening has no console errors"
+  ],
+  "sweep": [
+    {
+      "route": "web/conductor/inicio",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/datos",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/documentos",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/revision",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/publicacion",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/articulo/2",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/ticket/204",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/conductores",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/ayuda",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/apoderado/inicio",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/apoderado/ayuda",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/acceso/ingresar",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/acceso/registro",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/acceso/ingresar",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/acceso/registro",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/recorrido/1",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/ayuda",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/solicitud/105",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/cuenta",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/ayuda",
+      "width": 1440,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/datos",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/documentos",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/revision",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/publicacion",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/articulo/2",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/ticket/204",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/conductores",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/ayuda",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/apoderado/inicio",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/apoderado/ayuda",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/acceso/ingresar",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/acceso/registro",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/acceso/ingresar",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/acceso/registro",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/recorrido/1",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/ayuda",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/solicitud/105",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/cuenta",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/ayuda",
+      "width": 1280,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/datos",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/documentos",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/revision",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/publicacion",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/articulo/2",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/ticket/204",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/conductores",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/ayuda",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/apoderado/inicio",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/apoderado/ayuda",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/acceso/ingresar",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/acceso/registro",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/acceso/ingresar",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/acceso/registro",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/recorrido/1",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/ayuda",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/solicitud/105",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/cuenta",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/ayuda",
+      "width": 390,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/inicio",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/datos",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/documentos",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/revision",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/publicacion",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/articulo/2",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/conductor/ticket/204",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/validaciones",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/expediente/1",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/conductores",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/administrador/ayuda",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/apoderado/inicio",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/apoderado/ayuda",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/acceso/ingresar",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "web/acceso/registro",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/acceso/ingresar",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/acceso/registro",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/recorrido/1",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/ayuda",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/conductor/cuenta",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/solicitud/105",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/cuenta",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    },
+    {
+      "route": "android/apoderado/ayuda",
+      "width": 320,
+      "headings": 1,
+      "overflow": false
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:8768/",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:8768/prototype.css",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:8768/data.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:8768/prototype.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:8768/assets/furgoplus-logo.png",
+      "method": "GET"
+    },
+    {
+      "url": "file:///home/duran/Proyectos/furgoplus-planes/docs/design/task12-product-prototype/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "file:///home/duran/Proyectos/furgoplus-planes/docs/design/task12-product-prototype/prototype.css",
+      "method": "GET"
+    },
+    {
+      "url": "file:///home/duran/Proyectos/furgoplus-planes/docs/design/task12-product-prototype/data.js",
+      "method": "GET"
+    },
+    {
+      "url": "file:///home/duran/Proyectos/furgoplus-planes/docs/design/task12-product-prototype/prototype.js",
+      "method": "GET"
+    },
+    {
+      "url": "file:///home/duran/Proyectos/furgoplus-planes/docs/design/task12-product-prototype/assets/furgoplus-logo.png",
+      "method": "GET"
+    }
+  ],
+  "time": "2026-10-28T04:32:06.199Z"
+}

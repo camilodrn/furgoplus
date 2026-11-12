@@ -1,0 +1,49 @@
+# T12 — Jerarquía de controles y densidad administrativa
+
+Rama `task/12-plan-capabilities`. Ajuste acotado del 29-10-2026. La revisión humana del detalle por secciones fue **positiva**, según la instrucción de esta continuación. Se conserva esa estructura; **la aceptación visual de este ajuste está pendiente**.
+
+| Área                   | Ajuste                                                                                                                                                                                                                                                      | Comportamiento conservado                                                                                                                                                                                                                                    |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Detalle: navegación    | Pestañas discretas sin relleno permanente; indicador inferior azul y mayor peso tipográfico en la activa. Ancho según su contenido y salto de línea en pantallas pequeñas.                                                                                  | Las mismas cinco vistas excluyentes y sus datos, resúmenes, registros y páginas.                                                                                                                                                                             |
+| Detalle: accesibilidad | `tablist`, `tab`, `aria-selected`, relación con `tabpanel` y un único punto de entrada con Tab. Flechas izquierda/derecha, Inicio/Fin y activación por clic; foco permanece en la pestaña. Los accesos directos mantienen el foco en el título del destino. | Sin nuevas lecturas o escrituras por cambiar de pestaña. Foco visible del sistema, paneles ocultos fuera del recorrido de teclado y controles táctiles de 48 px.                                                                                             |
+| Detalle: acciones      | Revisar antecedentes destaca cuando la validación del servidor aún no está aprobada; si está aprobada se muestra con estilo secundario. Gestionar plan permanece secundario. Más acciones agrupa los cambios de perfil permitidos.                          | Suspender/desactivar/reactivar siguen requiriendo motivo, revisión y confirmación; mismos estados/versiones esperados, permisos, errores y protección ante doble envío. Abrir el desplegable o un editor no ejecuta cambios.                                 |
+| Conductores: barra     | Buscar conductor, Buscar y Filtros comparten una fila. Búsqueda con base máxima de 28 rem en escritorio, sin crecer para llenar el espacio sobrante; controles apilables en móvil.                                                                          | Búsqueda global por API, límite, filtros reales, envío explícito, criterios aplicados y paginación existentes.                                                                                                                                               |
+| Conductores: filtros   | Plegados al entrar; grilla adaptable al abrirlos. Escape cierra y devuelve el foco a Filtros. Cantidad de resultados una sola vez junto a criterios aplicados compactos. Limpiar filtros devuelve el foco a la búsqueda.                                    | El borrador no altera los resultados hasta Buscar/Aplicar filtros. Se conserva al plegar, paginar o volver del detalle. Limpiar borra búsqueda/filtros y vuelve a la primera página de la lista completa; también permite descartar un borrador sin aplicar. |
+
+El desplegable Más acciones se implementa con `details`/`summary`, estado de apertura y contenido `hidden` explícito. Escape lo cierra y devuelve el foco al control; cancelar un editor devuelve el foco a la acción que lo abrió. No tiene submenús, scroll interno ni nuevas dependencias. Los editores y confirmaciones existentes se reutilizan íntegramente.
+
+Se reutilizan tokens y componentes de T12; el CSS se limita a clases del directorio/detalle. Inicio, Soporte, Validaciones y las otras pantallas conservan su implementación. Los cambios de las pruebas de sesión se limitan a abrir Más acciones y consultar las pestañas y el selector de plan con sus roles precisos. El ayudante de capturas existente solo cambia la consulta de las secciones de botón a pestaña.
+
+## Verificación
+
+**389/389 pruebas React en 21 archivos**, TypeScript, lint, build y contratos: aprobados. Las dos suites específicas suman 91 pruebas. La revisión determinista 21st termina sin hallazgos. Resultados y logs finales: [evidencia](evidence/task12-admin-controls-density/README.md).
+
+```bash
+npm run test --prefix web -- --maxWorkers=2
+npm run typecheck --prefix web
+npm run lint --prefix web
+npm run build --prefix web
+npm run contract:check --prefix web
+web/node_modules/.bin/prettier --check web/src/AdminControls.tsx web/src/AdminControls.test.tsx web/src/SessionPrivacy.test.tsx web/src/admin-coherence.css web/scripts/capture-admin-readonly.mjs
+node --check web/scripts/capture-admin-readonly.mjs
+git diff --check
+```
+
+Las pruebas nuevas comprueban selección/foco con flechas e Inicio/Fin, relaciones entre pestañas y paneles, un único tabulador de entrada, apertura/cierre de Más acciones y cancelación sin escritura, opciones permitidas según perfil, énfasis según estado real y borradores frente a criterios API aplicados al paginar/limpiar. Se mantienen las pruebas de motivos, confirmaciones, concurrencia, 403/409, doble envío, sesión/caducidad, respuestas tardías y recorrido de cientos de registros.
+
+Las pruebas DOM comprueban los manejadores y semántica; no acreditan layout, zoom, Tab/Enter/Espacio nativos ni la interacción modal de un navegador. La revisión 21st es determinista, no visual. Se consultaron metadatos de [Tabs](https://21st.dev/@originui/components/tabs), [Filter Token Bar](https://21st.dev/@laziekiki/components/filter-token-bar) y [Filter Toolbar](https://21st.dev/@kuratlielia/components/filter-toolbar); se conservaron las primitivas y tokens del proyecto, sin recuperar código ni instalar dependencias o generar otra propuesta.
+
+## Aceptación breve en Fedora
+
+1. Abrir el frontend académico sintético ya existente con administrador autorizado. Verificar que la versión servida contiene `tablist` y `admin-more-actions` en `AdminControls.tsx`, y `.admin-detail-tab[aria-selected="true"]` en `admin-coherence.css`. No cargar datos ni reconstruir/desplegar servicios para esta revisión.
+2. En Conductores, comprobar barra compacta a 1440/1280 px; Filtros inicialmente plegados. Buscar por nombre/correo, abrir los cinco filtros, aplicar, paginar, cambiar un borrador sin aplicar y volver del detalle. Confirmar que resultados y etiquetas corresponden a los criterios **aplicados**, y que Limpiar filtros restaura la primera página completa y el foco en la búsqueda. Revisar error/vacío si el escenario lo permite.
+3. Abrir un conductor y recorrer las cinco pestañas: misma información y una sola vista. Diferenciar su línea activa de los botones de acción. Tab debe entrar en la pestaña seleccionada; flechas izquierda/derecha e Inicio/Fin deben seleccionar y enfocar otra; Tab/Shift+Tab permiten continuar al contenido. Verificar foco visible, lectura de selección y panel correspondiente con el lector de pantalla disponible.
+4. Comprobar Revisar antecedentes y Gestionar plan; abrir Más acciones y reconocer suspender/desactivar o reactivar según el perfil real. Escape cierra el desplegable. Abrir y **cancelar** un editor de perfil/plan: comprobar motivo, consecuencia, confirmación, foco contenido, fondo inerte, Escape y retorno al control correcto. **No confirmar suspensiones, desactivaciones, reactivaciones ni cambios de plan.** No descargar documentos.
+5. Repetir a **768×1024, 390×844 y 320×844**, con nombres/etiquetas largos y **zoom real de 200 % y 400 %** en escritorio. Comprobar controles táctiles, pestañas que se envuelven, filtros legibles, acciones esenciales accesibles, un solo scroll normal de página y ausencia de cortes/desplazamiento horizontal. Redimensionar no sustituye hacer zoom.
+6. Registrar navegador, tamaños/zoom, resultado y observaciones. El ayudante [capture-admin-readonly.mjs](../web/scripts/capture-admin-readonly.mjs) queda compatible con las pestañas y mantiene su bloqueo de escrituras y descargas; su uso con autenticación manual está descrito en la [guía anterior](TASK12_ADMIN_DRIVER_DETAIL.md). Las capturas no aceptan automáticamente este ajuste.
+
+## Límites y preservación
+
+No se inspeccionó visualmente la aplicación real en esta sesión. Playwright rechazó listar pestañas con `MCP tool call requires approval, but approval policy is never`; CUA devolvió `apps: [], browsers: []`. No hay capturas nuevas ni aceptación visual atribuida a este ajuste.
+
+El inventario SHA-256 anterior a editar está en `/tmp/task12-admin-controls-density-baseline.json`. La comparación final está en `preservation.json` de la evidencia. Se conservan los cambios anteriores sin commit; solo se intervienen React/CSS del administrador, pruebas, una consulta del ayudante y documentación de esta entrega. Sin backend, Flutter, API, contratos/tipos, datos académicos, Task 13/14, homelab ni demo r4. Sin operaciones reales de suspensión, desactivación o plan, migraciones, cargas, Docker, commit, push, merge o deploy. El bloque se detiene para aceptación humana.

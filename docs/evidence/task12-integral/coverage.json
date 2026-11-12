@@ -1,0 +1,1309 @@
+[
+  {
+    "id": "W01",
+    "pantalla": "Iniciar sesión",
+    "rol_plataforma": "Todos / React",
+    "componentes": "C01 C05 C06 C07",
+    "automatico_relacionado": "R-acceso",
+    "estado": "Conservada y verificada porque ya cumple el sistema",
+    "evidencias": [
+      "web/access-1440-final.png"
+    ],
+    "alcance_y_pendiente": "Acceso real sin credenciales en captura; autenticación y errores en pruebas. No se alteró su contrato.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W02",
+    "pantalla": "Registro conductor y modo demo",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C05 C07 C14",
+    "automatico_relacionado": "R-acceso",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "antes/07-web-registro-sin-envio-1440.png"
+    ],
+    "alcance_y_pendiente": "Componentes compartidos aplicados; falta contrastar registro completo actual. No se envió registro académico.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W03",
+    "pantalla": "Restauración, caducidad, error y cierre no confirmado",
+    "rol_plataforma": "Todos / React",
+    "componentes": "C05 C06",
+    "automatico_relacionado": "R-acceso",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Sesión, caducidad, identidad y cierre incierto cubiertos por pruebas; falta evidencia real de cada estado excepcional.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W04",
+    "pantalla": "Shell, menú compacto y cuenta lateral",
+    "rol_plataforma": "Conductor/admin; parent limitado / React",
+    "componentes": "C01 C06 C14",
+    "automatico_relacionado": "R-acceso",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/driver-w07-320.png",
+      "web/admin-directorio-final-390.png"
+    ],
+    "alcance_y_pendiente": "Shell/sidebar y menú adaptativo reales; pruebas de foco, historial y conservación de filtros. Cuenta lateral conserva su propósito web.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W05",
+    "pantalla": "Entrada de apoderado en web",
+    "rol_plataforma": "Apoderado / React",
+    "componentes": "C01 C05",
+    "automatico_relacionado": "R-acceso",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Se conserva la entrada web limitada del apoderado; verificación automatizada, sin sesión real de apoderado web en este corte.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W06",
+    "pantalla": "Privacidad y Términos, cada lector",
+    "rol_plataforma": "Todos / React",
+    "componentes": "C09 C10 C14",
+    "automatico_relacionado": "R-acceso",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/admin-privacidad-mobile-390.png",
+      "web/admin-legal-real-1440.png"
+    ],
+    "alcance_y_pendiente": "Lector compartido con scroll único, Escape y retorno. Términos conserva contenido; pruebas de ambos documentos. Zoom real pendiente transversalmente.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W07",
+    "pantalla": "Inicio",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C01 C03 C04 C05 C11",
+    "automatico_relacionado": "R-inicio",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/driver-w07-320.png",
+      "web/driver-w07-1440.png"
+    ],
+    "alcance_y_pendiente": "Inicio real a cinco anchos; próximos pasos y operación legibles. No se inició operación desde web.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W08",
+    "pantalla": "Mi servicio, resumen",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C01 C02 C04 C09 C11",
+    "automatico_relacionado": "R-servicio",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/driver-w08-320.png",
+      "web/driver-w08-1440.png"
+    ],
+    "alcance_y_pendiente": "Resumen real a cinco anchos; pestañas envuelven y mantienen identidad, documentos y estado.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W09",
+    "pantalla": "Datos del servicio",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C01 C05 C07",
+    "automatico_relacionado": "R-validación",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/driver-datos-1440.png"
+    ],
+    "alcance_y_pendiente": "Formulario inspeccionado en revisión previa; título secundario final Identidad y contacto cubierto por tests, falta nueva captura final del formulario.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W10",
+    "pantalla": "Documentos: lista, elegir, fecha, subir/reemplazar",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C03 C05 C07 C09",
+    "automatico_relacionado": "R-validación",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/driver-documentos-1440.png"
+    ],
+    "alcance_y_pendiente": "Lista y controles reales; fecha nativa compacta probada automáticamente. Subida/reemplazo completo y su confirmación visual pendientes sin escribir datos académicos.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W11",
+    "pantalla": "Descarga privada de documento propio",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C05 C06 C14",
+    "automatico_relacionado": "R-validación",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Descarga privada conservada y probada con fixtures; no se descargó contenido privado en el recorrido real.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W12",
+    "pantalla": "Revisión: requisitos, enviar y confirmar",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C04 C05 C09 C10",
+    "automatico_relacionado": "R-validación",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/driver-revision-1440.png"
+    ],
+    "alcance_y_pendiente": "Revisión e historial reales; confirmación nativa unificada. Envío final no ejecutado contra datos académicos.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W13",
+    "pantalla": "Historial de envíos y documentos enviados",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C09 C15",
+    "automatico_relacionado": "R-validación",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/driver-revision-1440.png"
+    ],
+    "alcance_y_pendiente": "Pantalla real aprobada; despliegue de todos los documentos/historial y estados de envío pendientes de contraste final.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W14",
+    "pantalla": "Publicación e intención de visibilidad",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C01 C04 C09 C13",
+    "automatico_relacionado": "R-publicación",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "antes/101-web-conductor-publicacion-1440.png"
+    ],
+    "alcance_y_pendiente": "Se preservan requisitos e intención; tests pasan. Captura actual final de todos los estados de publicación pendiente.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W15",
+    "pantalla": "Mis rutas, listado y páginas",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C03 C08 C11",
+    "automatico_relacionado": "R-publicación",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/driver-w15-320.png",
+      "web/driver-w15-1440.png"
+    ],
+    "alcance_y_pendiente": "Listado actual a cinco anchos; filas y capacidades contextualizadas. Paginación cubierta por pruebas.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W16",
+    "pantalla": "Ruta: crear/editar, tres etapas",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C07 C09 C10",
+    "automatico_relacionado": "R-publicación",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/driver-editor-ruta-320.png",
+      "web/driver-editor-ruta-1440.png"
+    ],
+    "alcance_y_pendiente": "Editor real abierto sin guardar; etapas adaptables. Falta contraste visual de etapas posteriores y confirmación; validación automática existente aprobada.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W17",
+    "pantalla": "Ruta: activar/desactivar",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C05 C06",
+    "automatico_relacionado": "R-publicación",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/driver-w15-390.png"
+    ],
+    "alcance_y_pendiente": "Acciones y guardas conservadas; activación/desactivación final no ejecutada sobre el escenario académico.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W18",
+    "pantalla": "Pasajeros, rutas/cupos, búsqueda y filtros",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C03 C08 C11",
+    "automatico_relacionado": "R-operaciones",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/driver-w18-320.png",
+      "web/driver-w18-1440.png"
+    ],
+    "alcance_y_pendiente": "Cupos y selectores reordenables, búsqueda/filtros y listado; cinco anchos reales y regresión automatizada.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W19",
+    "pantalla": "Pasajero: detalle y contacto/recogida",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C09 C10 C14",
+    "automatico_relacionado": "R-operaciones",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "antes/17-web-conductor-pasajero-detalle-1440.png"
+    ],
+    "alcance_y_pendiente": "Detalle conserva privacidad y contacto; falta captura actual después de adoptar el modal compartido.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W20",
+    "pantalla": "Asignación: crear/editar",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C07 C10",
+    "automatico_relacionado": "R-operaciones",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Formulario compartido y tests de crear/editar conservados. Falta revisión visual actual del flujo completo sin escrituras académicas.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W21",
+    "pantalla": "Asignación: finalizar",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C07 C10",
+    "automatico_relacionado": "R-operaciones",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Confirmación nativa compartida; contratos/versión probados. No se finalizó una asignación real.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W22",
+    "pantalla": "Solicitudes de contacto: bandeja por estado",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C03 C04 C08",
+    "automatico_relacionado": "R-solicitudes",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/driver-w22-320.png",
+      "web/driver-w22-1440.png"
+    ],
+    "alcance_y_pendiente": "Pendientes antes de historial y filtros preservados. Capturas anteriores al último título Solicitudes de contacto; falta repetir esa vista final.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W23",
+    "pantalla": "Contacto: lectura y aceptar/rechazar",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C09 C10 C14",
+    "automatico_relacionado": "R-solicitudes",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Lectura y decisiones mantienen consentimiento y versión. Aceptar/rechazar no se ejecutó contra API académica; tests aprobados.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W24",
+    "pantalla": "Pagos manuales, resumen/listado/filtros",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C03 C04 C08",
+    "automatico_relacionado": "R-operaciones",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/driver-w24-320.png",
+      "web/driver-w24-1440.png"
+    ],
+    "alcance_y_pendiente": "Pagos reales a cinco anchos; resumen/listado/filtros legibles y sin desbordamiento global observado.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W25",
+    "pantalla": "Pago: detalle de registro",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C04 C09 C10",
+    "automatico_relacionado": "R-operaciones",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Lectura de registro y modal común cubiertos automáticamente; falta captura actual del detalle.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W26",
+    "pantalla": "Pago: crear pendiente",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C07 C10",
+    "automatico_relacionado": "R-operaciones",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Formulario de pago y validaciones preservados; falta contraste visual final y no se creó pago académico.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W27",
+    "pantalla": "Pago: marcar pagado y anular, dos confirmaciones",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C05 C10",
+    "automatico_relacionado": "R-operaciones",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Dos confirmaciones preservadas con dialog nativo; escrituras reales omitidas por restricción de datos. Falta revisión visual completa.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W28",
+    "pantalla": "Plan y reportes: plan, sin plan y restricciones",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C01 C04 C09 C13",
+    "automatico_relacionado": "R-reportes",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/driver-w28-w31-320.png",
+      "web/driver-w28-w31-1440.png"
+    ],
+    "alcance_y_pendiente": "Reporte primero y plan completo debajo; estado Elite real. Sin plan/restricciones cubiertos por tests, sin captura real actual de cada variante.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W29",
+    "pantalla": "Beneficios/comparación de planes",
+    "rol_plataforma": "Conductor / React",
+    "componentes": "C09 C13",
+    "automatico_relacionado": "R-reportes",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/driver-w28-w31-1440-full.png"
+    ],
+    "alcance_y_pendiente": "Beneficios y capacidades existentes conservados debajo de la consulta; comparación expandida final pendiente de captura real.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W30",
+    "pantalla": "Resumen mensual",
+    "rol_plataforma": "Conductor autorizado / React",
+    "componentes": "C02 C08 C09",
+    "automatico_relacionado": "R-reportes",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/driver-reportes-1440.png",
+      "web/driver-w28-w31-390.png"
+    ],
+    "alcance_y_pendiente": "Consulta mensual prioritaria y datos reales; rango/mes/permisos cubiertos por regresión.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W31",
+    "pantalla": "Comparación mensual, cupos y registros detallados",
+    "rol_plataforma": "Conductor autorizado / React",
+    "componentes": "C08 C09 C11",
+    "automatico_relacionado": "R-reportes",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/driver-w28-w31-1440-full.png"
+    ],
+    "alcance_y_pendiente": "Comparación y desgloses existentes conservados y legibles; no se inventaron métricas. Cinco anchos en la vista principal.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "W32",
+    "pantalla": "Tres exportaciones Excel autorizadas",
+    "rol_plataforma": "Conductor autorizado / React",
+    "componentes": "C05 C06 C13",
+    "automatico_relacionado": "R-reportes",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/driver-w28-w31-1440-full.png"
+    ],
+    "alcance_y_pendiente": "Tres acciones de exportación presentes y contratos probados; descarga real de archivos no ejecutada.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A01",
+    "pantalla": "Inicio administrativo",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C01 C03 C04 C05",
+    "automatico_relacionado": "R-admin-inicio",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/admin-inicio-estable-1440.png",
+      "web/admin-inicio-estable-320.png"
+    ],
+    "alcance_y_pendiente": "Pendientes y soporte antes del resumen; estado estable real a cinco anchos. Capturas de carga previas se distinguen.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A02",
+    "pantalla": "Conductores: búsqueda, resultados y páginas",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C03 C08",
+    "automatico_relacionado": "R-admin",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/admin-directorio-final-clean-1440.png",
+      "web/admin-a02-complete-320.png"
+    ],
+    "alcance_y_pendiente": "Directorio real a cinco anchos; búsqueda y páginas conservadas en cambios de destino.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A03",
+    "pantalla": "Filtros avanzados",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C07 C08",
+    "automatico_relacionado": "R-admin",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/admin-filtros-final-1440.png",
+      "web/admin-filtros-final-390.png"
+    ],
+    "alcance_y_pendiente": "Filtros seleccionados/aplicados y cierre sin aplicar preservados; revisión real desktop/compacta y tests.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A04",
+    "pantalla": "Ficha: cabecera y Resumen",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C01 C04 C09 C15",
+    "automatico_relacionado": "R-admin",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/admin-ficha-final-1440.png"
+    ],
+    "alcance_y_pendiente": "Ficha, estado y contexto del conductor actuales; retorno al directorio preserva selección/filtros.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A05",
+    "pantalla": "Ficha: Estado",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C04 C09",
+    "automatico_relacionado": "R-admin",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/admin-estado-final-1440.png"
+    ],
+    "alcance_y_pendiente": "Lectura de estado, motivos y permisos intactos; sin cambios administrativos.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A06",
+    "pantalla": "Perfil: acción, motivo y confirmación",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C07 C10",
+    "automatico_relacionado": "R-admin",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/admin-perfil-motivo-1440.png",
+      "web/admin-perfil-confirmacion-1440.png",
+      "web/admin-perfil-confirmacion-320.png"
+    ],
+    "alcance_y_pendiente": "Motivo y confirmación reales en 1440/320; teclado abre Más acciones, Escape descarta y devuelve foco a Suspender perfil. No se confirmó el cambio académico; escritura/versiones cubiertas por tests.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A07",
+    "pantalla": "Ficha: Plan, lectura",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C04 C09 C13",
+    "automatico_relacionado": "R-admin",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/admin-plan-final-1440.png",
+      "web/admin-plan-final-320.png"
+    ],
+    "alcance_y_pendiente": "Plan y vigencia reales; lectura desktop y compacta.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A08",
+    "pantalla": "Plan: editar y confirmar asignación",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C07 C10 C13",
+    "automatico_relacionado": "R-admin",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/admin-plan-editor-final-1440.png",
+      "web/admin-plan-editor-final-320.png"
+    ],
+    "alcance_y_pendiente": "Editor real verificado sin guardar; confirmación final y variantes de conflicto solo automatizadas.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A09",
+    "pantalla": "Ficha: Validaciones/observaciones",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C03 C08 C09 C15",
+    "automatico_relacionado": "R-admin",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/admin-validaciones-ficha-final-1440.png"
+    ],
+    "alcance_y_pendiente": "Validaciones y observaciones reales; conserva colección y permisos.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A10",
+    "pantalla": "Ficha: Historial administrativo",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C08 C09 C15",
+    "automatico_relacionado": "R-admin",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/admin-historial-final-1440.png",
+      "web/admin-historial-final-320.png"
+    ],
+    "alcance_y_pendiente": "Historial actual y alcance explícito; desktop/compacto, sin reordenar criterios de backend.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A11",
+    "pantalla": "Validaciones: cola, filtros/búsqueda local",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C01 C04 C08",
+    "automatico_relacionado": "R-validación",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/admin-cola-cierre-1440.png",
+      "web/admin-a11-complete-320.png"
+    ],
+    "alcance_y_pendiente": "Envíos recientes con límite 50 explícito; pendientes vacíos y Todas reales. Búsqueda local no se presenta como global.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A12",
+    "pantalla": "Expediente: identidad, antecedentes y comparación",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C04 C09 C15",
+    "automatico_relacionado": "R-validación",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/admin-expediente-final-1440-full.png"
+    ],
+    "alcance_y_pendiente": "Expediente real aprobado; observación neutral, identidad/fecha/documentos y revisión previa preservados. Sin aprobar ni pedir cambios.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A13",
+    "pantalla": "Expediente: documentos privados",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C03 C05 C14",
+    "automatico_relacionado": "R-validación",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/admin-expediente-final-1440-full.png"
+    ],
+    "alcance_y_pendiente": "Documentos/versiones y descarga visibles; contenido privado no descargado durante recorrido real.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "A14",
+    "pantalla": "Expediente: comentario, aprobar/cambios y confirmar",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C07 C10 C15",
+    "automatico_relacionado": "R-validación",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "No hay expedientes pendientes en el escenario actual. Comentario/decisión/confirmación probados con fixtures; falta revisión visual de esos estados sin modificar el escenario.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "H01",
+    "pantalla": "Ayuda: destinos, tema/búsqueda y guía íntegra",
+    "rol_plataforma": "Conductor/admin/apoderado / React",
+    "componentes": "C01 C03 C08 C09",
+    "automatico_relacionado": "R-ayuda",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/admin-guias-final-1440.png",
+      "web/driver-ayuda-320.png"
+    ],
+    "alcance_y_pendiente": "Guías reales y navegación conservada; falta contraste final de artículo íntegro React y todos los roles.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "H02",
+    "pantalla": "Mis solicitudes de soporte: bandeja/filtros/páginas",
+    "rol_plataforma": "Conductor/apoderado / React",
+    "componentes": "C03 C04 C08",
+    "automatico_relacionado": "R-ayuda",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/driver-soporte-320.png"
+    ],
+    "alcance_y_pendiente": "Bandeja y filtros reales en revisión previa; vocabulario final Consultas cubierto por tests, nueva sesión visual conductor pendiente.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "H03",
+    "pantalla": "Crear solicitud de soporte",
+    "rol_plataforma": "Conductor/apoderado / React",
+    "componentes": "C07 C10 C14",
+    "automatico_relacionado": "R-ayuda",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/driver-consulta-nueva-final-320.png",
+      "web/driver-borrador-restaurado-390.png"
+    ],
+    "alcance_y_pendiente": "Formulario y borrador reales; última etiqueta Enviar consulta todavía sin nueva captura conductor. No se envió consulta académica.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "H04",
+    "pantalla": "Caso propio: historial y responder",
+    "rol_plataforma": "Conductor/apoderado / React",
+    "componentes": "C05 C09 C14 C15",
+    "automatico_relacionado": "R-ayuda",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Caso propio y respuesta cubiertos por tests de privacidad/versión; falta captura final del caso propio React.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "H05",
+    "pantalla": "Asistente existente y guía de origen",
+    "rol_plataforma": "Conductor/apoderado / React",
+    "componentes": "C05 C09 C13 C14",
+    "automatico_relacionado": "R-ayuda",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Capacidades reales y derivación conservadas; no se simuló como disponible una función ausente del rol. Falta recorrido visual actual del asistente.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "H06",
+    "pantalla": "Panel soporte administrativo: cola y resumen",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C03 C04 C08",
+    "automatico_relacionado": "R-ayuda",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "web/admin-soporte-vocabulario-final-1440.png"
+    ],
+    "alcance_y_pendiente": "Cola actual con Consultas, prioridades y alcance de página; consultas GET, cero escrituras.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "H07",
+    "pantalla": "Soporte admin: detalle, respuesta y cambio de estado",
+    "rol_plataforma": "Admin / React",
+    "componentes": "C07 C10 C14 C15",
+    "automatico_relacionado": "R-ayuda",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/admin-caso-vocabulario-final-320.png",
+      "web/admin-caso-vocabulario-final-1440.png"
+    ],
+    "alcance_y_pendiente": "Caso y formulario actuales legibles y auditados; respuesta/cambio final sin ejecutar. Validaciones y versión probadas.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "M01",
+    "pantalla": "Iniciar sesión",
+    "rol_plataforma": "Ambos / Flutter",
+    "componentes": "C01 C05 C07",
+    "automatico_relacionado": "F-sesión / F-visual",
+    "estado": "Conservada y verificada porque ya cumple el sistema",
+    "evidencias": [
+      "antes/46-android-acceso-1080.png"
+    ],
+    "alcance_y_pendiente": "Autenticación real completada por el usuario; sesión restaurada tras instalación -r sin limpiar datos. No se capturaron contraseñas.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "M02",
+    "pantalla": "Registro de familia y demo",
+    "rol_plataforma": "Apoderado / Flutter",
+    "componentes": "C05 C07 C14",
+    "automatico_relacionado": "F-sesión / F-visual",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Registro existente adopta componentes comunes y conserva validaciones; falta captura física del formulario completo actual.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "M03",
+    "pantalla": "Restauración, sesión expirada y cierre no confirmado",
+    "rol_plataforma": "Ambos / Flutter",
+    "componentes": "C05",
+    "automatico_relacionado": "F-sesión / F-visual",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Restauración física observada. Caducidad y cierre incierto probados automáticamente; falta su evidencia visual física.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "M04",
+    "pantalla": "Cuenta admin no disponible en móvil",
+    "rol_plataforma": "Admin / Flutter",
+    "componentes": "C01 C05 C06",
+    "automatico_relacionado": "F-sesión / F-visual",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Aislamiento de rol admin móvil conservado y probado; falta captura física de cuenta no compatible.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "M05",
+    "pantalla": "Configuración inválida al arrancar",
+    "rol_plataforma": "Todos / Flutter excepcional",
+    "componentes": "C01 C05",
+    "automatico_relacionado": "Sin caso específico validado",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Error de configuración aplica furgoTheme y detalle técnico desplegable; análisis aprobado, falta captura de arranque inválido.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "M06",
+    "pantalla": "Privacidad y Términos, cada lector",
+    "rol_plataforma": "Ambos / Flutter",
+    "componentes": "C09 C10 C14",
+    "automatico_relacionado": "F-legal",
+    "estado": "Conservada y verificada porque ya cumple el sistema",
+    "evidencias": [
+      "android/android-parent-privacidad.png",
+      "android/android-parent-privacidad-lectura.png",
+      "android/android-parent-terminos.png"
+    ],
+    "alcance_y_pendiente": "Ambos lectores abiertos físicamente; contenido y scroll conservados. Pruebas/previews complementarios. Lectura asistida hablada pendiente transversalmente.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "D01",
+    "pantalla": "Hoy, resumen/fecha/recorrido y acción iniciar",
+    "rol_plataforma": "Conductor / Flutter",
+    "componentes": "C01 C02 C04 C05 C11",
+    "automatico_relacionado": "F-conductor / F-integral",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "android/android-driver-hoy-final.png"
+    ],
+    "alcance_y_pendiente": "Hoy real con ruta/fecha/cupos y CTA. Inicio efectivo no ejecutado para no cambiar servicios académicos.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "D02",
+    "pantalla": "Seleccionar otros recorridos",
+    "rol_plataforma": "Conductor / Flutter",
+    "componentes": "C03 C04",
+    "automatico_relacionado": "F-conductor / F-integral",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "android/android-driver-hoy-final.png"
+    ],
+    "alcance_y_pendiente": "Selector y preservación probados; escenario real ofrece un recorrido y falta contraste físico de selección múltiple.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "D03",
+    "pantalla": "Información del recorrido",
+    "rol_plataforma": "Conductor / Flutter",
+    "componentes": "C02 C09 C11",
+    "automatico_relacionado": "F-conductor / F-integral",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-driver-recorrido-final.png"
+    ],
+    "alcance_y_pendiente": "Información del recorrido real, AppBar corto y detalle completo; contexto y cupos preservados.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "D04",
+    "pantalla": "Pasajeros, buscar y páginas de diez",
+    "rol_plataforma": "Conductor / Flutter",
+    "componentes": "C03 C07 C08 C11",
+    "automatico_relacionado": "F-conductor / F-integral",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-driver-pasajeros-final.png"
+    ],
+    "alcance_y_pendiente": "Lista real sin datos reales de menores; búsqueda/páginas de diez y fuente ampliada cubiertas por tests.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "D05",
+    "pantalla": "Pasajero: recogida y contacto desplegable",
+    "rol_plataforma": "Conductor / Flutter",
+    "componentes": "C09 C14",
+    "automatico_relacionado": "F-conductor / F-integral",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-driver-pasajero-expandido.png",
+      "android/android-driver-cuenta-retorno-pasajeros.png"
+    ],
+    "alcance_y_pendiente": "Recogida/contacto desplegados físicamente; Cuenta regresa conservando expansión, sin abrir llamadas ni mapas externos.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "D06",
+    "pantalla": "Finalizar recorrido y confirmación",
+    "rol_plataforma": "Conductor / Flutter",
+    "componentes": "C05 C10",
+    "automatico_relacionado": "F-conductor / F-integral",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Confirmación y recuperación cubiertas por tests. No se finalizó un recorrido académico ni se capturó su confirmación física actual.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "D07",
+    "pantalla": "Servicios anteriores pendientes y recuperación",
+    "rol_plataforma": "Conductor / Flutter",
+    "componentes": "C03 C04 C10",
+    "automatico_relacionado": "F-conductor / F-integral",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [],
+    "alcance_y_pendiente": "Recuperación existente mantiene estados y resultados inciertos; pruebas aprobadas, sin escenario físico pendiente disponible.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "D08",
+    "pantalla": "Abrir destino en mapas externo y volver",
+    "rol_plataforma": "Conductor / Flutter",
+    "componentes": "C05 C06 C14",
+    "automatico_relacionado": "F-conductor / F-integral",
+    "estado": "Conservada y verificada porque ya cumple el sistema",
+    "evidencias": [
+      "android/android-driver-recorrido-final.png"
+    ],
+    "alcance_y_pendiente": "En demo se deshabilita Mapas y se explica ubicación ficticia. Salida externa no ejecutada; contrato/retorno cubiertos por pruebas.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "D09",
+    "pantalla": "Mi plan, beneficios y Detalles",
+    "rol_plataforma": "Conductor / Flutter",
+    "componentes": "C04 C09 C13",
+    "automatico_relacionado": "F-conductor / F-integral",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-driver-plan-cabecera-corregida.png",
+      "android/android-driver-beneficios-apk-final.png"
+    ],
+    "alcance_y_pendiente": "Mi plan conserva capacidades reales y beneficios; Elite real. Sin inventar reportes móviles, variantes adicionales en tests/previews.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "D10",
+    "pantalla": "Cuenta y shell Hoy/Mi plan/Ayuda",
+    "rol_plataforma": "Conductor / Flutter",
+    "componentes": "C01 C06 C14",
+    "automatico_relacionado": "F-conductor / F-integral",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-driver-plan-cabecera-corregida.png",
+      "android/android-driver-ayuda-cabecera-corregida.png",
+      "android/android-driver-hoy-retorna-pasajeros.png",
+      "android/android-driver-cuenta-cierre.png",
+      "android/android-driver-borrador-regreso-cuenta.png"
+    ],
+    "alcance_y_pendiente": "APK final: cabecera del destino visible, Android Atrás en Ayuda conserva Pasajeros en Hoy, Cuenta sin acción duplicada y borrador retenido entre los tres destinos y Cuenta. Regresión automatizada específica aprobada.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "P01",
+    "pantalla": "Buscar/resultados/selección hasta tres",
+    "rol_plataforma": "Apoderado / Flutter",
+    "componentes": "C03 C08 C11 C12",
+    "automatico_relacionado": "F-familia / F-compartidos",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-parent-buscar-final.png"
+    ],
+    "alcance_y_pendiente": "Tres alternativas reales; identidad/cobertura/horario/fecha/cupos/reseñas antes de acciones. Tests de selección y estados.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "P02",
+    "pantalla": "Filtrar por comuna",
+    "rol_plataforma": "Apoderado / Flutter",
+    "componentes": "C07 C08",
+    "automatico_relacionado": "F-familia / F-compartidos",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-parent-comuna-contexto-final.png",
+      "android/android-parent-comuna-limpiar-borrador.png",
+      "android/android-parent-comuna-atras-conserva.png"
+    ],
+    "alcance_y_pendiente": "Filtro contextual físico: seleccionado/aplicado, Buscar, limpiar borrador y Atrás sin aplicar; selección y resultados conservados.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "P03",
+    "pantalla": "Comparar dos/tres servicios",
+    "rol_plataforma": "Apoderado / Flutter",
+    "componentes": "C09 C11 C12",
+    "automatico_relacionado": "F-familia / F-compartidos",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-parent-comparar-2-final.png",
+      "android/android-parent-comparar-3-final.png",
+      "android/android-parent-comparar-fuente200.png"
+    ],
+    "alcance_y_pendiente": "Dos/tres reales; hechos antes de acciones, identidad por atributo, fechas/ruta, Ver/Quitar presentes; Cuenta y regreso conservan comparación. Texto 200% físico y casos extremos automatizados.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "P04",
+    "pantalla": "Servicio, identidad y acción de contacto",
+    "rol_plataforma": "Apoderado / Flutter",
+    "componentes": "C02 C04 C12 C14",
+    "automatico_relacionado": "F-familia / F-compartidos",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-parent-detalle-final.png"
+    ],
+    "alcance_y_pendiente": "Identidad y acción real, datos de ruta/fecha/cupos visibles y regreso a comparación observado.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "P05",
+    "pantalla": "Servicio: cobertura/horario y Acerca del servicio",
+    "rol_plataforma": "Apoderado / Flutter",
+    "componentes": "C09 C12",
+    "automatico_relacionado": "F-familia / F-compartidos",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-parent-cobertura-expandida.png",
+      "android/android-parent-acerca-expandida.png"
+    ],
+    "alcance_y_pendiente": "Cobertura, horario, ruta/fecha/cupos y descripción desplegados físicamente con APK final, sin pérdida de contexto.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "P06",
+    "pantalla": "Servicio: significado de validado y reseñas",
+    "rol_plataforma": "Apoderado / Flutter",
+    "componentes": "C04 C09 C12",
+    "automatico_relacionado": "F-familia / F-compartidos",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-parent-alcance-validacion.png"
+    ],
+    "alcance_y_pendiente": "Alcance interno desplegado físicamente y reseñas vacías claras. Reseñas con datos cubiertas por pruebas, sin fabricar opiniones.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "P07",
+    "pantalla": "Solicitar contacto, consentimiento y enviar",
+    "rol_plataforma": "Apoderado / Flutter",
+    "componentes": "C05 C07 C14",
+    "automatico_relacionado": "F-familia / F-compartidos",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "android/android-parent-contacto-consentimiento.png",
+      "android/android-parent-contacto-teclado.png",
+      "android/android-parent-contacto-fuente200-acciones.png"
+    ],
+    "alcance_y_pendiente": "Destinatario/correo/consentimiento y no reserva físicos; teclado y borrador entre destinos. Envío real y resultado incierto solo automatizados para preservar datos.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "P08",
+    "pantalla": "Solicitudes de contacto: lista y anteriores",
+    "rol_plataforma": "Apoderado / Flutter",
+    "componentes": "C03 C04 C08",
+    "automatico_relacionado": "F-familia / F-compartidos",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-parent-solicitudes-final.png",
+      "android/android-parent-solicitudes-historial.png"
+    ],
+    "alcance_y_pendiente": "Pendiente antes del historial; cuatro registros con pendiente/cancelada/rechazada/aceptada reales. Revelado de anteriores conservado y probado.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "P09",
+    "pantalla": "Solicitud: detalle, mensaje y correo aceptado",
+    "rol_plataforma": "Apoderado / Flutter",
+    "componentes": "C04 C09 C14",
+    "automatico_relacionado": "F-familia / F-compartidos",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-parent-solicitud-pendiente.png",
+      "android/android-parent-solicitud-aceptada.png"
+    ],
+    "alcance_y_pendiente": "Detalles reales; correo solo aceptada, no reserva y mensaje desplegable conservados. No se abrió aplicación externa de correo.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "P10",
+    "pantalla": "Cancelar solicitud pendiente",
+    "rol_plataforma": "Apoderado / Flutter",
+    "componentes": "C05 C10",
+    "automatico_relacionado": "F-familia / F-compartidos",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "android/android-parent-cancelar-confirmacion.png",
+      "android/android-parent-cancelacion-descartada.png"
+    ],
+    "alcance_y_pendiente": "Confirmación física con consecuencias; Mantener solicitud conserva Pendiente. Cancelación final deliberadamente no ejecutada; API/versiones cubiertas por tests.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "P11",
+    "pantalla": "Cuenta/editar nombre y shell",
+    "rol_plataforma": "Apoderado / Flutter",
+    "componentes": "C01 C07 C14",
+    "automatico_relacionado": "F-familia / F-compartidos",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "android/android-parent-cuenta-cierre.png",
+      "android/android-parent-cuenta-retorna-comparacion.png",
+      "android/android-parent-editar-nombre.png"
+    ],
+    "alcance_y_pendiente": "Cuenta y editor de nombre físicos con APK final, regreso al contexto y duplicado eliminado. Guardar nombre se probó automáticamente sin modificar el perfil académico.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "F01",
+    "pantalla": "Portada de Ayuda",
+    "rol_plataforma": "Ambos / Flutter",
+    "componentes": "C01 C03 C13",
+    "automatico_relacionado": "F-ayuda / F-integral",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-parent-ayuda-regreso-corregido.png"
+    ],
+    "alcance_y_pendiente": "Ayuda nativa actual, tres destinos conservados y sin regreso duplicado. Conductor comparte PlanHelpScreen.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "F02",
+    "pantalla": "Guías: búsqueda/tema/resultados",
+    "rol_plataforma": "Ambos / Flutter",
+    "componentes": "C03 C07 C08",
+    "automatico_relacionado": "F-ayuda / F-integral",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-parent-guias.png"
+    ],
+    "alcance_y_pendiente": "Temas/resultados reales y búsqueda local conservada; texto largo y filtro cubiertos por pruebas.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "F03",
+    "pantalla": "Artículo íntegro y regreso",
+    "rol_plataforma": "Ambos / Flutter",
+    "componentes": "C01 C09",
+    "automatico_relacionado": "F-ayuda / F-integral",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-parent-guia-articulo.png"
+    ],
+    "alcance_y_pendiente": "Artículo real íntegro y Android Atrás a la lista observado, Cuenta regresa a contexto.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "F04",
+    "pantalla": "Mis solicitudes de soporte, páginas",
+    "rol_plataforma": "Ambos / Flutter",
+    "componentes": "C03 C04 C08",
+    "automatico_relacionado": "F-ayuda / F-integral",
+    "estado": "Migrada y verificada",
+    "evidencias": [
+      "android/android-parent-soporte-corregido.png"
+    ],
+    "alcance_y_pendiente": "Consultas y 1 consulta coherentes; caso existente real, páginas/roles cubiertos por tests.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "F05",
+    "pantalla": "Crear solicitud, gravedad y privacidad",
+    "rol_plataforma": "Ambos / Flutter",
+    "componentes": "C05 C07 C14",
+    "automatico_relacionado": "F-ayuda / F-integral",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "android/android-parent-soporte-formulario-corregido.png"
+    ],
+    "alcance_y_pendiente": "Título específico, gravedad y privacidad actuales físicos. Envío final y resultado incierto solo fixtures, sin escritura académica.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "F06",
+    "pantalla": "Caso de soporte, eventos y responder",
+    "rol_plataforma": "Ambos / Flutter",
+    "componentes": "C04 C09 C14 C15",
+    "automatico_relacionado": "F-ayuda / F-integral",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "android/android-parent-soporte-detalle.png",
+      "android/android-driver-soporte-caso-cierre.png",
+      "android/android-driver-soporte-fuente200.png"
+    ],
+    "alcance_y_pendiente": "Respuesta más reciente primero, metadatos y estados reales. Conductor actual con fuente ampliada; respuesta final no enviada.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "F07",
+    "pantalla": "Asistente existente, contexto y derivación",
+    "rol_plataforma": "Ambos según permiso / Flutter",
+    "componentes": "C05 C09 C13 C14",
+    "automatico_relacionado": "F-ayuda / F-integral",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "android/android-driver-asistente-lectura.png"
+    ],
+    "alcance_y_pendiente": "Entrada real del asistente conductor, capacidades y opción de contexto visibles; no se enviaron preguntas ni se solicitó derivación. Respuesta/guía de origen probadas con fixtures, contraste físico de esa etapa pendiente.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "S01",
+    "pantalla": "Carga inicial/actualización",
+    "rol_plataforma": "Todos / ambas",
+    "componentes": "C05",
+    "automatico_relacionado": "Regresión React + motor Flutter; alcance por consumidor pendiente",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/admin-a01-complete-320.png"
+    ],
+    "alcance_y_pendiente": "Carga inicial real visible en incrementos; falta contrastar todos los estados de actualización por rol. No se toman capturas de carga como estado estable.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "S02",
+    "pantalla": "Vacío real/sin coincidencias",
+    "rol_plataforma": "Todos / ambas",
+    "componentes": "C03 C05 C08",
+    "automatico_relacionado": "Regresión React + motor Flutter; alcance por consumidor pendiente",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/admin-a11-complete-320.png",
+      "sinteticas/apoderado-buscar-vacio-390.png"
+    ],
+    "alcance_y_pendiente": "Cola admin vacía real y estados vacíos familiares sintéticos actuales; falta contraste real de cada colección vacía.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "S03",
+    "pantalla": "Error de lectura y recuperación parcial",
+    "rol_plataforma": "Todos / ambas",
+    "componentes": "C05",
+    "automatico_relacionado": "Regresión React + motor Flutter; alcance por consumidor pendiente",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "sinteticas/apoderado-error-390.png"
+    ],
+    "alcance_y_pendiente": "Recuperación de conectividad física diagnosticada; errores parciales y reintentos automatizados. No se interrumpió infraestructura para fabricar errores.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "S04",
+    "pantalla": "Campos inválidos/texto largo",
+    "rol_plataforma": "Todos / ambas",
+    "componentes": "C07",
+    "automatico_relacionado": "Regresión React + motor Flutter; alcance por consumidor pendiente",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "android/android-parent-comparar-fuente200.png",
+      "sinteticas/conductor-formulario-320x844-text-200.png"
+    ],
+    "alcance_y_pendiente": "Nombres y texto 200% físicos, validación de campos y longitudes en tests. Falta revisar todas las combinaciones de formularios y contenido extremo.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "S05",
+    "pantalla": "Confirmación/cancelación/ocupado",
+    "rol_plataforma": "Todos que escriben / ambas",
+    "componentes": "C06 C10",
+    "automatico_relacionado": "Regresión React + motor Flutter; alcance por consumidor pendiente",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "android/android-parent-cancelar-confirmacion.png",
+      "web/admin-perfil-confirmacion-320.png"
+    ],
+    "alcance_y_pendiente": "Confirmación/cancelación familiar físicas y modales administrativos reales; ocupados y confirmaciones de escritura cubiertos con fixtures.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "S06",
+    "pantalla": "Conflicto/resultado incierto",
+    "rol_plataforma": "Operaciones/soporte/contacto / ambas",
+    "componentes": "C05 C10",
+    "automatico_relacionado": "Regresión React + motor Flutter; alcance por consumidor pendiente",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "checks/t12-integral-flutter-visible-destination-final.log",
+      "checks/t12-integral-react-verified-final.log"
+    ],
+    "alcance_y_pendiente": "Conflictos, concurrencia y resultado incierto mantienen guardas y recuperación; pruebas aprobadas, sin forzar cambios académicos para fotografiarlos.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "S07",
+    "pantalla": "Estado o permiso desconocido/revocado",
+    "rol_plataforma": "Todos / ambas",
+    "componentes": "C04 C05 C13",
+    "automatico_relacionado": "Regresión React + motor Flutter; alcance por consumidor pendiente",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "checks/t12-integral-react-verified-final.log"
+    ],
+    "alcance_y_pendiente": "Roles, permisos, desconocidos y revocación probados; falta evidencia visual actual de todas las variantes por plataforma.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "S08",
+    "pantalla": "Sesión y cambio de identidad/rol",
+    "rol_plataforma": "Todos / ambas",
+    "componentes": "C05 C14",
+    "automatico_relacionado": "Regresión React + motor Flutter; alcance por consumidor pendiente",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "diagnostics/android/a54-identity.json",
+      "diagnostics/android/apk-source-transition.json"
+    ],
+    "alcance_y_pendiente": "Autenticación/restauración físicas y aislamiento de identidad en tests. Falta contraste físico de caducidad y cambio de rol en APK final.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "S09",
+    "pantalla": "Regreso, capas, teclado y lector",
+    "rol_plataforma": "Todos / ambas",
+    "componentes": "C01 C10 C14",
+    "automatico_relacionado": "Regresión React + motor Flutter; alcance por consumidor pendiente",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "android/android-parent-contacto-teclado.png",
+      "android/android-driver-borrador-regreso-cuenta.png",
+      "web/admin-perfil-confirmacion-320.png"
+    ],
+    "alcance_y_pendiente": "Android Atrás, Cuenta, borradores, teclado y lector legal revisados en recorridos descritos. Lectura hablada con TalkBack pendiente; XML no la sustituye.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "S10",
+    "pantalla": "Responsive, orientación, texto ampliado",
+    "rol_plataforma": "Todos / ambas",
+    "componentes": "Todos aplicables",
+    "automatico_relacionado": "Regresión React + motor Flutter; alcance por consumidor pendiente",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "android/android-driver-soporte-horizontal200.png",
+      "android/android-parent-comparar-fuente200.png",
+      "web/admin-directorio-text200-390.png"
+    ],
+    "alcance_y_pendiente": "Cinco anchos React; texto CSS 200% (no zoom de navegador), fuente Android 2.0 y horizontal físicos. Zoom real web y barrido de orientación de todas las vistas pendientes.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "S11",
+    "pantalla": "Demo, datos sintéticos y permisos externos",
+    "rol_plataforma": "Todos / ambas",
+    "componentes": "C05 C14",
+    "automatico_relacionado": "Regresión React + motor Flutter; alcance por consumidor pendiente",
+    "estado": "Conservada y verificada porque ya cumple el sistema",
+    "evidencias": [
+      "android/android-driver-recorrido-apk-final.png",
+      "android/android-parent-buscar-final.png",
+      "web/admin-inicio-estable-1440.png"
+    ],
+    "alcance_y_pendiente": "Avisos académicos y permisos externos preservados. Mapas ficticios deshabilitados físicamente; no se modificaron datos, permisos ni infraestructura.",
+    "revision_humana": "No realizada"
+  },
+  {
+    "id": "S12",
+    "pantalla": "Éxito, avisos y anuncios accesibles",
+    "rol_plataforma": "Todos / ambas",
+    "componentes": "C05",
+    "automatico_relacionado": "Regresión React + motor Flutter; alcance por consumidor pendiente",
+    "estado": "Implementada con validación visual pendiente",
+    "evidencias": [
+      "web/admin-expediente-final-1440-full.png"
+    ],
+    "alcance_y_pendiente": "Estados textuales y avisos neutrales corregidos; éxitos/anuncios automatizados. Falta comprobación hablada de anuncios y éxito real sin escribir datos académicos.",
+    "revision_humana": "No realizada"
+  }
+]

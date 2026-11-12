@@ -1,0 +1,63 @@
+{
+  "name": "06-web-acceso-error-1440",
+  "role": "publico",
+  "screen": "S04 Acceso vacío: validación local",
+  "at": "2026-10-31T09:39:18.777Z",
+  "platform": "Fedora Chromium real React + academic API",
+  "browser": "156.0.8078.4",
+  "origin": "http://127.0.0.1:15174",
+  "geometry": {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "scrollWidth": 1440,
+    "scrollHeight": 1000,
+    "activeElement": {
+      "tag": "INPUT",
+      "role": null
+    },
+    "headings": [
+      "Inicia sesión"
+    ]
+  },
+  "blocked": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    }
+  ],
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "W01",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/06-web-acceso-error-1440.png",
+      "sha256": "cf81ba3000b8493ff04b32ec581fbbb7bfa73a6789f33a75462e6e387848c859",
+      "pixels": [
+        1440,
+        1000
+      ]
+    }
+  ]
+}

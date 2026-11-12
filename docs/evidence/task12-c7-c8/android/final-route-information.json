@@ -1,0 +1,120 @@
+{
+  "at": "2026-10-31T21:58:39.002808+00:00",
+  "package": "com.example.furgoplus.task12",
+  "apkSha256": "ecf88f06d3846d97196518051cb86169d6fdaa69231d59e3d34d877ae01b6ed1",
+  "model": "Samsung SM-A546E",
+  "screen": "Consumidor Flutter · información del recorrido en APK final",
+  "fontScale": "1.1",
+  "realDevice": true,
+  "humanApproval": false,
+  "ui": [
+    {
+      "text": "",
+      "label": "Volver a Hoy",
+      "clickable": "true",
+      "bounds": "[11,107][146,242]"
+    },
+    {
+      "text": "",
+      "label": "Tu recorrido",
+      "clickable": "false",
+      "bounds": "[203,140][503,210]"
+    },
+    {
+      "text": "",
+      "label": "Cuenta",
+      "clickable": "true",
+      "bounds": "[945,107][1080,242]"
+    },
+    {
+      "text": "",
+      "label": "Ruta ficticia T12 elite",
+      "clickable": "false",
+      "bounds": "[203,334][979,418]"
+    },
+    {
+      "text": "",
+      "label": "07:00–08:00",
+      "clickable": "false",
+      "bounds": "[101,452][416,522]"
+    },
+    {
+      "text": "",
+      "label": "31-10-2026",
+      "clickable": "false",
+      "bounds": "[461,452][715,522]"
+    },
+    {
+      "text": "",
+      "label": "Destino",
+      "clickable": "false",
+      "bounds": "[197,679][354,741]"
+    },
+    {
+      "text": "",
+      "label": "Escuela ficticia T12",
+      "clickable": "false",
+      "bounds": "[197,741][684,820]"
+    },
+    {
+      "text": "",
+      "label": "Parada sintética T12 sin domicilio real",
+      "clickable": "false",
+      "bounds": "[197,820][979,944]"
+    },
+    {
+      "text": "",
+      "label": "Abrir en mapas",
+      "clickable": "false",
+      "bounds": "[101,966][979,1101]"
+    },
+    {
+      "text": "",
+      "label": "Ubicación ficticia. Mapas no está disponible para datos de ensayo.",
+      "clickable": "false",
+      "bounds": "[101,1135][979,1436]"
+    },
+    {
+      "text": "",
+      "label": "Estado",
+      "clickable": "false",
+      "bounds": "[101,1622][244,1684]"
+    },
+    {
+      "text": "",
+      "label": "Planificada",
+      "clickable": "false",
+      "bounds": "[101,1695][353,1765]"
+    },
+    {
+      "text": "",
+      "label": "Capacidad: 3 ocupados · 1 disponible · 4 total",
+      "clickable": "false",
+      "bounds": "[101,1793][979,1894]"
+    },
+    {
+      "text": "",
+      "label": "Consultar pasajeros",
+      "clickable": "true",
+      "bounds": "[101,1928][979,2063]"
+    },
+    {
+      "text": "",
+      "label": "Hoy\nTab 1 of 3",
+      "clickable": "true",
+      "bounds": "[0,2081][360,2298]"
+    },
+    {
+      "text": "",
+      "label": "Mi plan\nTab 2 of 3",
+      "clickable": "true",
+      "bounds": "[360,2081][720,2298]"
+    },
+    {
+      "text": "",
+      "label": "Ayuda\nTab 3 of 3",
+      "clickable": "true",
+      "bounds": "[720,2081][1080,2298]"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "installedApkSha256": "22f795cef084bac1653b1e711397378247f27db4f2468409327d55897241c0a8",
+  "hasExpectedApiLiteral": true,
+  "hasEmulatorApiLiteral": false,
+  "checkedEntries": [
+    "assets/flutter_assets/kernel_blob.bin"
+  ],
+  "mode": "read-only APK inspection, no install, no build, no credentials"
+}

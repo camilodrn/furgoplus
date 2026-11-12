@@ -516,3 +516,97 @@ class ContactRequest(models.Model):
             models.Index(fields=["parent", "status"]),
             models.Index(fields=["driver", "status"]),
         ]
+
+
+class SupportTicket(models.Model):
+    class State(models.TextChoices):
+        OPEN = "open", "Abierta"
+        IN_PROGRESS = "in_progress", "En revisión"
+        WAITING_USER = "waiting_user", "Esperando tu respuesta"
+        RESOLVED = "resolved", "Resuelta"
+        CLOSED = "closed", "Cerrada"
+
+    class Severity(models.IntegerChoices):
+        CRITICAL = 1, "Crítica / seguridad"
+        HIGH = 2, "Alta"
+        NORMAL = 3, "Normal"
+        LOW = 4, "Baja"
+
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    subject = models.CharField(max_length=120)
+    severity = models.PositiveSmallIntegerField(choices=Severity.choices)
+    state = models.CharField(max_length=12, choices=State.choices, default=State.OPEN)
+    priority_at_creation = models.CharField(max_length=9)
+    version = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        permissions = [("manage_support", "Manage support queue and responses")]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(severity__in=[1, 2, 3, 4]), name="support_severity_valid"
+            ),
+            models.CheckConstraint(
+                condition=Q(
+                    state__in=[
+                        "open",
+                        "in_progress",
+                        "waiting_user",
+                        "resolved",
+                        "closed",
+                    ]
+                ),
+                name="support_state_valid",
+            ),
+            models.CheckConstraint(
+                condition=Q(
+                    priority_at_creation__in=["standard", "preferred", "priority"]
+                ),
+                name="support_priority_valid",
+            ),
+            models.CheckConstraint(
+                condition=Q(version__gte=1), name="support_version_positive"
+            ),
+        ]
+        indexes = [
+            models.Index(fields=["owner", "-updated_at"]),
+            models.Index(fields=["state", "severity", "created_at"]),
+        ]
+
+
+class SupportEvent(models.Model):
+    ticket = models.ForeignKey(
+        SupportTicket, on_delete=models.PROTECT, related_name="events"
+    )
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    author_role = models.CharField(max_length=6)
+    body = models.CharField(max_length=2000, blank=True)
+    from_state = models.CharField(max_length=12, blank=True)
+    to_state = models.CharField(max_length=12)
+    reason = models.CharField(max_length=300, blank=True)
+    occurred_at = models.DateTimeField(default=timezone.now)
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            raise ValidationError("Support history is append-only")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("Support history is retained")
+
+
+class SupportUsage(models.Model):
+    """One bounded counter per user/action; no assistant question transcripts."""
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    action = models.CharField(max_length=16)
+    window_started_at = models.DateTimeField()
+    attempts = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "action"], name="support_usage_user_action"
+            )
+        ]

@@ -1,0 +1,26 @@
+{
+  "at": "2026-10-31T16:18:54.878917+00:00",
+  "model": "SM-A546E",
+  "android": "16",
+  "sdk": "36",
+  "resolution": "Physical size: 1080x2340",
+  "density": "Physical density: 450",
+  "package": "com.example.furgoplus.task12",
+  "installed": true,
+  "version": [
+    "versionCode=1 minSdk=24 targetSdk=36",
+    "versionName=0.1.0"
+  ],
+  "reverseMappings": [
+    [
+      "tcp:18082",
+      "tcp:18082"
+    ],
+    []
+  ],
+  "installedApkSha256": [
+    "b957d8a625b8a538cae8c83f801063d62693e5356d41ea70c1c0eb11205956da"
+  ],
+  "candidateApkSha256": "b957d8a625b8a538cae8c83f801063d62693e5356d41ea70c1c0eb11205956da",
+  "serialIncluded": false
+}

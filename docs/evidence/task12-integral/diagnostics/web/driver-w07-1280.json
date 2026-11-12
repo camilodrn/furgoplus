@@ -1,0 +1,23 @@
+{
+  "width": 1280,
+  "scrollWidth": 1265,
+  "focus": "InicioMi servicioDatos del servicioActualiza el nombre, la descripción y el correo de contacto.Entorno de demostración: ",
+  "headings": [
+    "Inicio",
+    "Hola, Conductor ficticio Elite T12",
+    "Tu servicio está visible",
+    "Pendientes",
+    "Solicitudes",
+    "Pagos",
+    "Tu operación",
+    "Rutas",
+    "Pasajeros",
+    "Datos y documentos",
+    "Revisión del equipo",
+    "Plan vigente",
+    "Ruta y publicación",
+    "Rutas y cupos",
+    "Ruta ficticia T12 elite"
+  ],
+  "overflow": []
+}

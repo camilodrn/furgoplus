@@ -1,0 +1,1089 @@
+/* A · Panel operativo + B rows; shared task geometry for every role. */
+:root {
+  --operational-radius: var(--surface-radius);
+  --operational-width: var(--content-width);
+  --operational-title: var(--page-title);
+}
+.workspace-shell .workspace.home-workspace {
+  max-width: var(--operational-width);
+  font-size: 1rem;
+}
+.home-workspace > div > h1 {
+  font-size: var(--operational-title);
+  line-height: 1.2;
+  margin-bottom: var(--space-3);
+}
+.driver-home {
+  display: grid;
+  gap: var(--space-6);
+  min-width: 0;
+  font-size: 1rem;
+}
+.driver-home .publication-heading {
+  margin: 0;
+}
+.driver-home .publication-heading h2 {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 0;
+}
+.driver-home .button {
+  font-size: 1rem;
+  border-radius: var(--operational-radius);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.driver-home :is(h2, h3, p, li, summary) {
+  overflow-wrap: anywhere;
+}
+.home-visibility {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+  padding-block: var(--space-4);
+  border-block: 1px solid var(--border);
+}
+.home-visibility > div {
+  flex: 1 1 24rem;
+  min-width: 0;
+}
+.home-visibility h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+.home-visibility p {
+  margin: var(--space-2) 0 0;
+  max-width: 65ch;
+}
+.home-visibility.is-visible h3 {
+  color: var(--positive);
+}
+.home-visibility.needs-attention {
+  background: var(--warning-soft);
+  border: 1px solid var(--warning);
+  border-left-width: 4px;
+  border-radius: var(--operational-radius);
+  padding: var(--space-6);
+}
+.home-activity {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--operational-radius);
+}
+.operational-panel {
+  min-width: 0;
+  padding: var(--space-6);
+}
+.operational-panel + .operational-panel {
+  border-left: 1px solid var(--border);
+}
+.operational-panel > h2 {
+  font-size: 1.3rem;
+  margin: 0 0 var(--space-4);
+}
+.operational-row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: var(--space-2) var(--space-3);
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+.operational-row > svg {
+  color: var(--brand);
+}
+.operational-row h3 {
+  font-size: 1rem;
+  margin: 0 0 var(--space-2);
+}
+.operational-row p {
+  margin: 0;
+}
+.operational-row .helper-text {
+  margin-top: var(--space-2);
+}
+.operational-row .snapshot-count strong {
+  font-size: 1.5rem;
+}
+.operational-row > .button {
+  grid-column: 2;
+  justify-self: start;
+}
+.operational-row-content {
+  min-width: 0;
+}
+.driver-home .service-preparation {
+  margin: 0;
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--operational-radius);
+  box-shadow: none;
+}
+.driver-home .home-route-list {
+  display: grid;
+}
+.home-route-row {
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+.home-route-row h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+.home-route-row .operational-card-heading {
+  flex-wrap: wrap;
+}
+.home-route-row .capacity-text {
+  margin-bottom: 0;
+}
+.home-loading {
+  min-height: 8rem;
+  border-block: 1px solid var(--border);
+}
+@media (max-width: 1150px) {
+  .home-activity {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .operational-panel + .operational-panel {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+  }
+}
+@media (max-width: 420px) {
+  .operational-panel,
+  .driver-home .service-preparation,
+  .home-visibility.needs-attention {
+    padding: var(--space-4);
+  }
+  .operational-row > .button {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+  .home-visibility > .button {
+    width: 100%;
+  }
+}
+
+/* Authorized T12 passengers/payments batch: reuse operational surfaces and rows. */
+.operations-workspace {
+  font-size: 1rem;
+  min-width: 0;
+}
+.operations-workspace :is(h3, h4, p, button, summary) {
+  overflow-wrap: anywhere;
+}
+.operations-workspace .button {
+  border-radius: var(--operational-radius);
+  min-height: 48px;
+}
+.operations-group {
+  padding-block: var(--space-4);
+  border-block: 1px solid var(--border);
+}
+.operations-route-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+.operations-route-row > div {
+  flex: 1;
+  min-width: 0;
+}
+.operations-route-row h4 {
+  font-size: 1rem;
+  margin: 0;
+}
+.operations-workspace .capacity-text {
+  padding: 0;
+}
+.operations-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: var(--space-4);
+  align-items: end;
+  margin-block: var(--space-6);
+}
+.operations-filters label {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.operations-filters :is(input, select) {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+}
+.operations-workspace .operations-rows {
+  gap: 0;
+  border-block: 1px solid var(--border);
+}
+.operations-rows .operational-card {
+  border: 0;
+  border-radius: 0;
+  padding: var(--space-6) 0;
+}
+.operations-rows .operational-card + .operational-card {
+  border-top: 1px solid var(--border);
+}
+.operations-pages {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  flex-wrap: wrap;
+  margin-block: var(--space-4);
+}
+.operations-pages p {
+  margin: 0;
+  flex: 1 1 15rem;
+}
+.operations-workspace .payment-summary {
+  gap: 0;
+  border-block: 1px solid var(--border);
+}
+.operations-workspace .payment-summary > div {
+  background: none;
+  border-radius: 0;
+}
+.operations-workspace .payment-summary > div + div {
+  border-left: 1px solid var(--border);
+}
+.operations-workspace .payment-summary .operations-summary-amount {
+  font-size: 1rem;
+}
+@media (max-width: 640px) {
+  .operations-route-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .operations-workspace .payment-summary {
+    grid-template-columns: 1fr;
+  }
+  .operations-workspace .payment-summary > div + div {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+  }
+}
+
+/* Approved product prototype: shared driver surfaces, density and reflow. */
+:root {
+  --driver-content-width: var(--content-width);
+  --driver-gap: 24px;
+  --driver-panel-padding: 20px;
+  --driver-title-size: var(--page-title);
+  --driver-table-heading: #fafbfd;
+  --driver-neutral-soft: var(--neutral-soft);
+  --driver-overlay: rgb(23 45 72 / 45%);
+}
+.driver-shell {
+  font-size: 1rem;
+}
+.workspace-shell.driver-shell .workspace {
+  max-width: var(--driver-content-width);
+}
+.driver-shell .workspace h1 {
+  font-size: var(--driver-title-size);
+  line-height: 1.2;
+  margin: 0 0 24px;
+}
+.driver-shell .panel.driver-operations,
+.driver-shell .publication-area {
+  box-shadow: none;
+}
+.driver-operations > .publication-heading > h2 {
+  font-size: 1.25rem;
+}
+.driver-shell :is(p, dt, dd, h2, h3, h4),
+.driver-dialog :is(p, dt, dd, h2, h3, h4) {
+  overflow-wrap: anywhere;
+}
+.driver-surface,
+.driver-home > .operational-panel {
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--operational-radius);
+}
+.surface-heading {
+  padding: 16px 20px;
+}
+.surface-heading h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+.surface-heading p {
+  margin: 4px 0 0;
+}
+.result-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-block: 1px solid var(--border);
+  font-size: 0.875rem;
+}
+.driver-surface > .operations-filters {
+  margin: 0;
+  padding: var(--driver-panel-padding);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 12px;
+}
+.driver-surface > :is(h3, .helper-text) {
+  margin: 16px 20px;
+}
+.roster-layout {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  align-items: start;
+  gap: var(--driver-gap);
+}
+.capacity-options {
+  min-width: 0;
+}
+.capacity-option {
+  display: block;
+  width: 100%;
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  padding: 16px 20px;
+  overflow-wrap: anywhere;
+}
+.capacity-option[aria-pressed="true"],
+.capacity-option[data-selected="true"] {
+  background: var(--brand-soft);
+  box-shadow: inset 3px 0 var(--brand);
+}
+.capacity-option > span,
+.capacity-select > span {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.capacity-select {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  display: block;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+}
+/* Compact capacity uses one type scale in Inicio, rutas and pasajeros. */
+:is(.capacity-option, .home-route-row, .routes-list) .capacity-text {
+  font-size: 0.875rem;
+}
+:is(.capacity-option, .home-route-row, .routes-list) .capacity-text strong {
+  font-size: 1rem;
+}
+.capacity-option .capacity-text {
+  margin-top: 8px;
+}
+.driver-shell .capacity-meter,
+.operations-workspace .capacity-meter {
+  height: 12px;
+}
+.operational-table-container {
+  container-type: inline-size;
+  min-width: 0;
+}
+.operational-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.875rem;
+  text-align: left;
+}
+.operational-table :is(th, td) {
+  padding: 13px 20px;
+  overflow-wrap: anywhere;
+  vertical-align: middle;
+}
+.operational-table th {
+  background: var(--driver-table-heading);
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 650;
+  border-block: 1px solid var(--border);
+}
+.operational-table td {
+  border-bottom: 1px solid var(--border);
+}
+.operational-table th:last-child {
+  width: 9rem;
+}
+.operational-table :is(strong, small) {
+  display: block;
+}
+.operational-table small {
+  color: var(--muted);
+  margin-top: 4px;
+}
+.operational-table .status-pill {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.status-active,
+.status-paid {
+  color: var(--positive);
+  background: var(--positive-soft);
+}
+.status-future,
+.status-pending {
+  color: var(--warning);
+  background: var(--warning-soft);
+}
+.status-ended,
+.status-void {
+  color: var(--muted);
+  background: var(--driver-neutral-soft);
+}
+.operations-pages {
+  padding: 12px 20px;
+  margin: 0;
+  font-size: 0.875rem;
+}
+.operations-pages p {
+  flex-basis: 10rem;
+}
+.operations-pages label {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.operations-pages select {
+  width: auto;
+}
+.operations-workspace .payment-summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--operational-radius);
+  padding: 20px 0;
+}
+.operations-workspace .payment-summary > div {
+  display: flex;
+  flex-direction: column;
+  padding: 0 24px;
+}
+.operations-workspace .payment-summary dt {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.operations-workspace .payment-summary .operations-summary-amount {
+  order: 1;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 8px 0 4px;
+}
+.operations-workspace .payment-summary .summary-count {
+  order: 2;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+.payment-summary > div:first-child .operations-summary-amount {
+  color: var(--warning);
+}
+.payment-summary > div:nth-child(2) .operations-summary-amount {
+  color: var(--positive);
+}
+.driver-dialog {
+  width: min(44rem, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--operational-radius);
+  color: var(--ink);
+  background: var(--surface);
+  overscroll-behavior: contain;
+}
+.driver-dialog::backdrop {
+  background: var(--driver-overlay);
+}
+.driver-dialog .focus-panel {
+  border: 0;
+  margin: 0;
+  padding: 24px;
+  border-radius: 0;
+  max-width: none;
+}
+.driver-dialog .route-form {
+  max-width: none;
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+.driver-dialog :is(fieldset, input, select, textarea) {
+  min-width: 0;
+}
+.driver-dialog .form-body {
+  display: grid;
+  gap: 16px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.driver-dialog .form-body > label {
+  display: grid;
+  gap: 8px;
+}
+.driver-dialog .form-body > legend {
+  margin-bottom: 16px;
+}
+.driver-dialog .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.driver-dialog .route-group label:has(input[type="checkbox"]) {
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.driver-dialog input[type="checkbox"] {
+  width: 20px;
+  min-height: 20px;
+  flex: none;
+}
+.driver-home .home-activity {
+  gap: 24px;
+  border: 0;
+  background: none;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.driver-home .home-activity .operational-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--operational-radius);
+}
+.driver-home .operational-panel > h2 {
+  font-size: 1.25rem;
+}
+.driver-home .operational-row {
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+}
+.driver-home .operational-row > .button {
+  grid-column: 3;
+  grid-row: 1;
+}
+.driver-home .snapshot-count {
+  display: block;
+  font-size: 0.875rem;
+}
+.driver-home .route-line,
+.routes-list .route-line {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr) minmax(10rem, 15rem) auto;
+  align-items: center;
+  gap: 20px;
+  padding-block: 20px;
+  border-top: 1px solid var(--border);
+}
+.roster-scope {
+  padding: 0 20px;
+}
+.roster-scope summary {
+  cursor: pointer;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+.passenger-contact-details {
+  display: grid;
+  gap: 12px;
+  padding-block: 12px;
+}
+.passenger-detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: var(--brand-soft);
+  border-radius: var(--surface-radius);
+}
+.passenger-detail-row > .product-icon {
+  flex-shrink: 0;
+  color: var(--brand);
+}
+.passenger-detail-row dl {
+  min-width: 0;
+  margin: 0;
+}
+.passenger-detail-row dt {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.passenger-detail-row dt:not(:first-child) {
+  margin-top: 12px;
+}
+.passenger-detail-row dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+.passenger-detail-row a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+}
+.passenger-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.passenger-identity > div {
+  min-width: 0;
+}
+.passenger-symbol {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+.route-clock {
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.route-clock small {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+.routes-list {
+  padding: 0 24px;
+}
+.routes-list :is(h2, h3) {
+  font-size: 1rem;
+  margin: 0;
+}
+.routes-list p {
+  margin: 6px 0;
+}
+.routes-list .route-metadata {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.routes-list .form-actions {
+  margin: 0;
+}
+.driver-shell .service-overview-columns {
+  background: transparent;
+  border: 0;
+  gap: 24px;
+}
+.driver-shell .service-overview-columns > section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--operational-radius);
+  padding: 20px 24px;
+}
+.driver-shell .service-overview h1 {
+  font-size: var(--driver-title-size);
+}
+.driver-shell .service-status-bar {
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--operational-radius);
+}
+.driver-shell .publication-area {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.driver-shell .publication-summary {
+  background: var(--surface);
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--operational-radius);
+}
+.driver-shell .publication-summary > .hero-icon {
+  display: none;
+}
+.driver-shell .publication-state {
+  font-size: 1.5rem;
+}
+.driver-menu-close {
+  display: none;
+}
+@container (max-width: 42rem) {
+  .operational-table,
+  .operational-table tbody,
+  .operational-table tr,
+  .operational-table td {
+    display: block;
+    width: 100%;
+  }
+  .operational-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .operational-table tr {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .operational-table td {
+    display: grid;
+    grid-template-columns: minmax(5rem, 0.7fr) minmax(0, 1fr);
+    gap: 4px 12px;
+    border: 0;
+    padding: 6px 0;
+  }
+  .operational-table td::before {
+    content: attr(data-label);
+    grid-row: 1 / span 4;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .operational-table td > * {
+    grid-column: 2;
+  }
+}
+/* Compact record variant: identity leads, metadata uses the full row. */
+@container (max-width: 32rem) {
+  .operational-table td {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+    padding-block: 8px;
+  }
+  .operational-table td::before {
+    grid-row: auto;
+  }
+  .operational-table td > * {
+    grid-column: 1;
+  }
+  .roster-results .operational-table td:first-child::before {
+    display: none;
+  }
+  .roster-results .passenger-identity strong {
+    font-size: 1rem;
+  }
+}
+@media (max-width: 1250px) {
+  .roster-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .roster-results {
+    order: -1;
+  }
+  .roster-results .operations-filters {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  }
+  .roster-results .operations-filters > label:first-child {
+    grid-column: 1 / -1;
+  }
+  .capacity-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+  .capacity-option {
+    border-top: 0;
+    border-right: 1px solid var(--border);
+  }
+  .driver-home .home-activity {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .driver-home .route-line,
+  .routes-list .route-line {
+    grid-template-columns: 5rem minmax(0, 1fr);
+  }
+  .route-line > .capacity-display {
+    grid-column: 2;
+  }
+  .route-line > :last-child {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+/* Narrow routes give all operational facts the full reading width. */
+@media (max-width: 540px) {
+  .driver-home .route-line,
+  .routes-list .route-line {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .route-line > .capacity-display,
+  .route-line > :last-child {
+    grid-column: 1;
+  }
+  .route-clock {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .route-clock small::before {
+    content: "– ";
+  }
+  .routes-list {
+    padding-inline: 16px;
+  }
+}
+@media (max-width: 900px) {
+  .driver-shell .workspace-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(20rem, 100%);
+    z-index: 60;
+    height: 100dvh;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    box-shadow: 0 0 0 100vmax var(--driver-overlay);
+  }
+  .driver-shell .driver-menu-close {
+    display: block;
+    align-self: end;
+  }
+}
+@media (max-width: 640px) {
+  .driver-shell .workspace {
+    padding: 24px 16px;
+  }
+  .driver-shell .workspace h1 {
+    font-size: 1.75rem;
+  }
+  .driver-home .operational-row {
+    grid-template-columns: 28px minmax(0, 1fr);
+  }
+  .driver-home .operational-row > .button {
+    grid-column: 2;
+    grid-row: auto;
+    justify-self: start;
+  }
+  .operations-workspace .payment-summary > div {
+    padding: 16px 20px;
+  }
+  .driver-dialog .focus-panel {
+    padding: 20px 16px;
+  }
+  .driver-dialog {
+    max-height: calc(100dvh - 16px);
+    width: calc(100% - 16px);
+  }
+}
+.requests-workspace .request-layout {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.85fr) minmax(0, 1.15fr);
+  gap: 24px;
+  align-items: start;
+}
+.requests-workspace .request-list {
+  margin: 0;
+  padding: 0;
+}
+.requests-workspace .request-row {
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 20px;
+  width: 100%;
+}
+.requests-workspace .request-row[aria-expanded="true"] {
+  background: var(--brand-soft);
+  box-shadow: inset 3px 0 var(--brand);
+}
+.requests-workspace .inbox-filters {
+  display: flex;
+  flex-wrap: wrap;
+  margin-block: 16px 24px;
+}
+.requests-workspace .inbox-filters button {
+  flex: none;
+}
+.requests-workspace .request-reading .focus-panel {
+  border: 0;
+  margin: 0;
+  padding: 24px;
+}
+.requests-workspace .request-expansion {
+  margin: 0;
+}
+@media (max-width: 1000px) {
+  .requests-workspace .request-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.requests-workspace .request-row {
+  min-height: 48px;
+}
+.requests-workspace .operations-pages button {
+  min-height: 48px;
+  min-width: 48px;
+}
+.requests-workspace .request-reading .focus-panel {
+  width: 100%;
+  max-width: none;
+}
+.driver-home .home-visibility {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--operational-radius);
+  padding: 16px 20px;
+}
+.driver-home .home-visibility.needs-attention {
+  background: var(--warning-soft);
+}
+.home-route-row .capacity-text,
+.routes-list .capacity-text {
+  margin: 0 0 6px;
+}
+.driver-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.driver-tabs .button {
+  flex: none;
+  border-radius: 0;
+  white-space: normal;
+}
+.driver-tabs [aria-current="page"] {
+  border-bottom: 3px solid var(--brand);
+  color: var(--brand);
+  font-weight: 700;
+}
+.driver-shell .publication-heading h1 {
+  margin: 0;
+}
+.driver-shell .driver-operations > .publication-heading {
+  margin-bottom: 16px;
+}
+.driver-shell .onboarding-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.driver-shell .onboarding-steps li {
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+.driver-shell .onboarding-steps .button {
+  border-radius: 0;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+}
+.driver-shell .onboarding-steps [aria-current="step"] {
+  border-bottom-color: var(--brand);
+}
+.driver-shell .publication-summary {
+  display: grid;
+  gap: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.publication-visibility {
+  padding: 20px 24px;
+}
+.publication-visibility .publication-state {
+  margin: 0 0 8px;
+}
+.publication-visibility .button {
+  margin-top: 12px;
+}
+.publication-requirement {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+}
+.publication-requirement > div:first-child {
+  flex: 1 1 16rem;
+}
+.publication-requirement .helper-text {
+  margin: 4px 0 0;
+}
+.publication-requirement .status-pill {
+  font-size: 0.875rem;
+}
+.publication-explanation > summary {
+  cursor: pointer;
+  min-height: var(--touch-target);
+  padding: 12px 0;
+}
+/* A date picker participates in modal scroll instead of being clipped below a field. */
+.driver-dialog .expiry-calendar {
+  position: static;
+  width: 100%;
+  max-width: 100%;
+  transform: none;
+  margin-top: 8px;
+  box-shadow: none;
+  padding: 8px;
+}
+.driver-dialog .expiry-calendar-grid {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.driver-dialog .expiry-calendar-grid button {
+  min-width: 44px;
+  min-height: var(--touch-target);
+}
+.driver-dialog .expiry-calendar-trigger,
+.driver-dialog .expiry-calendar-heading button {
+  min-width: 44px;
+  padding: 0;
+}
+.driver-shell {
+  grid-template-rows: auto 1fr;
+}
+.driver-shell .workspace-sidebar {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  max-height: 100dvh;
+  overflow-y: auto;
+}
+.driver-context-bar {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 16px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.driver-context-bar strong {
+  font-weight: 500;
+}
+.driver-shell .workspace {
+  grid-column: 2;
+  grid-row: 2;
+}
+@media (max-width: 900px) {
+  .driver-context-bar {
+    padding: 12px 16px;
+  }
+}

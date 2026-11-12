@@ -1,0 +1,216 @@
+{
+  "name": "17-web-conductor-pasajero-detalle-1440",
+  "role": "conductor",
+  "screen": "W19 Detalle pasajero, sin editar",
+  "at": "2026-10-31T12:22:51.532Z",
+  "platform": "Fedora Chromium real React + academic API",
+  "browser": "156.0.8078.4",
+  "origin": "http://127.0.0.1:15174",
+  "geometry": {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "scrollWidth": 1440,
+    "scrollHeight": 1000,
+    "activeElement": {
+      "tag": "H3",
+      "role": null
+    },
+    "headings": [
+      "Gestiona tu servicio",
+      "Datos del servicio",
+      "Documentos requeridos",
+      "Documento de identidad demo",
+      "Documento de vehículo demo",
+      "Credencial con vencimiento demo",
+      "Tu información fue aprobada",
+      "Historial de revisiones",
+      "Documentos enviados",
+      "Publicación",
+      "Visibilidad de tu servicio",
+      "Requisitos de publicación",
+      "Plan actual",
+      "Mis rutas",
+      "Ruta ficticia T12 elite",
+      "Pasajeros",
+      "Cupos por ruta",
+      "Pasajeros asociados",
+      "Pasajero ficticio elite 1"
+    ]
+  },
+  "blocked": [],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me/",
+      "status": 403
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/profile/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validation/checklist/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/documents/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validation/checklist/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/profile/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/documents/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/validations/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/summary/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/contact-requests/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/communes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/publication/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/passenger-assignments/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/passenger-assignments/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/driver/routes/",
+      "status": 200
+    }
+  ],
+  "inspectedByAgent": true,
+  "humanReviewed": false,
+  "viewKey": "W19",
+  "productAccepted": false,
+  "evidenceKind": "real-application-current-run",
+  "inspection": "Viewport abierto individualmente; imágenes de página completa adicionales revisadas por lámina de conjunto. No acredita desplegables cerrados ni pruebas con personas.",
+  "files": [
+    {
+      "file": "capturas-reales/17-web-conductor-pasajero-detalle-1440.png",
+      "sha256": "d3f4eb0eaf30996772334150ab61304051337e84f95f4daf3601d114bb458e8a",
+      "pixels": [
+        1440,
+        1000
+      ]
+    }
+  ]
+}

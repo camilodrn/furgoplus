@@ -2,18 +2,23 @@ import { useEffect, useRef, useState } from "react";
 import { AuthApi } from "./api";
 import type { Publication, Route, RouteInput } from "./api-types";
 import { humanChileanDate } from "./dates";
+import { planValidity } from "./PlanValidity";
+import { homeSteps } from "./DriverHomeStatus";
 import { validateForm } from "./formValidation";
 import {
+  publicationBlocker,
   CapacityText,
   DriverReadNotice,
   DriverActionError,
   FieldError,
-  ActivationPath,
-  FocusPanel,
+  ServiceAvailabilityNotice,
   ProductIcon,
   type DriverDestination,
   useDriverResource,
 } from "./DriverExperience";
+
+import { DriverDialog } from "./OperationalPanel";
+import { CollectionPages, useLocalPage } from "./OperationsNavigation";
 
 const days = [
   ["monday", "Lunes"],
@@ -24,11 +29,7 @@ const days = [
   ["saturday", "Sábado"],
   ["sunday", "Domingo"],
 ] as const;
-const subscriptionLabels = {
-  inactive: "Inactivo",
-  active: "Activo",
-  suspended: "Suspendido",
-};
+
 const emptyRoute: RouteInput = {
   label: "",
   status: "active",
@@ -47,6 +48,7 @@ export function DriverPublicationScreen({
   refreshKey = 0,
   onPublicationChange,
   onNavigate,
+  onBack,
 }: {
   api: AuthApi;
   activeSection?: "all" | "publication" | "routes";
@@ -54,6 +56,7 @@ export function DriverPublicationScreen({
   refreshKey?: number;
   onPublicationChange?: (publication: Publication) => void;
   onNavigate?: (destination: DriverDestination) => void;
+  onBack?: () => void;
 }) {
   const [formOpen, setFormOpen] = useState(false);
   const [step, setStep] = useState(0);
@@ -96,7 +99,14 @@ export function DriverPublicationScreen({
     );
   }, [fields]);
   const publication = task.data?.publication;
+  const validity = publication
+    ? planValidity(
+        publication.subscription,
+        publication.blockers.map((item) => item.code),
+      )
+    : null;
   const routes = task.data?.routes ?? [];
+  const routePage = useLocalPage(routes, "routes");
   const communes = task.data?.communes ?? [];
   const lastRefreshKey = useRef(refreshKey);
   useEffect(() => {
@@ -209,15 +219,23 @@ export function DriverPublicationScreen({
   }
   return (
     <section
-      className="panel publication-area driver-operations"
+      className="publication-area driver-operations operations-workspace"
       aria-label="Publicación y rutas"
       hidden={!visible}
     >
+      {onBack && (
+        <button className="button button-link" onClick={onBack}>
+          Volver al resumen de mi servicio
+        </button>
+      )}
       <DriverReadNotice {...task} />
       {!formOpen && <DriverActionError {...task} />}
       <div hidden={activeSection === "routes"}>
         <div className="publication-heading">
-          <h2>Visibilidad de tu servicio</h2>
+          <div>
+            <h1>Publicación</h1>
+            <p>Controla cuándo tu servicio aparece en las búsquedas.</p>
+          </div>
           <button
             type="button"
             className="button button-link publication-refresh"
@@ -229,29 +247,59 @@ export function DriverPublicationScreen({
         </div>
         {publication ? (
           <div className="publication-summary">
-            <span
-              className={`hero-icon ${publication.eligible ? "is-success" : ""}`}
-            >
-              <ProductIcon
-                name={publication.eligible ? "visible" : "waiting"}
+            <div className="publication-visibility driver-surface">
+              <div className="publication-status-copy">
+                <h2 className="task12-eyebrow">Visibilidad de tu servicio</h2>
+                <span
+                  className={`hero-icon ${publication.eligible ? "is-success" : ""}`}
+                >
+                  <ProductIcon
+                    name={publication.eligible ? "visible" : "waiting"}
+                  />
+                </span>
+                <p
+                  className={`publication-state ${publication.eligible ? "publication-visible" : ""}`}
+                >
+                  {publication.eligible
+                    ? "Visible para apoderados"
+                    : "Aún no visible"}
+                </p>
+                <p>
+                  {publication.publication_requested
+                    ? publication.eligible
+                      ? "Pediste que tu servicio sea visible y los apoderados pueden encontrarte."
+                      : "Pediste que tu servicio sea visible, pero aún falta resolver los requisitos indicados en esta pantalla."
+                    : "Aún no has pedido que tu servicio sea visible."}
+                </p>
+              </div>
+              <button
+                className={
+                  publication.publication_requested
+                    ? "button button-outline"
+                    : "button button-primary"
+                }
+                disabled={busy}
+                onClick={() => void intent()}
+              >
+                {publication.publication_requested
+                  ? "Dejar de mostrar mi servicio"
+                  : "Solicitar que mi servicio sea visible"}
+              </button>
+            </div>
+            <div className="publication-service-notice">
+              <ServiceAvailabilityNotice
+                publication={publication}
+                onNavigate={onNavigate}
               />
-            </span>
-            <p
-              className={`publication-state ${publication.eligible ? "publication-visible" : ""}`}
+            </div>
+            <PublicationRequirements
+              publication={publication}
+              onNavigate={onNavigate}
+            />
+            <section
+              className="plan-block driver-surface"
+              aria-label="Plan actual"
             >
-              {publication.eligible
-                ? "Visible para apoderados"
-                : "Aún no visible"}
-            </p>
-            <p>
-              {publication.publication_requested
-                ? publication.eligible
-                  ? "Pediste que tu servicio sea visible y los apoderados pueden encontrarte."
-                  : "Pediste que tu servicio sea visible, pero aún falta resolver los requisitos indicados abajo."
-                : "Aún no has pedido que tu servicio sea visible."}
-            </p>
-            <ActivationPath publication={publication} onNavigate={onNavigate} />
-            <div className="plan-block" aria-label="Plan actual">
               <h3>Plan actual</h3>
               {publication.subscription ? (
                 <>
@@ -259,9 +307,9 @@ export function DriverPublicationScreen({
                     {publication.subscription.plan_label}
                   </strong>
                   <span
-                    className={`plan-status ${publication.subscription.status === "active" && !publication.blockers.some((item) => item.code.startsWith("subscription_")) ? "is-success" : ""}`}
+                    className={`plan-status ${validity === "Vigente" ? "is-success" : ""}`}
                   >
-                    {subscriptionLabels[publication.subscription.status]}
+                    {validity}
                   </span>
                   <p className="plan-validity">
                     {publication.blockers.some(
@@ -273,43 +321,41 @@ export function DriverPublicationScreen({
                           )
                         ? `Comienza el ${humanChileanDate(publication.subscription.starts_at)}`
                         : publication.subscription.ends_at
-                          ? `${publication.subscription.status === "active" ? "Vigente" : "Período definido"} hasta ${humanChileanDate(publication.subscription.ends_at)}`
+                          ? `${validity === "Vigente" ? "Vigente" : "Período definido"} hasta ${humanChileanDate(publication.subscription.ends_at)}`
                           : "Sin fecha de vigencia definida"}
                   </p>
                 </>
               ) : (
                 <>
-                  <strong className="plan-empty">Sin plan activo</strong>
+                  <strong className="plan-empty">Sin plan asignado</strong>
                   <p className="plan-validity">
                     Necesitas un plan vigente para aparecer ante los apoderados.
                   </p>
                 </>
               )}
-            </div>
-            <p className="helper-text">
-              {publication.publication_requested
-                ? "Si dejas de mostrar tu servicio, los apoderados no podrán encontrarte. Tus rutas y registros privados se conservan."
-                : "Al solicitarlo, tu servicio será visible solo cuando cumpla todos los requisitos. La solicitud por sí sola no lo hace visible."}
-            </p>
-            <button
-              className={
-                publication.publication_requested
-                  ? "button button-outline"
-                  : "button button-primary"
-              }
-              disabled={busy}
-              onClick={() => void intent()}
-            >
-              {publication.publication_requested
-                ? "Dejar de mostrar mi servicio"
-                : "Solicitar que mi servicio sea visible"}
-            </button>
+              {onNavigate && (
+                <button
+                  className="button button-outline"
+                  onClick={() => onNavigate("help")}
+                >
+                  Consultar sobre mi plan
+                </button>
+              )}
+            </section>
+            <details className="publication-explanation driver-surface">
+              <summary>Qué ocurre al cambiar la publicación</summary>{" "}
+              <p className="helper-text">
+                {publication.publication_requested
+                  ? "Si dejas de mostrar tu servicio, los apoderados no podrán encontrarte. Tus rutas y registros privados se conservan."
+                  : "Al solicitarlo, tu servicio será visible solo cuando cumpla todos los requisitos. La solicitud por sí sola no lo hace visible."}
+              </p>
+            </details>
           </div>
         ) : null}
       </div>
       <div hidden={activeSection === "publication"}>
         <div className="publication-heading">
-          <h2>Mis rutas</h2>
+          <h1>Mis rutas</h1>
           <button
             className="button button-primary"
             hidden={formOpen}
@@ -326,7 +372,7 @@ export function DriverPublicationScreen({
           </button>
         </div>
         <button
-          className="button button-link driver-refresh"
+          className="button button-quiet driver-refresh"
           disabled={busy || task.loading}
           onClick={() => void task.refresh()}
         >
@@ -334,9 +380,8 @@ export function DriverPublicationScreen({
         </button>
         <div hidden={formOpen}>
           <p>
-            Una ruta define dónde y cuándo prestas el traslado de forma
-            recurrente. El servicio de cada día se gestiona en la aplicación
-            móvil.
+            Define horarios, destino y cupos. Gestiona cada recorrido del día en
+            la app.
           </p>
 
           {task.data && routes.length === 0 && (
@@ -360,37 +405,46 @@ export function DriverPublicationScreen({
               </button>
             </div>
           )}
-          <div className="operational-list">
-            {routes.map((route) => (
-              <article className="operational-card" key={route.id}>
-                <div className="operational-card-heading">
-                  <h3>{route.label}</h3>
-                  <span className="status-pill">
-                    {route.status === "active" ? "Activa" : "Inactiva"}
-                  </span>
+          <div
+            className="driver-surface routes-list"
+            id="route-list-results"
+            tabIndex={-1}
+          >
+            {routePage.rows.map((route) => (
+              <article className="route-line" key={route.id}>
+                <div className="route-clock">
+                  {route.start_time.slice(0, 5)}
+                  <small>{route.end_time.slice(0, 5)}</small>
                 </div>
-                <p>
-                  {days
-                    .filter(([code]) => route.weekdays.includes(code))
-                    .map(([, label]) => label.slice(0, 3))
-                    .join(" · ")}
-                </p>
-                <p className="route-time">
-                  {route.start_time.slice(0, 5)} → {route.end_time.slice(0, 5)}
-                </p>
+                <div>
+                  <div className="operational-card-heading">
+                    <h2>{route.label}</h2>
+                    <span className="status-pill">
+                      {route.status === "active" ? "Activa" : "Inactiva"}
+                    </span>
+                  </div>
+                  <p>
+                    {days
+                      .filter(([code]) => route.weekdays.includes(code))
+                      .map(([, label]) => label.slice(0, 3))
+                      .join(" · ")}
+                  </p>
+
+                  <p>
+                    Destino: {route.destination_label}
+                    <br />
+                    Cobertura:{" "}
+                    {route.coverage_codes
+                      .map(
+                        (code) =>
+                          communes.find((item) => item.code === code)
+                            ?.display_name ??
+                          "Comuna fuera del catálogo vigente",
+                      )
+                      .join(", ")}
+                  </p>
+                </div>
                 <CapacityText route={route} />
-                <p>
-                  Destino: {route.destination_label}
-                  <br />
-                  Cobertura:{" "}
-                  {route.coverage_codes
-                    .map(
-                      (code) =>
-                        communes.find((item) => item.code === code)
-                          ?.display_name ?? "Comuna fuera del catálogo vigente",
-                    )
-                    .join(", ")}
-                </p>
                 <div className="form-actions">
                   <button
                     className="button button-outline"
@@ -407,14 +461,22 @@ export function DriverPublicationScreen({
                     {route.status === "active" ? "Desactivar" : "Activar"}
                   </button>
                 </div>
-                {route.status === "active" && (
-                  <p className="helper-text">
-                    Al desactivarla, deja de aparecer como ruta activa para los
-                    apoderados. Las asignaciones se conservan.
-                  </p>
-                )}
               </article>
             ))}
+            {routes.length > 10 && (
+              <>
+                <p className="helper-text">
+                  Paginación local de las rutas recibidas; no solicita páginas
+                  al servidor.
+                </p>
+                <CollectionPages
+                  {...routePage}
+                  busy={busy || task.loading}
+                  label="Páginas de rutas"
+                  resultsId="route-list-results"
+                />
+              </>
+            )}
           </div>
           {task.data && communes.length === 0 && (
             <p>
@@ -424,7 +486,8 @@ export function DriverPublicationScreen({
           )}
         </div>
         {formOpen && (
-          <FocusPanel
+          <DriverDialog
+            visible={visible && activeSection !== "publication"}
             title={editing ? `Editar ruta: ${editing.label}` : "Crear ruta"}
             busy={busy}
             onClose={() => {
@@ -453,11 +516,11 @@ export function DriverPublicationScreen({
             <h4 id="route-stage-title" tabIndex={-1}>
               {["Días y horario", "Cupos y cobertura", "Revisar"][step]}
             </h4>
-            <p>
-              El regreso requiere otra ruta. Los horarios son locales de Chile.
-              No puedes cambiar los datos del servicio de hoy después de
-              iniciarlo.
-            </p>
+            {step === 0 && (
+              <p className="helper-text">
+                Horarios de Chile. El regreso requiere otra ruta.
+              </p>
+            )}
             <form
               noValidate
               className="route-form"
@@ -713,6 +776,11 @@ export function DriverPublicationScreen({
                   </section>
                 )}
                 <DriverActionError {...task} />
+                <p className="helper-text">
+                  {step < 2
+                    ? "Continuar conserva el borrador en este editor; aún no guarda la ruta."
+                    : "Al confirmar se guarda la ruta. El recorrido de hoy no cambia si ya fue iniciado."}
+                </p>
                 <div className="form-actions">
                   {step > 0 && (
                     <button
@@ -758,9 +826,93 @@ export function DriverPublicationScreen({
                 {editing.status === "active" ? "Desactivar" : "Activar"}
               </button>
             )}
-          </FocusPanel>
+          </DriverDialog>
         )}
       </div>
+    </section>
+  );
+}
+
+function PublicationRequirements({
+  publication,
+  onNavigate,
+}: {
+  publication: Publication;
+  onNavigate?: (destination: DriverDestination) => void;
+}) {
+  const accountReady =
+    publication.profile_status === "active" &&
+    !publication.blockers.some((item) =>
+      ["account_inactive", "driver_suspended", "driver_deactivated"].includes(
+        item.code,
+      ),
+    );
+  const requirements = homeSteps(publication).map((step) =>
+    step.title === "Ruta y publicación"
+      ? {
+          ...step,
+          title: "Ruta activa",
+          complete:
+            publication.active_route_count > 0 &&
+            !publication.blockers.some(
+              (item) => item.code === "active_route_missing",
+            ),
+          pending: step.pending.filter(
+            (item) => item.code === "active_route_missing",
+          ),
+          destination: "routes" as DriverDestination,
+          action: "Configurar una ruta",
+        }
+      : step,
+  );
+  return (
+    <section
+      className="driver-surface publication-requirements"
+      aria-label="Requisitos de publicación"
+    >
+      <div className="surface-heading">
+        <h3>Requisitos de publicación</h3>
+      </div>
+      <div className="publication-requirement">
+        <strong>Cuenta habilitada</strong>
+        <span
+          className={`status-pill ${accountReady ? "status-active" : "status-pending"}`}
+        >
+          {accountReady ? "Completo" : "Requiere atención"}
+        </span>
+      </div>
+      {requirements.map((step) => (
+        <div className="publication-requirement" key={step.title}>
+          <div>
+            <strong>{step.title}</strong>
+            {step.pending.map((item) => (
+              <p className="helper-text" key={item.code}>
+                {publicationBlocker(item)}
+              </p>
+            ))}
+          </div>
+          {step.complete ? (
+            <span className="status-pill status-active">Completo</span>
+          ) : (
+            <div>
+              <span className="status-pill status-pending">
+                {step.title === "Revisión del equipo" &&
+                publication.validation_state === "pending"
+                  ? "En revisión"
+                  : "Pendiente"}
+              </span>
+              {onNavigate && (
+                <button
+                  className="button button-link"
+                  onClick={() => onNavigate(step.destination)}
+                >
+                  {step.action}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
     </section>
   );
 }

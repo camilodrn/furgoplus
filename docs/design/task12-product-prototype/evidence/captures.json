@@ -1,0 +1,248 @@
+{
+  "captures": [
+    {
+      "route": "web/conductor/inicio",
+      "width": 1440,
+      "height": 1000,
+      "setup": null,
+      "file": "web-inicio-1440.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/conductor/servicio",
+      "width": 1440,
+      "height": 1000,
+      "setup": null,
+      "file": "web-mi-servicio-1440.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/conductor/pasajeros",
+      "width": 1440,
+      "height": 1000,
+      "setup": null,
+      "file": "web-pasajeros-1440.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=muchos",
+      "width": 1280,
+      "height": 900,
+      "setup": null,
+      "file": "web-pasajeros-muchos-1280.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 1440,
+      "height": 1000,
+      "setup": null,
+      "file": "web-pagos-1440.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/conductor/solicitudes",
+      "width": 1440,
+      "height": 1000,
+      "setup": null,
+      "file": "web-solicitudes-1440.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/conductor/plan",
+      "width": 1440,
+      "height": 1000,
+      "setup": null,
+      "file": "web-plan-reportes-1440.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/conductor/rutas",
+      "width": 1280,
+      "height": 900,
+      "setup": null,
+      "file": "web-rutas-1280.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/conductor/ayuda",
+      "width": 1440,
+      "height": 1000,
+      "setup": null,
+      "file": "web-ayuda-1440.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/administrador/validaciones?estado=pendiente",
+      "width": 1440,
+      "height": 1000,
+      "setup": null,
+      "file": "web-validaciones-1440.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/administrador/expediente/1?estado=pendiente",
+      "width": 1440,
+      "height": 1000,
+      "setup": "review",
+      "file": "web-expediente-1440.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/administrador/conductor/1",
+      "width": 1440,
+      "height": 1000,
+      "setup": null,
+      "file": "web-administracion-1440.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/administrador/ayuda?estado=muchos",
+      "width": 1440,
+      "height": 1000,
+      "setup": null,
+      "file": "web-soporte-criticos-1440.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 1080,
+      "height": 1000,
+      "setup": null,
+      "file": "android-hoy-412.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "android/conductor/hoy",
+      "width": 390,
+      "height": 844,
+      "setup": null,
+      "file": "android-hoy-390.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "android/conductor/pasajeros/1",
+      "width": 390,
+      "height": 844,
+      "setup": null,
+      "file": "android-pasajeros-390.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "android/conductor/plan",
+      "width": 390,
+      "height": 844,
+      "setup": null,
+      "file": "android-plan-390.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "android/apoderado/buscar",
+      "width": 1080,
+      "height": 1000,
+      "setup": "search",
+      "file": "android-buscar-412.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "android/apoderado/servicio/1",
+      "width": 390,
+      "height": 844,
+      "setup": null,
+      "file": "android-servicio-390.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "android/apoderado/contacto/1",
+      "width": 390,
+      "height": 844,
+      "setup": null,
+      "file": "android-contacto-390.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "android/apoderado/solicitudes",
+      "width": 390,
+      "height": 844,
+      "setup": null,
+      "file": "android-solicitudes-390.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 390,
+      "height": 844,
+      "setup": "compare",
+      "file": "android-comparar-390.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "android/apoderado/comparar",
+      "width": 320,
+      "height": 844,
+      "setup": "compare3",
+      "file": "android-comparar-tres-320.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/conductor/pagos?estado=vacio",
+      "width": 1280,
+      "height": 900,
+      "setup": null,
+      "file": "web-pagos-vacio-1280.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/conductor/pasajeros?estado=error",
+      "width": 1280,
+      "height": 900,
+      "setup": null,
+      "file": "web-error-1280.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "android/conductor/hoy?estado=incierto",
+      "width": 390,
+      "height": 844,
+      "setup": null,
+      "file": "android-estado-incierto-390.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    },
+    {
+      "route": "web/conductor/pagos",
+      "width": 1280,
+      "height": 900,
+      "setup": "payment",
+      "file": "web-confirmar-pago-1280.png",
+      "pageOverflow": false,
+      "mobileOverflow": false
+    }
+  ],
+  "errors": []
+}
