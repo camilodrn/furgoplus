@@ -4,6 +4,7 @@ import {
   isDemoRegistrationEnabled,
 } from "./demo";
 import type {
+  AdminRegistrations,
   HelpCenter,
   SupportTickets,
   SupportTicket,
@@ -367,6 +368,9 @@ export class AuthApi {
   }
   adminDrivers(filters: URLSearchParams): Promise<AdminDrivers> {
     return this.request(`admin/drivers/?${filters.toString()}`, "GET");
+  }
+  adminRegistrations(filters: URLSearchParams): Promise<AdminRegistrations> {
+    return this.operationalRead(`admin/registrations/?${filters.toString()}`);
   }
   adminDriver(id: number): Promise<AdminDriver> {
     return this.request(`admin/drivers/${id}/`, "GET");

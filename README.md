@@ -79,6 +79,10 @@ The mobile app has parent registration, parent/driver login, restored-session st
 
 ## Checks
 
+El [informe de usuarios registrados para la feria del 04-11-2026](docs/TASK15_REGISTRATIONS_REPORT.md)
+documenta el endpoint administrativo, flags demo, verificación local y pendientes
+antes del despliegue.
+
 ```bash
 # Backend, with PostgreSQL configured
 cd backend

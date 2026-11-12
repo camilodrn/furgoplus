@@ -19,6 +19,65 @@ const fail = (status: number, code: string) =>
     json: async () => ({ code, message: code, fields: {} }),
   }) as Response;
 const csrf = ok({ csrf_token: "masked" });
+
+test("administrator opens registered users and browser Back preserves navigation", async () => {
+  const fetchMock = vi.fn(async (path: string) =>
+    path.includes("csrf")
+      ? csrf
+      : path.includes("auth/me")
+        ? ok({
+            id: 100,
+            email: "admin@example.test",
+            role: "admin",
+            display_name: null,
+          })
+        : path.includes("admin/registrations/")
+          ? ok({
+              totals: { parent: 1, driver: 0, admin: 1 },
+              count: 1,
+              results: [
+                {
+                  id: 101,
+                  display_name: "Apoderada nueva",
+                  email: "profesora@example.test",
+                  role: "parent",
+                  created_at: "2026-11-04T12:00:00Z",
+                },
+              ],
+            })
+          : path.includes("admin/")
+            ? ok({ results: [], count: 0 })
+            : domain(path),
+  );
+  vi.stubGlobal("fetch", fetchMock);
+  render(<App />);
+  const nav = await screen.findByRole("navigation", { name: "Administración" });
+  fireEvent.click(
+    within(nav).getByRole("button", { name: "Usuarios registrados" }),
+  );
+  await screen.findByRole("heading", { name: "Usuarios registrados" });
+  await screen.findByText("profesora@example.test");
+  expect(
+    within(nav)
+      .getByRole("button", { name: "Usuarios registrados" })
+      .getAttribute("aria-current"),
+  ).toBe("page");
+  fireEvent.click(within(nav).getByRole("button", { name: "Inicio" }));
+  expect(screen.queryByText("profesora@example.test")).toBeNull();
+  act(() =>
+    window.dispatchEvent(
+      new PopStateEvent("popstate", {
+        state: { furgoAdminSection: "registrations", furgoHelp: false },
+      }),
+    ),
+  );
+  await screen.findByText("profesora@example.test");
+  expect(
+    fetchMock.mock.calls.filter(([path]) =>
+      path.includes("admin/registrations/"),
+    ),
+  ).toHaveLength(2);
+});
 const driver = {
   id: 1,
   email: "sample@example.test",

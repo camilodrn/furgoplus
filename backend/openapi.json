@@ -12058,6 +12058,168 @@
           }
         ]
       }
+    },
+    "/api/v1/admin/registrations/": {
+      "get": {
+        "operationId": "getAdminRegistrations",
+        "summary": "Recent registered accounts; active staff administrators only",
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private non-cacheable response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "totals",
+                    "count",
+                    "results"
+                  ],
+                  "properties": {
+                    "totals": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "parent",
+                        "driver",
+                        "admin"
+                      ],
+                      "properties": {
+                        "parent": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "driver": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "admin": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      }
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "display_name",
+                          "email",
+                          "role",
+                          "created_at"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "display_name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "email": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "email"
+                          },
+                          "role": {
+                            "type": "string",
+                            "enum": [
+                              "parent",
+                              "driver",
+                              "admin"
+                            ]
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "parent",
+                "driver",
+                "admin"
+              ]
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 25
+            }
+          }
+        ],
+        "description": "Global totals include every existing User, active or inactive. Count and results apply q/role filters; newest created_at first, then descending id. Only @example.test email addresses are disclosed; others are null. Creation instants are ISO 8601; display in America/Santiago. No cache; unknown or repeated query parameters return 400."
+      }
     }
   },
   "components": {

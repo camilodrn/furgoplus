@@ -2,6 +2,7 @@ from django.urls import path
 
 from api.auth import CsrfView, LoginView, LogoutView, MeView, RegisterView
 from api.contracts import ENDPOINTS
+from api.registrations import AdminRegistrationsView
 from api.views import HealthView
 from drivers import api as driver_api
 from drivers import (
@@ -16,6 +17,7 @@ from drivers import (
 )
 
 VIEWS = {
+    "admin-registrations": AdminRegistrationsView,
     "help-center": support_api.HelpView,
     "support-list": support_api.TicketsView,
     "support-create": support_api.TicketsView,

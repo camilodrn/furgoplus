@@ -14,6 +14,7 @@ import { AdminValidationScreen, DriverOnboarding } from "./ValidationScreens";
 import { DriverPublicationScreen } from "./PublicationScreens";
 import { AdminControlScreen } from "./AdminControls";
 import { AdminOverview } from "./AdminOverview";
+import { AdminRegistrations } from "./AdminRegistrations";
 import "./admin-coherence.css";
 import { DriverRequests } from "./DriverRequests";
 import { DriverReports } from "./DriverReports";
@@ -545,7 +546,7 @@ function AuthenticatedWorkspace({
     | "reports"
   >("summary");
   const [adminSection, setAdminSection] = useState<
-    "summary" | "control" | "validation"
+    "summary" | "control" | "validation" | "registrations"
   >("summary");
   const [adminPendingDrivers, setAdminPendingDrivers] = useState(false);
   const [adminValidationTarget, setAdminValidationTarget] = useState<
@@ -588,7 +589,12 @@ function AuthenticatedWorkspace({
     const restore = (event: PopStateEvent) => {
       if (user.role === "admin") {
         const section = event.state?.furgoAdminSection;
-        if (!["summary", "control", "validation"].includes(section)) return;
+        if (
+          !["summary", "control", "validation", "registrations"].includes(
+            section,
+          )
+        )
+          return;
         historyPop.current = true;
         setAdminSection(section);
         setHelpOpen(Boolean(event.state?.furgoHelp));
@@ -877,6 +883,22 @@ function AuthenticatedWorkspace({
                   Conductores
                 </button>
               </li>
+              <li>
+                <button
+                  className="sidebar-link"
+                  aria-current={
+                    !helpOpen && adminSection === "registrations"
+                      ? "page"
+                      : undefined
+                  }
+                  onClick={() =>
+                    navigate(() => setAdminSection("registrations"))
+                  }
+                >
+                  <ProductIcon size={24} name="people" />
+                  Usuarios registrados
+                </button>
+              </li>
             </ul>
           </nav>
         )}
@@ -1080,6 +1102,9 @@ function AuthenticatedWorkspace({
           )}
           {user.role === "admin" && (
             <>
+              {!helpOpen && adminSection === "registrations" && (
+                <AdminRegistrations api={api} />
+              )}
               {adminSection === "summary" && (
                 <AdminOverview
                   api={api}

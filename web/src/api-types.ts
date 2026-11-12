@@ -1,4 +1,15 @@
 // Generated from backend/openapi.json. Do not edit by hand.
+export type AdminRegistrations = {
+  totals: { parent: number; driver: number; admin: number };
+  count: number;
+  results: {
+    id: number;
+    display_name: string | null;
+    email: string | null;
+    role: "parent" | "driver" | "admin";
+    created_at: string;
+  }[];
+};
 export type HelpCenter = {
   version: string;
   service_notice: string;

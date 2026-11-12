@@ -33,6 +33,7 @@ function typeOf(schema) {
 }
 
 const types = [
+  ["AdminRegistrations", "/api/v1/admin/registrations/", "get", "200"],
   ["HelpCenter", "/api/v1/help/", "get", "200"],
   ["SupportTickets", "/api/v1/support/tickets/", "get", "200"],
   ["SupportTicket", "/api/v1/support/tickets/{id}/", "get", "200"],

@@ -1697,7 +1697,7 @@ test("admin control navigation exposes only the authorized workspace and sends v
     within(nav)
       .getAllByRole("button")
       .map((button) => button.textContent?.trim()),
-  ).toEqual(["Inicio", "Validaciones", "Conductores"]);
+  ).toEqual(["Inicio", "Validaciones", "Conductores", "Usuarios registrados"]);
   expect(mock.fetchMock.mock.calls.map(([path]) => path).join(" ")).not.toMatch(
     /\/driver\/|passenger|payment|contact-request|route-run/,
   );

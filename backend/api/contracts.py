@@ -1988,9 +1988,64 @@ from api.support_contracts import build_endpoints  # noqa: E402
 ENDPOINTS += build_endpoints()
 _support_openapi_document = openapi_document
 
+# Task 15: existing accounts only; no new persistence or write operations.
+REGISTRATION_FILTERS = {
+    "q": {"type": "string", "maxLength": 100},
+    "role": IDENTITY["properties"]["role"],
+    "offset": {**INTEGER, "minimum": 0, "default": 0},
+    "limit": {**INTEGER, "minimum": 1, "maximum": 50, "default": 25},
+}
+ENDPOINTS += (
+    Endpoint(
+        "admin/registrations/",
+        "admin-registrations",
+        "get",
+        "getAdminRegistrations",
+        "Recent registered accounts; active staff administrators only",
+        control_object(
+            {
+                "totals": control_object(
+                    {
+                        role: {**INTEGER, "minimum": 0}
+                        for role in ("parent", "driver", "admin")
+                    }
+                ),
+                "count": {**INTEGER, "minimum": 0},
+                "results": {
+                    "type": "array",
+                    "items": control_object(
+                        {
+                            "id": INTEGER,
+                            "display_name": {"type": ["string", "null"]},
+                            "email": {"type": ["string", "null"], "format": "email"},
+                            "role": IDENTITY["properties"]["role"],
+                            "created_at": DATETIME,
+                        }
+                    ),
+                },
+            }
+        ),
+    ),
+)
+
 
 def openapi_document():
     document = _support_openapi_document()
+    report = document["paths"]["/api/v1/admin/registrations/"]["get"]
+    report["parameters"] = [
+        {"name": key, "in": "query", "schema": schema}
+        for key, schema in REGISTRATION_FILTERS.items()
+    ]
+    report["description"] = (
+        "Global totals include every existing User, active or inactive. Count and "
+        "results apply q/role filters; newest created_at first, then descending id. "
+        "Only @example.test email addresses are disclosed; others are null. "
+        "Creation instants are ISO 8601; display in America/Santiago. "
+        "No cache; unknown or repeated query parameters return 400."
+    )
+    report["responses"]["200"]["headers"] = {
+        "Cache-Control": {"schema": {"type": "string", "const": "no-store"}}
+    }
     for name in ("support-list", "admin-support-list"):
         endpoint = next(e for e in ENDPOINTS if e.name == name)
         document["paths"][f"/api/v1/{endpoint.path}"]["get"]["parameters"] = [

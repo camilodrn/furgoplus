@@ -25,6 +25,64 @@ const identity = {
 
 afterEach(() => vi.unstubAllGlobals());
 
+test("registered accounts use authenticated GET with server filters and pagination", async () => {
+  const body = {
+    totals: { parent: 1, driver: 0, admin: 1 },
+    count: 1,
+    results: [],
+  };
+  const fetchMock = vi.fn().mockResolvedValue(ok(body));
+  vi.stubGlobal("fetch", fetchMock);
+  await expect(
+    new AuthApi().adminRegistrations(
+      new URLSearchParams({
+        role: "parent",
+        q: "feria@example.test",
+        offset: "25",
+        limit: "25",
+      }),
+    ),
+  ).resolves.toEqual(body);
+  expect(fetchMock.mock.calls[0]![0]).toBe(
+    "/api/v1/admin/registrations/?role=parent&q=feria%40example.test&offset=25&limit=25",
+  );
+  expect(fetchMock.mock.calls[0]![1]).toMatchObject({
+    method: "GET",
+    credentials: "same-origin",
+  });
+});
+
+test("registered accounts time out stalled reads and allow a manual retry", async () => {
+  vi.useFakeTimers();
+  try {
+    const fetchMock = vi
+      .fn()
+      .mockImplementationOnce(() => new Promise(() => {}))
+      .mockResolvedValue(
+        ok({
+          totals: { parent: 0, driver: 0, admin: 1 },
+          count: 0,
+          results: [],
+        }),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    const api = new AuthApi();
+    const filters = new URLSearchParams({ offset: "0", limit: "25" });
+    const failed = expect(
+      api.adminRegistrations(filters),
+    ).rejects.toMatchObject({ code: "request_timeout" });
+    await vi.advanceTimersByTimeAsync(15_001);
+    await failed;
+    expect(fetchMock.mock.calls[0]![1].signal.aborted).toBe(true);
+    await expect(api.adminRegistrations(filters)).resolves.toMatchObject({
+      count: 0,
+    });
+    expect(vi.getTimerCount()).toBe(0);
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
 test("Vite preserves the browser Host for Django's same-origin CSRF check", () => {
   expect(viteConfig.server?.proxy?.["/api"]).toMatchObject({
     changeOrigin: false,
