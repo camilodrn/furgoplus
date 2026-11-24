@@ -11,9 +11,11 @@ from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied
 
 from accounts.models import DriverProfile, User
+from drivers.capacity import CHILE
 from drivers.models import DriverSubscription
+from drivers.student_quota import student_usage
 
-CATALOG_VERSION = "2026-10-19.3"
+CATALOG_VERSION = "2026-11-24.1"
 
 
 @dataclass(frozen=True)
@@ -28,13 +30,14 @@ class CommercialPlan:
     label: str
     monthly_price_clp: int
     support_priority: str
+    student_limit: int
 
 
 PLANS = MappingProxyType(
     {
-        "basic": CommercialPlan("Básico", 19990, "standard"),
-        "pro": CommercialPlan("Pro", 39990, "preferred"),
-        "elite": CommercialPlan("Elite", 69990, "priority"),
+        "basic": CommercialPlan("Básico", 19990, "standard", 20),
+        "pro": CommercialPlan("Pro", 39990, "preferred", 50),
+        "elite": CommercialPlan("Elite", 69990, "priority", 150),
     }
 )
 ALL_PLANS = frozenset(PLANS)
@@ -52,6 +55,17 @@ CAPABILITIES = MappingProxyType(
         "assistant.contextual": Capability(frozenset({"elite"}), True),
     }
 )
+
+
+def assigned_plan(driver):
+    # The roster remains operational without an effective subscription. An
+    # assigned plan still defines its quota, independently of premium access.
+    code = (
+        DriverSubscription.objects.filter(driver=driver)
+        .values_list("plan__code", flat=True)
+        .first()
+    )
+    return PLANS.get(code)
 
 
 def subscription_blockers(subscription, now):
@@ -136,6 +150,9 @@ def driver_capabilities(user, *, now=None):
         else None,
         "blockers": profile_blockers + blockers,
         "capabilities": capabilities,
+        "student_usage": student_usage(
+            driver, plan, timezone.localtime(now, CHILE).date()
+        ),
     }
 
 

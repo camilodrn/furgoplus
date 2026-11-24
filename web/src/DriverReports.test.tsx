@@ -80,6 +80,15 @@ function capabilities(plan = "pro", enabled = true): DriverCapabilities {
     },
     capabilities: caps,
     blockers: enabled ? [] : ["subscription_expired"],
+    student_usage:
+      plan === "basic"
+        ? { active: 19, limit: 20, available: 1, plan_label: "Básico" }
+        : {
+            active: 7,
+            limit: plan === "elite" ? 150 : 50,
+            available: plan === "elite" ? 143 : 43,
+            plan_label: plan === "elite" ? "Elite" : "Pro",
+          },
   } as unknown as DriverCapabilities;
 }
 const monthly: MonthlyReport = {
@@ -135,6 +144,7 @@ function setup(
 test("Básico presents the plan and continuity without technical entitlements", async () => {
   const { api } = setup(capabilities("basic"));
   await screen.findByRole("heading", { name: "Básico", level: 2 });
+  expect(screen.getByText("19 de 20")).toBeTruthy();
   expect(screen.getByText(/Tu gestión diaria sigue disponible/)).toBeTruthy();
   expect(document.body.textContent).not.toMatch(
     /included_in_plan|implemented|enabled|No incluido en tu plan|Aún no implementado/,

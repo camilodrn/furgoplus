@@ -1,0 +1,11 @@
+# Append after compose.public.yaml only for HTTPS rehearsal.
+services:
+  web:
+    volumes:
+      - type: bind
+        source: ${TASK16_REHEARSAL_CADDYFILE:?Set the absolute rehearsal Caddyfile path}
+        target: /etc/caddy/Caddyfile
+        read_only: true
+        bind:
+          create_host_path: false
+          selinux: z

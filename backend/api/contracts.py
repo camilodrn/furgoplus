@@ -725,14 +725,45 @@ ASSIGNMENT_INPUT = {
         "ends_on": {"type": ["string", "null"], "format": "date"},
     },
 }
+ASSIGNMENT_CREATE = {
+    **ASSIGNMENT_INPUT,
+    "properties": {
+        **ASSIGNMENT_INPUT["properties"],
+        "student_id": {
+            **INTEGER,
+            "minimum": 1,
+            "description": (
+                "Identidad propia del conductor. Omitir para crear una nueva."
+            ),
+        },
+    },
+}
 ASSIGNMENT = {
     **ASSIGNMENT_INPUT,
-    "required": ["id", "created_at", "updated_at", *ASSIGNMENT_INPUT["required"]],
+    "required": [
+        "id",
+        "student_id",
+        "created_at",
+        "updated_at",
+        *ASSIGNMENT_INPUT["required"],
+    ],
     "properties": {
         **ASSIGNMENT_INPUT["properties"],
         "id": INTEGER,
+        "student_id": INTEGER,
         "created_at": STRING,
         "updated_at": STRING,
+    },
+}
+STUDENT_USAGE = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["active", "limit", "available", "plan_label"],
+    "properties": {
+        "active": {**INTEGER, "minimum": 0},
+        "limit": {"type": ["integer", "null"], "minimum": 1},
+        "available": {"type": ["integer", "null"], "minimum": 0},
+        "plan_label": {"type": ["string", "null"]},
     },
 }
 PAYMENT_INPUT = {
@@ -971,8 +1002,11 @@ ENDPOINTS += (
         {
             "type": "object",
             "additionalProperties": False,
-            "required": ["assignments"],
-            "properties": {"assignments": {"type": "array", "items": ASSIGNMENT}},
+            "required": ["assignments", "student_usage"],
+            "properties": {
+                "assignments": {"type": "array", "items": ASSIGNMENT},
+                "student_usage": STUDENT_USAGE,
+            },
         },
     ),
     Endpoint(
@@ -983,7 +1017,7 @@ ENDPOINTS += (
         "Create own passenger assignment",
         ASSIGNMENT,
         201,
-        ASSIGNMENT_INPUT,
+        ASSIGNMENT_CREATE,
     ),
     Endpoint(
         "driver/passenger-assignments/{id}/",
@@ -1776,6 +1810,7 @@ DRIVER_CAPABILITIES = control_object(
         "plan": {"oneOf": [COMMERCIAL_PLAN, {"type": "null"}]},
         "subscription": {"oneOf": [CAPABILITY_SUBSCRIPTION, {"type": "null"}]},
         "blockers": {"type": "array", "items": STRING},
+        "student_usage": STUDENT_USAGE,
         "capabilities": control_object(
             {
                 code: CAPABILITY_STATE
@@ -2031,6 +2066,18 @@ ENDPOINTS += (
 
 def openapi_document():
     document = _support_openapi_document()
+    for endpoint, method in (
+        ("driver/passenger-assignments/", "post"),
+        ("driver/passenger-assignments/{id}/", "patch"),
+    ):
+        document["paths"][f"/api/v1/{endpoint}"][method]["responses"]["409"] = {
+            "description": "student_limit_reached: la operación excede el límite "
+            "de estudiantes del plan en las fechas indicadas. "
+            "operation_conflict: las condiciones operativas cambiaron.",
+            "content": {
+                "application/json": {"schema": {"$ref": "#/components/schemas/Error"}}
+            },
+        }
     report = document["paths"]["/api/v1/admin/registrations/"]["get"]
     report["parameters"] = [
         {"name": key, "in": "query", "schema": schema}

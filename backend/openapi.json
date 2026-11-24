@@ -3823,6 +3823,7 @@
                   "additionalProperties": false,
                   "required": [
                     "id",
+                    "student_id",
                     "created_at",
                     "updated_at",
                     "route_id",
@@ -3866,6 +3867,9 @@
                     "id": {
                       "type": "integer"
                     },
+                    "student_id": {
+                      "type": "integer"
+                    },
                     "created_at": {
                       "type": "string"
                     },
@@ -3879,6 +3883,16 @@
           },
           "default": {
             "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "student_limit_reached: la operación excede el límite de estudiantes del plan en las fechas indicadas. operation_conflict: las condiciones operativas cambiaron.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3933,6 +3947,11 @@
                       "null"
                     ],
                     "format": "date"
+                  },
+                  "student_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Identidad propia del conductor. Omitir para crear una nueva."
                   }
                 }
               }
@@ -3968,7 +3987,8 @@
                   "type": "object",
                   "additionalProperties": false,
                   "required": [
-                    "assignments"
+                    "assignments",
+                    "student_usage"
                   ],
                   "properties": {
                     "assignments": {
@@ -3978,6 +3998,7 @@
                         "additionalProperties": false,
                         "required": [
                           "id",
+                          "student_id",
                           "created_at",
                           "updated_at",
                           "route_id",
@@ -4021,12 +4042,51 @@
                           "id": {
                             "type": "integer"
                           },
+                          "student_id": {
+                            "type": "integer"
+                          },
                           "created_at": {
                             "type": "string"
                           },
                           "updated_at": {
                             "type": "string"
                           }
+                        }
+                      }
+                    },
+                    "student_usage": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "active",
+                        "limit",
+                        "available",
+                        "plan_label"
+                      ],
+                      "properties": {
+                        "active": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "limit": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "minimum": 1
+                        },
+                        "available": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "minimum": 0
+                        },
+                        "plan_label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       }
                     }
@@ -4067,6 +4127,7 @@
                   "additionalProperties": false,
                   "required": [
                     "id",
+                    "student_id",
                     "created_at",
                     "updated_at",
                     "route_id",
@@ -4110,6 +4171,9 @@
                     "id": {
                       "type": "integer"
                     },
+                    "student_id": {
+                      "type": "integer"
+                    },
                     "created_at": {
                       "type": "string"
                     },
@@ -4123,6 +4187,16 @@
           },
           "default": {
             "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "student_limit_reached: la operación excede el límite de estudiantes del plan en las fechas indicadas. operation_conflict: las condiciones operativas cambiaron.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4212,6 +4286,7 @@
                   "additionalProperties": false,
                   "required": [
                     "id",
+                    "student_id",
                     "created_at",
                     "updated_at",
                     "route_id",
@@ -4253,6 +4328,9 @@
                       "format": "date"
                     },
                     "id": {
+                      "type": "integer"
+                    },
+                    "student_id": {
                       "type": "integer"
                     },
                     "created_at": {
@@ -4308,6 +4386,7 @@
                   "additionalProperties": false,
                   "required": [
                     "id",
+                    "student_id",
                     "created_at",
                     "updated_at",
                     "route_id",
@@ -4349,6 +4428,9 @@
                       "format": "date"
                     },
                     "id": {
+                      "type": "integer"
+                    },
+                    "student_id": {
                       "type": "integer"
                     },
                     "created_at": {
@@ -9086,6 +9168,7 @@
                     "plan",
                     "subscription",
                     "blockers",
+                    "student_usage",
                     "capabilities"
                   ],
                   "properties": {
@@ -9201,6 +9284,42 @@
                       "type": "array",
                       "items": {
                         "type": "string"
+                      }
+                    },
+                    "student_usage": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "active",
+                        "limit",
+                        "available",
+                        "plan_label"
+                      ],
+                      "properties": {
+                        "active": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "limit": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "minimum": 1
+                        },
+                        "available": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "minimum": 0
+                        },
+                        "plan_label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
                       }
                     },
                     "capabilities": {

@@ -93,7 +93,7 @@ def table_models():
     }
 
 
-def check_schema(*, migrated):
+def check_schema(*, migrated, action=None, verify=None):
     if connection.vendor == "postgresql":
         with connection.cursor() as cursor:
             cursor.execute(
@@ -111,12 +111,12 @@ def check_schema(*, migrated):
             raise CommandError("Faltan migraciones académicas; ejecutar fase migrate.")
     manifest = None
     if AdminActionLog._meta.db_table in tables:
-        rows = AdminActionLog.objects.filter(action=ACTION)
+        rows = AdminActionLog.objects.filter(action=action or ACTION)
         if rows.count() > 1:
             raise CommandError("Manifiesto académico ambiguo.")
         manifest = rows.first()
     if manifest:
-        verify_manifest(manifest)
+        (verify or verify_manifest)(manifest)
         return manifest
     # A new destination can contain ONLY standard migration metadata and plans.
     with connection.cursor() as cursor:
@@ -166,11 +166,13 @@ def verify_manifest(manifest):
         raise CommandError("Catálogo de comunas compartido o alterado.")
     models = table_models()
     baseline = meta.get("baseline", {})
-    if set(baseline) != {
+    baseline_tables = {
         table
         for table, model in models.items()
         if model._meta.app_label in {"accounts", "drivers"}
-    }:
+    }
+    # Manifests created before Task 16 have no separate identity table.
+    if set(baseline) not in (baseline_tables, baseline_tables - {"drivers_student"}):
         raise CommandError("Manifiesto de recursos incompleto.")
     for table, ids in baseline.items():
         if table not in models or models[table].objects.filter(
@@ -223,13 +225,13 @@ def initial_day():
     return day
 
 
-def passwords():
+def passwords(accounts=None):
     if not sys.stdin.isatty() or not sys.stderr.isatty():
         raise CommandError(
             "Use terminal privada interactiva, sin -T, pipes ni registros."
         )
     result = {}
-    for email, role, _ in ACCOUNTS:
+    for email, role, _ in ACCOUNTS if accounts is None else accounts:
         try:
             with warnings.catch_warnings():
                 warnings.simplefilter("error", getpass.GetPassWarning)
@@ -270,10 +272,10 @@ def invoke(view, actor, method, data=None, *, id=None, multipart=False):
     return response.data
 
 
-def document(name, kind):
+def document(name, kind, task="TASK 12"):
     image = Image.new("RGB", (960, 280), "white")
     draw = ImageDraw.Draw(image)
-    draw.text((24, 35), "DOCUMENTO SINTETICO - NO VALIDO - TASK 12", fill="black")
+    draw.text((24, 35), f"DOCUMENTO SINTETICO - NO VALIDO - {task}", fill="black")
     draw.text((24, 100), name, fill="black")
     draw.text((24, 170), kind, fill="black")
     stream = io.BytesIO()

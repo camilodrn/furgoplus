@@ -1,0 +1,112 @@
+name: furgoplus-task16-${TASK16_SLOT:?Select rehearsal or presentation}-${TASK16_INSTANCE:-01}
+
+services:
+  task16-db:
+    image: postgres:17.6-alpine3.22
+    environment:
+      POSTGRES_DB: furgoplus_task16
+      POSTGRES_USER: furgoplus_task16
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+      TASK16_SLOT: ${TASK16_SLOT}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - type: bind
+        source: ${TASK16_CONFIG_DIR:?Set an absolute Task 16 config directory}/mark-database.sh
+        target: /docker-entrypoint-initdb.d/10-mark-database.sh
+        read_only: true
+        bind:
+          create_host_path: false
+          selinux: z
+      - type: bind
+        source: ${TASK16_SECRETS_DIR:?Set an absolute per-project secrets directory}/db_password
+        target: /run/secrets/db_password
+        read_only: true
+        bind:
+          create_host_path: false
+          selinux: z
+    networks: [database]
+    healthcheck:
+      test: ["CMD-SHELL", 'pg_isready -h 127.0.0.1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  backend:
+    build:
+      context: ../..
+      dockerfile: infra/demo/backend.Dockerfile
+    entrypoint: ["/bin/sh", "/run/task16/bootstrap.sh"]
+    command: ["gunicorn", "--config", "gunicorn.conf.py", "--forwarded-allow-ips", "", "config.wsgi:application"]
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings
+      DJANGO_SECRET_KEY_FILE: /run/secrets/django_secret_key
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      DJANGO_DEBUG: "true"
+      DJANGO_TRUST_PROXY_SSL_HEADER: "false"
+      API_PUBLIC_ORIGIN: http://127.0.0.1:${TASK16_PORT:?Set a dedicated port}
+      WEB_PUBLIC_ORIGIN: http://127.0.0.1:${TASK16_PORT}
+      # Required while Gunicorn parses the shared config, before the CLI override.
+      DEMO_CADDY_IP: 127.0.0.1
+      DB_NAME: furgoplus_task16
+      DB_USER: furgoplus_task16
+      DB_HOST: task16-db
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      FURGOPLUS_DEMO_MODE: "true"
+      FURGOPLUS_DEMO_REGISTRATION_ENABLED: "true"
+      FURGOPLUS_TASK16_SLOT: ${TASK16_SLOT}
+    volumes:
+      - private_uploads:/var/lib/furgoplus/private
+      - type: bind
+        source: ${TASK16_CONFIG_DIR}/bootstrap.sh
+        target: /run/task16/bootstrap.sh
+        read_only: true
+        bind:
+          create_host_path: false
+          selinux: z
+      - type: bind
+        source: ${TASK16_SECRETS_DIR}/db_password
+        target: /run/secrets/db_password
+        read_only: true
+        bind:
+          create_host_path: false
+          selinux: z
+      - type: bind
+        source: ${TASK16_SECRETS_DIR}/django_secret_key
+        target: /run/secrets/django_secret_key
+        read_only: true
+        bind:
+          create_host_path: false
+          selinux: z
+    networks: [database, application]
+    depends_on:
+      task16-db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ../..
+      dockerfile: infra/demo/web.Dockerfile
+      args:
+        FURGOPLUS_DEMO_REGISTRATION_ENABLED: "true"
+    ports:
+      - "127.0.0.1:${TASK16_PORT:?Set a dedicated port}:8080"
+    volumes:
+      - type: bind
+        source: ${TASK16_CONFIG_DIR}/Caddyfile
+        target: /etc/caddy/Caddyfile
+        read_only: true
+        bind:
+          create_host_path: false
+          selinux: z
+    networks: [application]
+    depends_on: [backend]
+
+networks:
+  database:
+    internal: true
+  application: {}
+
+volumes:
+  pg_data:
+  private_uploads:

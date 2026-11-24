@@ -1,0 +1,3 @@
+tag	image_id	platform	size_bytes
+localhost/furgoplus-task16-backend:20261124-9e6ef46-2eff066a-01	sha256:5b9ce8ea82beca7945b3fcd967b0ac8b030db9053c1dbdfe5158d882acc7f842	linux/amd64	250399951
+localhost/furgoplus-task16-web:20261124-9e6ef46-2eff066a-01	sha256:b6b01ba9329a85d0dcd709c5c68f6d4c3f2f2fdcd935fc3d03587dc9f31318c7	linux/amd64	119787531

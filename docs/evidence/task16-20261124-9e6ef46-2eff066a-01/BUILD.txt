@@ -1,0 +1,9 @@
+base_git=9e6ef4620ef4362531527490c1b338508e0363c4
+manifest_sha256=2eff066a055bb9c2bca9862e752b08eb94521366d5848f6c47a37a3b08555b66
+plataforma=linux/amd64
+proyecto_presentacion=furgoplus-task16-presentation-01
+puerto=127.0.0.1:18084
+postgres_del_hp=postgres:17.6-alpine3.22 (fuera del paquete)
+base_image=docker.io/library/python:3.13.8-slim fbb3bcf0e4fce4165d2ddfb4e179a8f3c1eeb376b2e30065daba9e02f4bb30aa linux/amd64
+base_image=docker.io/library/node:22.19.0-alpine3.22 70e3575514953b11adf257269030673dcb065f31ea11d9d86eb5c65b5a3c475f linux/amd64
+base_image=docker.io/library/caddy:2.11.7-alpine 3067cc4e02c091399edbd5d65f85a3ff4d511574aecadb47f280c3761e68852e linux/amd64

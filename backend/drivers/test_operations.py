@@ -16,6 +16,7 @@ from drivers.models import (
     Plan,
     Route,
     RouteCoverage,
+    Student,
 )
 from drivers.services import CHECKLIST
 from drivers.test_publication import PublicationTests
@@ -458,6 +459,7 @@ class FinalSeatConcurrencyTests(TransactionTestCase):
                     )
                     PassengerAssignment.objects.create(
                         route=locked,
+                        student=Student.objects.create(driver=driver),
                         student_display_name=f"Estudiante Ficticio {index}",
                         pickup_instruction="Parada ficticia",
                         guardian_display_name="Apoderado Ficticio",

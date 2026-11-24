@@ -1,5 +1,10 @@
 # FurgoPlus: demo de homelab Debian 13
 
+Para el despliegue de noviembre de 2026, consultar el
+[estado de Task 16](TASK16_DEMO_RUNBOOK.md) y su
+[procedimiento operativo](TASK16_DEPLOYMENT.md). Esta guía conserva el contexto
+del despliegue histórico y el origen de reversión en el puerto 18080.
+
 Configuración preparada el **14-10-2026**, con integración Fedora, backup/restore
 real en Fedora y despliegue/reinicio físico Debian 13 confirmados por el operador.
 Worktree:

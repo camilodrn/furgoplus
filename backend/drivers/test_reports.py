@@ -19,6 +19,7 @@ from drivers.models import (
     Plan,
     Route,
     RouteRun,
+    Student,
 )
 from drivers.publication import CHILE, change_subscription
 from drivers.reports import detail_rows, queries, report_snapshot, summarize
@@ -72,6 +73,7 @@ class ReportTests(TestCase):
         )
         assignment = PassengerAssignment.objects.create(
             route=route,
+            student=Student.objects.create(driver=route.driver),
             student_display_name="Menor privado",
             pickup_instruction="Casa privada",
             guardian_display_name="Adulto privado",

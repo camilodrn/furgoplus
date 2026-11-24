@@ -17,6 +17,7 @@ import { CollectionPages, useLocalPage } from "./OperationsNavigation";
 import { planValidity } from "./PlanValidity";
 import { ProductIcon, driverError } from "./DriverExperience";
 import { formatChileanDate, humanChileanDate } from "./dates";
+import { StudentUsage } from "./StudentUsage";
 
 const states: Record<string, string> = {
   pending: "Pendientes",
@@ -442,6 +443,7 @@ export function DriverReports({
                 <span>Valor de referencia del plan. Sin cobro automático.</span>
               </p>
             )}
+            <StudentUsage usage={caps.student_usage} />
             {caps.subscription && (
               <dl className="plan-dates">
                 <div>

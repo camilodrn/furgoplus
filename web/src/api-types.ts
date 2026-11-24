@@ -239,6 +239,12 @@ export type DriverCapabilities = {
     effective: boolean;
   } | null;
   blockers: string[];
+  student_usage: {
+    active: number;
+    limit: number | null;
+    available: number | null;
+    plan_label: string | null;
+  };
   capabilities: {
     "operations.core": {
       included_in_plan: boolean;
@@ -812,9 +818,16 @@ export type Assignments = {
     starts_on: string;
     ends_on: string | null;
     id: number;
+    student_id: number;
     created_at: string;
     updated_at: string;
   }[];
+  student_usage: {
+    active: number;
+    limit: number | null;
+    available: number | null;
+    plan_label: string | null;
+  };
 };
 export type Assignment = {
   route_id: number;
@@ -825,6 +838,7 @@ export type Assignment = {
   starts_on: string;
   ends_on: string | null;
   id: number;
+  student_id: number;
   created_at: string;
   updated_at: string;
 };
@@ -836,6 +850,7 @@ export type AssignmentInput = {
   guardian_contact: string;
   starts_on: string;
   ends_on: string | null;
+  student_id?: number;
 };
 export type AssignmentUpdate = {
   route_id?: number;

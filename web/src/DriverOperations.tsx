@@ -8,6 +8,7 @@ import type {
   DriverSummary,
 } from "./api-types";
 import { ChileanDateField } from "./ChileanDateField";
+import { StudentUsage } from "./StudentUsage";
 import { validateForm } from "./formValidation";
 import {
   chileDateTimeParts,
@@ -84,7 +85,11 @@ export function DriverRoster({
         api.routes(),
         api.assignments(),
       ]);
-      return { routes: routeList.routes, assignments: assignments.assignments };
+      return {
+        routes: routeList.routes,
+        assignments: assignments.assignments,
+        studentUsage: assignments.student_usage,
+      };
     },
     () => {
       setFormOpen(false);
@@ -104,6 +109,13 @@ export function DriverRoster({
   const routes = task.data?.routes ?? [];
   const capacityPage = useLocalPage(routes, "roster-route-capacity", 5);
   const rows = task.data?.assignments ?? [];
+  const students = new Map<number, Assignment>();
+  for (const row of rows) {
+    const previous = students.get(row.student_id);
+    if (row.student_id && (!previous || previous.updated_at < row.updated_at)) {
+      students.set(row.student_id, row);
+    }
+  }
   async function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy) return;
@@ -125,8 +137,13 @@ export function DriverRoster({
     await task.mutate(
       async () => {
         if (editing) {
-          const { route_id: _routeId, ...changes } = payload;
+          const {
+            route_id: _routeId,
+            student_id: _studentId,
+            ...changes
+          } = payload;
           void _routeId;
+          void _studentId;
           return api.updateAssignment(editing, changes);
         }
         return api.createAssignment(payload);
@@ -207,6 +224,7 @@ export function DriverRoster({
           <span aria-hidden="true">＋ </span>Agregar pasajero
         </button>
       </div>
+      <StudentUsage usage={task.data?.studentUsage} />
       <p className="helper-text">
         Esta información es privada y solo debe usarse para coordinar el
         traslado.
@@ -619,6 +637,36 @@ export function DriverRoster({
           >
             <fieldset className="form-body" disabled={busy || !task.data}>
               <legend>Datos de la asignación</legend>
+              {editing === null && students.size > 0 && (
+                <label>
+                  Estudiante
+                  <select
+                    value={form.student_id ?? ""}
+                    onChange={(event) => {
+                      const selected = students.get(Number(event.target.value));
+                      setForm({
+                        ...form,
+                        student_id: selected?.student_id,
+                        student_display_name:
+                          selected?.student_display_name ?? "",
+                        guardian_display_name:
+                          selected?.guardian_display_name ?? "",
+                        guardian_contact: selected?.guardian_contact ?? "",
+                      });
+                    }}
+                  >
+                    <option value="">Crear estudiante nuevo</option>
+                    {[...students.values()].map((student) => (
+                      <option
+                        key={student.student_id}
+                        value={student.student_id}
+                      >
+                        {student.student_display_name} · #{student.student_id}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
               <label>
                 Ruta
                 <select

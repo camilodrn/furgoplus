@@ -18,6 +18,7 @@ from drivers.models import (
     PassengerAssignment,
     PaymentRecord,
     Plan,
+    Student,
     ValidationDocument,
 )
 from drivers.publication import CHILE
@@ -391,6 +392,7 @@ class AdminControlTests(Fixture, TestCase):
     def test_admin_and_cross_driver_private_ids_remain_denied(self):
         assignment = PassengerAssignment.objects.create(
             route=self.route,
+            student=Student.objects.create(driver=self.route.driver),
             student_display_name="Estudiante secreto",
             pickup_instruction="Recogida secreta",
             guardian_display_name="Tutor secreto",

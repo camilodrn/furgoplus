@@ -1,7 +1,21 @@
 # FurgoPlus — Estado y continuidad
 
-Actualizado: 2026-11-01.
+Último corte incorporado: cierre académico de noviembre de 2026.
 Este documento resume lo recuperado y debe contrastarse con el código y las evidencias.
+
+## Task 16 · Cierre académico de noviembre de 2026
+
+En `furgoplus-feria`, rama `task/16-cierre-academico`, base `9e6ef46`, el
+operador confirmó el release `20261124-9e6ef46-2eff066a-01`, 730 pruebas
+automatizadas y el ensayo integral HTTPS 15/15. Al cierre, el origen público
+volvió a presentación en 18084. Ensayo conserva su base separada en 18083.
+Task 15 y landing siguen en 18080 y 18081, respectivamente. El candidato se
+empaquetó con cambios aún sin commit. El procedimiento reproducible de
+infraestructura se añadió después del despliegue y queda pendiente validarlo
+como conjunto nuevo en el HP. [Runbook y evidencia](../TASK16_DEMO_RUNBOOK.md)
+· [Procedimiento operativo](../TASK16_DEPLOYMENT.md).
+
+## Corte histórico de Task 12 · 1 de noviembre de 2026
 
 ## Procedencia de las decisiones reconciliadas
 Fuente: confirmación explícita del usuario del 2026-11-01, en el encargo
@@ -17,7 +31,7 @@ Plataforma de transporte escolar para conductor, apoderado y administrador.
 Backend Django/DRF y PostgreSQL; web React/TypeScript; móvil Flutter.
 El backend controla permisos, capacidades y reglas críticas.
 
-## Trabajo actual
+## Trabajo al corte de Task 12
 Task 12 — rama task/12-plan-capabilities.
 Planes Básico, Pro y Elite; reportes, Excel, ayuda, soporte y asistente FAQ.
 Rediseño integral F01–F13 para los tres roles.

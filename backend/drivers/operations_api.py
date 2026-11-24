@@ -8,11 +8,13 @@ from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
 
 from accounts.models import DriverProfile
+from drivers.capabilities import assigned_plan
 from drivers.capacity import capacity_snapshot, local_today, validate_capacity
 from drivers.daily_operation import active_on, frozen_today
-from drivers.models import PassengerAssignment, PaymentRecord, Route
+from drivers.models import PassengerAssignment, PaymentRecord, Route, Student
 from drivers.publication import publication_json, utc_instant
 from drivers.publication_api import DriverView
+from drivers.student_quota import student_usage, validate_student_quota
 
 
 class OperationConflict(APIException):
@@ -43,10 +45,15 @@ class AssignmentInput(serializers.Serializer):
         return attrs
 
 
+class AssignmentCreateInput(AssignmentInput):
+    student_id = serializers.IntegerField(min_value=1, required=False)
+
+
 def assignment_json(row):
     return {
         "id": row.pk,
         "route_id": row.route_id,
+        "student_id": row.student_id,
         "student_display_name": row.student_display_name,
         "pickup_instruction": row.pickup_instruction,
         "guardian_display_name": row.guardian_display_name,
@@ -63,6 +70,15 @@ def exact_fields(data, fields):
         raise ValidationError({"fields": ["Indica solo los campos permitidos."]})
 
 
+def lock_roster_driver(request):
+    # Same first lock as subscription and route configuration writes. Acquire
+    # the route and assignment locks only after this one. Allow unrelated
+    # inserts to check foreign keys referencing this driver.
+    return get_object_or_404(
+        DriverProfile.objects.select_for_update(no_key=True), user=request.user
+    )
+
+
 class AssignmentsView(DriverView):
     def get(self, request):
         driver = self.driver(request)
@@ -75,18 +91,33 @@ class AssignmentsView(DriverView):
                 raise ValidationError({"route_id": ["Ruta inválida."]})
             get_object_or_404(Route, pk=int(route_id), driver=driver)
             rows = rows.filter(route_id=int(route_id))
-        return Response({"assignments": [assignment_json(row) for row in rows]})
+        return Response(
+            {
+                "assignments": [assignment_json(row) for row in rows],
+                "student_usage": student_usage(
+                    driver, assigned_plan(driver), local_today()
+                ),
+            }
+        )
 
     def post(self, request):
-        form = AssignmentInput(data=request.data)
+        form = AssignmentCreateInput(data=request.data)
         form.is_valid(raise_exception=True)
-        exact_fields(request.data, form.fields)
-        data = form.validated_data
+        if set(request.data) - set(form.fields):
+            raise ValidationError({"fields": ["Campo no permitido."]})
+        data = dict(form.validated_data)
         with transaction.atomic():
+            driver = lock_roster_driver(request)
             route = get_object_or_404(
                 Route.objects.select_for_update(),
-                pk=data["route_id"],
-                driver=self.driver(request),
+                pk=data.pop("route_id"),
+                driver=driver,
+            )
+            student_id = data.pop("student_id", None)
+            student = (
+                get_object_or_404(Student, pk=student_id, driver=driver)
+                if student_id is not None
+                else None
             )
             today = local_today()
             if (
@@ -98,8 +129,18 @@ class AssignmentsView(DriverView):
             validate_capacity(
                 route, replacement=(None, data["starts_on"], data["ends_on"])
             )
+            validate_student_quota(
+                driver,
+                assigned_plan(driver),
+                student_id,
+                data["starts_on"],
+                data["ends_on"],
+                today,
+            )
+            if student is None:
+                student = Student.objects.create(driver=driver)
             row = PassengerAssignment.objects.create(
-                route=route, **{k: v for k, v in data.items() if k != "route_id"}
+                route=route, student=student, **data
             )
         return Response(assignment_json(row), status=201)
 
@@ -112,30 +153,32 @@ class AssignmentDetailView(DriverView):
         return Response(assignment_json(row))
 
     def patch(self, request, id):
-        driver = self.driver(request)
-        original = get_object_or_404(PassengerAssignment, pk=id, route__driver=driver)
-        if "route_id" in request.data and request.data["route_id"] != original.route_id:
-            raise ValidationError(
-                {
-                    "route_id": [
-                        "Termina esta asignación y crea otra para cambiar de ruta."
-                    ]
-                }
-            )
-        merged = {k: getattr(original, k) for k in AssignmentInput().fields}
-        merged.update(request.data)
-        form = AssignmentInput(data=merged)
-        form.is_valid(raise_exception=True)
-        if set(request.data) - set(form.fields):
-            raise ValidationError({"fields": ["Campo no permitido."]})
-        data = form.validated_data
         with transaction.atomic():
+            driver = lock_roster_driver(request)
+            original = get_object_or_404(
+                PassengerAssignment, pk=id, route__driver=driver
+            )
             route = get_object_or_404(
                 Route.objects.select_for_update(), pk=original.route_id, driver=driver
             )
             row = get_object_or_404(
                 PassengerAssignment.objects.select_for_update(), pk=id, route=route
             )
+            if "route_id" in request.data and request.data["route_id"] != row.route_id:
+                raise ValidationError(
+                    {
+                        "route_id": [
+                            "Termina esta asignación y crea otra para cambiar de ruta."
+                        ]
+                    }
+                )
+            merged = {key: getattr(row, key) for key in AssignmentInput().fields}
+            merged.update(request.data)
+            form = AssignmentInput(data=merged)
+            form.is_valid(raise_exception=True)
+            if set(request.data) - set(form.fields):
+                raise ValidationError({"fields": ["Campo no permitido."]})
+            data = form.validated_data
             today = local_today()
             before = active_on(row, today)
             after = data["starts_on"] <= today and (
@@ -158,6 +201,15 @@ class AssignmentDetailView(DriverView):
             validate_capacity(
                 route, replacement=(row.pk, data["starts_on"], data["ends_on"])
             )
+            if (data["starts_on"], data["ends_on"]) != (row.starts_on, row.ends_on):
+                validate_student_quota(
+                    driver,
+                    assigned_plan(driver),
+                    row.student_id,
+                    data["starts_on"],
+                    data["ends_on"],
+                    today,
+                )
             for key, value in data.items():
                 if key != "route_id":
                     setattr(row, key, value)
@@ -170,9 +222,11 @@ class AssignmentEndView(DriverView):
         exact_fields(request.data, {"ends_on"})
         date_field = serializers.DateField()
         end = date_field.run_validation(request.data["ends_on"])
-        driver = self.driver(request)
-        original = get_object_or_404(PassengerAssignment, pk=id, route__driver=driver)
         with transaction.atomic():
+            driver = lock_roster_driver(request)
+            original = get_object_or_404(
+                PassengerAssignment, pk=id, route__driver=driver
+            )
             route = get_object_or_404(
                 Route.objects.select_for_update(), pk=original.route_id, driver=driver
             )

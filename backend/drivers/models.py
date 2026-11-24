@@ -333,9 +333,20 @@ class RouteRun(models.Model):
         ]
 
 
+class Student(models.Model):
+    """Stable identity within one driver's roster. Details live on assignments."""
+
+    driver = models.ForeignKey(
+        "accounts.DriverProfile", on_delete=models.PROTECT, related_name="students"
+    )
+
+
 class PassengerAssignment(models.Model):
     route = models.ForeignKey(
         Route, on_delete=models.PROTECT, related_name="assignments"
+    )
+    student = models.ForeignKey(
+        Student, on_delete=models.PROTECT, related_name="assignments"
     )
     student_display_name = models.CharField(max_length=100)
     pickup_instruction = models.CharField(max_length=255)
@@ -347,8 +358,15 @@ class PassengerAssignment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        if self.pk and type(self).objects.get(pk=self.pk).route_id != self.route_id:
-            raise ValidationError("Assignment route history is immutable")
+        if self.pk:
+            original = type(self).objects.get(pk=self.pk)
+            if (original.route_id, original.student_id) != (
+                self.route_id,
+                self.student_id,
+            ):
+                raise ValidationError("Assignment route and student are immutable")
+        elif self.student.driver_id != self.route.driver_id:
+            raise ValidationError("Student and route must belong to the same driver")
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):

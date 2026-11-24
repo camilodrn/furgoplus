@@ -128,6 +128,8 @@ export function driverError(cause: unknown, area?: "route" | "assignment") {
     return "No puedes cambiar esta ruta porque el servicio de hoy ya comenzó. También se protege cuando ha finalizado.";
   if (cause.fields.seat_capacity && area === "assignment")
     return "Esta ruta no tiene cupos disponibles para esas fechas.";
+  if (cause.code === "student_limit_reached" && area === "assignment")
+    return cause.message;
   if (cause.code === "operation_conflict" && area === "assignment")
     return "No se pudo cambiar la asignación. El servicio de hoy puede haber comenzado o la fecha de término ya cambió. Actualiza y revisa las fechas; los cambios que afecten solo días futuros pueden permitirse.";
   if (cause.code === "driver_ineligible")
@@ -222,11 +224,14 @@ export function useDriverResource<T>(
                   area === "assignment") ||
                 cause.code === "driver_ineligible")
             ? driverError(cause, area)
-            : cause instanceof ApiError && cause.status === 409
-              ? "La información cambió. Actualiza y revisa los datos antes de continuar."
-              : !(cause instanceof ApiError) || cause.status >= 500
-                ? "No se pudo confirmar la acción. Revisa tu conexión y actualiza la información antes de volver a guardar."
-                : "Revisa los datos y las indicaciones de esta acción antes de continuar.";
+            : cause instanceof ApiError &&
+                cause.code === "student_limit_reached"
+              ? "La incorporación supera el máximo de estudiantes de tu plan para esas fechas."
+              : cause instanceof ApiError && cause.status === 409
+                ? "La información cambió. Actualiza y revisa los datos antes de continuar."
+                : !(cause instanceof ApiError) || cause.status >= 500
+                  ? "No se pudo confirmar la acción. Revisa tu conexión y actualiza la información antes de volver a guardar."
+                  : "Revisa los datos y las indicaciones de esta acción antes de continuar.";
       show({ kind: "error", title, message });
     },
     [area, clear, show],

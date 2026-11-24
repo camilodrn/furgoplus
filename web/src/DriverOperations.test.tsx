@@ -18,6 +18,7 @@ import {
 
 const assignment: Assignment = {
   id: 5,
+  student_id: 8,
   route_id: 2,
   student_display_name: "Estudiante Ficticio",
   pickup_instruction: "Parada ficticia",
@@ -58,6 +59,83 @@ const payment: Payment = {
 };
 
 afterEach(cleanup);
+
+test("roster refreshes commercial usage and allows selecting an existing student at the limit", async () => {
+  let active = 19;
+  const api = {
+    routes: vi.fn(async () => ({ routes: [{ ...route, seat_capacity: 12 }] })),
+    assignments: vi.fn(async () => ({
+      assignments: [assignment],
+      student_usage: {
+        active,
+        limit: 20,
+        available: 20 - active,
+        plan_label: "Básico",
+      },
+    })),
+    createAssignment: vi.fn(async (input: { student_id?: number }) => {
+      if (input.student_id === assignment.student_id) return assignment;
+      if (active === 20)
+        throw new ApiError(
+          409,
+          "student_limit_reached",
+          "Has alcanzado el máximo de estudiantes de tu plan Básico para las fechas indicadas.",
+        );
+      active += 1;
+      return assignment;
+    }),
+  };
+  render(<DriverRoster api={api as unknown as AuthApi} />);
+  await screen.findByText("19 de 20");
+  const open = () =>
+    fireEvent.click(screen.getByRole("button", { name: "Agregar pasajero" }));
+  const fill = () => {
+    fireEvent.change(screen.getByLabelText("Ruta"), { target: { value: "2" } });
+    fireEvent.change(screen.getByLabelText("Instrucciones de recogida"), {
+      target: { value: "Parada ficticia" },
+    });
+    fireEvent.change(screen.getByLabelText("Fecha de inicio"), {
+      target: { value: "25/11/2026" },
+    });
+  };
+  const submit = () =>
+    fireEvent.click(screen.getByRole("button", { name: "Crear asignación" }));
+  const enterNew = () => {
+    fill();
+    fireEvent.change(screen.getByLabelText("Nombre del estudiante"), {
+      target: { value: "Estudiante ficticio nuevo" },
+    });
+    fireEvent.change(screen.getByLabelText("Nombre del apoderado"), {
+      target: { value: "Responsable ficticio" },
+    });
+    fireEvent.change(screen.getByLabelText("Teléfono del apoderado"), {
+      target: { value: "000000000" },
+    });
+  };
+  open();
+  enterNew();
+  submit();
+  await screen.findByText("20 de 20");
+  open();
+  enterNew();
+  submit();
+  await screen.findByText(
+    "Has alcanzado el máximo de estudiantes de tu plan Básico para las fechas indicadas.",
+  );
+  const selected = within(screen.getByRole("dialog")).getByRole("combobox", {
+    name: /^Estudiante$/,
+  });
+  fireEvent.change(selected, {
+    target: { value: String(assignment.student_id) },
+  });
+  submit();
+  await waitFor(() =>
+    expect(api.createAssignment).toHaveBeenLastCalledWith(
+      expect.objectContaining({ student_id: assignment.student_id }),
+    ),
+  );
+  expect(screen.getByText("20 de 20")).toBeTruthy();
+});
 
 test.each(["roster", "payments"])(
   "%s required selections produce Spanish feedback and preserve the draft without writing",

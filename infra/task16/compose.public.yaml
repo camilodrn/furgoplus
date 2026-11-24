@@ -1,0 +1,43 @@
+# Append after compose.yaml and the release's images.override.yaml.
+services:
+  backend:
+    entrypoint: !reset null
+    command: ["gunicorn", "--config", "gunicorn.conf.py", "config.wsgi:application"]
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings_demo
+      DJANGO_ALLOWED_HOSTS: demo.furgoplus.cl
+      DJANGO_DEBUG: "false"
+      DJANGO_TRUST_PROXY_SSL_HEADER: "true"
+      API_PUBLIC_ORIGIN: https://demo.furgoplus.cl
+      WEB_PUBLIC_ORIGIN: https://demo.furgoplus.cl
+      DEMO_SYNTHETIC_ONLY: "true"
+      DEMO_CADDY_IP: ${TASK16_CADDY_IP:?Set the exact Caddy proxy IP}
+    networks: !override
+      database: {}
+      public_proxy:
+        ipv4_address: ${TASK16_BACKEND_IP:?Set the backend proxy IP}
+    healthcheck:
+      test: [CMD, python, healthcheck.py]
+      interval: 10s
+      timeout: 8s
+      retries: 6
+
+  web:
+    # Use the hardened infra/demo/Caddyfile already baked into the frozen image.
+    volumes: !reset []
+    networks:
+      application: {}
+      public_proxy:
+        ipv4_address: ${TASK16_CADDY_IP}
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, '--header=Host: demo.furgoplus.cl', '--header=CF-Connecting-IP: 127.0.0.1', 'http://127.0.0.1:8080/api/v1/health/']
+      interval: 10s
+      timeout: 8s
+      retries: 6
+
+networks:
+  public_proxy:
+    internal: true
+    ipam:
+      config:
+        - subnet: ${TASK16_PROXY_SUBNET:?Set a dedicated unused subnet}

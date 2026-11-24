@@ -312,6 +312,29 @@ Future<void> fill(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets('Mi plan shows commercial usage returned by the API', (
+    tester,
+  ) async {
+    final t = Transport()
+      ..caps = {
+        ...capabilityData(plan: 'basic'),
+        'student_usage': {
+          'active': 20,
+          'limit': 20,
+          'available': 0,
+          'plan_label': 'Básico',
+        },
+      };
+    await open(tester, t, plan: true);
+    expect(find.text('Estudiantes activos'), findsOneWidget);
+    expect(find.text('20 de 20'), findsOneWidget);
+    expect(find.text('Disponibles'), findsOneWidget);
+    expect(
+      find.text('Has alcanzado el máximo de estudiantes de tu plan Básico.'),
+      findsOneWidget,
+    );
+  });
+
   test('strict effective capabilities never grant from plan inclusion', () {
     expect(
       capabilityEnabled({

@@ -446,6 +446,10 @@ class _PlanHelpScreenState extends State<PlanHelpScreen>
     if (caps == null) return [];
     final plan = caps!['plan'] as Map?;
     final subscription = caps!['subscription'] as Map?;
+    final usage = caps!['student_usage'] as Map?;
+    final activeStudents = usage?['active'];
+    final studentLimit = usage?['limit'];
+    final availableStudents = usage?['available'];
     final blockers = caps!['blockers'] as List? ?? [];
     final effective = subscription?['effective'] == true;
     final available = effective && !blockers.contains('driver_unavailable');
@@ -523,6 +527,23 @@ class _PlanHelpScreenState extends State<PlanHelpScreen>
             ),
             const SizedBox(height: 12),
             if (plan != null) FurgoStatus(status, active: available),
+            if (activeStudents is int) ...[
+              const SizedBox(height: 16),
+              FurgoFact(
+                'Estudiantes activos',
+                studentLimit is int
+                    ? '$activeStudents de $studentLimit'
+                    : '$activeStudents',
+              ),
+              if (availableStudents is int)
+                FurgoFact('Disponibles', '$availableStudents'),
+              if (studentLimit is int && activeStudents >= studentLimit)
+                Text(
+                  activeStudents > studentLimit
+                      ? 'Superas el máximo de estudiantes de tu plan ${usage?['plan_label']}. Puedes conservar y actualizar las asignaciones existentes.'
+                      : 'Has alcanzado el máximo de estudiantes de tu plan ${usage?['plan_label']}.',
+                ),
+            ],
             if (subscription != null) ...[
               const SizedBox(height: 16),
               FurgoFact('Vencimiento', _planDate(subscription['ends_at'])),
